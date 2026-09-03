@@ -1,0 +1,6 @@
+node_modules/
+.env
+*.local
+dist/*.zip
+design-clone-runs/
+.DS_Store

@@ -1,0 +1,39 @@
+# AGENTS.md
+
+本仓库是 Agent Skill「design-clone」，遵循 Agent Skills 规范（agentskills.io）。
+
+## 必读文档（改任何东西前）
+
+- `docs/VISION.md` — 诉求与定位（"活 PRD"，唯一权威）
+- `docs/DECISIONS.md` — 架构决策（ADR），偏离前先改这里
+- `docs/RESEARCH.md` — 调研结论与许可存档
+- `docs/LESSONS.md` — 实战经验账本（新坑先记再修）
+- `docs/ROADMAP.md` — 里程碑状态与验收标准
+
+## 仓库布局
+
+- `skills/design-clone/` — skill 本体（SKILL.md + scripts/ + references/ + schema/ + presets/ + templates/）
+- `dist/` — 给无 CLI 平台（WorkBuddy 等）的 zip 产物，CI 打包，勿手工编辑
+
+## 开发约定
+
+- `SKILL.md` frontmatter 只允许 6 个字段：`name, description, license, compatibility, metadata`（+ name 必须等于目录名），禁止平台私有字段（`context: fork`、`hooks` 等），保证跨端可移植
+- `scripts/` 内脚本必须是可被裸 bash 调用的独立入口（`node scripts/xxx.mjs --help`），不依赖任何特定 MCP
+- 脚本只允许使用 `scripts/package.json` 声明的依赖 + 系统命令（adb/ffmpeg 等）；禁止引入需要付费或需 GPU 的运行时依赖
+- 修改工作流时同步更新：SKILL.md 总控 → 对应 references/*.md → schema（如涉及产物格式）
+- 所有路径引用用相对路径；产物目录规范见 `skills/design-clone/references/directory-spec.md`
+
+## 验证
+
+```bash
+node skills/design-clone/scripts/doctor.mjs
+node skills/design-clone/scripts/web/capture.mjs --url https://news.ycombinator.com --out /tmp/dc-test --max-pages 2
+```
+
+## 技术选型（已定稿）
+
+- 执行层：Midscene CLI（`npx @midscene/*`）+ 原生工具兜底（adb / simctl / Playwright）
+- 决策：宿主 agent 的 VLM；可选本地 MAI-UI-2B / GUI-Owl（vLLM OpenAI 兼容端点）
+- 生成：规格驱动（spec.yaml + tokens.css），静态 HTML + Tailwind v4，动效 GSAP
+- Figma：官方远程 MCP 优先，talk-to-figma-mcp 降级
+- 分发：npx skills（vercel-labs/skills）+ dist/*.zip 兜底

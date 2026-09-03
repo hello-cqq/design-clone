@@ -1,0 +1,125 @@
+<!doctype html>
+<!--
+  design-clone 原型外壳 inspector v4（M14：OD 借鉴 + 17 修复）。
+  IA：左 rail（页面|场景）；右「详情」单看板；底栏图标 pill（阅读|编辑|标注|边框|文字|播放|撤销|还原）。
+  URL 状态：#pages/<id> | #scene/<tree|path>/<node>[/<pathIdx>]，popstate 双向。
+  顶栏：预览|代码 · 设备下拉 · 分享/截图/对照/主题/演示 · 导出(分组)。
+  边框默认关；开=设备 bezel + 状态栏（iOS 灵动岛 / Android 打孔）。
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__ — design-clone 原型</title>
+<link rel="stylesheet" href="../knowledge/tokens.css">
+<link rel="stylesheet" href="inspector.css">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style>
+  __VIEW_CSS__
+</style>
+</head>
+<body>
+<div id="dc-topbar">
+  <span class="dc-logo"></span>
+  <span id="dc-title">__TITLE__</span>
+  <span id="dc-crumb"><span id="dc-cur">—</span></span>
+  <span class="dc-spacer"></span>
+  <div id="dc-viewmode">
+    <button data-vm="preview" class="on" title="预览"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg><span>预览</span></button>
+    <button data-vm="code" title="代码"><svg viewBox="0 0 24 24"><path d="m8 8-5 4 5 4"/><path d="m16 8 5 4-5 4"/></svg><span>代码</span></button>
+  </div>
+  <div id="dc-device-wrap">
+    <button id="dc-device-btn" class="dc-tb" title="设备类型（覆盖 platform.json）"><span id="dc-device-label">设备</span> ▾</button>
+    <div id="dc-device-dd" hidden>
+      <button data-shell="c_mobile">手机</button>
+      <button data-shell="c_tablet">平板</button>
+      <button data-shell="c_browser">浏览器窗</button>
+      <button data-shell="c_desktop">桌面窗</button>
+    </div>
+  </div>
+  <button id="dc-share-btn" class="dc-ic" title="分享：复制当前状态链接"><svg viewBox="0 0 24 24"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 6-4-4-4 4"/><path d="M12 2v14"/></svg></button>
+  <button id="dc-shot-btn" class="dc-ic" title="截图：导出当前页 PNG"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></button>
+  <button id="dc-compare-btn" class="dc-ic" title="对照原截图"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3"/><path d="M16 3h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3"/><path d="M12 3v18"/></svg></button>
+  <button id="dc-theme" class="dc-ic" title="明暗主题"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></svg></button>
+  <button id="dc-demo" class="dc-ic" title="演示模式 D"><svg viewBox="0 0 24 24"><path d="m6 4 14 8-14 8z"/></svg></button>
+  <div id="dc-export-wrap">
+    <button id="dc-export-btn" class="dc-tb primary">导出 ▾</button>
+    <div id="dc-export-dd" hidden></div>
+  </div>
+</div>
+
+<div id="dc-shell">
+  <nav id="dc-rail">
+    <button data-ia="pages" class="on" title="页面（1）">
+      <svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/></svg><span>页面</span></button>
+    <button data-ia="scene" title="场景（2）· 树与路径">
+      <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="12" r="2.4"/><path d="M8 6h4a3 3 0 0 1 3 3v0M8 18h4a3 3 0 0 0 3-3v0"/></svg><span>场景</span></button>
+  </nav>
+
+  <aside id="dc-left">
+    <div id="dc-left-pages">
+      <div class="dc-sec">页面 PAGES</div>
+      <div id="dc-pages"></div>
+    </div>
+    <div id="dc-left-scene" hidden>
+      <div class="dc-sec">场景 SCENES</div>
+      <div id="dc-tree"></div>
+    </div>
+    <button id="dc-left-fold" title="折叠/展开左栏">‹</button>
+  </aside>
+
+  <main id="dc-workspace">
+    <div id="dc-single">
+      <div id="dc-zoomwrap">
+        <div id="dc-phone"><div id="dc-screen"><div id="dc-stage"></div></div></div>
+      </div>
+      <div id="dc-overlay"></div>
+    </div>
+    <div id="dc-flow" hidden>
+      <div id="dc-flow-toggle">
+        <button data-fm="tree" class="on">树</button><button data-fm="path">路径</button>
+      </div>
+      <div id="dc-flow-canvas"></div>
+    </div>
+    <div id="dc-code" hidden>
+      <div id="dc-code-head"><b id="dc-code-title"></b><button id="dc-code-copy" class="dc-btn">复制</button><button id="dc-code-open" class="dc-btn">新标签打开</button></div>
+      <pre id="dc-code-pre"></pre>
+    </div>
+  </main>
+
+  <aside id="dc-right">
+    <div id="dc-boardhead">详情</div>
+    <div id="dc-board-detail" class="dc-board on"></div>
+    <button id="dc-right-fold" title="折叠/展开右栏">›</button>
+  </aside>
+</div>
+
+<div id="dc-bottombar">
+  <button id="dc-read" class="on" title="阅读"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="lb">阅读</span></button>
+  <button id="dc-edit" title="编辑 E"><svg viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg><span class="lb">编辑</span></button>
+  <span class="bb-sep"></span>
+  <button id="dc-ann-toggle" title="标注 A"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="cnt"></span><span class="lb">标注</span></button>
+  <button id="dc-frame-toggle" title="设备边框（默认关）"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg><span class="lb">边框</span></button>
+  <button id="dc-labels-toggle" title="按钮文字开/关"><svg viewBox="0 0 24 24"><path d="M4 7V5h16v2"/><path d="M12 5v14"/><path d="M9 19h6"/></svg><span class="lb">文字</span></button>
+  <span id="bb-scene" hidden>
+    <span class="bb-sep"></span>
+    <button id="dc-play" title="播放所选路径"><svg viewBox="0 0 24 24"><path d="m6 4 14 8-14 8z"/></svg><span class="lb">播放</span></button>
+  </span>
+  <span class="bb-sep"></span>
+  <button id="dc-undo" title="撤销 Ctrl+Z"><svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg></button>
+  <button id="dc-restore" title="一键还原到克隆原件"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+</div>
+
+<div id="dc-zoombar">
+  <button id="dc-zoom-out" title="缩小">−</button><span id="dc-zoom-pct">100%</span><button id="dc-zoom-in" title="放大">＋</button>
+  <button id="dc-zoom-100" title="实际大小">1:1</button><button id="dc-zoom-fit" title="适应画布">适应</button><button id="dc-hand" title="抓手 H">抓手</button>
+</div>
+
+<div id="dc-player"></div>
+<div id="dc-compare"><div id="dc-compare-head"><b>原截图对照</b><span id="dc-compare-src"></span><button id="dc-compare-x" title="关闭">✕</button></div><div id="dc-compare-body"><img src="" alt="原截图对照"></div></div>
+<div id="dc-modal-root"></div>
+
+<script>window.DC = __DC_JSON__;</script>
+<script src="inspector.js"></script>
+</body>
+</html>

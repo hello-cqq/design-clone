@@ -1,0 +1,38 @@
+# 全链路验收协议（QA Protocol）
+
+触发词：全链路验收 / QA / 产品验收 / 设计走查 / 全量测试 / 回归。
+每次触发**必须**按本协议四阶段执行，不许跳步；结果归档 `docs/QA/<日期>/`。
+
+## 0. 基线与门槛
+- 用例矩阵维护在 `docs/QA.md`（A–H 组）。**新缺陷修复后必补 case**，编号递增。
+- 通过门槛：doctor 必需项 ✅；inspect.mjs 零 pageError、零非可选 requestfailed；
+  fidelity：pixel <0.05、live-high <0.15（文本重排屏噪声约 0.11，QA 首轮校准）；五模式+演示+主题全操作 pass。
+- 设备路由（每次验收开头探测并记录）：
+  - Android：**真机 > 模拟器**（`adb devices` 有 device 用真机；否则 avd，见 install-guide §Android 模拟器）> env-blocked
+  - iOS：simctl（需 Xcode）> env-blocked（缺失按 human-takeover 四段式引导安装）
+  - Windows：本机无 win → 模板/文档静态审查，标 env-blocked
+  - Web/mac：本机直跑
+
+## 1. PM 验收（功能是否实现 + 全链路）
+- H1 web：新目标 capture（预算制）→ tokens.mjs → 生成最小原型（≥2 视图+annotations+journeys）→ serve → `scripts/qa/inspect.mjs` 取证
+- H2 android：安全目标（系统设置）捕获 ≥2 屏+ui-tree → 最小原型 → inspect.mjs
+- H3 ios：sim-capture.sh list/launch/openurl/shot 闭环（环境具备时）
+- B 组：预算停/续跑/coverage/录屏/dedup/proxy/keyframes/meta 逐项执行留痕
+- 产物：`docs/QA/<日期>/pm-acceptance.md`（逐项 ✅/❌ + shots 引用）
+
+## 2. 设计师走查
+- 三 demo（wechat/dy1/xhs2）× 明暗：F1–F7（fidelity 阈值 / tokens-sample 抽点核对 / 字体栈 computed style / VLM 逐屏对照原图出 Fix 清单 / WCAG 对比度 / a11y title-alt-键盘 / emoji 残留扫描）
+- 产物：`docs/QA/<日期>/design-review.md`（Fix 清单按 P0/P1/P2 分级）
+
+## 3. 测试（功能/稳定/兼容）
+- A 环境、C 知识、E Remix/Export、G 稳定兼容（serve 并发、genimg 缓存、sync-shell 幂等、三视口、代理 emulate、长截图滚动）
+- 产物：`docs/QA/<日期>/test-report.md`
+
+## 4. 修复闭环
+- 三角色 Fix 清单**合并去重** → 主代理修复（不外包）→ 失败项用 inspect.mjs/对应脚本**回归重跑**
+- 归档三份报告 + shots/；新坑进 LESSONS；架构级进 DECISIONS；ROADMAP 打 ✅
+- 全绿后向用户交付：矩阵通过率 + 修复清单 + 仍 env-blocked 项
+
+## 工具
+- `node scripts/qa/inspect.mjs <base-url> <name> --shots <dir>`：五模式/演示/缩放/调参/对照/双主题自动操作+截图+错误收集
+- `node scripts/fidelity.mjs`、`scripts/tokens-sample.mjs`、`scripts/review.mjs` 作设计走查证据

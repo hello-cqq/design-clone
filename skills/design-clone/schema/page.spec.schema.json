@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "design-clone/page.spec.schema.json",
+  "title": "Design Clone Page Spec",
+  "type": "object",
+  "required": ["meta", "regions"],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["page_id", "page_name", "surface", "page_type", "canvas", "evidence"],
+      "additionalProperties": false,
+      "properties": {
+        "page_id": { "type": "string", "pattern": "^[0-9]{2}-[a-z][a-z0-9-]*$" },
+        "page_name": { "type": "string", "minLength": 1 },
+        "surface": { "enum": ["c_mobile", "c_desktop", "b_desktop", "c_tablet"] },
+        "page_type": {
+          "enum": ["c_home", "c_list", "c_detail", "c_form", "c_profile", "c_player", "c_chat",
+                   "b_dashboard", "b_list_page", "b_detail_page", "b_form_page", "web_landing", "web_other"]
+        },
+        "canvas": {
+          "type": "object",
+          "required": ["width", "height"],
+          "properties": {
+            "width": { "type": "integer", "minimum": 320 },
+            "height": { "type": "integer", "minimum": 480 }
+          }
+        },
+        "evidence": {
+          "description": "来源证据：截图相对路径；Link 模式附帧与时间戳",
+          "type": ["string", "array"],
+          "items": { "type": "string" }
+        },
+        "fidelity": { "enum": ["high", "low"], "default": "high" },
+        "product": {
+          "description": "产品三要素（inspector v3 产品看板数据源；同步入 prototype/products.json）",
+          "type": "object",
+          "properties": {
+            "function": { "type": "string", "description": "一页动宾功能描述" },
+            "goals": { "type": "array", "items": { "type": "string" }, "description": "获客/转化/留存/NPS/信任/变现等+理由" },
+            "page_prompt": { "type": "string", "description": "再生成提示词：可喂多模态模型生成相似页面" },
+            "element_prompts": {
+              "type": "object",
+              "additionalProperties": { "type": "string" },
+              "description": "关键元素再生成提示词，key=data-dc"
+            }
+          }
+        },
+        "design_plan_ref": { "type": "string" },
+        "spec_version": { "type": "integer", "default": 1 },
+        "change_log": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["at", "by", "note"],
+            "properties": {
+              "at": { "type": "string" },
+              "by": { "enum": ["clone", "link", "remix", "user"] },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "figma": {
+          "type": "object",
+          "properties": {
+            "file_key": { "type": "string" },
+            "frame_name": { "type": "string" },
+            "frame_node_id": { "type": "string" }
+          }
+        }
+      }
+    },
+    "design_system_ref": {
+      "description": "风格预设引用：预设名或 DESIGN.md 路径；缺省表示从捕获中提取的原生风格",
+      "type": "string"
+    },
+    "tokens_override": {
+      "description": "相对设计系统的局部 token 微调，键为 token 名，值须注明理由",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["value"],
+        "properties": {
+          "value": { "type": ["string", "number"] },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "shell": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "enum": ["c_mobile", "c_tablet", "c_browser", "c_desktop", "c_mobile_shell", "desktop_window", "tablet_window", "none"] },
+        "title": { "type": "string" },
+        "show_back": { "type": "boolean" },
+        "nav_items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label"],
+            "properties": {
+              "label": { "type": "string" },
+              "icon": { "type": "string" },
+              "active": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "regions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "type"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "type": {
+            "description": "区域类型：nav_bar, tab_bar, search_bar, hero, banner, carousel, list, grid, card_list, form_section, kpi_row, data_table, filter_bar, bottom_cta, toolbar, sidebar, modal, toast, empty_state, footer, custom",
+            "type": "string"
+          },
+          "label": { "type": "string" },
+          "figma_node_id": { "type": "string" },
+          "layout": {
+            "type": "object",
+            "properties": {
+              "direction": { "enum": ["row", "column", "stack"] },
+              "gap": { "enum": [0, 4, 8, 12, 16, 24, 32, 48] },
+              "padding": { "enum": [0, 4, 8, 12, 16, 24, 32, 48] },
+              "align": { "enum": ["start", "center", "end", "stretch", "between"] }
+            }
+          },
+          "constraints": {
+            "type": "object",
+            "properties": {
+              "max_items": { "type": "integer", "minimum": 1 },
+              "primary_actions_max": { "type": "integer", "maximum": 2 }
+            }
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["kind"],
+              "properties": {
+                "kind": {
+                  "enum": ["button", "input", "select", "switch", "checkbox", "radio", "slider",
+                           "tab", "tag", "badge", "avatar", "icon", "image", "video", "text",
+                           "list_item", "grid_item", "card", "kpi_card", "table_column", "divider", "progress"]
+                },
+                "label": { "type": "string" },
+                "variant": { "enum": ["primary", "secondary", "ghost", "danger", "link"] },
+                "width": { "type": "string" },
+                "data_key": { "type": "string" },
+                "sample_value": {},
+                "visible_in_states": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "states": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "flows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["trigger", "to_page_id"],
+        "properties": {
+          "trigger": { "type": "string" },
+          "from_region": { "type": "string" },
+          "to_page_id": { "type": "string" },
+          "transition": { "enum": ["push", "fade", "modal", "popover", "none"], "default": "push" }
+        }
+      }
+    },
+    "catalog_map": {
+      "description": "组件名 → Figma nodeId，导出后回填",
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}

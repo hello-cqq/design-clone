@@ -1,0 +1,168 @@
+{
+  "_doc": "薄索引 v2（平台矩阵）：不打包运行时库。icons 在线 iconify（免 key）按需拉取并缓存 assets/.cache；SF Symbols 仅命名（许可限制）抓取回退 lucide；fonts 为平台栈/OFL 映射；component_libs 仅命名/结构知识+官方资源 URL。VLM 产出 spec/products 时先定 platform 再引用对应档。",
+  "platforms": {
+    "web": {
+      "forms": ["mobile", "desktop"],
+      "canvas": { "mobile": [390, 844], "desktop": [[1280, 800], [1440, 900]] },
+      "shell": { "mobile": "c_mobile", "desktop": "c_browser" },
+      "icon_set": "lucide",
+      "font_stack": "Inter, system-ui, -apple-system, \"PingFang SC\", sans-serif",
+      "component_libs": [
+        { "name": "Ant Design", "url": "https://ant.design", "patterns": ["Layout.Sider", "Table", "Breadcrumb", "Modal", "Form.Item", "Menu"] },
+        { "name": "Element Plus", "url": "https://element-plus.org", "patterns": ["ElMenu", "ElTable", "ElDialog", "ElForm", "ElBreadcrumb", "ElTabs"] },
+        { "name": "MUI", "url": "https://mui.com", "patterns": ["AppBar", "Drawer", "DataGrid", "Dialog", "Tabs"] },
+        { "name": "shadcn/ui", "url": "https://ui.shadcn.com", "patterns": ["sidebar", "data-table", "sheet", "command", "breadcrumb"] }
+      ],
+      "component_patterns": {
+        "Web.TopNav": "左 logo+中/左导航链+右操作；高 56-64；底 1px 分隔；激活链着色下划线",
+        "Web.Sider": "宽 200-240 可折叠；分组菜单+图标 16；激活项浅底圆角",
+        "Web.Table": "表头 13 灰+行 14；hover 行浅底；操作列右置文字链",
+        "Web.Breadcrumb": "13 灰+分隔 /；末级黑不可点",
+        "Web.Modal": "居中 480-720 宽；标题 16+右上 X；底部右对齐 双钮",
+        "Web.Hero.Split": "左文右图 55/45；H1 40-56 半粗+副 16 灰+双 CTA"
+      }
+    },
+    "android": {
+      "canvas": [[393, 851], [360, 800]],
+      "shell": "c_mobile",
+      "icon_set": "material-symbols",
+      "font_stack": "Roboto, \"Noto Sans SC\", system-ui, sans-serif",
+      "component_libs": [
+        { "name": "Material 3", "url": "https://m3.material.io", "patterns": ["TopAppBar", "BottomNavigation", "FAB", "Card.Elevated", "List.ListItem", "Sheet.Modal", "Chip"] },
+        { "name": "Material Symbols", "url": "https://fonts.google.com/icons", "patterns": ["icon 24 outline/rounded", "fill 态表激活"] }
+      ],
+      "component_patterns": {
+        "M3.TopAppBar": "高 64；中标题 22 或左小标题 17；右操作 icon 24；滚动升起 tonal",
+        "M3.BottomNav": "高 80；3-5 项；激活 icon pill tonal+label 12",
+        "M3.FAB": "56 圆角 16 右下 16 边距；icon 24+可选 label",
+        "M3.ListItem": "高 56-72；leading icon 24+headline 16+support 14 灰+trailing meta",
+        "M3.Card": "r12；elevated/tonal/filled 三档；内容 padding 16"
+      }
+    },
+    "ios": {
+      "canvas": [[393, 852], [390, 844]],
+      "shell": "c_mobile",
+      "icon_set": "sf-symbols-naming",
+      "icon_fetch_fallback": "lucide",
+      "font_stack": "-apple-system, \"SF Pro Text\", \"PingFang SC\", \"Helvetica Neue\", sans-serif",
+      "component_libs": [
+        { "name": "Apple Design Resources", "url": "https://developer.apple.com/cn/design/resources/", "patterns": ["iOS/iPadOS/macOS/watchOS/visionOS Figma+Sketch 模板", "Keynote 演示模板"] },
+        { "name": "SF Symbols", "url": "https://developer.apple.com/sf-symbols/", "patterns": ["symbol 命名 house.fill/chevron.left 等，仅命名知识"] },
+        { "name": "HIG", "url": "https://developer.apple.com/design/human-interface-guidelines/", "patterns": ["NavigationStack", "TabView", "List.insetGrouped", "Sheet.detent", "LargeTitle"] }
+      ],
+      "component_patterns": {
+        "iOS.NavBar": "高 44；中标题 17 半粗或大标题 34 粗滚动收缩；左返回 chevron 无文字",
+        "iOS.List.insetGrouped": "左右 16 圆角 10 组卡；行 44+；分隔左缩进至文案",
+        "iOS.TabBar": "高 49+safe；5 项内；icon 25 模板渲染+label 10；激活着色",
+        "iOS.Sheet.detent": "中/高两档圆角 10 顶；grabber 36x5；背景暗 30%",
+        "iOS.ActionRow": "icon 29 彩底圆角 7+label 13 居中；四列栅格"
+      }
+    },
+    "ipad": {
+      "canvas": [[834, 1194], [1194, 834]],
+      "shell": "c_tablet",
+      "icon_set": "sf-symbols-naming",
+      "icon_fetch_fallback": "lucide",
+      "font_stack": "-apple-system, \"SF Pro Text\", \"PingFang SC\", sans-serif",
+      "component_libs": [
+        { "name": "HIG iPadOS", "url": "https://developer.apple.com/design/human-interface-guidelines/", "patterns": ["SplitView.sidebar-detail", "TabBar.top", "Popover", "Pointer.hover", "多列并排"] }
+      ],
+      "component_patterns": {
+        "iPad.SplitView": "sidebar 240-320 可收起+detail 主区；sidebar 行 40+icon",
+        "iPad.TopTabBar": "顶居中大 tab 17；激活粗体+下划细线",
+        "iPad.Grid.Multi": "2-4 列等宽卡；卡间距 20；横屏不出现底部 tabbar"
+      }
+    },
+    "desktop": {
+      "oses": ["mac", "win"],
+      "canvas": [[1280, 800], [1440, 900]],
+      "shell": "c_desktop",
+      "icon_set": { "mac": "sf-symbols-naming", "win": "fluent" },
+      "icon_fetch_fallback": { "mac": "lucide", "win": "fluent" },
+      "font_stack": { "mac": "-apple-system, \"SF Pro Text\", \"PingFang SC\", sans-serif", "win": "\"Segoe UI Variable\", \"Segoe UI\", \"Microsoft YaHei\", sans-serif" },
+      "component_libs": [
+        { "name": "Fluent 2", "url": "https://fluent2.design", "patterns": ["TitleBar", "NavigationView", "CommandBar", "SettingsCard", "ContentDialog"] },
+        { "name": "macOS HIG", "url": "https://developer.apple.com/design/human-interface-guidelines/menus", "patterns": ["MenuBar", "Toolbar", "Sidebar.nav", "Sheet", "Preferences.window"] }
+      ],
+      "component_patterns": {
+        "Desk.TitleBar.mac": "高 28-38；左红绿灯 12x3；中标题 13 灰；toolbar icon 模板",
+        "Desk.TitleBar.win": "高 32-40；左 icon+标题 12；右置 ─ ▢ ✕ caption",
+        "Desk.Sidebar": "宽 200-280；分组 label 12 灰大写；行 32+icon 16+hover 浅底",
+        "Desk.SettingsPane": "卡列表行：左 icon+标题/副标+右控件（toggle/select）",
+        "Desk.CommandPalette": "居中 560 宽浮层；搜索框+结果行；⌘K 触发"
+      }
+    }
+  },
+  "design_resources": [
+    { "platform": "ios/ipad/mac", "name": "Apple Design Resources（模板/SF Symbols/字体）", "url": "https://developer.apple.com/cn/design/resources/", "free": true },
+    { "platform": "ios/ipad/mac", "name": "Human Interface Guidelines", "url": "https://developer.apple.com/design/human-interface-guidelines/", "free": true },
+    { "platform": "android/web", "name": "Material 3 设计规范", "url": "https://m3.material.io", "free": true },
+    { "platform": "android/web", "name": "Material Symbols 图标库", "url": "https://fonts.google.com/icons", "free": true },
+    { "platform": "win", "name": "Fluent 2 设计系统", "url": "https://fluent2.design", "free": true },
+    { "platform": "web", "name": "Ant Design", "url": "https://ant.design", "free": true },
+    { "platform": "web", "name": "Element Plus", "url": "https://element-plus.org", "free": true },
+    { "platform": "web", "name": "shadcn/ui", "url": "https://ui.shadcn.com", "free": true },
+    { "platform": "web", "name": "MUI", "url": "https://mui.com", "free": true },
+    { "platform": "cross", "name": "Iconify（免 key 在线抓取）", "url": "https://api.iconify.design/<set>/<name>.svg", "free": true },
+    { "platform": "cross", "name": "OFL 字体镜像", "url": "https://fonts.loli.net", "free": true }
+  ],
+  "detection_signals": {
+    "web": ["浏览器 tab 条/地址栏/刷新按钮", "可见 URL 或书签栏", "链接 hover 下划线/手型", "页面滚动条为浏览器原生"],
+    "android": ["打孔屏/居中挖孔", "三键或手势虚拟导航条", "Material ripple/tonal 卡", "状态栏图标右置+左侧时间"],
+    "ios": ["Dynamic Island/胶囊", "底部 home 指示条", "insetGrouped 圆角组卡/大标题", "小程序胶囊 •••⊙ 右上"],
+    "ipad": ["横屏宽幅+常驻 sidebar", "顶 TabBar/分栏 SplitView", "指针 hover 抬起效果", "多列并排内容无底 tabbar"],
+    "desktop": ["OS 窗口标题栏（红绿灯/右置 caption）", "菜单栏/⌘ 或 Ctrl 快捷键提示", "高密度多列+键盘焦点环", "设置 pane/系统托盘"],
+    "web.form.desktop": ["宽屏居中表格式布局/顶 nav", "无底部 tabbar", "鼠标 hover 态密集"],
+    "web.form.mobile": ["窄视口 375-430", "底部 tabbar 或汉堡菜单"],
+    "desktop.os.mac": ["左置红绿灯", "顶部全局菜单栏", "SF 字体观感"],
+    "desktop.os.win": ["右置 ─ ▢ ✕", "Segoe UI 观感", "任务栏/开始菜单入镜"]
+  },
+  "icon_semantic_map": {
+    "返回": "material-symbols/arrow-back", "更多": "material-symbols/more-horiz", "搜索": "material-symbols/search",
+    "加号": "material-symbols/add", "关闭": "material-symbols/close", "设置": "material-symbols/settings",
+    "钱包": "material-symbols/wallet-outline", "收付款": "material-symbols/qr-code-scanner", "银行卡": "material-symbols/credit-card-outline",
+    "首页": "material-symbols/home-outline", "通讯录": "material-symbols/contacts-outline", "发现": "material-symbols/explore-outline",
+    "我": "material-symbols/person-outline", "收藏": "material-symbols/bookmark-outline", "朋友圈": "material-symbols/image-outline",
+    "表情": "material-symbols/mood", "服务": "material-symbols/verified-outline", "通知": "material-symbols/notifications-outline",
+    "消息": "material-symbols/chat-outline", "电话": "material-symbols/call-outline", "语音": "material-symbols/mic-outline",
+    "视频": "material-symbols/videocam-outline", "相机": "material-symbols/photo-camera-outline", "图片": "material-symbols/photo-outline",
+    "分享": "material-symbols/share-outline", "点赞": "material-symbols/thumb-up-outline", "评论": "material-symbols/chat-bubble-outline",
+    "定位": "material-symbols/location-on-outline", "时间": "material-symbols/schedule-outline", "日历": "material-symbols/calendar-month-outline",
+    "温度": "material-symbols/thermostat-outline", "空调": "material-symbols/ac-unit-outline", "座椅": "material-symbols/chair-outline",
+    "电量": "material-symbols/battery-full-alt", "健康": "material-symbols/favorite-outline", "火焰": "material-symbols/local-fire-department-outline",
+    "购物": "material-symbols/shopping-bag-outline", "订单": "material-symbols/receipt-long-outline", "客服": "material-symbols/support-agent-outline",
+    "编辑": "material-symbols/edit-outline", "删除": "material-symbols/delete-outline", "刷新": "material-symbols/refresh",
+    "下载": "material-symbols/download", "上传": "material-symbols/upload", "链接": "material-symbols/link",
+    "微信": "simple-icons/wechat", "抖音": "simple-icons/douyin", "小红书": "simple-icons/xiaohongshu", "bilibili": "simple-icons/bilibili",
+    "tiktok": "simple-icons/tiktok", "youtube": "simple-icons/youtube", "facebook": "simple-icons/facebook", "github": "simple-icons/github",
+    "机器人": "lucide/bot", "猫": "lucide/cat", "狗": "lucide/dog", "爪印": "lucide/paw-print", "骨头": "lucide/bone",
+    "心": "lucide/heart", "星星": "lucide/star", "铃铛": "lucide/bell", "礼物": "lucide/gift", "皇冠": "lucide/crown",
+    "食物碗": "lucide/soup", "玩具球": "lucide/volleyball", "房子": "lucide/home", "用户": "lucide/user", "菜单": "lucide/menu"
+  },
+  "font_index": {
+    "ios_wechat": "-apple-system, \"PingFang SC\", \"Helvetica Neue\", sans-serif",
+    "android": "Roboto, \"Noto Sans SC\", system-ui, sans-serif",
+    "xiaomi": "MiSans, \"Noto Sans SC\", system-ui, sans-serif",
+    "huawei": "\"HarmonyOS Sans SC\", \"Noto Sans SC\", system-ui, sans-serif",
+    "web_latin_minimal": "Inter, system-ui, sans-serif",
+    "web_display_tech": "\"Space Grotesk\", Inter, sans-serif",
+    "win_desktop": "\"Segoe UI Variable\", \"Segoe UI\", \"Microsoft YaHei\", sans-serif",
+    "mac_desktop": "-apple-system, \"SF Pro Text\", \"PingFang SC\", sans-serif",
+    "ofl_webfont_mirror": "https://fonts.loli.net/css2?family={Family}:wght@{weights}",
+    "video_guess_map": { "圆体/可爱": "Yuanti SC, \"Noto Sans SC\"", "黑体/标准": "PingFang SC, \"Noto Sans SC\"", "等宽/代码": "ui-monospace, Menlo", "衬线/杂志": "Georgia, \"Songti SC\"" }
+  },
+  "component_patterns": {
+    "_doc": "跨平台通用基线：spec 的 regions/components 与 data-dc 命名对齐此表；平台特有模式见 platforms.*.component_patterns",
+    "List.Item": "头像/图标 + 主文案(17) + 摘要(14 灰) + 右 meta/箭头；分隔线左缩进至主文案",
+    "TabBar": "3-5 项；图标 28-30 + 文案 11；激活态着色+徽标；触控面≥44",
+    "NavBar": "居中标题 17 半粗；左返回右操作；底分隔 1px",
+    "Chat.Bubble": "用户右白 r16/16/4/16；对方左着色 r16/16/16/4；max 78-82%",
+    "Grid.Entry": "4 列；图标 32 线性彩标 + 文案 13；组标题 14 灰",
+    "Hero.Dual": "双格大圆角色块；线图标 44 白 + 主文案 17 + 次行 13 半透",
+    "Card.Stat": "数值 40 半粗 + 标签 12 间距；可横向瓷砖列",
+    "Stepper.V": "+/− 竖排大按钮≥48；激活青/蓝实底",
+    "CTA.Pill": "单焦点胶囊 r999 高 44；全屏唯一高饱和",
+    "Form.Row": "label 左 14 灰 + 输入右对齐 16；分隔线",
+    "Empty.State": "插画(genimg flat) + 一句动词引导 + 次 CTA 文字链"
+  }
+}

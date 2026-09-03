@@ -1,0 +1,22 @@
+/* web-marketing 组件库（M18）：官网/营销/商店类 live 视图积木（c_browser 壳内）。tokens 由 run 提供。 */
+.wm-root { display: flex; flex-direction: column; height: 100%; min-height: 800px; background: var(--color-bg, #fff); color: var(--color-ink, #1d1d1f); overflow: hidden; }
+.wm-nav { display: flex; align-items: center; justify-content: center; gap: 34px; padding: 12px 0; font-size: 12px; background: var(--color-nav, rgba(255,255,255,.85)); }
+.wm-nav a, .wm-nav span { cursor: pointer; color: var(--color-ink, #1d1d1f); }
+.wm-hero { padding: 64px 24px; text-align: center; }
+.wm-hero h1 { font-size: 40px; font-weight: 600; letter-spacing: -.01em; }
+.wm-hero .s { margin-top: 10px; font-size: 18px; color: var(--color-text-secondary, #6e6e73); }
+.wm-cta { margin-top: 22px; display: flex; justify-content: center; gap: 18px; font-size: 14px; }
+.wm-cta .pri { border-radius: 999px; padding: 9px 18px; background: var(--color-primary, #0071e3); color: #fff; cursor: pointer; }
+.wm-cta .ghost { border-radius: 999px; padding: 9px 18px; color: var(--color-primary, #0071e3); border: 1px solid var(--color-primary, #0071e3); cursor: pointer; }
+.wm-band { padding: 56px 24px; text-align: center; background: var(--color-bg-dim, #f5f5f7); }
+.wm-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding: 40px 64px; background: var(--color-bg-dim, #f5f5f7); }
+.wm-card { border-radius: 14px; background: var(--color-surface, #fff); padding: 22px; box-shadow: 0 1px 2px rgba(0,0,0,.06); cursor: pointer; }
+.wm-card .t { font-size: 17px; font-weight: 600; }
+.wm-card .d { margin-top: 8px; font-size: 12px; color: var(--color-text-secondary, #6e6e73); }
+.wm-prod { display: flex; gap: 28px; padding: 40px 64px; align-items: flex-start; }
+.wm-prod .fig { flex: 1; border-radius: 14px; background: var(--color-bg-dim, #f5f5f7); min-height: 260px; display: grid; place-items: center; color: var(--color-text-secondary, #86868b); font-size: 12px; }
+.wm-prod .info { width: 320px; display: flex; flex-direction: column; gap: 12px; }
+.wm-price { font-size: 14px; color: var(--color-text-secondary, #6e6e73); }
+.wm-table { margin: 24px 64px; border-collapse: collapse; width: calc(100% - 128px); font-size: 13px; }
+.wm-table th, .wm-table td { border-bottom: 1px solid var(--color-border, #d2d2d7); padding: 10px 14px; text-align: left; }
+.wm-table th { color: var(--color-text-secondary, #6e6e73); font-weight: 500; }

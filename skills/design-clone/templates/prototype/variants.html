@@ -1,0 +1,47 @@
+<!doctype html>
+<!-- 三变体并排画布（Remix 模糊需求时"看着选"，借鉴 huashu 不文字盲选） -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>变体对比 — design-clone</title>
+<style>
+  body { margin: 0; background: #141416; color: #ddd; font: 12px/1.6 ui-monospace, monospace; }
+  header { padding: 10px 16px; display: flex; gap: 12px; align-items: center; }
+  h1 { font-size: 13px; margin: 0; color: #888; font-weight: 400; }
+  #pick { margin-left: auto; background: #07C160; border: none; color: #fff; border-radius: 6px; padding: 6px 14px; cursor: pointer; }
+  #row { display: flex; gap: 14px; padding: 0 16px 16px; overflow-x: auto; }
+  .cell { flex: 0 0 340px; }
+  .cell h2 { font-size: 12px; margin: 6px 2px; color: #eee; }
+  .cell p { margin: 2px 2px 8px; color: #777; }
+  iframe { width: 340px; height: 720px; border: 1px solid #333; border-radius: 18px; background: #000; }
+  .cell.sel iframe { border-color: #07C160; box-shadow: 0 0 0 2px #07C16055; }
+</style>
+</head>
+<body>
+<header><h1>Remix 变体对比 · 点选一个，右上"选定"落回 tokens.css</h1><button id="pick">选定所选</button></header>
+<div id="row"></div>
+<script>
+let V = {};
+fetch("variants.json").then((r) => r.json()).then((v) => {
+  V = v;
+  const row = document.getElementById("row");
+  row.innerHTML = Object.entries(v).map(([name, o], i) => `
+    <div class="cell" data-name="${name}">
+      <h2>${String.fromCharCode(65 + i)}. ${name}</h2>
+      <p>${o._why || ""}</p>
+      <iframe src="index.html?variant=${encodeURIComponent(name)}&embed=1"></iframe>
+    </div>`).join("");
+  row.querySelectorAll(".cell").forEach((c) => c.addEventListener("click", () => {
+    row.querySelectorAll(".cell").forEach((x) => x.classList.remove("sel"));
+    c.classList.add("sel");
+  }));
+  document.getElementById("pick").onclick = () => {
+    const sel = row.querySelector(".cell.sel");
+    if (!sel) return alert("先点选一个变体");
+    const name = sel.dataset.name;
+    prompt("把这句发给 agent 落回：", ` Remix 选定变体「${name}」，用 apply-patch.mjs 落回 tokens.css 并跑五维评审`);
+  };
+});
+</script>
+</body>
+</html>

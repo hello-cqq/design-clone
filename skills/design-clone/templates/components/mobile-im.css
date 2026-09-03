@@ -1,0 +1,24 @@
+/* mobile-im 组件库（M18）：移动 IM/工具类 app 的 live 视图积木。tokens 由 run 的 knowledge/tokens.css 提供。 */
+.mi-root { display: flex; flex-direction: column; height: 100%; min-height: 844px; background: var(--color-bg, #ededed); color: var(--color-text-primary, #1a1a1a); overflow: hidden; }
+.mi-nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; background: var(--color-bg, #ededed); }
+.mi-nav .t { font-size: 17px; font-weight: 600; }
+.mi-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--color-surface, #fff); border-top: 1px solid var(--color-border, #e5e5e5); cursor: pointer; }
+.mi-row:first-of-type { border-top: 0; }
+.mi-ava { width: 48px; height: 48px; border-radius: 8px; display: grid; place-items: center; color: #fff; font-size: 16px; font-weight: 600; flex: none; }
+.mi-row .main { flex: 1; min-width: 0; }
+.mi-row .name { font-size: 16px; }
+.mi-row .sub { margin-top: 3px; font-size: 13px; color: var(--color-text-secondary, #767676); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mi-row .time { font-size: 12px; color: var(--color-text-secondary, #767676); }
+.mi-bubble-in, .mi-bubble-out { max-width: 72%; padding: 10px 12px; border-radius: 10px; font-size: 15px; line-height: 1.5; }
+.mi-bubble-in { background: var(--color-surface, #fff); }
+.mi-bubble-out { background: var(--color-bubble-out, #95ec69); margin-left: auto; }
+.mi-cell { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--color-surface, #fff); border-top: 1px solid var(--color-border, #e5e5e5); cursor: pointer; }
+.mi-cell .ic { width: 26px; height: 26px; flex: none; }
+.mi-cell .lb { flex: 1; font-size: 16px; }
+.mi-cell .ar { width: 14px; height: 14px; color: var(--color-text-secondary, #767676); }
+.mi-tabbar { display: flex; align-items: center; justify-content: space-around; padding: 8px 0 10px; background: var(--color-surface-dim, #f7f7f7); border-top: 1px solid var(--color-border, #d9d9d9); }
+.mi-tab { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; color: var(--color-text-primary, #1a1a1a); cursor: pointer; }
+.mi-tab.on { color: var(--color-primary, #2a7f4f); }
+.mi-tab svg { width: 24px; height: 24px; }
+.mi-skeleton { border-radius: 10px; background: var(--color-surface-dim, #f0f0f0); animation: mi-pulse 1.2s ease-in-out infinite; }
+@keyframes mi-pulse { 50% { opacity: .5; } }
