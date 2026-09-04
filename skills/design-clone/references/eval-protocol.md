@@ -46,3 +46,11 @@ scope=full 必须有 `<run>/report/fidelity.json`（核心视图≥3 的 ratio�
 阈值（2026-09-03 校准：wechat 01-chatlist 真头像+精确色实测 0.1315）：
 app 视图 ratio ≤0.20 达标（warn 修），>0.40 hard 阻断；web ≤0.15 / >0.30 hard；pixel-perfect 目标 <0.08。
 豁免须 critique.log 记理由（如动态内容区）。
+
+## parity 逐控件/交互门（M23，不敷衍评测）
+
+`qa/parity.mjs --run <r> --base <url>` 输出 qa/parity.json：
+- 控件覆盖 = 原型交互元素数 / 源控件树 clickable 数（android XML / web JSON 自动；无树须 qa/parity-log.md 人工盘点）
+- 交互覆盖 = graph 边被原型 data-goto 命中比例
+inspect `parity` 硬检查仅强制"有证据"（mode≠none）；覆盖数值如实进 EVAL-REPORT 列，
+不强行打绿——密度缺口靠逐控件重建提升，靠报告透明呈现。

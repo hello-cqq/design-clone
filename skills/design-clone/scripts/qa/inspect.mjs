@@ -104,6 +104,14 @@ await page.waitForTimeout(700);
   } else {
     await stepw("placeholder-scan", async () => { const bad = await phCheck(); return bad.length ? bad.length + " placeholder-views(demo 允许)" : ""; });
   }
+  await step("parity", async () => {
+    if (scopeMode !== "full") return;
+    const pf = values.run ? path.join(values.run, "qa/parity.json") : null;
+    if (!pf || !fs.existsSync(pf)) throw new Error("parity-not-run（跑 qa/parity.mjs --run <run> --base <url>）");
+    const parity = JSON.parse(fs.readFileSync(pf, "utf8"));
+    const bad = Object.entries(parity).filter(([k, v]) => v.mode === "none").map(([k]) => k + ":no-parity-evidence");
+    if (bad.length) throw new Error(bad.length + " parity-fail: " + bad.slice(0, 4).join(","));
+  });
   await step("asset-refs", async () => {
     if (!values.run) return;
     const viewsDir = path.join(values.run, "prototype/views");

@@ -128,3 +128,5 @@
 97. web --assets 在 --resume 下不跑（resume 跳过已访页）；抓原图需不带 resume 小批量重抓。genimg photorealistic 风格慢易超时，风景用 flat/pixar-3d 更快
 98. M19b 用户二次打回："图标是通用线稿、页面是简化布局，咋这么丑"。根因：资产阶梯跳过真图标裁剪档 + 布局没逐块对位（卡片宫格代替日历周视图）。修：rail/应用图标全部 extract-assets 真裁（44-60px 物理=2x 显示，asset-qa too-small 对图标仅 flag）；日历按源重画 tabs+mini 月历+周时间格+GMT+8+红 now 线；fidelity 02-calendar 重测 0.0905。prototype-spec/critique-loop 增"图标与布局对位"硬维
 99. M19c 图标灰条根因：rail 图标 bbox 偏左吃到窗边阴影（trim 删不掉非均匀渐变），且预览目测坐标不可靠；正解=bbox 右移到 glyph 列[298,t-20,84,60]+trim+icon≥56。inspect icon-render 门须除以 #dc-stage 画布缩放（getBoundingClientRect 是缩放后像素，offsetWidth 比 rect 得 scale），否则 22px 图标在 fit-zoom 下误判 <14px
+100. 微信会话列表曾照抄真昵称/消息预览（违反文本匿名）：M23 全虚构化+parity-log 盘点；根因=重建时直接誊了 capture 文案。规则：chrome 照准、个人文本必虚构
+101. wechat sweep 只 settle 截图漏了 uiautomator dump → 无控件树、逐控件比对只能人工盘点。修：android/capture.sh snap 模式绑定 settle+shot+dump；无树 run 须 parity-log.md

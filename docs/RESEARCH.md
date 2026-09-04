@@ -84,3 +84,8 @@
   - anti-slop P0：默认 indigo、hero 紫蓝渐变、emoji 图标、占位 CDN、虚构指标、lorem 文案——linter 直接挡
 - **mobile-app 种子制**：设备壳+状态栏 SVG 画一次在 template.html，agent 只许复制；checklist.md「anti-fake-device」清单（外圆角>内圆角、状态栏全浓度、home 条最后可见、tabbar 顶边+blur、tap≥44、accent≤2、数字等宽）
 - **借鉴落地（M14b）**：状态栏填充式三件 SVG 入种子与 dy-qa2；inspector 流光按环境动效纪律（仅选中流动/失选即停/reduced-motion 降级）；导出恰两项；新增 references/capture-quality.md（截图质量门禁）+ critique-loop.md + scripts/shotdiff.mjs（生成后必审闭环）；patterns 增 anti-fake-device 与 P0/P1/P2 自查；vlm-analysis §7 增地基体检与产出后必审
+
+## M23 外部优秀 AI 设计项目借鉴（2026-09-03）
+- awesome-design-md（74 品牌 DESIGN.md）：apple 为 web-apple 风格真源（#0066cc/#0071e3/#2997ff、parchment #f5f5f7、SF 负字距阶、44px 吸顶半透明 nav）；aliyun 借 stripe/clickhouse 云类纪律+源橙。
+- ui-ux-pro-max：motion.csv（120-160ms 曲线）/google-fonts 配对/app-interface 布局基线 → 组件库交互态与字号阶。
+- 借鉴落点：web-marketing.css / desktop-app.css / mobile-im.css 交互态库；prototype-spec tokens 三层（primitive→semantic→component）。

@@ -122,5 +122,6 @@ design-clone is a cross-agent skill that captures real apps/websites (Android vi
 - **live-views**: delivered views must be real HTML controls (screenshot-as-view is hard-blocked);
 - **placeholder-scan / asset-qa / asset-refs / icon-render**: assets must be real (source originals > crops > genimg), never blurry/blank/truncated/missing;
 - **fidelity gate**: prototype screenshot vs source diff ratio thresholds (app ≤0.20 / web ≤0.15);
+ - **parity (M23)**: per-control & per-interaction coverage vs source ui-tree (android XML / web JSON / manual inventory fallback), reported transparently in EVAL-REPORT;
 - **privacy four lines**: captures stay local, visual assets owner-consented, personal text anonymized, handoff declares it.
 Install: `npx skills add <this-repo>` (or git clone / dist zip for CLI-less platforms).

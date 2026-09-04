@@ -17,6 +17,9 @@ if (!runDir || rest.includes("--help") || rest.includes("-h")) {
 }
 const sheet = rest[rest.indexOf("--sheet") + 1] || null;
 const review = rest.includes("--review");
+const waiveArg = rest.includes("--waive") ? rest[rest.indexOf("--waive") + 1] : null;
+const waivers = {};
+for (const w of String(waiveArg || "").split(",").filter(Boolean)) { const [f, ...r] = w.split(":"); waivers[f] = r.join(":") || "waived"; }
 const assetsDir = path.join(path.resolve(runDir), "prototype/assets");
 if (!fs.existsSync(assetsDir)) { console.log(JSON.stringify({ checked: 0, note: "no assets dir" })); process.exit(0); }
 
@@ -55,7 +58,9 @@ for (const f of files) {
   if (s.sharp < 8) issues.push("blurry");
   if (s.edgeRatio > 2.2) issues.push("maybe-truncated");
   if ((meta.width || 0) < 48 || (meta.height || 0) < 48) issues.push("too-small");
-  qa[f] = { ...s, edgeRatio: +s.edgeRatio.toFixed(2), verdict: issues.length ? (issues.includes("blank") || issues.includes("blurry") ? "fail" : "flag") : "pass", issues };
+  let verdict = issues.length ? (issues.includes("blank") || issues.includes("blurry") ? "fail" : "flag") : "pass";
+  if (verdict === "fail" && waivers[f]) verdict = "waived";
+  qa[f] = { ...s, edgeRatio: +s.edgeRatio.toFixed(2), verdict, issues, waiver: waivers[f] || null };
 }
 fs.writeFileSync(path.join(assetsDir, "..", "assets-qa.json"), JSON.stringify({ generated_at: new Date().toISOString(), assets: qa }, null, 1));
 if (sheet) {

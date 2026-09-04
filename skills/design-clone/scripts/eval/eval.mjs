@@ -184,8 +184,18 @@ async function main() {
       rows.push(r);
     }
     rows.sort((x, y) => y.total - x.total);
-    const md = ["# EVAL-REPORT（M15 评测汇总）", "", "| run | perf | ux | stab | total | verdict | issues |", "|---|---|---|---|---|---|---|"];
-    for (const r of rows) md.push(`| ${r.run} | ${r.perf} | ${r.ux} | ${r.stab} | ${r.total} | ${r.verdict} | ${r.issues.length ? r.issues.map((i) => i.check).join(",") : "—" } |`);
+    const md = ["# EVAL-REPORT（M15+M23 评测汇总，含 parity 逐控件/交互覆盖）", "", "| run | perf | ux | stab | total | verdict | ctrl覆盖 | 交互覆盖 | issues |", "|---|---|---|---|---|---|---|---|---|"];
+    for (const r of rows) {
+      let ctrl = "—", inter = "—";
+      try {
+        const p = JSON.parse(fs.readFileSync(path.join(RUNS_ROOT, r.run, "qa/parity.json"), "utf8"));
+        const vs = Object.values(p);
+        const c = vs.filter((v) => v.control_coverage != null);
+        ctrl = c.length ? (c.reduce((s, v) => s + v.control_coverage, 0) / c.length).toFixed(2) : "—";
+        inter = vs.length ? (vs.reduce((s, v) => s + v.interaction_coverage, 0) / vs.length).toFixed(2) : "—";
+      } catch {}
+      md.push(`| ${r.run} | ${r.perf} | ${r.ux} | ${r.stab} | ${r.total} | ${r.verdict} | ${ctrl} | ${inter} | ${r.issues.length ? r.issues.map((i) => i.check).join(",") : "—" } |`);
+    }
     md.push("", "生成时间：" + new Date().toISOString(), "");
     const docDir = path.resolve(SCRIPTS, "../../../docs");
     fs.mkdirSync(docDir, { recursive: true });
