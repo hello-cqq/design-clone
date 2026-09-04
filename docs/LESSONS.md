@@ -130,3 +130,7 @@
 99. M19c 图标灰条根因：rail 图标 bbox 偏左吃到窗边阴影（trim 删不掉非均匀渐变），且预览目测坐标不可靠；正解=bbox 右移到 glyph 列[298,t-20,84,60]+trim+icon≥56。inspect icon-render 门须除以 #dc-stage 画布缩放（getBoundingClientRect 是缩放后像素，offsetWidth 比 rect 得 scale），否则 22px 图标在 fit-zoom 下误判 <14px
 100. 微信会话列表曾照抄真昵称/消息预览（违反文本匿名）：M23 全虚构化+parity-log 盘点；根因=重建时直接誊了 capture 文案。规则：chrome 照准、个人文本必虚构
 101. wechat sweep 只 settle 截图漏了 uiautomator dump → 无控件树、逐控件比对只能人工盘点。修：android/capture.sh snap 模式绑定 settle+shot+dump；无树 run 须 parity-log.md
+102. 微信热启动回上次页（"我"/发现），dump 前假设启动态=拿错页。修：snap 后特征文本验页，不匹配重导航
+103. spec2view 文本色在 bbox 左缘采样命中背景→白字隐形。修：取 bbox 内 4×6 网格最暗像素作文字色
+104. spec2view 裁剪写错目录(views/assets)致 asset-refs 全红。修：assetsDir=views/../assets
+105. 加号菜单不暗化、长按要暗化：spec2view --dim 可选；容器底色由 box 节点采样渲染（否则菜单/卡片无底）

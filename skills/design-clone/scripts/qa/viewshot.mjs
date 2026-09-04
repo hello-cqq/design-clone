@@ -14,8 +14,8 @@ if (!base || !viewId || !out || ["--help", "-h"].includes(base)) {
 const b = await chromium.launch();
 const p = await b.newPage({ viewport: { width: 1280, height: 900 } });
 await p.emulateMedia({ reducedMotion: "reduce" });
-await p.goto(base.replace(/\/+$/, "") + "/prototype/#pages/" + viewId, { waitUntil: "networkidle" });
-await p.waitForTimeout(700);
+await p.goto(base.replace(/\/+$/, "") + "/prototype/#pages/" + viewId, { waitUntil: "domcontentloaded", timeout: 20000 }).catch(() => {});
+await p.waitForTimeout(1200);
 const el = p.locator("#dc-stage");
 await el.screenshot({ path: out });
 await b.close();

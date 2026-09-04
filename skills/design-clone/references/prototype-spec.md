@@ -218,3 +218,6 @@ flows:
 - 页面块结构逐一对位源：源有 tabs 就画 tabs、有 mini 月历+周时间格+红色 now 线就全画、有选中白 pill 就画 pill。
   不许"卡片宫格代替日历周视图"式简化（M19b 用户打回案例）。
 - critique-loop 第 7 维「图标与布局对位」：<2 必修。
+
+## M28 生成管线（extract→compile→润色→gates）
+1. extract：测量适配(ui-tree/DOM/AX)+annotate(SoM)+meta；2. compile：spec2view 按真值编译；3. 润色：VLM 语义 pass(semantic-pass.md)只裁决歧义/匿名/动效；4. gates：per-view fidelity+parity+9维 critique+资产/隐私门。手写 HTML 仅作兜底。
