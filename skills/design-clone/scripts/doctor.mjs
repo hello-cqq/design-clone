@@ -117,6 +117,17 @@ if (platform === "darwin") {
   add(sh("osascript -e 'tell application \"System Events\" to return name of first process' >/dev/null 2>&1 && echo y") ? "ok" : "need", "辅助功能", sh("osascript -e 'tell application \"System Events\" to return name of first process' >/dev/null 2>&1 && echo y") ? "System Events 可达" : "系统设置→隐私与安全性→辅助功能 给终端授权");
   add("skip", "mac 权限", "屏幕录制授权：desktop/capture.sh check；Electron app a11y 空属正常，走 CGEvent 不走元素点击（ios-desktop.md）");
 }
+// 手机捕获前置提示（M37）：亮屏+前台，防错捕
+if (sh("command -v adb") && sh("adb devices 2>/dev/null | grep -c '\tdevice'") >= 1) {
+  add(sh("adb shell dumpsys power 2>/dev/null | grep -c mWakefulness=Awake") === "1" ? "ok" : "warn", "手机亮屏",
+    sh("adb shell dumpsys power 2>/dev/null | grep -c mWakefulness=Awake") === "1" ? "屏幕已亮" : "屏幕灭→dump 会错捕；请解锁亮屏（capture.sh snap 已自动跳过灭屏）");
+  add("info", "前台 app", "snap 请传 --pkg <包名> 校验前台（防 tap 打在别的 app，如钉钉）；dump 后用 gen/verify-page.mjs 验页");
+}
+// s2c 可选加速（opt-in，不假设 key，跨 agent）
+const s2cKey = process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY || process.env.GEMINI_API_KEY;
+add(s2cKey ? "opt" : "skip", "s2c 加速", s2cKey ? "检测到 provider key→可用 gen/s2c-adapter 加速（可选）" : "无 key→用内置宿主-agent 免费管线（默认）；如需完美复刻自备 key 或起本地 backend:7001");
+add(sh("command -v chromium || ls ~/.cache/ms-playwright 2>/dev/null | grep -c chromium") !== "" ? "opt" : "skip", "preview chromium", "playwright install chromium 启用自渲染视觉门（audit/qa 无它自动降级）");
+add("info", "真视觉资产", "默认用 capture 真头像/图标+文本匿名；首次生成前询问用户授权（R1/隐私，safety-rules §10）");
 if (platform === "win32") add("info", "Windows", "bash 脚本请在 WSL2/Git Bash 运行；adb 驱动问题见 install-guide");
 
 const icon = { ok: "✅", need: "❌", warn: "⚠️", opt: "🔧", skip: "⚪", info: "ℹ️" };
