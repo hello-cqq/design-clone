@@ -89,3 +89,11 @@
 - awesome-design-md（74 品牌 DESIGN.md）：apple 为 web-apple 风格真源（#0066cc/#0071e3/#2997ff、parchment #f5f5f7、SF 负字距阶、44px 吸顶半透明 nav）；aliyun 借 stripe/clickhouse 云类纪律+源橙。
 - ui-ux-pro-max：motion.csv（120-160ms 曲线）/google-fonts 配对/app-interface 布局基线 → 组件库交互态与字号阶。
 - 借鉴落点：web-marketing.css / desktop-app.css / mobile-im.css 交互态库；prototype-spec tokens 三层（primitive→semantic→component）。
+
+## screenshot-to-code 深研（2026-09-04，克隆 /tmp/s2c，MIT）
+效果好的本质（读 system_prompt.py/agent/engine.py/tools/definitions.py/preview_screenshot）：
+1. agentic 闭环：create_file → screenshot_preview(headless 渲染桌面+移动) → VLM 目检 → edit_file 定向 string-replace 修，循环到像。自渲染目检是保真引擎。
+2. extract_assets：VLM(Gemini) 按"单一实例+特征+精确位置+上下文"紧裁真资产；不可提取才 generate_images；低清用 edit_images upscale 而非 CSS 拉伸；透明用 remove_backgrounds。
+3. 单文件 Tailwind + targeted edits（不整文件重生成）。
+4. 多模型多变体对比；视频→原型。
+结论：魔法=强 VLM+自渲染循环+VLM 资产抽取。我们免付费等价=宿主 VLM+viewshot 自渲染门+extract-assets 真裁+genimg；另做 optional s2c adapter+翻译器（调本地后端）。不硬依赖（skill 免费/跨端约束）。

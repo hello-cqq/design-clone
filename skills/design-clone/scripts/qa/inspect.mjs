@@ -112,6 +112,25 @@ await page.waitForTimeout(700);
     const bad = Object.entries(parity).filter(([k, v]) => v.mode === "none").map(([k]) => k + ":no-parity-evidence");
     if (bad.length) throw new Error(bad.length + " parity-fail: " + bad.slice(0, 4).join(","));
   });
+  await step("truncated-text", async () => {
+    const btns = page.locator("#dc-pages button");
+    const n = await btns.count();
+    let worst = 0, worstPage = "";
+    for (let i = 0; i < n; i++) {
+      await btns.nth(i).click(); await page.waitForTimeout(200);
+      const c = await page.evaluate(() => {
+        let trunc = 0, total = 0;
+        for (const el of document.querySelectorAll("#dc-stage span, #dc-stage a, #dc-stage div")) {
+          if (el.children.length || !el.textContent.trim()) continue;
+          total++;
+          if (el.scrollWidth > el.clientWidth + 2) trunc++;
+        }
+        return total ? trunc / total : 0;
+      });
+      if (c > worst) { worst = c; worstPage = String(i + 1); }
+    }
+    if (worst > 0.2) throw new Error(`page ${worstPage} truncated=${(worst * 100).toFixed(0)}%（碎片布局/窄文本截断）`);
+  });
   await step("asset-refs", async () => {
     if (!values.run) return;
     const viewsDir = path.join(values.run, "prototype/views");
