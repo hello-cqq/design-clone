@@ -24,7 +24,8 @@ const png = spec.png;
 const F = spec.frame;
 const assetsDir = path.join(path.dirname(out), "..", "assets");
 fs.mkdirSync(assetsDir, { recursive: true });
-const scale = 390 / F.w;
+const targetW = parseInt(get("--width") || "390", 10);
+const scale = targetW / F.w;
 
 const px = async (x, y) => { const { data } = await sharp(png).extract({ left: Math.min(F.w - 1, x | 0), top: Math.min(F.h - 1, y | 0), width: 1, height: 1 }).raw().toBuffer({ resolveWithObject: true }); return data; };
 const rgb = (d) => `rgb(${d[0]},${d[1]},${d[2]})`;
@@ -69,7 +70,7 @@ async function renderNodes(sp, isOverlay) {
 }
 
 const bgTop = await px(4, 4), bgMid = await px(4, F.h >> 1);
-let html = `<div data-dc="g/root" style="position:relative;width:100%;height:100%;min-height:844px;background:${rgb(bgTop)};overflow:hidden;font-family:system-ui,'PingFang SC',sans-serif">\n`;
+let html = `<div data-dc="g/root" style="position:relative;width:100%;height:100%;min-height:${Math.round(F.h * scale)}px;background:${rgb(bgTop)};overflow:hidden;font-family:system-ui,'PingFang SC',sans-serif">\n`;
 html += await renderNodes(spec, false);
 if (overlay) {
   if (A.includes("--dim")) html += `\n<div style="position:absolute;inset:0;background:rgba(0,0,0,.45)"></div>\n`;

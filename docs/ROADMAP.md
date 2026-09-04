@@ -34,4 +34,9 @@
 - 缩放 25–400%+抓手平移全模式可用
 | M18 质量重建+丝滑沉淀 | ✅ 2026-09-03 | skill-first：inspect live-views 硬检查+eval live_ratio+prototype-spec/completeness fidelity 改写（交付必须 live，pixel 仅 compare/状态帧）；templates/components/ 三套组件库（mobile-im/desktop-app/web-marketing）；63 截图视图全 live 重建（mac-lark 14/mac-workbuddy 10/wechat-full 15/slytherin 7/web×2 13/xhs5 3，三原型用户验收通过）；老线标 demo；link-video 源覆盖门槛原则修正；桌面 click 默认 CGEvent+clickv/sweep/raise/windowid+doctor 三探针；pitfalls-index（LESSONS 64-95 分类）；action-protocol 桌面决策树+ios-desktop Electron 节；WorkBuddy CGEvent 验证推翻"人接管"结论 |
 | M19b 图标与布局对位 | ✅ 2026-09-03 | lark rail 15+应用 11 真图标裁剪；全视图 rail 换真图标+选中白 pill；02-calendar 按源重画（tabs/mini 月历/周时间格/GMT+8/红 now 线/蓝绿勾选）fidelity 0.0905；05-workbench 真彩色应用图标；prototype-spec+critique-loop 增第7维 |
+| M24 微信可见修复 | ✅ 2026-09-04 | mobile-im.css .name/.sub block+.tabbar 贴底；发现页真彩色图标裁剪；加号/长按弹层底层列表+暗罩修黑屏 |
+| M25 数据驱动编译设计 | ✅ 2026-09-04 | 三端测量适配→统一 spec→spec2view 编译；模型只做语义（神经符号）；页身份校验 |
+| M26 微信试点编译 | ✅ 2026-09-04 | 补 dump 微信树；spec2view 编译 01/03(0.08)+07/15 手写弹层；文本最暗采样修白字 |
+| M27 全 run 达标回归 | ✅ 2026-09-04 | 16 run eval PASS；parity 列如实；slytherin 编译 0.055 |
+| M28 神经符号管线+解锁重 dump | ✅ 2026-09-04 | gen 六工具+semantic-pass；解锁手机重 dump 02/05/12/13 全树；编译 02/05/13(0.02-0.05)；fidelity --waive 匿名豁免；A46+LESSONS102-105 |
 | M19 原版一致+资产质量门 | ✅ 2026-09-03 | 目标重写 live-high=真控件+近1:1；img/asset-qa.mjs（blur/blank/截断启发+VLM sheet+assets-qa.json）；inspect 增 placeholder-scan+asset-qa 硬检查；inspector c_mobile 自动注入状态栏；web/capture.mjs --assets 源原图；qa/viewshot.mjs+fidelity 门（校准 app≤0.20/web≤0.15，2× hard）；七 run 资产 uplift（微信真头像+genimg 朋友圈、lark clay 头像/banner、slytherin pixar 吉祥物/城景、web 源原图替 .fig、workbuddy/xhs5 genimg）；safety-rules 3b 真视觉+文本匿名；fidelity 实测 0.07-0.17 全达标 |

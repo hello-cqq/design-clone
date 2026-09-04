@@ -176,12 +176,19 @@ Tweaks 调参 / **演示模式（右下 ▶ 演示 或 D 键，自动播放+字�
 不达标的屏返工。交付：服务地址 + 目录 + 模式说明 + handoff（保真模/场景/状态/排除项）。
 可选：`node {SKILL_DIR}/scripts/export-walkthrough.mjs <产物目录>` 导出演示视频。
 
-**保真与素材（M8）**：核心屏用 pixel 档（截图底+热点），其余 live-high。
-- 裁真素材：`node {SKILL_DIR}/scripts/extract-assets.mjs <run目录> <spec.json>`（或 `--from-uitree`）
+**保真与素材（M8/M18）**：交付视图主体必须 live（真控件+真元素），pixel 仅限 compare/状态帧。
+- 裁真素材：`node {SKILL_DIR}/scripts/extract-assets.mjs <run目录> <spec.json>`（或 `--from-uitree`，`trim`/`icon` 预设一次裁准）
 - 采样精确色：`node {SKILL_DIR}/scripts/tokens-sample.mjs <证据图> --points "x,y,--color-x;..."`
 - 生质感图：`node {SKILL_DIR}/scripts/genimg.mjs --prompt "..." --out <run>/prototype/assets/x.png --style pixar-3d`（免费档；风格锚见 presets/genimg-styles.md）
 - 保真 QA：`node {SKILL_DIR}/scripts/fidelity.mjs <源图> <原型截屏> --report <run>/report/fidelity.json --name <key>`
 外壳双主题：顶栏 ◐ 切换（跟随系统+记忆）；换壳同步存量 run：`node {SKILL_DIR}/scripts/sync-shell.mjs`。
+
+**生成管线（M28 神经符号，首选）**：测量交给工具、模型只做语义，任何模型都稳。
+1. 测量适配：mobile `android/capture.sh snap <id> <run>`（settle+shot+uiautomator dump，**特征文本验页防热启动/锁屏**）；web `web/capture.mjs --probe --assets`；desktop `gen/ax2spec.mjs <proc> <cap>`
+2. 转 spec：`gen/uitree2spec.mjs` / `gen/webtree2spec.mjs` / `gen/ax2spec.mjs` → region spec（bounds/text/clickable）
+3. 标注：`gen/annotate.mjs <spec> --out /tmp/som.png --crops <dir>`（Set-of-Mark 喂语义 pass，配方见 references/semantic-pass.md）
+4. 编译：`gen/spec2view.mjs --spec <spec> [--overlay <spec>] [--dim] [--anon <map>] [--goto <map>] --out <view.html>`（bounds→%、像素采色、bbox 真裁、overlay 成层、data-goto、匿名 hook）
+5. 验收：viewshot+fidelity（匿名视图 `--waive`）+ inspect parity/asset/icon/live 门
 
 ---
 
