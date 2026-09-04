@@ -15,3 +15,12 @@ screenshot-to-code 的魔法=**视觉模型+SYSTEM_PROMPT+自渲染循环**，ke
 - 每次 create/edit 后调 screenshot_preview 目检桌面+移动，发现破布局/叠/错距/错色即修。
 - 图标用 extract_assets 紧裁真资产；不可裁才 generate_images；低清用 edit_images upscale 非 CSS 拉；透明用 remove_backgrounds。
 - 栈：Tailwind CDN / 纯 HTML-CSS / React / Vue / Bootstrap / Ionic；Google Fonts；Font Awesome。
+
+## 自主逐页达标循环（M39，用户一条命令、agent 内部修到达标）
+s2c 演示"一次完美"=render→目检→修 循环在内部自动跑完。本 skill 同：用户只发"克隆 X"，
+agent 对每页自动循环，**不向用户提问**，直到全过：
+1. audit 输出 per-view fidelity 排序，从最差页开始。
+2. 每页：读高清 capture→按 s2c prompt 誊写 HTML→viewshot 并排→fidelity≤0.15 且 truncated=0？
+   否→自己 edit→重渲；是→下一页。单页上限 3 轮防死循环。
+3. 全页 bad=[] 后一次性交付用户验收。
+禁止把"修一版等用户指问题"当流程——那是把自主循环外推给人工。

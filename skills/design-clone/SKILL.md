@@ -183,6 +183,8 @@ Tweaks 调参 / **演示模式（右下 ▶ 演示 或 D 键，自动播放+字�
 - 保真 QA：`node {SKILL_DIR}/scripts/fidelity.mjs <源图> <原型截屏> --report <run>/report/fidelity.json --name <key>`
 外壳双主题：顶栏 ◐ 切换（跟随系统+记忆）；换壳同步存量 run：`node {SKILL_DIR}/scripts/sync-shell.mjs`。
 
+**自主逐页达标循环（M39）**：用户一条命令，agent 内部 render→目检→修 循环到全页 fidelity≤0.15 且 truncated=0，不向用户提问，一次交付（s2c-prompt.md）。
+
 **s2c 效果=宿主 agent 当生成器（M38，零 key）**：见 references/s2c-prompt.md——读高清 capture→按 s2c prompt 逐像素誊写单文件 HTML→viewshot 自渲染循环修到像；有 key 可选 s2c-adapter 加速。
 
 **逐页逐控件验收（M36/M37）**：`node {SKILL_DIR}/scripts/qa/audit.mjs --run <run> --base <url>` 对每视图渲染截图+源控件 label 召回+truncated+fidelity+并排图；门=truncated≤0.2 且非空视图；并排图供宿主 VLM 9 维目检，坏一个控件都过不了。
