@@ -5,7 +5,14 @@
 set -euo pipefail
 # M23: snap 模式 = settle+shot+uiautomator dump 绑定（防丢控件树，LESSONS 101）
 if [ "${1:-}" = "snap" ]; then
-  HERE="$(cd "$(dirname "$0")" && pwd)"; ID="${2:?id}"; RUND="${3:?runDir}"
+  HERE="$(cd "$(dirname "$0")" && pwd)"; ID="${2:?id}"; RUND="${3:?runDir}"; PKG="${4:-}"
+  # 亮屏+前台包双重校验，防灭屏/错app错捕（M37）
+  PWR=$(adb shell dumpsys power 2>/dev/null | grep -c "mWakefulness=Awake")
+  if [ "$PWR" != "1" ]; then echo "⚠ snap $ID 跳过：屏幕未亮（请解锁）"; exit 3; fi
+  if [ -n "$PKG" ]; then
+    FG=$(adb shell "dumpsys window 2>/dev/null | grep mCurrentFocus" | grep -c "$PKG")
+    if [ "$FG" != "1" ]; then echo "⚠ snap $ID 跳过：前台非 $PKG（当前非目标 app）"; exit 3; fi
+  fi
   mkdir -p "$RUND/capture/screens" "$RUND/capture/ui-tree"
   node "$HERE/settle.mjs" "$RUND/capture/screens/$ID.png" 3 1.2
   adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 && adb pull /sdcard/ui.xml "$RUND/capture/ui-tree/$ID.xml" >/dev/null 2>&1 || true

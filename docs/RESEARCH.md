@@ -97,3 +97,6 @@
 3. 单文件 Tailwind + targeted edits（不整文件重生成）。
 4. 多模型多变体对比；视频→原型。
 结论：魔法=强 VLM+自渲染循环+VLM 资产抽取。我们免付费等价=宿主 VLM+viewshot 自渲染门+extract-assets 真裁+genimg；另做 optional s2c adapter+翻译器（调本地后端）。不硬依赖（skill 免费/跨端约束）。
+
+## s2c 集成形态（M35，opt-in 不假设 key）
+gen/s2c-adapter.mjs 通用检测（任意 provider key 或本地 backend :7001）→启用 s2c+翻译器(HTML→views/tokens/data-goto/匿名)；无 key 回落内置宿主-agent 管线。不假设特定 agent 的 env（跨 claudecode/opencode/codex）。

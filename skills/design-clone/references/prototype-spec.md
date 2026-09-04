@@ -221,3 +221,8 @@ flows:
 
 ## M28 生成管线（extract→compile→润色→gates）
 1. extract：测量适配(ui-tree/DOM/AX)+annotate(SoM)+meta；2. compile：spec2view 按真值编译；3. 润色：VLM 语义 pass(semantic-pass.md)只裁决歧义/匿名/动效；4. gates：per-view fidelity+parity+9维 critique+资产/隐私门。手写 HTML 仅作兜底。
+
+## 防再犯三规则（M30）
+- R1 替换保护：覆盖已 PASS 视图前必须先渲染新稿+audit/truncated/目检过门，并保留旧稿 fallback。
+- R2 验收代理修正：fidelity 像素比仅辅助；交付门=视觉 QA+truncated+逐控件召回。
+- R3 编译定位：平铺绝对定位=坏模式禁用；组件/层级模式=好模式。
