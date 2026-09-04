@@ -11,7 +11,6 @@
 | web-aliyun | 77 | 100 | 100 | 93 | PASS | — | 1.00 | — |
 | qa-web | 74 | 100 | 100 | 92 | PASS | — | — | — |
 | link-dy1 | 69 | 100 | 100 | 91 | PASS | — | — | goto_ms |
-| wechat-full | 67 | 100 | 100 | 90 | PASS | 1.00 | 0.14 | — |
 | dy-qa2 | 62 | 100 | 100 | 89 | PASS | — | — | — |
 | link-xhs4 | 65 | 94 | 100 | 87 | PASS | — | — |  |
 | dy-qa1 | 40 | 100 | 100 | 82 | PASS | — | — | goto_ms |
@@ -19,5 +18,6 @@
 | qa-hn | 40 | 100 | 100 | 82 | PASS | — | — | goto_ms |
 | wechat-pay | 40 | 100 | 100 | 82 | PASS | — | — | goto_ms |
 | slytherin | 36 | 100 | 100 | 81 | PASS | 0.35 | 0.63 | goto_ms |
+| wechat-full | 30 | 100 | 100 | 79 | FIX | 1.00 | 0.14 | goto_ms,fidelity |
 
-生成时间：2026-09-04T03:52:13.934Z
+生成时间：2026-09-04T06:25:40.114Z

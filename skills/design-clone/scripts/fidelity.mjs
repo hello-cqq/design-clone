@@ -17,8 +17,9 @@ if (process.argv.includes("--help") || process.argv.includes("-h")) {
 }
 const { positionals, values } = parseArgs({
   allowPositionals: true,
-  options: { out: { type: "string" }, report: { type: "string" }, name: { type: "string" } },
+  options: { out: { type: "string" }, report: { type: "string" }, name: { type: "string" }, waive: { type: "string" } },
 });
+const waiveArg = values.waive || null;
 const [fa, fb] = positionals;
 const metaA = await sharp(fa).metadata();
 const W = metaA.width, H = metaA.height;
@@ -26,7 +27,7 @@ const raw = (f) => sharp(f).resize(W, H, { fit: "fill" }).raw().ensureAlpha().to
 const a = await raw(fa), b = await raw(fb);
 const diff = values.out ? Buffer.alloc(W * H * 4) : null;
 const n = pixelmatch(a.data, b.data, diff, W, H, { threshold: 0.1 });
-const result = { diffPixels: n, total: W * H, ratio: +(n / (W * H)).toFixed(4) };
+const result = { diffPixels: n, total: W * H, ratio: +(n / (W * H)).toFixed(4), waive: waiveArg || null };
 if (values.out) fs.writeFileSync(values.out, await sharp(diff, { raw: { width: W, height: H, channels: 4 } }).png().toBuffer());
 if (values.report) {
   fs.mkdirSync(path.dirname(path.resolve(values.report)), { recursive: true });

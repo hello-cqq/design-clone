@@ -151,7 +151,8 @@ function scoreRun(runDir, base, runInspect) {
       if (!fid) issues.push({ dim: "ux", kind: "warn", check: "fidelity-not-run", note: "缺 report/fidelity.json（M19 门：viewshot+fidelity 核心视图≥3）", fix: "eval-protocol#fidelity" });
       else for (const [k, v] of Object.entries(fid.checks || {})) {
         const hardF = shellMode === "c_browser" ? 0.30 : 0.40, warnF = shellMode === "c_browser" ? 0.15 : 0.20;
-        if (v.ratio > hardF) issues.push({ dim: "ux", kind: "hard", check: "fidelity", note: `${k} ratio=${v.ratio}>${hardF}`, fix: "prototype-spec#资产阶梯" });
+        if (v.waive) issues.push({ dim: "ux", kind: "warn", check: "fidelity-waived", note: `${k} ratio=${v.ratio} 豁免(${v.waive})`, fix: "eval-protocol#fidelity" });
+        else if (v.ratio > hardF) issues.push({ dim: "ux", kind: "hard", check: "fidelity", note: `${k} ratio=${v.ratio}>${hardF}`, fix: "prototype-spec#资产阶梯" });
         else if (v.ratio > warnF) issues.push({ dim: "ux", kind: "warn", check: "fidelity", note: `${k} ratio=${v.ratio}>${warnF}`, fix: "prototype-spec#资产阶梯" });
       }
       if (iaCov != null && iaCov < 0.8) issues.push({ dim: "ux", kind: "warn", check: "completeness-ia", note: `ia_coverage=${iaCov}`, fix: "completeness-protocol#3" });
