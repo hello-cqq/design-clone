@@ -1,3 +1,12 @@
+# 核心原则：照猫画猫（M41，app-agnostic）
+生成=对该 capture **逐元素誊写**，**照猫画猫**（看到什么誊什么），**禁止**：
+- 用通用组件**近似** capture（照猫画虎）；
+- 在 prompt/skill 里 baked **任何 app 的视觉约定**（如"微信 outgoing 带右头像"）——其他聊天 app 约定不同，套用微信=错。
+**誊写前强制逐 capture 盘点**（帮宿主模型 attending 每元素，弱模型补偿）：
+对每行/每格/每消息列清单——头像有/无/左/右/形状、图标形状+色、行结构、开关态、名字单/多行——再照清单誊写。
+**自渲染目检**增："capture 有的元素，渲染是否逐一存在且形状/位置一致？"（抓"画虎"）。
+s2c 同机制：高清晰截图(detail:high)喂视觉模型+extract_assets 真裁+screenshot_preview 自渲染循环；无 app 约定。
+
 # s2c 效果 = 宿主 agent 当生成器（M38，零 key，跨 agent）
 
 screenshot-to-code 的魔法=**视觉模型+SYSTEM_PROMPT+自渲染循环**，key 只是拿模型的通道。
