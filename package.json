@@ -1,0 +1,20 @@
+{
+  "name": "design-clone-repo",
+  "private": true,
+  "version": "0.5.0",
+  "description": "Dev-only tooling root for the design-clone skill repo. The skill itself lives in skills/design-clone and ships without these devDeps.",
+  "type": "module",
+  "scripts": {
+    "test": "npm test --prefix skills/design-clone/scripts",
+    "build:shell": "node skills/design-clone/scripts/build-shell.mjs --out skills/design-clone/templates/prototype/inspector.built.js",
+    "lint": "npm run build:shell && eslint .",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "scan": "node skills/design-clone/scripts/qa/ip-scan.mjs && node skills/design-clone/scripts/qa/secret-scan.mjs",
+    "regress": "node skills/design-clone/scripts/regress.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "eslint": "^9.0.0",
+    "typescript": "^5.5.0"
+  }
+}

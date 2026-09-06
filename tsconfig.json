@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": [
+    "skills/design-clone/scripts/serve/policy.mjs",
+    "skills/design-clone/scripts/build-shell.mjs",
+    "skills/design-clone/templates/prototype/zipstore.js"
+  ]
+}

@@ -34,7 +34,7 @@
 - screenshot-to-code(MIT)：HTML+Tailwind 一等公民；Playwright 渲染自检闭环 → 借鉴
 - Design2Code(NoviScl, 代码 MIT；数据 research-only)：评分=Block-Match(文本/位置/色彩)+CLIP → 验证环借用
 - 动效：GSAP 2025-04 起全免费含商用；motion/anime.js MIT；react-bits(MIT+CommonsClause) 仅灵感
-- Tailwind Play CDN 仅限开发期；交付用 @tailwindcss/cli
+- Tailwind Play CDN 仅限开发期；交付用 @tailwindcss/cli（**M45 已超越**：utility 子集本地编译 utilities.css，零运行时依赖，见 ADR-051）
 - token 提取：Color Thief v3(MIT, CLI 出 CSS 变量)；本项目自实现量化脚本(tokens.mjs)
 
 ## 5. 规格驱动与预设

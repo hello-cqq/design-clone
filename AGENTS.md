@@ -38,6 +38,6 @@ node skills/design-clone/scripts/qa/interact.mjs --run <run目录> --base http:/
 
 - 执行层：Midscene CLI（`npx @midscene/*`）+ 原生工具兜底（adb / simctl / Playwright）
 - 决策：宿主 agent 的 VLM；可选本地 MAI-UI-2B / GUI-Owl（vLLM OpenAI 兼容端点）
-- 生成：规格驱动（spec.yaml + tokens.css），静态 HTML + Tailwind v4，动效 GSAP
+- 生成：规格驱动（spec.yaml + tokens.css），静态 HTML + 自带组件库 + 本地编译 utilities.css（无运行时 CDN），动效 GSAP
 - Figma：官方远程 MCP 优先，talk-to-figma-mcp 降级
 - 分发：npx skills（vercel-labs/skills）+ dist/*.zip 兜底
