@@ -63,12 +63,13 @@ attempts.push(["yt-dlp", `yt-dlp -o "${out}/%(title)s.%(ext)s"${values.cookies ?
 if (platform === "kuaishou") attempts.push(["you-get", `you-get -o "${out}" "${url}"`]);
 
 let tool = null;
+let files = [];
 for (const [name, cmd] of attempts) {
   console.log(`[fetch] 尝试 ${name}...`);
   const prev = before();
   const r = sh(cmd);
   const got = newFiles(prev);
-  if (r !== null && got.length) { tool = name; var files = got; break; }
+  if (r !== null && got.length) { tool = name; files = got; break; }
 }
 
 if (!tool) {

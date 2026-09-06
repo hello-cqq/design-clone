@@ -18,6 +18,7 @@ import path from "node:path";
 import { spawnSync, spawn } from "node:child_process";
 import { parseArgs } from "node:util";
 import http from "node:http";
+import { buildInspector } from "./build-shell.mjs";
 
 const HERE = path.dirname(new URL(import.meta.url).pathname);
 const TPL = path.join(HERE, "..", "templates", "prototype");
@@ -144,9 +145,13 @@ if (!values["gates-only"]) {
 let views = fs.existsSync(viewsDir) ? fs.readdirSync(viewsDir).filter((f) => f.endsWith(".html")).map((f) => f.replace(".html", "")).sort() : [];
 if (!values["gates-only"]) {
   step(6, "复制原型外壳 + 交互运行时（runtime.js）");
-  for (const f of ["inspector.css", "inspector.js", "runtime.js"]) {
+  for (const f of ["inspector.css", "runtime.js", "zipstore.js"]) {
     fs.copyFileSync(path.join(TPL, f), path.join(protoDir, f));
   }
+  // inspector.js = ins/* 分段拼接产物（build-shell.mjs）
+  fs.writeFileSync(path.join(protoDir, "inspector.js"), buildInspector());
+  // M45：utility 子集本地编译（替代 Tailwind CDN）
+  run("node", [path.join(HERE, "gen/utility-css.mjs"), "--run", runDir, "--out", path.join(protoDir, "utilities.css")]);
   // 组件库 css 并入 index 的 __VIEW_CSS__
   let viewCss = "";
   const compDir = path.join(HERE, "..", "templates", "components");

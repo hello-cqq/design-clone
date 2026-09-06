@@ -54,6 +54,8 @@ for (const v of required) {
   const e = (j.views || {})[v];
   if (!e || !e.layout) bad.push(v + ":unscored");
   else if (e.layout < 3 && !e.fixed) bad.push(v + ":layout" + e.layout);
+  // M44k：--skeleton 会写占位 notes「TODO: VLM 对照并排图打分」——若打分时只填分数不改 notes，视为没真做对照
+  else if (/TODO:/.test(e.notes || "")) bad.push(v + ":todo-notes");
 }
 console.log(JSON.stringify({ ok: !bad.length, scope, required: [...required], bad: bad.slice(0, 8), scored: Object.keys(j.views || {}).length }));
 process.exit(bad.length && scope === "full" ? 4 : 0);

@@ -34,5 +34,19 @@
 - 全绿后向用户交付：矩阵通过率 + 修复清单 + 仍 env-blocked 项
 
 ## 工具
-- `node scripts/qa/inspect.mjs <base-url> <name> --shots <dir>`：五模式/演示/缩放/调参/对照/双主题自动操作+截图+错误收集
+- `node scripts/qa/inspect.mjs <base-url> <name> --shots <dir> [--run <runDir>]`：五模式/演示/缩放/调参/对照/双主题自动操作+截图+错误收集；带 `--run` 时串起全部硬门（含 ui-smoke --fast / privacy / layout-sanity / paths-sanity / appicon / structural-critique）
+- `node scripts/qa/ui-smoke.mjs --run <runDir> --base <url> [--fast] [--keep]`：M44k 外壳冒烟门——真点播放/导出下载/分享/设备档/标注·产品·变体写回/画布标签排版/`?chrome=0`/左栏筛选/快捷键帮助/代码视图，断言"有反应且正确"；写盘类检查自动还原。`--fast` 跳过真实导出下载（inspect 内置用），regress 跑全量
+- `node scripts/qa/interact.mjs --run <runDir> --base <url>`：逐视图真点每个控件断言可观测变化，dead=0 门
+- `node scripts/qa/paths-qa.mjs <runDir>`：路径决策卫生门（禁 hub-chain/giant-chain/back 环等违反真实交互逻辑的结构）
+- `node scripts/qa/critique.mjs --run <runDir> [--skeleton | --set <view> --layout N --notes ...]`：结构 critique（VLM 对照并排图打 layout 分）；full run 必须跑且 notes 不允许残留 TODO
+- `node scripts/qa/warn-dump.mjs <base-url> [--out <file>]`：把各门 warn 汇总成清单，供"软警告清零"冲刺用
+- `node scripts/gen/verify-page.mjs <ui-tree.xml> --expect "标签1,标签2"`：dump 后按特征文本验页身份（防热启动/导航错位拿错页）
+- `node scripts/qa/viewsheet.mjs --run <run> --base <url> --out <png>`：全视图拼图，供 VLM/人一次看全
+- `node scripts/gen/flows-skeleton.mjs <runDir>` / `node scripts/gen/flows-from-events.mjs <runDir>`：无 flows.json 时从图结构/录制事件流起草交互流骨架（agent 目视修正后落 flows.json）
+- `node scripts/desktop/diff2.mjs <a> <b>`：桌面 capture 两帧差分，验证点击是否命中（clickv 闭环证据）
+- `node scripts/package.mjs [--out dist/design-clone.zip]`：打包 skill 主体为 zip（无 CLI 平台兜底；CI 同款）
 - `node scripts/fidelity.mjs`、`scripts/tokens-sample.mjs`、`scripts/review.mjs` 作设计走查证据
+- `node scripts/gen/utility-css.mjs --run <runDir> [--strict]`：utility 子集本地编译（替代 CDN）；unknown=长得像 utility 却无任何样式源定义（笔误门）
+- `node scripts/build-shell.mjs [--out <file>]`：inspector 17 段拼接；`npm test` 内含"拼接=单 IIFE/确定性/无重名顶层声明"断言
+- `node scripts/qa/ip-scan.mjs` / `node scripts/qa/secret-scan.mjs`：开源自证门（跟踪文件零二进制/零 run 产物；零凭据/PII），CI 必跑
+- 一键全量：`node scripts/regress.mjs [--runs a,b] [--full]`（每 run：interact + inspect(含 ui-smoke --fast) + ui-smoke 全量含导出下载 [+ --full 时 fidelity-all]，输出 report/regress-<ts>.md）

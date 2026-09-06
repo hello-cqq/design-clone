@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 /**
- * 把 templates/prototype 的新外壳（index.html/inspector.css/inspector.js）同步到存量 run，
+ * 把 templates/prototype 的新外壳（index.html/inspector.css/inspector.js=ins/* 拼接产物）同步到存量 run，
  * 保留每个 run 自己的 __DC_JSON__、标题、视图自定义 CSS。
  * 用法: node sync-shell.mjs [prototype目录...]   （不带参数=扫描全部 design-clone-runs）
  */
 import fs from "node:fs";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
+import { buildInspector } from "./build-shell.mjs";
 
 const HERE = path.dirname(new URL(import.meta.url).pathname);
 const TPL = path.join(HERE, "../templates/prototype");
@@ -59,8 +61,13 @@ for (const dir of dirs) {
     .replaceAll("__DC_JSON__", mDC[1].trim());
   fs.writeFileSync(old, html);
   fs.copyFileSync(path.join(TPL, "inspector.css"), path.join(dir, "inspector.css"));
-  fs.copyFileSync(path.join(TPL, "inspector.js"), path.join(dir, "inspector.js"));
+  // inspector.js 是 ins/* 分段的拼接产物（build-shell.mjs），不再手维护单文件
+  fs.writeFileSync(path.join(dir, "inspector.js"), buildInspector());
   fs.copyFileSync(path.join(TPL, "runtime.js"), path.join(dir, "runtime.js"));
+  fs.copyFileSync(path.join(TPL, "zipstore.js"), path.join(dir, "zipstore.js"));
+  // M45：utility 子集本地编译（替代 Tailwind CDN）；失败不阻断换壳，但必须可见
+  const uc = spawnSync("node", [path.join(HERE, "gen/utility-css.mjs"), "--run", path.dirname(dir), "--out", path.join(dir, "utilities.css")], { encoding: "utf8" });
+  if (uc.status !== 0) console.log("  ⚠️ utilities.css 生成失败:", (uc.stderr || "").slice(0, 200));
   console.log("synced:", path.relative(process.cwd(), dir));
   ok++;
 }

@@ -10,7 +10,7 @@ description: >-
 license: MIT
 compatibility: opencode, claude-code, codex, qoder, qwen-code, trae
 metadata:
-  version: "0.1.0"
+  version: "0.5.0"
   homepage: https://github.com/tt-a1i/design-clone
 ---
 
@@ -201,8 +201,14 @@ simctl 无原生 tap → 默认人接管点击，或辅助功能权限下 `deskt
 
 验收：`node {SKILL_DIR}/scripts/serve.mjs <产物目录>` 起本地服务，
 打开 `http://localhost:4173/prototype/`，逐项自检（清单在 `references/prototype-spec.md`）：
-普通可点（**每个控件点击都有反应，不是静态图**）/ 产品折线批注 / 设计 inspect / 编辑拖拽导出 / 路径故事板+播放 /
-Tweaks 调参 / **演示模式（右下 ▶ 演示 或 D 键，自动播放+字幕+模拟弹窗+总结卡）**；
+普通可点（**每个控件点击都有反应，不是静态图**）/ 产品折线批注（**标注模式 A：点元素即新增/编辑批注并写回 annotations.json；视图改版后失效的标注会红字提示**）/
+设计 inspect / 编辑拖拽导出 / 路径故事板+播放（**P 键或底栏「播放」：页面模式从当前页起播、场景模式播所选路径；无出向路径自动回退演示旅程，两者皆无会明确告知缺什么**）/
+Tweaks 调参（**「存为变体」落 prototype/variants/<名>/{tokens.json,tokens-override.css} 并登记 variants-index.json，?variant=<名> 复现**）/
+演示模式（D 键，自动播放+字幕+模拟弹窗+总结卡）/
+导出（**默认浏览器直接下载 zip；也可「选目录导出」或「仅存服务端 run/export/<ts>/」；含页面 ±标注 PNG、场景树与 board.json**）/
+设备档（下拉=手机/平板/桌面/网页，选择持久化并写进分享链接）；
+外壳自检可自动化：`node {SKILL_DIR}/scripts/qa/ui-smoke.mjs --run <run> --base <url>`
+（真点播放/导出下载/分享/标注与产品与变体写回/画布标签排版/?chrome=0/筛选/帮助；inspect 硬门跑 --fast，regress 跑全量含下载）。
 不达标的屏返工。交付：服务地址 + 目录 + 模式说明 + handoff（保真模/场景/状态/排除项）。
 可选：`node {SKILL_DIR}/scripts/export-walkthrough.mjs <产物目录>` 导出演示视频。
 
@@ -312,6 +318,10 @@ node {SKILL_DIR}/scripts/gen/wire.mjs <run目录> [--dry]                    # M
 node {SKILL_DIR}/scripts/qa/audit.mjs --run <run目录> --base <base-url>      # 逐页召回+截断+溢出+并排图
 node {SKILL_DIR}/scripts/qa/fidelity-all.mjs --run <run目录> --base <base-url> # M44 逐视图保真复测（source-map 配对+chrome=0 截屏）
 node {SKILL_DIR}/scripts/qa/inspect.mjs <base-url> <name> --shots <取证目录> --run <run目录>
+node {SKILL_DIR}/scripts/qa/ui-smoke.mjs --run <run目录> --base <base-url> [--fast]  # M44k 外壳冒烟门：真点播放/导出下载/分享/设备/标注·产品·变体写回/画布排版/?chrome=0
+node {SKILL_DIR}/scripts/gen/utility-css.mjs --run <run目录> [--strict]             # M45 utility 子集本地编译（无 CDN）；unknown=疑似笔误
+node {SKILL_DIR}/scripts/build-shell.mjs [--out <file>]                            # M45 inspector 17 段拼接（单 IIFE，产物对拍可验）
+node {SKILL_DIR}/scripts/qa/ip-scan.mjs && node {SKILL_DIR}/scripts/qa/secret-scan.mjs  # M45 开源自证门（CI 必跑）
 node {SKILL_DIR}/scripts/eval/eval.mjs --run <run目录> --base <base-url>   # M15：每次回归同步自评（含 interactivity）
 ```
 

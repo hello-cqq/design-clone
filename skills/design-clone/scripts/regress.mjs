@@ -22,24 +22,42 @@ for (let i = 0; i < runs.length; i++) {
   const r = runs[i];
   const port = portBase + i;
   const srv = spawn("node", [path.join(HERE, "serve.mjs"), path.join(ROOT, r), "--port", String(port)], { stdio: "ignore" });
-  await new Promise((res) => setTimeout(res, 1400));
   const base = `http://localhost:${port}`;
-  const ia = spawnSync("node", [path.join(HERE, "qa/interact.mjs"), "--run", path.join(ROOT, r), "--base", base], { encoding: "utf8" });
-  let iaj = {}; try { iaj = JSON.parse((ia.stdout || "").trim().split("\n").pop()); } catch {}
-  const ins = spawnSync("node", [path.join(HERE, "qa/inspect.mjs"), base, r, "--run", path.join(ROOT, r), "--shots", path.join("/tmp", "regress-" + r)], { encoding: "utf8" });
-  let insj = {}; try { insj = JSON.parse((ins.stdout || "").trim().split("\n").pop()); } catch {}
+  // 就绪探测：固定 sleep 曾在慢机上让 inspect/interact 打到未监听端口 → 空输出被误判为全绿（M45 门禁完整性修复）
+  let ready = false;
+  for (let i = 0; i < 60 && !ready; i++) {
+    try { const rr = await fetch(base + "/prototype/"); ready = rr.ok || rr.status === 404; } catch {}
+    if (!ready) await new Promise((res) => setTimeout(res, 500));
+  }
+  const lastJson = (t) => { try { return JSON.parse(String(t || "").trim().split("\n").pop()); } catch { return null; } };
+  const ia = spawnSync("node", [path.join(HERE, "qa/interact.mjs"), "--run", path.join(ROOT, r), "--base", base], { encoding: "utf8", timeout: 600000 });
+  const iaj = lastJson(ia.stdout) || {};
+  const iaBroken = !ready || ia.status !== 0 || !iaj || !(iaj.views > 0);
+  const ins = spawnSync("node", [path.join(HERE, "qa/inspect.mjs"), base, r, "--run", path.join(ROOT, r), "--shots", path.join("/tmp", "regress-" + r)], { encoding: "utf8", timeout: 900000 });
+  const insj = lastJson(ins.stdout) || {};
+  // inspect/ui-smoke 的 stdout 是**扁平** summary（{pass,fail,warnFail,…}），没有 .summary 包装；
+  // 历史上 regress 读 insj.summary.* 恒 undefined → 全 run 假绿（LESSONS 132 的真正根因）
+  const insBroken = !ready || ins.status !== 0 || typeof insj.fail !== "number" || typeof insj.pass !== "number";
+  // 外壳冒烟全量门（含真实导出下载）：inspect 内只跑 --fast，这里补真实下载与标注入图
+  const smk = spawnSync("node", [path.join(HERE, "qa/ui-smoke.mjs"), "--run", path.join(ROOT, r), "--base", base, "--out", path.join(ROOT, r, "qa/ui-smoke.json")], { encoding: "utf8", timeout: 900000 });
+  const smkj = lastJson(smk.stdout) || {};
+  const smkBroken = !ready || smk.status !== 0 || typeof smkj.pass !== "number";
+  const smkFail = smkBroken ? 1 : (smkj.fail || 0);
+  if (process.env.REGRESS_DEBUG) fs.writeFileSync("/tmp/regress-dbg.json", JSON.stringify({ r, iaStatus: ia.status, iaOut: (ia.stdout || "").length, insStatus: ins.status, insSignal: ins.signal, insOut: (ins.stdout || "").slice(-200), insErr: (ins.stderr || "").slice(-300), smkStatus: smk.status, smkSignal: smk.signal, smkOut: (smk.stdout || "").slice(-200), smkErr: (smk.stderr || "").slice(-300) }, null, 1));
   let fid = "";
   if (full) { const f = spawnSync("node", [path.join(HERE, "qa/fidelity-all.mjs"), "--run", path.join(ROOT, r), "--base", base], { encoding: "utf8" }); const fj = (() => { try { return JSON.parse((f.stdout || "").trim().split("\n").pop()); } catch { return {}; } })(); fid = (fj.hard || []).length ? `fid-hard=${fj.hard.length}` : "fid-ok"; }
   srv.kill();
-  const dead = iaj.total_dead || 0;
-  const fail = (insj.summary || {}).fail || 0;
-  const ok = dead === 0 && fail === 0 && !(iaj.bad || []).length;
+  const dead = iaBroken ? -1 : (iaj.total_dead || 0);
+  const fail = insBroken ? -1 : insj.fail;
+  // 完整性：输出不可解析/进程异常/serve 未就绪 一律记为失败，绝不静默全绿
+  const ok = ready && !iaBroken && !insBroken && !smkBroken && dead === 0 && fail === 0 && smkFail === 0 && !(iaj.bad || []).length;
   if (!ok) bad++;
-  rows.push(`| ${r} | dead=${dead} | inspect ${fail ? "FAIL" + fail : "pass" + ((insj.summary || {}).pass || 0)} | ${(insj.summary || {}).warnFail || 0} warn | ${fid || "-"} | ${ok ? "✅" : "❌"} |`);
-  console.log(`${r}: dead=${dead} inspectFail=${fail} warnFail=${(insj.summary || {}).warnFail || 0} ${fid || ""} ${ok ? "OK" : "BAD"}`);
+  const brokenNote = !ready ? "serve-not-ready" : iaBroken ? "interact-broken" : insBroken ? "inspect-broken" : smkBroken ? "smoke-broken" : "";
+  rows.push(`| ${r} | dead=${dead} | inspect ${fail < 0 ? "BROKEN" : fail ? "FAIL" + fail : "pass" + insj.pass} | smoke ${smkBroken ? "BROKEN" : smkFail ? "FAIL" + smkFail : "pass" + smkj.pass} | ${insj.warnFail || 0} warn | ${fid || "-"} | ${ok ? "✅" : "❌ " + brokenNote} |`);
+  console.log(`${r}: ready=${ready} dead=${dead} inspectFail=${fail} smokeFail=${smkFail} warnFail=${insj.warnFail || 0} ${fid || ""} ${ok ? "OK" : "BAD " + brokenNote}`);
 }
 const ts = new Date().toISOString().replace(/[:.]/g, "-");
-const md = `# 回归报告 ${ts}\n\n| run | interact | inspect | warn | fidelity | 结果 |\n|---|---|---|---|---|---|\n${rows.join("\n")}\n`;
+const md = `# 回归报告 ${ts}\n\n| run | interact | inspect | smoke | warn | fidelity | 结果 |\n|---|---|---|---|---|---|---|\n${rows.join("\n")}\n`;
 fs.mkdirSync(path.join(HERE, "..", "..", "report"), { recursive: true });
 fs.writeFileSync(path.join(HERE, "..", "..", "report", `regress-${ts}.md`), md);
 console.log(bad ? `REGRESS BAD: ${bad} run(s)` : "REGRESS ALL GREEN");

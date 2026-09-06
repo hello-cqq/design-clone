@@ -304,8 +304,18 @@ await step("scene-zoom", async () => {
 });
 
 await step("scene-path-mode", async () => {
-  await page.click("#dc-flow-toggle [data-fm=path]");
-  await page.waitForTimeout(800);
+  // M45：选一个"真有出向路径"的节点再断言（默认 root 可能无路径，如 hub 型站点）；全 run 无路径则降级 warn
+  let nodeWithPaths = null;
+  if (values.run) {
+    try {
+      const P = JSON.parse(fs.readFileSync(path.join(values.run, "prototype/paths.json"), "utf8"));
+      nodeWithPaths = Object.entries(P.perNode || {}).find(([, n]) => (n.paths || []).some((p) => (p || []).length));
+      nodeWithPaths = nodeWithPaths ? nodeWithPaths[0] : null;
+    } catch {}
+  }
+  if (!nodeWithPaths) { ok("scene-path-mode", true, "run 无可用出向路径，跳过"); R.checks["scene-path-mode"].warn = true; return; }
+  await page.goto(base + "/prototype/?t=" + Date.now() + "#scene/path/" + nodeWithPaths, { waitUntil: "domcontentloaded" });
+  await page.waitForTimeout(900);
   if ((await page.locator(".fc-chain").count()) < 1) throw new Error("no path chain");
   if ((await page.locator(".fc-chain .fc-card").count()) < 2) throw new Error("chain too short");
   if ((await page.locator(".wires path.band.flow-loop").count()) < 1) throw new Error("no flow-loop band");
@@ -318,19 +328,50 @@ await step("scene-path-mode", async () => {
 });
 
 await step("play-path", async () => {
-  await page.click("#dc-rail [data-ia=scene]");
-  await page.waitForTimeout(600);
+  // M45：步骤自包含——先清模态/演示态，再按"有路径节点 > journeys 回退"起播；三种反应都算通过
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(200);
+  const hasJourneys = await page.evaluate(() => window.__dcJourneys || 0);
+  let nodeWithPaths = null;
+  if (values.run) {
+    try {
+      const P = JSON.parse(fs.readFileSync(path.join(values.run, "prototype/paths.json"), "utf8"));
+      const hit = Object.entries(P.perNode || {}).find(([, n]) => (n.paths || []).some((p) => (p || []).length));
+      nodeWithPaths = hit ? hit[0] : null;
+    } catch {}
+  }
+  if (!nodeWithPaths && !hasJourneys) { ok("play-path", true, "无路径且无 journeys，跳过"); R.checks["play-path"].warn = true; return; }
+  if (nodeWithPaths) {
+    await page.goto(base + "/prototype/?t=" + Date.now() + "#scene/path/" + nodeWithPaths, { waitUntil: "domcontentloaded" });
+  } else {
+    await page.goto(base + "/prototype/?t=" + Date.now(), { waitUntil: "domcontentloaded" });
+  }
+  await page.waitForTimeout(900);
   await page.click("#dc-play");
-  await page.waitForSelector("#dc-player.on", { timeout: 4000 });
-  await shot("player");
-  await page.click("#pp-end");
+  let reacted = false;
+  try { await page.waitForSelector("#dc-player.on", { timeout: 6000 }); reacted = true; }
+  catch {
+    reacted = (await page.evaluate(() => document.body.classList.contains("dc-demo") ||
+      !!document.querySelector("#dc-caption") || !!document.querySelector("#dc-summary") || !!document.querySelector("#dc-modal-root .dc-modal")));
+  }
+  if (!reacted) {
+    const st = await page.evaluate(() => ({ cls: document.body.className, modal: !!document.querySelector("#dc-modal-root .dc-modal"), ia: location.hash, player: !!document.querySelector("#dc-player"), capTxt: ((document.querySelector("#dc-caption") || {}).textContent || "").slice(0, 40) }));
+    await shot("play-fail");
+    throw new Error("播放无任何反应 " + JSON.stringify(st));
+  }
+  if (await page.locator("#dc-player.on").count()) { await shot("player"); if (await page.locator("#pp-end").count()) await page.click("#pp-end"); }
+  else { await shot("player"); await page.keyboard.press("Escape"); await page.waitForTimeout(300); await page.keyboard.press("Escape"); }
+  await page.waitForTimeout(300);
 });
 
 await step("demo", async () => {
   if (!(await page.evaluate(() => window.__dcJourneys || 0))) { ok("demo", true, "无 journeys，跳过"); return; }
+  // 若上一步的回退演示仍在跑，先退出，保证本步从干净状态起
+  if (await page.evaluate(() => document.body.classList.contains("dc-demo"))) { await page.keyboard.press("Escape"); await page.waitForTimeout(400); }
+  await page.locator("#dc-workspace").click({ position: { x: 4, y: 4 } }).catch(() => {});
   await page.keyboard.press("d");
   if (await page.locator("#dc-modal-root .opt").count()) await page.locator("#dc-modal-root .opt").first().click();
-  await page.waitForSelector("#dc-caption", { timeout: 4000 });
+  await page.waitForSelector("#dc-caption", { timeout: 9000 });
   await shot("demo");
   await page.keyboard.press("Escape");
   await page.waitForTimeout(300);
@@ -357,10 +398,13 @@ await step("zoom-hand", async () => {
 
 await step("export-menu-two", async () => {
   await page.click("#dc-export-btn");
-  const n = await page.locator("#dc-export-dd button").count();
-  const first = await page.locator("#dc-export-dd button").first().textContent();
+  // M45 新契约：方式档(data-m)恰好 3 + 范围项(data-x) 1–2 且首项=导出全部（ADR-048 取代 A42 的"恰两项"）
+  const nm = await page.locator("#dc-export-dd [data-m]").count();
+  const n = await page.locator("#dc-export-dd [data-x]").count();
+  const first = await page.locator("#dc-export-dd [data-x]").first().textContent();
   await shot("export");
   await page.click("#dc-export-btn");
+  if (nm !== 3) throw new Error(`export modes ${nm} (应 3)`);
   if (n < 1 || n > 2 || !/导出全部/.test(first)) throw new Error(`export items ${n}: ${first}`);
 });
 
@@ -533,6 +577,30 @@ await step("structural-critique", async () => {
     ok("structural-critique", true, "demo 无 critique.json（建议补）"); R.checks["structural-critique"].warn = true; return;
   }
   if (!j.ok) throw new Error("结构 critique 不达标: " + (j.bad || []).join(","));
+});
+
+// M44k 外壳冒烟门：真点播放/导出/分享/设备/标注写回，并锁画布标签排版。
+// 此前所有门只覆盖"原型内容"，外壳功能退化（播放静默、导出不下载、标签太粗）门全绿，故补此硬门。
+// --fast：不跑真实导出下载（regress 会单独跑全量，含下载），控制单 run 门时长。
+await step("ui-smoke", async () => {
+  if (!values.run) return;
+  const runDir = path.resolve(values.run);
+  const r = spawnSync("node", [path.join(HERE, "ui-smoke.mjs"), "--run", runDir, "--base", base, "--fast", "--out", path.join(runDir, "qa/ui-smoke.json")], { encoding: "utf8", timeout: 240000 });
+  let j = {};
+  try { j = JSON.parse((r.stdout || "").trim().split("\n").pop()); } catch {}
+  if (!j || j.fail) throw new Error("外壳冒烟门失败: " + (((j || {}).summary || {}).bad || ["no-output"]).join(","));
+  ok("ui-smoke", true, `${j.pass} 项通过`);
+});
+
+// M45：utility 编译覆盖（warn 级）。"长得像 utility 却编译不出且任何样式源都没定义"=疑似笔误（实战：gap8 静默失效）
+await stepw("utility-coverage", async () => {
+  if (!values.run) return;
+  const probe = path.join(shots, "utilities-probe.css");
+  const r = spawnSync("node", [path.join(HERE, "..", "gen", "utility-css.mjs"), "--run", values.run, "--out", probe], { encoding: "utf8" });
+  let j = {};
+  try { j = JSON.parse((r.stdout || "").trim().split("\n").pop()); } catch {}
+  if ((j.unknownCount || 0) > 0) throw new Error("疑似笔误 utility: " + (j.unknown || []).slice(0, 6).join(","));
+  return `${j.compiled} rules / ${j.bytes}B`;
 });
 
 await stepw("contrast", async () => {
