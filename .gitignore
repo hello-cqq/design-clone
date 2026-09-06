@@ -4,3 +4,5 @@ node_modules/
 dist/*.zip
 design-clone-runs/
 .DS_Store
+skills/design-clone/report/
+skills/report/

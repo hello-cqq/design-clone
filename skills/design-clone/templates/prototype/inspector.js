@@ -57,6 +57,11 @@
     } catch { localStorage.setItem("dc-editover", payload); }
   }
   async function loadOverrides() {
+    // M44h：layout-overrides（apply-patch 落回）+ ?variant= 变体（原版保留，变体可切换）
+    S.variant = Q.get("variant") || "";
+    const loPath = S.variant ? ("variants/" + S.variant + "/layout-overrides.json") : "layout-overrides.json";
+    try { S.layoutOv = await (await fetch(loPath)).json(); } catch { S.layoutOv = {}; }
+    if (S.variant) { try { const css = await (await fetch("variants/" + S.variant + "/tokens-override.css")).text(); let st = document.getElementById("dc-variant-css"); if (!st) { st = document.createElement("style"); st.id = "dc-variant-css"; document.head.appendChild(st); } st.textContent = css; } catch {} }
     try { S.overrides = await (await fetch("edit-overrides.json")).json(); }
     catch { try { S.overrides = JSON.parse(localStorage.getItem("dc-editover") || "{}"); } catch { S.overrides = {}; } }
   }
@@ -133,6 +138,14 @@
     });
     if (S.play) { W.stage.classList.remove("dc-fade"); void W.stage.offsetWidth; W.stage.classList.add("dc-fade"); }
     W.screen.scrollTop = 0;
+    if (window.DCRuntime) DCRuntime.enhance(W.stage);
+    for (const [page, m] of Object.entries(S.layoutOv || {})) {
+      if (page !== S.view) continue;
+      for (const [dc, o] of Object.entries(m || {})) {
+        const el = W.stage.querySelector('[data-dc="' + dc + '"]');
+        if (el) el.style.transform = "translate(" + (o.dx || 0) + "px," + (o.dy || 0) + "px)";
+      }
+    }
     S.page = id; S.selected = null;
     $$("#dc-pages [data-nav]").forEach((b) => b.classList.toggle("on", b.dataset.nav === id));
     const cnt = $("#dc-ann-toggle .cnt"); if (cnt) cnt.textContent = (S.ann_data[id] || []).length || "";
@@ -276,16 +289,18 @@
   function renderSceneTree() {
     const P = S.paths; const box = $("#dc-tree");
     if (!P) { box.innerHTML = `<div style="padding:8px;color:var(--sh-mut);font-size:11px">无 paths.json<br>跑 scripts/paths-gen.mjs 生成</div>`; return; }
-    const kids = (id) => [...new Set((P.edges || []).filter((e) => e.from === id && e.dir !== "back").map((e) => e.to))];
+    const kids = (id) => [...new Set((P.edges || []).filter((e) => e.from === id && (e.role ? (e.role !== "module" && e.role !== "back") : e.dir !== "back")).map((e) => e.to))];
     const row = (id, depth, seen) => {
       const k = kids(id).filter((c) => !seen.has(c));
       const n = P.nodes[id] || { title: id };
+      const nav = ((P.perNode || {})[id] || {}).nav || [];
       const s2 = new Set(seen); s2.add(id);
       return `<div class="tr-node">
         <div class="tr-row" data-node="${id}" style="padding-left:${8 + depth * 4}px">
           <span class="tr-caret" data-tg="${id}">${k.length ? "▸" : ""}</span>
           <span class="idx" style="color:var(--sh-mut);font-size:11px">${idxOf(id)}</span><span>${esc(n.title || id)}</span>
         </div>
+        ${nav.length ? `<div class="tr-nav" style="padding-left:${8 + (depth + 1) * 4}px;display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 4px">${nav.map((t) => `<span class="tr-row" data-node="${t}" style="display:inline-flex;padding:2px 8px;border:1px solid var(--sh-border);border-radius:999px;font-size:10.5px;color:var(--sh-mut);cursor:pointer"><span class="idx" style="color:var(--sh-mut);font-size:10px">${idxOf(t)}</span>${esc(((P.nodes || {})[t] || {}).title || t)}</span>`).join("")}<span style="font-size:10px;color:var(--sh-mut);align-self:center">导航</span></div>` : ""}
         <div class="tr-kids" data-kids="${id}" hidden>${k.map((c) => row(c, depth + 1, s2)).join("")}</div>
       </div>`;
     };
@@ -785,6 +800,9 @@
     ["dc-mobile", "dc-tablet", "dc-browser", "dc-desktop"].forEach((c) => document.body.classList.remove(c));
     document.body.classList.add(shellClass());
     $("#dc-device-label").textContent = { "dc-mobile": "手机", "dc-tablet": "平板", "dc-browser": "浏览器窗", "dc-desktop": "桌面窗" }[shellClass()];
+    // M44f：shell 尺寸用 inline 兜底（防视图 css 级联把桌面窗压成手机宽——desktop run 排版崩坏根因）
+    const DIM = { "dc-mobile": [390, 844], "dc-tablet": [834, 1194], "dc-browser": [1280, 800], "dc-desktop": [1280, 800] }[shellClass()] || [390, 844];
+    W.phone.style.width = DIM[0] + "px"; W.phone.style.height = DIM[1] + "px";
   }
 
   /* ---------- 模式/事件 ---------- */
@@ -891,6 +909,14 @@
     }, true);
     W.stage.addEventListener("click", (e) => {
       if (S.ia !== "pages" || S.demo.active) return;
+      const actEl = e.target.closest("[data-act]");
+      if (actEl && !S.edit && window.DCRuntime) {
+        e.preventDefault(); e.stopPropagation();
+        window.DCRuntime.handleClick(actEl, e);
+        const d = actEl.getAttribute("data-dc");
+        if (d) { S.selected = d; fillDetail(); redraw(); }
+        return;
+      }
       const nav = e.target.closest("[data-goto]");
       if (nav && !S.edit) {
         e.preventDefault();
@@ -954,6 +980,14 @@
 
     renderPages();
     bind();
+    if (window.DCRuntime) {
+      window.DCRuntimeHooks = {
+        goto: (id) => { const s = String(id || ""); if (s.startsWith("placeholder:")) notify("原型占位", esc(s.slice(10)) + "（范围外/安全边界，不克隆）"); else loadView(s).catch((err) => notify("加载失败", esc(err.message))); },
+        toast: (m) => toast(m),
+        back: () => { if (history.length > 1) history.back(); else loadView((DC.pages[0] || {}).id).catch(() => {}); },
+      };
+      DCRuntime.attach(W.stage);
+    }
     await loadOverrides();
     try { S.ann_data = await (await fetch("annotations.json")).json(); } catch { S.ann_data = {}; }
     try { S.journeys = await (await fetch("journeys.json")).json(); } catch { S.journeys = []; }

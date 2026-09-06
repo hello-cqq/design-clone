@@ -18,3 +18,23 @@
 
 ## 兜底链
 crop 证据 → iconify/simple-icons 矢量 → genimg → VLM 重画 SVG（clay 配方：radial 渐变+顶部高光+feGaussianBlur）→ CSS clay → emoji。
+
+## M44e 场景自适应风格 + 循环自检
+不限死 3D。`scripts/gen/style-pick.mjs --scenario <s>|--run <run> --kind avatar|cover|scene|icon` 按产品场景自主决策风格：
+| 场景 | avatar | cover/scene | icon |
+|---|---|---|---|
+| social-im（微信/IM） | anime | photographic / illustration | clay-icon |
+| travel-life（轨迹/出行） | anime | photographic / illustration | sticker |
+| work-collab（飞书/办公桌面） | flat-corporate | flat-corporate | flat |
+| ecommerce-marketing（apple/aliyun/电商） | photographic | photographic | clay-icon |
+| game-tech | cyberpunk | cyberpunk | sticker |
+| culture-reading | guofeng | guofeng | sticker |
+
+新增锚点：`anime / disney / illustration / cyberpunk / guofeng / photographic / flat-corporate`（均含 "NOT photoreal/NOT 3d" 等防串味措辞）。
+**反 AI 味后缀**（genimg 默认附加，`--no-anti` 关闭）：非对称光/构图、自然不完美细节、禁塑料光泽肌/完美对称/纯灰底。
+**循环自检**：`scripts/img/gen-loop.mjs --out <asset> --run <run> --kind avatar --subject "..." [--rounds 3] [--sheet p]`
+= style-pick 选风格 → 生成 → 自检(blank/blur/collage/头像禁纯灰底) → 不过则变异重试(换 seed→加纠正词→换风格) ≤N 轮 → 写 manifest(style/scenario/rounds/checks)。
+**假名也按场景**：`scripts/gen/fakename.mjs --scenario <s> --n K`（社交可爱/职场/游戏ID/古风池）；称呼保留。
+
+## M44g 内容安全后缀（不可关闭）
+所有 prompt 自动附加：family-safe, fully clothed, no nudity/partial nudity, no suggestive pose。cover/scene 默认追加 no people（gen-loop --with-people 关闭该追加）。palette 从 run tokens 注入。

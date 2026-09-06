@@ -131,3 +131,19 @@ Android 目标尽量补齐 `platform_info`：
 `scripts/dedup.mjs` 用感知哈希（aHash 8x8）标记重复：汉明距离 ≤ 6 判为同屏。
 重复屏不删文件，只在 `graph.json` 节点上标 `"duplicate_of": "<screen-id>"`，
 edges 指向原始屏。生成原型时只为原始屏建视图。
+
+## M44h/i 新增产物（展示与入口契约）
+```
+<run>/
+├── knowledge/
+│   ├── flows.json            # 真实交互流（events 归纳或 agent 推断）→ paths-gen 优先
+│   ├── flows-skeleton.json   # 结构推导草稿（agent 修正用）
+│   ├── consent.json          # GUI 采集同意收据 {granted,scope,platform,at,by}
+│   ├── showcase.json         # 展示网站契约 {id,title,subtitle,platform,shell,source,tags,blurb,icon,iconMaskable,cover,views,updatedAt}
+│   └── run-state.json        # 阶段状态（--resume 续跑）
+├── capture/events.jsonl      # 采集期真实交互事件（ground-truth 路径来源）
+└── prototype/
+    ├── appicon/              # icon-16..512.png + icon-maskable-512.png + icon-spec.json(--regen) + cover.png
+    ├── variants/<name>/      # remix 变体（tokens-override.css + layout-overrides.json），原版=default 保留
+    └── variants-index.json
+```

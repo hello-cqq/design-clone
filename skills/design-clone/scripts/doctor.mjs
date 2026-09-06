@@ -136,5 +136,26 @@ for (const r of rows) console.log(`${icon[r.level]} ${r.name.padEnd(16)} ${r.det
 const missing = rows.filter((r) => r.level === "need");
 const warnings = rows.filter((r) => r.level === "warn");
 console.log("");
+if (process.argv.includes("--onboard")) {
+  const has = (n) => rows.some((r) => r.name === n && r.level !== "miss");
+  const OS_SUPPORT = { mac: "yes", android: "yes", web: "yes", ios: "partial(simctl)", windows: "roadmap", linux: "roadmap", harmony: "roadmap" };
+  const cap = {
+    platforms: OS_SUPPORT,
+    capabilities: {
+      web_capture: has("playwright"), android_gui: has("adb"), desktop_gui: platform === "darwin",
+      ios_sim: platform === "darwin", link_ladder: has("lux") || has("yt-dlp") || has("you-get"),
+      figma_export: has("figma-mcp") || true, genimg: has("genimg-net") || true, vlm: has("provider-key"),
+    },
+    entry: "node scripts/entry.mjs \"<一句话|链接|图片|app名>\" → clone/link/remix/export",
+    note: "windows/linux/harmony 采集为 roadmap；当前 mac/android/web 全支持",
+  };
+  const { mkdirSync, writeFileSync } = await import("node:fs");
+  mkdirSync(path.join(__dirname, "..", "report"), { recursive: true });
+  writeFileSync(path.join(__dirname, "..", "report", "capability.json"), JSON.stringify(cap, null, 1));
+  console.log("能力矩阵（report/capability.json）:");
+  for (const [k, v] of Object.entries(cap.capabilities)) console.log("  " + k.padEnd(14) + (v ? "✅" : "❌"));
+  for (const [k, v] of Object.entries(OS_SUPPORT)) console.log("  os:" + k.padEnd(9) + v);
+  console.log("降级：无 playwright→仅 link/图片入口；无 adb→android 转 web/链接或用户供截图；离线→genimg 退化为 crop/iconify/css-clay。");
+}
 if (missing.length) { console.log(`❌ ${missing.length} 项必需缺失，按提示安装后重试。`); process.exit(1); }
 console.log(`✅ 必需项就绪。${warnings.length ? `⚠️ ${warnings.length} 项警告需处理（多为设备侧，话术见 references/human-takeover.md）。` : "无警告。"} ⚪ 可选项用到再装。`);

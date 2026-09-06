@@ -45,6 +45,31 @@ node {SKILL_DIR}/scripts/doctor.mjs
 
 ## §A Clone 模式（自动捕获 + 复刻）
 
+### A-一键（推荐入口，M44）
+
+一条命令编排「抓取→结构化→可交互原型→门禁→起服务」：
+
+```bash
+# 统一入口（M44h）：一句话 / 几张图片 / 网页链接 / 视频图文链接 / app 名 皆可
+node {SKILL_DIR}/scripts/clone.mjs --entry "复刻微信朋友圈和聊天，安卓，全量"
+node {SKILL_DIR}/scripts/clone.mjs --entry "https://v.douyin.com/xxx 这个视频里的界面"
+node {SKILL_DIR}/scripts/clone.mjs --entry "/tmp/a.png,/tmp/b.png 做成可点原型"
+# 或显式参数：
+node {SKILL_DIR}/scripts/clone.mjs --target <名> --platform <web|android|ios|desktop> \
+  [--url <网址>] [--images a.png,b.png] [--scope full|scene] [--out <run目录>] [--port 4200] [--serve] [--resume]
+```
+
+- **entry.mjs 路由**：视频/图文宿主(douyin/xhs/bili/tiktok…)→Link 六级梯；普通站点→web crawl；app 词典(微信/抖音/相机/圆周轨迹/飞书/workbuddy…)→device；本地图片→capture/screens；歧义只问一次。
+- **GUI 采集红线**：android/desktop 抓取前须 `knowledge/consent.json`（用户口头同意后由 agent 写入），否则退出并提示。
+- **web 目标**：近乎全自动（capture→dedup→tokens→外壳+runtime→门禁→serve）。
+- **android/ios/desktop**：脚本跑确定性步骤后，**打印宿主 agent 的抓取/誊写交接命令**（VLM 决策与逐页 s2c 誊写由宿主完成），完成后 `--gates-only` 收口。
+- **中断续跑**：`--resume` 读 `knowledge/run-state.json` 跳过已完成阶段。
+- **展示契约（M44i）**：每 run 自带 `prototype/appicon/`（16..512+maskable+`icon-spec.json`，用户改 spec 后 `gen/appicon.mjs --regen` 调整图标）+ `knowledge/showcase.json`（原型展示网站读它）。
+- 脚本自动跑六门：`privacy`/`interact`/`audit`/`inspect`(含 layout-sanity/paths-sanity/appicon-present/critique)/`eval`(含 interactivity+style-parity)，并起服务打印「打开即用」地址。
+- 已装配的 run 仅收口：`node {SKILL_DIR}/scripts/clone.mjs --target <名> --gates-only --out <run目录> --serve`。
+- 全量回归/自修：`node {SKILL_DIR}/scripts/regress.mjs [--full]`、`node {SKILL_DIR}/scripts/autofix.mjs --run <run> --base <url>`；失败查 `references/recovery.md`。
+- Remix 保留原版：`apply-patch.mjs <run> <patch> --variant <名>` → `?variant=<名>` 切换，default 永远是原版。
+
 ### A0 环境与人接管（Android 目标必做，Web 目标跳过 2/3）
 
 1. 跑 `node {SKILL_DIR}/scripts/doctor.mjs`；`❌` 项按提示装（跨平台命令见
@@ -161,7 +186,12 @@ simctl 无原生 tap → 默认人接管点击，或辅助功能权限下 `deskt
   读图一律先 `node scripts/img/view.mjs`（多图 --grid），不读原图
 - **交付视图必须 live（M18 硬规则）**：视图主体=真 HTML 控件+真元素+data-goto；
   截图仅限 compare 右半/状态帧，进 views 主层即被 inspect `live-views` 硬阻断。
-  先抄 `templates/components/`（mobile-im/desktop-app/web-marketing）再填内容
+  先抄 `templates/components/`（mobile-im/desktop-app/web-marketing/controls）再填内容
+- **每个控件必须可交互（M44 硬规则）**：不止导航——开关/单选/多选/下拉/折叠/分段/弹层/步进/滑杆/输入全接
+  `data-act`（运行时 `templates/prototype/runtime.js`，控件目录+snippet `templates/components/controls.md`）。
+  微信只是控件子集，别的 app 有下拉/面包屑/单选/多选，一律按目录接线。无目标页的控件用 `toast`/`sheet` 兜底，**杜绝死按钮**。
+  门：`node scripts/qa/interact.mjs --run <run> --base <url>` → dead=0 且 act_pass=1 且 goto_pass=1；
+  inspect `interactive-controls` + `no-h-overflow`（390 宽装不下要换行/收缩）双硬阻断；eval 计 `interactivity`。
 - **preflight 三平台**（每新会话首跑 doctor 后按平台过一遍）：
   - android：`adb devices` 见 device → `android/prepare.sh` → 动作走 `android/gesture.sh`，
     等待走 `android/settle.mjs`（不稳不截），中文输入 Midscene ai-input 无人工兜底
@@ -171,7 +201,7 @@ simctl 无原生 tap → 默认人接管点击，或辅助功能权限下 `deskt
 
 验收：`node {SKILL_DIR}/scripts/serve.mjs <产物目录>` 起本地服务，
 打开 `http://localhost:4173/prototype/`，逐项自检（清单在 `references/prototype-spec.md`）：
-普通可点 / 产品折线批注 / 设计 inspect / 编辑拖拽导出 / 路径故事板+播放 /
+普通可点（**每个控件点击都有反应，不是静态图**）/ 产品折线批注 / 设计 inspect / 编辑拖拽导出 / 路径故事板+播放 /
 Tweaks 调参 / **演示模式（右下 ▶ 演示 或 D 键，自动播放+字幕+模拟弹窗+总结卡）**；
 不达标的屏返工。交付：服务地址 + 目录 + 模式说明 + handoff（保真模/场景/状态/排除项）。
 可选：`node {SKILL_DIR}/scripts/export-walkthrough.mjs <产物目录>` 导出演示视频。
@@ -272,8 +302,17 @@ Tweaks 调参 / **演示模式（右下 ▶ 演示 或 D 键，自动播放+字�
 设备路由：Android 真机>模拟器>env-blocked；iOS 模拟器>env-blocked；win 静态审查。
 
 ```bash
-node {SKILL_DIR}/scripts/qa/inspect.mjs <base-url> <name> --shots <取证目录>
-node {SKILL_DIR}/scripts/eval/eval.mjs --run <run目录> --base <base-url>   # M15：每次回归同步自评
+node {SKILL_DIR}/scripts/qa/interact.mjs --run <run目录> --base <base-url>   # M44 交互门：逐控件点击验响应，dead=0
+node {SKILL_DIR}/scripts/qa/privacy.mjs --run <run目录> [--discover]        # M44c 隐私门：真名/PII/真人脸未虚构=fail；--discover 起草 privacy.json
+node {SKILL_DIR}/scripts/qa/viewsheet.mjs --run <run目录> --base <url> --out /tmp/sheet.jpg  # M44d 全视图拼图（critique 用）
+node {SKILL_DIR}/scripts/qa/critique.mjs --run <run目录> [--skeleton|--set <v> --layout N]  # M44d 结构 critique 硬门（full 必 VLM 打分）
+node {SKILL_DIR}/scripts/img/gen-loop.mjs --out <asset> --run <run目录> --kind avatar --subject "..."  # M44e 场景风格+循环自检生图
+node {SKILL_DIR}/scripts/gen/style-pick.mjs --run <run目录> --kind avatar    # M44e 场景→风格决策；gen/fakename.mjs 场景化假名
+node {SKILL_DIR}/scripts/gen/wire.mjs <run目录> [--dry]                    # M44 通用死控件接线（toast/toggle/tab 兜底，幂等）
+node {SKILL_DIR}/scripts/qa/audit.mjs --run <run目录> --base <base-url>      # 逐页召回+截断+溢出+并排图
+node {SKILL_DIR}/scripts/qa/fidelity-all.mjs --run <run目录> --base <base-url> # M44 逐视图保真复测（source-map 配对+chrome=0 截屏）
+node {SKILL_DIR}/scripts/qa/inspect.mjs <base-url> <name> --shots <取证目录> --run <run目录>
+node {SKILL_DIR}/scripts/eval/eval.mjs --run <run目录> --base <base-url>   # M15：每次回归同步自评（含 interactivity）
 ```
 
 ## 红线（任何模式下必须遵守）

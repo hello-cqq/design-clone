@@ -2,6 +2,10 @@
 
 mac/win 桌面应用（飞书/WorkBuddy/Slack/IDE 类）live 视图积木。外壳（红绿灯/标题栏）由 c_desktop shell 注入，视图只写窗口内容。
 
+> **M44f 硬契约**：视图**禁止**自带红绿灯/标题栏/窗口边框——shell `c_desktop` 的 `.dc-framebar` 已注入（`chrome=0` 截屏不含外壳属正常，不是缺陷）。
+> 在视图里塞标题栏会因 `da-root` 是 flex-row 而被挤成竖列（M44f 事故）。inspect `layout-sanity` 会对"视图内重复窗口 chrome"报警。
+> 侧栏/列表必须 `overflow-y:auto` 防末项被裁；聊天输入条用 `.da-input` 且主区 flex-column 吸底（`margin-top:auto`）。
+
 ## 三栏骨架（rail+side+main）
 ```html
 <div data-dc="lk/root" class="da-root">

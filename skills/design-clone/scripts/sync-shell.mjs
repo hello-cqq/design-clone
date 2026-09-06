@@ -42,9 +42,16 @@ for (const dir of dirs) {
   const mDC = src.match(/<script>window\.DC = ([\s\S]*?);<\/script>/);
   if (!mDC) { console.log("skip(无 DC JSON):", dir); skip++; continue; }
   const title = mTitle ? mTitle[1] : path.basename(path.dirname(dir));
-  let viewCss = "";
+  // M44f: __VIEW_CSS__ 以组件库为唯一源重建（库更新可传播到存量 run），不再沿用 run 内烘焙旧 css
+  let shell = "c_mobile";
+  try { shell = JSON.parse(mDC[1]).shell || "c_mobile"; } catch {}
+  const CSSFOR = { c_mobile: "mobile-im.css", mobile: "mobile-im.css", c_tablet: "mobile-im.css", tablet: "mobile-im.css", c_desktop: "desktop-app.css", desktop: "desktop-app.css", c_browser: "web-marketing.css", c_browser2: "web-marketing.css", web: "web-marketing.css" };
+  const cssFile = path.join(TPL, "../components", CSSFOR[shell] || "mobile-im.css");
+  const libCss = fs.existsSync(cssFile) ? fs.readFileSync(cssFile, "utf8") : "";
   const mStyle = src.match(/<style>([\s\S]*?)<\/style>/);
-  if (mStyle) viewCss = mStyle[1].replace(/html\s*,\s*body\s*\{[^}]*\}/, "").trim();
+  const runExtra = mStyle ? mStyle[1].replace(/html\s*,\s*body\s*\{[^}]*\}/, "").trim() : "";
+  // run 额外 css 在前、组件库在后（库为权威，更新可传播；run 特有类保留）
+  let viewCss = (runExtra ? runExtra + "\n" : "") + libCss;
 
   const html = tplIndex
     .replaceAll("__TITLE__", title)
@@ -53,6 +60,7 @@ for (const dir of dirs) {
   fs.writeFileSync(old, html);
   fs.copyFileSync(path.join(TPL, "inspector.css"), path.join(dir, "inspector.css"));
   fs.copyFileSync(path.join(TPL, "inspector.js"), path.join(dir, "inspector.js"));
+  fs.copyFileSync(path.join(TPL, "runtime.js"), path.join(dir, "runtime.js"));
   console.log("synced:", path.relative(process.cwd(), dir));
   ok++;
 }

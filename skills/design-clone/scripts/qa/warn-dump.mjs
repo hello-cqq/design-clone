@@ -58,12 +58,12 @@ const dumpOne = () => page.evaluate(() => {
     if (ratio < 4.5) contrast.push({ text: n.textContent.trim().slice(0, 24), tag: n.tagName.toLowerCase(), dc: n.closest("[data-dc]")?.getAttribute("data-dc") || "", color: toRGB(cs.color), bg: `rgba(${d[0]}, ${d[1]}, ${d[2]}, 1)`, ratio: Math.round(ratio * 100) / 100, fs: cs.fontSize });
   }
   const privacy = [];
-  const re = [/1[3-9]\d{9}/, /wxid_[a-z0-9_]+/i, /微信号[:：]/, /[\w.+-]+@[\w-]+\.(com|cn|net|org)/i, /\d{17}[\dXx]/];
+  const pre = [/1[3-9]\d{9}/, /wxid_[a-z0-9_]+/i, /微信号[:：]/, /[\w.+-]+@[\w-]+\.(com|cn|net|org)/i, /\d{17}[\dXx]/];
   for (const n of [...document.querySelectorAll("#dc-stage *")].slice(0, 400)) {
     if (n.children.length) continue;
     const t = (n.textContent || "").trim();
     if (!t) continue;
-    for (const r of re) if (r.test(t)) { privacy.push({ text: t.slice(0, 30), dc: n.closest("[data-dc]")?.getAttribute("data-dc") || "" }); break; }
+    for (const r of pre) if (r.test(t)) { privacy.push({ text: t.slice(0, 30), dc: n.closest("[data-dc]")?.getAttribute("data-dc") || "" }); break; }
   }
   return { emoji, contrast, privacy };
 });

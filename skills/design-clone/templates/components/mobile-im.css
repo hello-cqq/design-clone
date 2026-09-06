@@ -24,3 +24,7 @@
 .mi-tab svg { width: 24px; height: 24px; }
 .mi-skeleton { border-radius: 10px; background: var(--color-surface-dim, #f0f0f0); animation: mi-pulse 1.2s ease-in-out infinite; }
 @keyframes mi-pulse { 50% { opacity: .5; } }
+
+/* M44f 防裁切：行内副标题/主列省略号 + min-width:0（flex 子项默认 min-width:auto 会撑破） */
+.mi-row .main, .mi-cell .lb { min-width: 0; }
+.mi-row .sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

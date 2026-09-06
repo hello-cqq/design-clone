@@ -45,17 +45,19 @@ const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
 const result = {};
 for (const v of views) {
-  await page.goto(base + "/prototype/#pages/" + v, { waitUntil: "domcontentloaded", timeout: 20000 }).catch(() => {});
+  await page.goto(base + "/prototype/?chrome=0&ann=0#pages/" + v, { waitUntil: "domcontentloaded", timeout: 20000 }).catch(() => {});
   await page.waitForTimeout(900);
   const rendered = await page.evaluate(() => {
     const stage = document.querySelector("#dc-stage");
+    const sc = document.querySelector("#dc-screen");
     const text = stage ? stage.textContent : "";
     let trunc = 0, total = 0;
     for (const el of document.querySelectorAll("#dc-stage span,#dc-stage a,#dc-stage div")) {
       if (el.children.length || !el.textContent.trim()) continue;
       total++; if (el.scrollWidth > el.clientWidth + 2) trunc++;
     }
-    return { text, truncRatio: total ? trunc / total : 0 };
+    const overflow = Math.max(stage.scrollWidth - stage.clientWidth, sc ? sc.scrollWidth - sc.clientWidth : 0);
+    return { text, truncRatio: total ? trunc / total : 0, overflow };
   });
   // 捕获时 id 配对（GUI 已按导航步骤映射源↔视图）
   const cap = path.join(run, "capture/screens", v + ".png");
@@ -80,11 +82,11 @@ for (const v of views) {
         ]).jpeg({ quality: 70 }).toFile(path.join(run, "qa", `audit-${v}-side.jpg`)).catch(() => {});
     } catch {}
   }
-  result[v] = { src: v, labels: labels.length, matched: matched.length, recall, missing: labels.filter((l) => !matched.includes(l)).slice(0, 8), truncRatio: +rendered.truncRatio.toFixed(2), fidelity };
+  result[v] = { src: v, labels: labels.length, matched: matched.length, recall, missing: labels.filter((l) => !matched.includes(l)).slice(0, 8), truncRatio: +rendered.truncRatio.toFixed(2), overflow: rendered.overflow, fidelity };
 }
 await browser.close();
 fs.mkdirSync(path.dirname(outP), { recursive: true });
 fs.writeFileSync(outP, JSON.stringify(result, null, 1));
 const waive = (() => { try { return JSON.parse(fs.readFileSync(path.join(run, "qa/audit-waive.json"), "utf8")); } catch { return {}; } })();
-const bad = Object.entries(result).filter(([k, r]) => r.truncRatio > 0.2 && !waive[k]?.trunc);
+const bad = Object.entries(result).filter(([k, r]) => ((r.truncRatio > 0.2 && !waive[k]?.trunc) || (r.overflow > 2 && !waive[k]?.overflow)));
 console.log(JSON.stringify({ views: Object.keys(result).length, bad: bad.map(([k]) => k + `(rec=${result[k].recall ?? "-"} fid=${result[k].fidelity ?? "-"} trunc=${result[k].truncRatio})`) }));

@@ -3,7 +3,8 @@
 移动 IM/工具类 app（微信/钉钉/抖音个人主页类）live 视图积木。
 **用法**：视图文件顶部 `<link rel="stylesheet" href="../components-mobile-im.css">` 不可行（views 是 fragment）——
 把本 css 内容并入 run 的 index `__VIEW_CSS__`（sync-shell 已会把 templates/components/*.css 收集进新 run；存量 run 手工 copy 一次），
-然后按下面 snippet 拼视图。所有交互元素带 `data-dc` + `data-goto`，文案**全虚构**。
+然后按下面 snippet 拼视图。所有交互元素带 `data-dc` + `data-goto`（导航）或 `data-act`（开关/单选/下拉/折叠/弹层等非导航控件，全目录见 `templates/components/controls.md`），文案**全虚构**。
+**每个可见控件点击必须有反应**（M44 交互门 `qa/interact.mjs` 强制，死按钮=0）。
 
 ## 会话列表行
 ```html

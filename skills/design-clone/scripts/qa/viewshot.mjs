@@ -14,7 +14,8 @@ if (!base || !viewId || !out || ["--help", "-h"].includes(base)) {
 const b = await chromium.launch();
 const p = await b.newPage({ viewport: { width: 1280, height: 900 } });
 await p.emulateMedia({ reducedMotion: "reduce" });
-await p.goto(base.replace(/\/+$/, "") + "/prototype/#pages/" + viewId, { waitUntil: "domcontentloaded", timeout: 20000 }).catch(() => {});
+// chrome=0：长页面元素截屏会滚动拼接，固定定位的外壳（底栏/缩放条）会渗进图里 → 必须去壳
+await p.goto(base.replace(/\/+$/, "") + "/prototype/?chrome=0&ann=0#pages/" + viewId, { waitUntil: "domcontentloaded", timeout: 20000 }).catch(() => {});
 await p.waitForTimeout(1200);
 const el = p.locator("#dc-stage");
 await el.screenshot({ path: out });
