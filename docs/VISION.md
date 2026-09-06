@@ -38,7 +38,7 @@
 
 - MVP 平台：Web + Android 先行；iOS 模拟器优先、真机引导配置；桌面靠后
 - 决策大脑：宿主 agent VLM 默认；MAI-UI-2B/GUI-Owl 本地增强可选
-- 原型形态：静态 HTML + Tailwind（迭代 CDN / 交付编译）
+- 原型形态：静态 HTML + 自带组件库 + tokens.css；utility 子集由 gen/utility-css.mjs 本地编译（M45 起无运行时 CDN，离线/file:// 可开）
 - 编辑模式深度（本轮）：拖拽 + 导出 layout-patch，实时写回 spec 留后续
 - 路径展示 v1：故事板抽屉 + 原型内播放；自动流程图 v2
 - 实施顺序：Inspector 先于 M2 链接模式

@@ -1,0 +1,54 @@
+name: ci
+on:
+  push: { branches: ["main"] }
+  pull_request:
+jobs:
+  gates:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["20", "22"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: install (repo devDeps + skill deps)
+        run: |
+          npm ci --no-audit --no-fund
+          npm ci --no-audit --no-fund --prefix skills/design-clone/scripts
+      - name: unit + integration tests (node:test)
+        run: npm test
+      - name: lint (eslint, 0 errors)
+        run: npm run lint
+      - name: typecheck (tsc --noEmit on pure modules)
+        run: npm run typecheck
+      - name: ip + secret scans
+        run: npm run scan
+      - name: shell build determinism
+        run: |
+          node skills/design-clone/scripts/build-shell.mjs --out /tmp/a.js
+          node skills/design-clone/scripts/build-shell.mjs --out /tmp/b.js
+          cmp /tmp/a.js /tmp/b.js && node --check /tmp/a.js
+      - name: doctor (environment probe, advisory)
+        run: node skills/design-clone/scripts/doctor.mjs || true
+  package:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - name: package skill zip
+        run: node skills/design-clone/scripts/package.mjs --out /tmp/design-clone.zip
+      - name: zip must not contain runs/binaries/devDeps
+        run: |
+          python3 - <<'EOF'
+          import zipfile, sys
+          names = zipfile.ZipFile("/tmp/design-clone.zip").namelist()
+          bad = [n for n in names if any(k in n for k in ("design-clone-runs/", "node_modules/", ".git/", "inspector.built.js")) or n.lower().endswith((".png", ".jpg", ".jpeg", ".webp", ".gif", ".zip", ".woff", ".woff2", ".ttf", ".mp4"))]
+          print("entries:", len(names))
+          sys.exit(1 if bad else 0)
+          EOF
+      - uses: actions/upload-artifact@v4
+        with: { name: design-clone-zip-ci, path: /tmp/design-clone.zip }

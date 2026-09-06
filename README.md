@@ -1,127 +1,127 @@
-# Design Clone（设计克隆）
+# design-clone
 
-一个跨 Agent 的通用技能：自动捕获真实应用的界面与交互路径，一比一复刻为**可用于生产的"活 PRD"**——不只是能点的原型，而是带产品批注、设计 inspect、功能路径故事板/播放、可编辑、可导出的完整设计交付物。
+**Clone any app's design into a production-grade "living PRD"** — an interactive local web prototype plus structured design assets (screenshots, state captures, design tokens, design-rationale docs), captured automatically from real apps, websites, desktop apps, or video/link sources.
 
-> 面向没有产品设计经验的创作者和开发者：不再从零设计原型，而是"站在优秀产品的肩膀上"，把成熟产品的设计思维、交互路径、视觉语言变成你项目的起点。**克隆是起点，不是终点。**
+> Clone is the starting point, not the destination. design-clone rebuilds a mature product's visual language, interaction paths and product rationale as *your* project's baseline: inspectable, annotatable, editable, exportable — and honest about what it is (a clone, with provenance and consent rules baked in).
 
-## 原型内置五模式（inspector）
+- **License:** MIT (code). Captured app screenshots/videos remain the property of their owners; see [Privacy & IP boundary](#privacy--ip-boundary).
+- **Runs as:** an [Agent Skill](https://agentskills.io) for any compatible agent CLI (opencode, Claude Code, Codex, Qoder, Qwen Code, Trae, …). No proprietary MCP or paid API is required — visual decisions are made by *your* agent's own VLM.
 
-| 模式 | 快捷键 | 内容 |
+---
+
+## What you get per run
+
+```
+<run>/
+├── capture/        source evidence: screenshots, ui-trees, screen recordings, action logs
+├── knowledge/      tokens.css · source-map.json · privacy.json · scope.json · showcase.json · DESIGN.md
+├── prototype/      the deliverable (see below)
+├── qa/             gate results: interact.json · inspect.json · ui-smoke.json · critique.json …
+├── report/         fidelity/eval/audit reports + regression evidence
+└── export/         timestamped PNG/webm/board exports produced by the inspector
+```
+
+`prototype/` is a **static, offline-openable** bundle:
+
+| Piece | What it is |
+|---|---|
+| `index.html` + `inspector.{js,css}` | the inspector shell: pages/scene IA, preview/code view, device shells, zoom/pan, compare-with-source, share links |
+| `views/*.html` | **live views** — real HTML controls from `templates/components/` (never screenshot-as-view; hard-gated) |
+| `runtime.js` | interaction runtime: `data-act` catalogue (toggle/radio/checkbox/select/accordion/tab/sheet/dialog/toast/step/slider/input/back/goto) with a11y roles + keyboard support |
+| `annotations.json` / `products.json` | product annotations & per-screen product notes — editable in-app, written back to disk |
+| `paths.json` / `journeys.json` | interaction paths (classified by real app logic) & demo journeys for playback |
+| `appicon/` | 16–512 + maskable icons (cloned from source when possible, generated otherwise, `--regen` to tune) |
+
+### Inspector capabilities (all covered by the `ui-smoke` gate)
+
+- **Play paths** (`P`): page mode plays from the current screen, scene mode plays the selected path; falls back to a demo journey with captions/simulated dialogs/safety-boundary cards, and tells you exactly what is missing when neither exists.
+- **Annotate** (`A`): click any element to create/edit/delete product annotations → written to `annotations.json`. Stale annotations (target renamed/removed) are surfaced, never silently dropped.
+- **Inspect / edit**: computed-style readout, Alt+hover measuring, drag-to-nudge and style edits → `edit-overrides.json` (Ctrl/⌘+Z undo, one-click restore).
+- **Tweaks & variants**: live token editing; "save as variant" persists `prototype/variants/<name>/` + `variants-index.json` (same contract as `apply-patch.mjs --variant`), reproducible via `?variant=<name>`.
+- **Export**: browser zip download (default), File-System-Access directory export, or server-side `export/<ts>/`; includes pages ± annotations, scene trees, path boards and `board.json`.
+- **Device shells**: 手机 / 平板 / 桌面 / 网页 (mobile 390×844, tablet 834×1194, desktop/browser 1280×800) with optional bezel + status/frame bars; choice persists and travels in share links.
+- **Compare** with the original capture, side-by-side at matched scale with synced scrolling.
+- `?` lists every shortcut.
+
+## Four modes
+
+| Mode | What it does | Example prompt |
 |---|---|---|
-| 普通 | 1 | 纯净可交互原型 |
-| 产品 | 2 | 折线批注：控件功能 + 点击/长按/开关→各自响应，像产品设计稿 |
-| 设计 | 3 | Figma 式 inspect：颜色 hex/字体/尺寸/圆角/间距测量 |
-| 编辑 | 4 | 拖拽元素微调 → 导出 layout-patch 交给 agent 落回 |
-| 路径 | 5 | 完整功能路径：真机截图故事板 + 原型内逐步播放（含弹窗/安全拦截步骤） |
-| 调参 | 6 | Tweaks 面板 live 改 tokens、存变体、导出 patch |
-| 演示 | D / ▶ 按钮 | 面向观看者的自动播放：字幕、模拟弹窗、安全边界卡、总结卡；可导出 MP4/GIF |
+| **Clone** | drives Android (adb) / headless Chromium / macOS HID to capture every screen, ui-tree, recording and interaction path of an app or site | "clone the WeChat Pay flow as a design prototype" |
+| **Link** | pulls design material from Douyin/Bilibili/Xiaohongshu links or local video/images: download → frame extract → transcribe → identify screens | "rebuild the bookkeeping app shown in this Bilibili video" |
+| **Remix** | minimal-layer restyle of a cloned prototype (palette/type/motion/layout) with automatic re-validation | "keep the layout, make it dark cyberpunk with springy cards" |
+| **Export** | optional Figma MCP bridge to turn the prototype into editable hi-fi design files | "export this prototype to Figma" |
 
-画布：Ctrl+滚轮缩放 25–400%、抓手平移、适应/1:1。
+## Quality gates (why "green" here means something)
 
-## 四大模式
+Every gate is a script you can run yourself; `scripts/regress.mjs` runs all of them over every run and writes `report/regress-<ts>.md`:
 
-| 模式 | 说明 | 示例指令 |
-|---|---|---|
-| **Clone** | 自动操作 Android 手机 / 浏览器，逐页截图、录屏、记录交互路径，复刻整个应用或指定场景 | "帮我把微信支付场景的设计原型克隆出来" |
-| **Link** | 从抖音 / B站 / 小红书等链接（或本地视频/图片）提取设计素材：下载→抽帧→转录→识别页面 | "复刻这个 B站视频里展示的记账 App 设计" |
-| **Remix** | 在复刻的原型上按你的想法调整：字体、配色、风格、动效、布局，最小层修改+自动验证 | "保留布局，整体改成暗黑赛博风，卡片加弹性动效" |
-| **Export** | 可选：接入 Figma MCP 时，把原型导出为可编辑的高保真设计稿 | "把这个原型导出到 Figma" |
+- `doctor.mjs` — environment probes (adb/permissions/click channels) before anything else.
+- `qa/interact.mjs` — **clicks every control** in every view and asserts an observable change (`dead=0`).
+- `qa/inspect.mjs` — hard gates: live-views (no screenshot-as-view), placeholder-scan, asset-qa (blur/blank/truncated/collage), layout-sanity (clipped/empty-slot/broken-img), privacy-anon, paths-sanity, appicon-present, structural-critique, **ui-smoke** (shell smoke, see below).
+- `qa/ui-smoke.mjs` — clicks the *shell*: play/export-download/share/device/annotate-write/product-write/variant-write/canvas-label typography/`?chrome=0`/filter/help/code view.
+- `fidelity.mjs` / `qa/fidelity-all.mjs` — pixel diff vs source with correct view↔capture pairing (`knowledge/source-map.json`), plus style-parity.
+- `qa/critique.mjs` — VLM structural critique on suspicious views (pixel metrics are structurally blind on sparse light UIs).
+- `qa/privacy.mjs` — real names/faces/PII must be anonymized or genimg-replaced; brand assets require `knowledge/consent.json`.
+- `eval.mjs` — aggregate score (fidelity/interactivity/perf/ux/stability/privacy).
 
-## 核心能力
-
-- **自动捕获**：截图 + 控件树 + 录屏 + 动作日志，权限弹窗自动处理，支付/密码/验证码强制暂停等人确认
-- **结构化资产**：屏幕按原子功能/场景/旅程组织，输出 `graph.json`（页面状态图）、`tokens.css`（色彩/字体/间距）、`DESIGN.md`（设计理念）
-- **可交互原型**：纯静态 HTML + Tailwind，浏览器直接打开即可点击交互，屏幕间按真实路径跳转
-- **规格驱动**：每页一份 `spec.yaml` 布局规格，改色/换字/加动效只动最小层，支持增量修改与回滚
-- **零额外消费**：除你已有的大模型 API 外，全部使用开源免费工具
-
-## 安装
-
-适用于所有支持 Agent Skills 的客户端（opencode / Claude Code / Codex / Qoder / Qwen Code / Trae 等）：
+## Install
 
 ```bash
-# 一条命令安装到你的 agent（按需选择 -a 参数，可多个）
-npx skills add <owner>/design-clone -a opencode
-npx skills add <owner>/design-clone -a claude-code
-npx skills add <owner>/design-clone -a codex
-npx skills add <owner>/design-clone -a qoder -a qwen-code -a trae
-
-# 全局安装
-npx skills add <owner>/design-clone -g -a opencode
-```
-
-WorkBuddy 等无 CLI 的平台：下载 `dist/design-clone.zip`，在"添加技能 → 上传技能"中导入。
-
-安装后在 agent 里说一句 **"运行 design-clone doctor"** 完成环境自检与依赖初始化。
-
-## 平台支持
-
-| 平台 | 捕获方式 | 状态 |
-|---|---|---|
-| Web 应用 | Playwright（截图/录屏/DOM 快照） | ✅ |
-| Android | adb + Midscene CLI（截图/控件树/输入/录屏） | ✅ |
-| 抖音 | web-sim（登录 profile 持久化 + aweme API 拦截 + 轮播翻页） | ✅ |
-| B站 | web-sim（__playinfo__ dash 流 + ffmpeg 合流；CLI 被 412 风控） | ✅ |
-| 小红书 | xhs.mjs（__INITIAL_STATE__ 匿名可取图文原图/视频） | ✅ |
-| YouTube | intent 梯级 L1 yt-dlp（shorts/长视频） | ✅ |
-| TikTok | L1 yt-dlp 视频；photo 帖 L3 headless/L5 真机横滑 | ✅ |
-| Facebook | 系统代理感知 + L2 og 提取（公开帖免登）；登录帖 L3 | ✅ |
-| 手机 app 深链 | L5：am start + 横滑 + 长按保存 + 关键区域裁剪；无网/无设备自动回落 | ✅ |
-| iOS | 模拟器（simctl）优先；真机引导配置 WebDriverAgent | 🚧 |
-| macOS / Windows | Midscene computer / screencapture / ffmpeg | 🚧 |
-
-## 使用示例
-
-```
-帮我把 Hacker News 的设计原型克隆出来
-克隆小红书"发布笔记"场景的设计原型，只要这条路径
-这个抖音视频里展示了一个很好的音乐播放器设计，帮我复刻：https://v.douyin.com/xxxx
-在复刻的基础上，主色换成墨绿，字体改成衬线体，整体更杂志感一些
-```
-
-## 依赖（全部免费，doctor 会自动检查）
-
-必需：Node.js ≥ 20.19、npm
-按需：adb（Android）、Playwright Chromium、ffmpeg、lux、yt-dlp、you-get、scrcpy
-
-## 致谢与许可溯源
-
-本 skill 的工艺借鉴自以下 MIT 开源项目（借鉴方法论与模式，代码为自研实现）：
-- [baoyu-design](https://github.com/JimLiu/baoyu-design)（Claude Design 封装）— 读真实样式表、设计系统绑定契约、Tweaks、starter components
-- [huashu-design](https://github.com/alchaincyf/huashu-design) — 品牌资产五步协议、三逻辑变体顾问、五维评审、反 slop 细则、HTML→视频导出
-- [plannotator/effective-html](https://github.com/plannotator/effective-html) — 保真度分模、状态先列后建、a11y 交互完整性、handoff 契约
-- 另有 laowangba-pmprototype-skill（规格 schema）、open-design（预设三件套）、Design2Code（评分）等，见 `docs/RESEARCH.md`
-
-## 许可与合规
-
-- 代码：MIT
-- 捕获的应用截图/视频版权归原作者与平台所有，**仅限个人学习与内部设计参考**，不得将复刻产物冒充原创发布或商用
-- 内置安全红线：不自动执行支付、不输入密码、遇验证码暂停
-
-## Quick Start（一条链）
-
-```bash
-# 1) 依赖
+# any Agent-Skills client
+npx skills add tt-a1i/design-clone
+# or clone / or dist/*.zip for CLI-less platforms
+git clone https://github.com/tt-a1i/design-clone && cd design-clone
 cd skills/design-clone/scripts && npm install && npx playwright install chromium
-node doctor.mjs                      # 环境探针（adb/权限/点击通道）
+node doctor.mjs
+```
 
-# 2) 抓一个网站并起服务
-node web/capture.mjs --url https://news.ycombinator.com --out ../../demo-run/capture --max-pages 5 --assets 6
-# 3) 生成原型后
-node serve.mjs ../../demo-run --port 4210
+## Quick start (one command)
+
+```bash
+# website → prototype → gates → local server
+node skills/design-clone/scripts/clone.mjs --target hn --platform web \
+  --url https://news.ycombinator.com --serve
+
+# or step by step
+node skills/design-clone/scripts/web/capture.mjs --url https://news.ycombinator.com \
+  --out ./demo-run/capture --max-pages 5 --assets 6
+node skills/design-clone/scripts/serve.mjs ./demo-run --port 4210
 open http://localhost:4210/prototype/
 
-# 4) 质量门
-node qa/inspect.mjs http://localhost:4210 <run> --run ../../demo-run
-node eval/eval.mjs --run ../../demo-run --base http://localhost:4210
+# gates
+node skills/design-clone/scripts/qa/inspect.mjs http://localhost:4210 hn --run ./demo-run
+node skills/design-clone/scripts/qa/ui-smoke.mjs --run ./demo-run --base http://localhost:4210
+node skills/design-clone/scripts/eval/eval.mjs --run ./demo-run --base http://localhost:4210
 ```
 
-## English Summary
+GUI capture of a real device/app requires an explicit consent receipt (`knowledge/consent.json`) — see [safety-rules](skills/design-clone/references/safety-rules.md).
 
-design-clone is a cross-agent skill that captures real apps/websites (Android via adb, web via headless Chromium, desktop via macOS HID) and rebuilds them as **interactive local web prototypes** with design tokens, annotation/inspect/path-playback modes, and a strict quality gate stack:
-- **live-views**: delivered views must be real HTML controls (screenshot-as-view is hard-blocked);
-- **placeholder-scan / asset-qa / asset-refs / icon-render**: assets must be real (source originals > crops > genimg), never blurry/blank/truncated/missing;
-- **fidelity gate**: prototype screenshot vs source diff ratio thresholds (app ≤0.20 / web ≤0.15);
- - **parity (M23)**: per-control & per-interaction coverage vs source ui-tree (android XML / web JSON / manual inventory fallback), reported transparently in EVAL-REPORT;
-- **privacy four lines**: captures stay local, visual assets owner-consented, personal text anonymized, handoff declares it.
-Install: `npx skills add <this-repo>` (or git clone / dist zip for CLI-less platforms).
+## Privacy & IP boundary
+
+- Captures never leave your machine; the local server binds loopback only and write APIs are whitelisted.
+- Personal text is anonymized and personal faces are replaced with generated, style-matched fictional portraits (`knowledge/privacy.json`, hard-gated).
+- Brand assets (logos/icons/illustrations) are copied **only from your own captures** and only with a consent receipt; generated runs declare provenance in `assets-manifest.json`.
+- Cloned output must not be published or sold as original work. This repo ships **no third-party app screenshots, logos or fonts** — `design-clone-runs/` is gitignored and the built-in demo target is self-authored.
+- Details: [PRIVACY.md](PRIVACY.md), [docs/PROVENANCE.md](docs/PROVENANCE.md), [SECURITY.md](SECURITY.md).
+
+## Repo layout & docs
+
+- `skills/design-clone/` — the skill (SKILL.md + scripts/ + references/ + schema/ + presets/ + templates/)
+- `docs/` — [VISION](docs/VISION.md) (the living PRD for this repo), [DECISIONS](docs/DECISIONS.md) (ADRs), [RESEARCH](docs/RESEARCH.md), [LESSONS](docs/LESSONS.md) (127 field lessons), [ROADMAP](docs/ROADMAP.md)
+- `dist/` — CI-packaged zip for CLI-less platforms (never hand-edited)
+
+English is the reference language for code comments and docs; [README.zh.md](README.zh.md) is the Chinese edition.
+
+## Try it without touching anyone's IP
+
+`demo/` ships a self-authored sample app (Orbit Tasks, original design, no third-party assets):
+
+```bash
+python3 -m http.server 8099 --directory demo
+node skills/design-clone/scripts/clone.mjs --target orbit --platform web --url http://127.0.0.1:8099/ --serve
+```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Short version: read `docs/VISION.md` + `docs/DECISIONS.md` first, keep `SKILL.md` frontmatter to the 6 portable fields, scripts must be bare-bash-invocable with zero paid/GPU deps, and every workflow change lands with its gate + docs update in the same commit.
