@@ -14,11 +14,17 @@ if (!fs.existsSync(P)) { out.warn.push("no-paths.json"); }
 else {
   const j = JSON.parse(fs.readFileSync(P, "utf8"));
   const N = Object.keys(j.nodes || {}).length;
-  const countTree = (t) => { if (!t) return 0; let c = 1, d = 0; const walk = (n, dep) => { d = Math.max(d, dep); n.children.forEach((k) => { c++; walk(k.child, dep + 1); }); }; walk(t, 0); return { c, d }; };
+  // M45：giant-chain 只在该链**主要由 module/nav 边**构成时才硬判（那才是"导航被当路径"）；
+  // 线性内容流（视频/教程型 demo，边全是 task）覆盖全图是正常形态，降为 warn 供人工确认（dy-qa3 误判修正）
+  const countTree = (t) => { let c = 1, d = 0; const roles = []; const walk = (n, dep) => { d = Math.max(d, dep); (n.children || []).forEach((k) => { c++; roles.push((j.edges[k.edge] || {}).role); walk(k.child, dep + 1); }); }; walk(t, 0); return { c, d, roles }; };
   for (const r of j.roots || []) {
     const pn = j.perNode[r] || {};
-    const { c, d } = countTree(pn.tree) || { c: 0, d: 0 };
-    if (N > 3 && c > Math.max(3, N * 0.6) && d > 4) out.hard.push(`giant-chain@${r}(覆盖${c}/${N}深${d}：导航被当路径)`);
+    const { c, d, roles } = countTree(pn.tree || { children: [] });
+    const navFrac = roles.length ? roles.filter((x) => x === "module").length / roles.length : 0;
+    if (N > 3 && c > Math.max(3, N * 0.6) && d > 4) {
+      if (navFrac >= 0.5) out.hard.push(`giant-chain@${r}(覆盖${c}/${N}深${d}：导航被当路径)`);
+      else out.warn.push(`long-linear-chain@${r}(覆盖${c}/${N}深${d}：线性内容流，人工确认非导航误判)`);
+    }
     const contentPaths = (pn.paths || []).filter((p) => (Array.isArray(p) ? p : p.edges || []).some((ei) => { const e = j.edges[ei]; return e && e.role !== "module" && e.role !== "back"; }));
     if (!contentPaths.length && !((pn.nav || []).length)) out.warn.push(`isolated-root@${r}`);
     for (const p of pn.paths || []) {

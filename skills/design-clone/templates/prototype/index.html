@@ -1,10 +1,11 @@
 <!doctype html>
 <!--
-  design-clone 原型外壳 inspector v4（M14：OD 借鉴 + 17 修复）。
+  design-clone 原型外壳 inspector v5（M44k）。
   IA：左 rail（页面|场景）；右「详情」单看板；底栏图标 pill（阅读|编辑|标注|边框|文字|播放|撤销|还原）。
   URL 状态：#pages/<id> | #scene/<tree|path>/<node>[/<pathIdx>]，popstate 双向。
-  顶栏：预览|代码 · 设备下拉 · 分享/截图/对照/主题/演示 · 导出(分组)。
+  顶栏：预览|代码 · 设备下拉（手机/平板/桌面/网页，选项由 inspector.js DEVICES 单一真源渲染）· 分享/截图/对照/主题/演示 · 导出(分组)。
   边框默认关；开=设备 bezel + 状态栏（iOS 灵动岛 / Android 打孔）。
+  快捷键：1 页面 · 2 场景 · E 编辑 · A 标注 · D 演示 · H 抓手 · F 边框 · P 播放 · 0 1:1 · +/- 缩放 · ? 帮助。
 -->
 <html lang="zh-CN">
 <head>
@@ -13,7 +14,9 @@
 <title>__TITLE__ — design-clone 原型</title>
 <link rel="stylesheet" href="../knowledge/tokens.css">
 <link rel="stylesheet" href="inspector.css">
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<!-- M45：utility 子集本地编译（scripts/gen/utility-css.mjs），移除 @tailwindcss/browser CDN ——
+     原型离线/file:// / zip 分发不再依赖网络，也无第三方运行时 -->
+<link rel="stylesheet" href="utilities.css">
 <style>
   __VIEW_CSS__
 </style>
@@ -29,15 +32,13 @@
     <button data-vm="code" title="代码"><svg viewBox="0 0 24 24"><path d="m8 8-5 4 5 4"/><path d="m16 8 5 4-5 4"/></svg><span>代码</span></button>
   </div>
   <div id="dc-device-wrap">
-    <button id="dc-device-btn" class="dc-tb" title="设备类型（覆盖 platform.json）"><span id="dc-device-label">设备</span> ▾</button>
-    <div id="dc-device-dd" hidden>
-      <button data-shell="c_mobile">手机</button>
-      <button data-shell="c_tablet">平板</button>
-      <button data-shell="c_browser">浏览器窗</button>
-      <button data-shell="c_desktop">桌面窗</button>
-    </div>
+    <button id="dc-device-btn" class="dc-tb" title="设备类型（覆盖 platform.json）" aria-haspopup="true" aria-expanded="false"><span id="dc-device-label">设备</span> ▾</button>
+    <div id="dc-device-dd" hidden role="menu"></div>
   </div>
-  <button id="dc-share-btn" class="dc-ic" title="分享：复制当前状态链接"><svg viewBox="0 0 24 24"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 6-4-4-4 4"/><path d="M12 2v14"/></svg></button>
+  <div id="dc-share-wrap">
+    <button id="dc-share-btn" class="dc-ic" title="分享：状态链接 / 纯净版 / 卡片版 / 全屏演示" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 6-4-4-4 4"/><path d="M12 2v14"/></svg></button>
+    <div id="dc-share-dd" hidden role="menu"></div>
+  </div>
   <button id="dc-shot-btn" class="dc-ic" title="截图：导出当前页 PNG"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></button>
   <button id="dc-compare-btn" class="dc-ic" title="对照原截图"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3"/><path d="M16 3h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3"/><path d="M12 3v18"/></svg></button>
   <button id="dc-theme" class="dc-ic" title="明暗主题"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></svg></button>
@@ -57,6 +58,9 @@
   </nav>
 
   <aside id="dc-left">
+    <div id="dc-left-search">
+      <input id="dc-q" class="dc-inp" type="search" placeholder="筛选页面 / 场景…" aria-label="筛选页面或场景" autocomplete="off">
+    </div>
     <div id="dc-left-pages">
       <div class="dc-sec">页面 PAGES</div>
       <div id="dc-pages"></div>
@@ -101,10 +105,8 @@
   <button id="dc-ann-toggle" title="标注 A"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="cnt"></span><span class="lb">标注</span></button>
   <button id="dc-frame-toggle" title="设备边框（默认关）"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg><span class="lb">边框</span></button>
   <button id="dc-labels-toggle" title="按钮文字开/关"><svg viewBox="0 0 24 24"><path d="M4 7V5h16v2"/><path d="M12 5v14"/><path d="M9 19h6"/></svg><span class="lb">文字</span></button>
-  <span id="bb-scene" hidden>
-    <span class="bb-sep"></span>
-    <button id="dc-play" title="播放所选路径"><svg viewBox="0 0 24 24"><path d="m6 4 14 8-14 8z"/></svg><span class="lb">播放</span></button>
-  </span>
+  <span class="bb-sep"></span>
+  <button id="dc-play" title="播放路径 P（页面模式=从当前页起播，场景模式=播所选路径）"><svg viewBox="0 0 24 24"><path d="m6 4 14 8-14 8z"/></svg><span class="lb">播放</span></button>
   <span class="bb-sep"></span>
   <button id="dc-undo" title="撤销 Ctrl+Z"><svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg></button>
   <button id="dc-restore" title="一键还原到克隆原件"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
@@ -120,6 +122,7 @@
 <div id="dc-modal-root"></div>
 
 <script>window.DC = __DC_JSON__;</script>
+<script src="zipstore.js"></script>
 <script src="runtime.js"></script>
 <script src="inspector.js"></script>
 </body>

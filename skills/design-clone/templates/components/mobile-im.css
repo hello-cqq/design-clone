@@ -5,9 +5,9 @@
 .mi-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--color-surface, #fff); border-top: 1px solid var(--color-border, #e5e5e5); cursor: pointer; }
 .mi-row:first-of-type { border-top: 0; }
 .mi-ava { width: 48px; height: 48px; border-radius: 8px; display: grid; place-items: center; color: #fff; font-size: 16px; font-weight: 600; flex: none; }
-.mi-row .main { flex: 1; min-width: 0; }
-.mi-row .name { font-size: 16px; }
-.mi-row .sub { margin-top: 3px; font-size: 13px; color: var(--color-text-secondary, #767676); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mi-row .main { flex: 1; min-width: 0; display: block; }
+.mi-row .name { display: block; font-size: 16px; }
+.mi-row .sub { display: block; margin-top: 3px; font-size: 13px; color: var(--color-text-secondary, #767676); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mi-row .time { font-size: 12px; color: var(--color-text-secondary, #767676); }
 .mi-bubble-in, .mi-bubble-out { max-width: 72%; padding: 10px 12px; border-radius: 10px; font-size: 15px; line-height: 1.5; }
 .mi-bubble-in { background: var(--color-surface, #fff); }

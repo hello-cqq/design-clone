@@ -2,7 +2,7 @@
 /**
  * 打包 skill 主体为 dist/design-clone.zip（无 CLI 平台兜底，AGENTS.md 既定）。
  * 用法: node package.mjs [--out dist/design-clone.zip]
- * 排除: node_modules / 缓存 / 运行产物。
+ * 排除: node_modules / 缓存 / 运行产物 / lint 拼接产物 inspector.built.js / 单测 tests。
  */
 import { execSync } from "node:child_process";
 import fs from "node:fs";
@@ -17,5 +17,5 @@ if (args.includes("--help") || args.includes("-h")) {
 }
 const out = path.resolve(args[args.indexOf("--out") + 1] || path.join(SKILL, "../../dist/design-clone.zip"));
 fs.mkdirSync(path.dirname(out), { recursive: true });
-execSync(`cd "${SKILL}" && zip -r -q "${out}" SKILL.md references schema presets templates scripts -x "scripts/node_modules/*" -x "*/.cache/*"`, { stdio: "inherit" });
+execSync(`cd "${SKILL}" && zip -r -q "${out}" SKILL.md references schema presets templates scripts -x "scripts/node_modules/*" -x "*/.cache/*" -x "templates/prototype/inspector.built.js" -x "scripts/tests/*"`, { stdio: "inherit" });
 console.log("✅", out, fs.statSync(out).size, "bytes");
