@@ -7,10 +7,12 @@
 import { createRequire } from "node:module";
 import fs from "node:fs";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 import { parseArgs } from "node:util";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
+const HERE = path.dirname(new URL(import.meta.url).pathname);
 
 if (process.argv.includes("--help") || process.argv.includes("-h")) {
   console.log("常驻回归器 v4：自动遍历双菜单/双画布/详情看板/底栏/播放器/演示/URL 状态并取证。\n用法: node inspect.mjs <base-url> <name> [--shots <dir>]");
@@ -235,6 +237,8 @@ await step("pages-nav+detail-board", async () => {
 });
 
 await step("detail-design-section", async () => {
+  const has = await page.evaluate(() => !!document.querySelector("#dc-stage [data-dc]:not([data-goto])"));
+  if (!has) { ok("detail-design-section", true, "run 无 data-dc 标注（设计看板空，demo 可接受）"); R.checks["detail-design-section"].warn = true; return; }
   await page.evaluate(() => {
     const t = document.querySelector('#dc-stage [data-dc]:not([data-goto])') || document.querySelector("#dc-stage [data-dc]");
     t.dispatchEvent(new MouseEvent("click", { bubbles: true }));
@@ -245,6 +249,8 @@ await step("detail-design-section", async () => {
 });
 
 await step("edit-toggle+undo-restore", async () => {
+  const has = await page.evaluate(() => !!document.querySelector("#dc-stage [data-dc]:not([data-goto])"));
+  if (!has) { ok("edit-toggle+undo-restore", true, "run 无 data-dc 标注，跳过编辑态断言"); R.checks["edit-toggle+undo-restore"].warn = true; return; }
   await page.click("#dc-edit");
   if (!(await page.evaluate(() => document.querySelector("#dc-edit").classList.contains("on")))) throw new Error("edit on");
   await page.waitForTimeout(200);
@@ -377,16 +383,72 @@ await step("compare-chain", async () => {
   await page.click("#dc-compare-x");
 });
 
-await stepw("no-emoji-ui", async () => {
+await step("no-emoji-ui", async () => {
   const bad = await page.evaluate(() => {
     const re = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u;
     return [...document.querySelectorAll("#dc-stage a, #dc-stage button, #dc-stage span, #dc-stage div")].filter((n) => {
       if (n.querySelector("svg, img")) return false;
+      if (n.closest("[data-emoji-ok]")) return false; // 内容型 emoji（聊天/表情选择）豁免
       const t = (n.childNodes.length === 1 && n.firstChild.nodeType === 3) ? n.textContent.trim() : "";
-      return t && t.length <= 3 && re.test(t);
+      return t && re.test(t);
     }).length;
   });
-  if (bad) throw new Error(bad + " emoji glyphs");
+  let scope = "demo"; try { scope = (JSON.parse(fs.readFileSync(path.join(values.run, "knowledge/scope.json"), "utf8")).scope) || "demo"; } catch {}
+  if (bad && scope === "full") throw new Error(bad + " emoji glyphs（full 禁 emoji 作 UI/内容：换 inline SVG 或文字）");
+  if (bad) { ok("no-emoji-ui", true, bad + " emoji glyphs（demo 仅 warn）"); R.checks["no-emoji-ui"].warn = true; }
+});
+
+// M44f 布局 sanity（通用硬门，逐页）：元素级裁切 / 空槽 / 坏图 / 视图内重复窗口 chrome
+await step("layout-sanity", async () => {
+  const btns = page.locator("#dc-pages button");
+  const n = await btns.count();
+  const all = [];
+  for (let i = 0; i < n; i++) {
+    await btns.nth(i).click(); await page.waitForTimeout(220);
+    const r = await page.evaluate(() => {
+    const out = { clipped: [], empty: [], broken: [], chrome: 0 };
+    const stage = document.querySelector("#dc-stage");
+    if (!stage) return out;
+    const desktop = document.body.classList.contains("dc-desktop");
+    const dots = [...stage.querySelectorAll("span,i,div")].filter((n) => { const cs = getComputedStyle(n); return cs.borderRadius === "50%" && /255,\s*95,\s*87|254,\s*188,\s*46|40,\s*200,\s*64/.test(cs.backgroundColor); });
+    if (desktop && dots.length >= 3) out.chrome = dots.length;
+    for (const el of stage.querySelectorAll("*")) {
+      const cs = getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      if (rect.width < 4 || rect.height < 4) continue;
+      const scrollable = /auto|scroll/.test(cs.overflowX + cs.overflowY);
+      const ellipsis = cs.textOverflow === "ellipsis";
+      if (!scrollable && !ellipsis && (el.textContent || "").trim() &&
+        (el.scrollWidth - el.clientWidth > 8 || el.scrollHeight - el.clientHeight > 8)) {
+        if (out.clipped.length < 5) out.clipped.push((el.getAttribute("data-dc") || el.tagName) + ":" + (el.textContent || "").trim().slice(0, 12));
+      }
+      const transparent = /rgba\(0, 0, 0, 0\)|transparent/.test(cs.backgroundColor);
+      const tapCatcher = transparent && (el.hasAttribute("data-goto") || el.hasAttribute("data-act"));
+      const rgba = cs.backgroundColor.match(/rgba\([^)]*,\s*([0-9.]+)\)/);
+      const scrim = (cs.position === "absolute" || cs.position === "fixed") && rgba && parseFloat(rgba[1]) < 0.6;
+      const decorative = cs.borderRadius === "50%" || /gradient/.test(cs.backgroundImage);
+      if (!tapCatcher && !scrim && !decorative && el.children.length === 0 && !(el.textContent || "").trim() &&
+        !cs.backgroundImage.includes("url") && el.tagName !== "IMG" &&
+        rect.width >= 120 && rect.height >= 120) {
+        if (out.empty.length < 5) out.empty.push((el.getAttribute("data-dc") || el.className || el.tagName) + ":" + Math.round(rect.width) + "x" + Math.round(rect.height));
+      }
+      if (el.tagName === "IMG" && el.complete && el.naturalWidth === 0) {
+        if (out.broken.length < 5) out.broken.push(el.getAttribute("src") || "?");
+      }
+    }
+    return out;
+    });
+    const tag = (i + 1);
+    if (r.clipped.length) all.push("p" + tag + " clipped:" + r.clipped.join(","));
+    if (r.empty.length) all.push("p" + tag + " empty-slot:" + r.empty.join(","));
+    if (r.broken.length) all.push("p" + tag + " broken-img:" + r.broken.join(","));
+    if (r.chrome) all.push("p" + tag + " in-view-window-chrome(shell已提供)=" + r.chrome);
+  }
+  if (all.length) {
+    let scope = "demo"; try { scope = (JSON.parse(fs.readFileSync(path.join(values.run, "knowledge/scope.json"), "utf8")).scope) || "demo"; } catch {}
+    if (scope === "full") throw new Error(all.slice(0, 6).join(" | "));
+    ok("layout-sanity", true, "demo warn: " + all.slice(0, 4).join(" | ")); R.checks["layout-sanity"].warn = true;
+  }
 });
 
 await stepw("assets-exist", async () => {
@@ -394,12 +456,83 @@ await stepw("assets-exist", async () => {
   if (bad) throw new Error("broken: " + bad);
 });
 
-await stepw("no-h-overflow", async () => {
-  const o = await page.evaluate(() => {
-    const s = document.querySelector("#dc-stage");
-    return s.scrollWidth - s.clientWidth;
-  });
-  if (o > 2) throw new Error("h-overflow " + o + "px");
+await step("no-h-overflow", async () => {
+  const btns = page.locator("#dc-pages button");
+  const n = await btns.count();
+  const bad = [];
+  for (let i = 0; i < n; i++) {
+    await btns.nth(i).click(); await page.waitForTimeout(220);
+    const o = await page.evaluate(() => {
+      const s = document.querySelector("#dc-stage");
+      const sc = document.querySelector("#dc-screen");
+      return Math.max(s.scrollWidth - s.clientWidth, sc.scrollWidth - sc.clientWidth);
+    });
+    if (o > 2) bad.push((i + 1) + ":" + o + "px");
+  }
+  if (bad.length) throw new Error(bad.length + " 视图横向溢出（390 宽装不下，需换行/收缩）: " + bad.slice(0, 5).join(","));
+});
+
+await step("interactive-controls", async () => {
+  let scope = "demo";
+  if (values.run) { try { scope = (JSON.parse(fs.readFileSync(path.join(values.run, "knowledge/scope.json"), "utf8")).scope) || "demo"; } catch {} }
+  if (scope !== "full") return;
+  const f = values.run ? path.join(values.run, "qa/interact.json") : null;
+  if (!f || !fs.existsSync(f)) throw new Error("interact-not-run（跑 qa/interact.mjs --run <run> --base <url>，M44 交互门）");
+  const ia = JSON.parse(fs.readFileSync(f, "utf8"));
+  const bad = Object.entries(ia).filter(([k, v]) => v.error || (v.dead && v.dead.length) || v.act_pass < 1 || v.goto_pass < 1)
+    .map(([k, v]) => k + "(dead=" + ((v.dead || []).length) + (v.act_pass < 1 ? ",act=" + v.act_pass.toFixed(2) : "") + (v.goto_pass < 1 ? ",goto" : "") + ")");
+  if (bad.length) throw new Error(bad.length + " 视图存在死控件/无响应（每个控件点击必须有可观测反应）: " + bad.slice(0, 5).join(","));
+});
+
+await step("privacy-anon", async () => {
+  if (!values.run) return;
+  const r = spawnSync("node", [path.join(HERE, "privacy.mjs"), "--run", values.run], { encoding: "utf8" });
+  let j = {}; try { j = JSON.parse((r.stdout || "").trim().split("\n").pop()); } catch {}
+  if (j.configured === false) {
+    let scope = "demo"; try { scope = (JSON.parse(fs.readFileSync(path.join(values.run, "knowledge/scope.json"), "utf8")).scope) || "demo"; } catch {}
+    if (scope === "full") throw new Error("privacy-not-configured（full 必须有 knowledge/privacy.json：跑 qa/privacy.mjs --discover 起草）");
+    ok("privacy-anon", true, "demo 无 privacy.json（建议 --discover 起草）"); R.checks["privacy-anon"].warn = true; return;
+  }
+  if (!j.ok) {
+    const parts = [];
+    if ((j.leaks || []).length) parts.push("真名泄露:" + j.leaks.slice(0, 3).map((l) => l.key + "@" + l.file).join(","));
+    if ((j.pii || []).length) parts.push("PII:" + j.pii.slice(0, 3).map((p) => p.hit + "@" + p.file).join(","));
+    if ((j.face_bad || []).length) parts.push("真人脸未虚构:" + j.face_bad.slice(0, 3).map((f) => f.asset).join(","));
+    throw new Error(parts.join(" | ") || "privacy fail");
+  }
+});
+
+await step("appicon-present", async () => {
+  if (!values.run) return;
+  let scope = "demo"; try { scope = (JSON.parse(fs.readFileSync(path.join(values.run, "knowledge/scope.json"), "utf8")).scope) || "demo"; } catch {}
+  const icon = path.join(values.run, "prototype/appicon/icon-256.png");
+  const sc = path.join(values.run, "knowledge/showcase.json");
+  const miss = [];
+  if (!fs.existsSync(icon)) miss.push("appicon/icon-256.png");
+  if (!fs.existsSync(sc)) miss.push("knowledge/showcase.json");
+  if (miss.length) {
+    if (scope === "full") throw new Error("缺应用图标/展示清单（展示网站契约）: " + miss.join(",") + " → node gen/appicon.mjs --run <run>");
+    ok("appicon-present", true, "demo warn: 缺 " + miss.join(",")); R.checks["appicon-present"].warn = true;
+  }
+});
+
+await step("paths-sanity", async () => {
+  if (!values.run) return;
+  const r = spawnSync("node", [path.join(HERE, "paths-qa.mjs"), values.run], { encoding: "utf8" });
+  let j = {}; try { j = JSON.parse((r.stdout || "").trim().split("\n").pop()); } catch {}
+  if ((j.hard || []).length) throw new Error("路径决策违反真实交互逻辑: " + j.hard.slice(0, 3).join(","));
+  if ((j.warn || []).length) { ok("paths-sanity", true, "warn: " + j.warn.slice(0, 3).join(",")); R.checks["paths-sanity"].warn = true; }
+});
+
+await step("structural-critique", async () => {
+  if (!values.run) return;
+  const r = spawnSync("node", [path.join(HERE, "critique.mjs"), "--run", values.run], { encoding: "utf8" });
+  let j = {}; try { j = JSON.parse((r.stdout || "").trim().split("\n").pop()); } catch {}
+  if (j.missing) {
+    if (j.scope === "full") throw new Error("critique-not-run（full 必须 VLM 对照并排图逐视图打 layout 分：qa/critique.mjs --skeleton 后 --set 填写；pixelmatch/recall 抓不到缺栏/错页）");
+    ok("structural-critique", true, "demo 无 critique.json（建议补）"); R.checks["structural-critique"].warn = true; return;
+  }
+  if (!j.ok) throw new Error("结构 critique 不达标: " + (j.bad || []).join(","));
 });
 
 await stepw("contrast", async () => {

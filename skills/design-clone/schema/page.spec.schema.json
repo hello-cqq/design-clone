@@ -146,16 +146,34 @@
               "required": ["kind"],
               "properties": {
                 "kind": {
-                  "enum": ["button", "input", "select", "switch", "checkbox", "radio", "slider",
-                           "tab", "tag", "badge", "avatar", "icon", "image", "video", "text",
-                           "list_item", "grid_item", "card", "kpi_card", "table_column", "divider", "progress"]
+                  "enum": ["button", "icon_button", "fab", "input", "textarea", "select", "dropdown", "picker", "switch", "checkbox", "radio", "slider", "stepper",
+                           "tab", "segment", "breadcrumb", "accordion", "tag", "badge", "avatar", "icon", "image", "video", "text",
+                           "list_item", "grid_item", "card", "kpi_card", "table_column", "divider", "progress", "sheet", "dialog", "toast"]
                 },
                 "label": { "type": "string" },
                 "variant": { "enum": ["primary", "secondary", "ghost", "danger", "link"] },
                 "width": { "type": "string" },
                 "data_key": { "type": "string" },
                 "sample_value": {},
-                "visible_in_states": { "type": "array", "items": { "type": "string" } }
+                "visible_in_states": { "type": "array", "items": { "type": "string" } },
+                "interaction": {
+                  "description": "交互契约（M44）：每个可点控件必须声明响应，编译为 data-act/data-goto，杜绝死按钮。act=goto 用 to；其余见 runtime.js 控件目录。",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "act": { "enum": ["goto", "back", "toggle", "checkbox", "radio", "select", "select-opt", "accordion", "tab", "sheet", "dialog", "toast", "step", "slider", "input", "noop"] },
+                    "to": { "type": "string", "description": "act=goto/back 的目标视图 id；或 placeholder:说明（范围外/安全边界）" },
+                    "target": { "type": "string", "description": "accordion/step/slider/input 作用的元素选择器（同视图内）" },
+                    "group": { "type": "string", "description": "radio/tab 的互斥分组名" },
+                    "tab": { "type": "string", "description": "tab 对应面板名（data-tab-panel）" },
+                    "msg": { "type": "string", "description": "toast/noop 文案" },
+                    "title": { "type": "string", "description": "sheet/dialog 标题" },
+                    "body": { "type": "string", "description": "dialog 正文" },
+                    "items": { "type": "string", "description": "sheet 选项，竖线分隔，如 赞|评论|转发" },
+                    "dir": { "type": "integer", "enum": [-1, 1], "description": "step 方向" },
+                    "step": { "type": "number", "description": "step 步长" }
+                  }
+                }
               }
             }
           }

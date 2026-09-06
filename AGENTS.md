@@ -28,6 +28,10 @@
 ```bash
 node skills/design-clone/scripts/doctor.mjs
 node skills/design-clone/scripts/web/capture.mjs --url https://news.ycombinator.com --out /tmp/dc-test --max-pages 2
+# 一条命令编排（抓取→可交互原型→四门→起服务）：
+node skills/design-clone/scripts/clone.mjs --target <名> --platform web --url <网址> --serve
+# 交互门（每控件点击必须有反应，dead=0）：
+node skills/design-clone/scripts/qa/interact.mjs --run <run目录> --base http://localhost:4200
 ```
 
 ## 技术选型（已定稿）

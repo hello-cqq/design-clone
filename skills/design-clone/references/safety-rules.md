@@ -77,9 +77,20 @@
 
 ## 10. 隐私分层（M17）
 
-复刻产物的隐私四防线（细节见 completeness-protocol §9）：
+复刻产物的隐私五防线（细节见 completeness-protocol §9）：
 1. capture 原图仅本机；2. pixel 资产必 mask（img/mask.mjs + privacy-rects.json）；
-3. 文本全虚构 + privacy-scan 清零；4. handoff 声明匿名化。
-3b. 视觉资产（M19）：所有者 run 默认**真视觉+文本匿名**（头像/配图/图标用 capture 真图且过 asset-qa；昵称/ID/聊天文字仍虚构或打码）；他人/第三方 run 用真视觉资产前必须询问授权；用户选虚构人脸时 genimg 替代。
+3. 文本全虚构 + privacy-scan 清零；4. handoff 声明匿名化；
+5. **M44c 隐私门 `qa/privacy.mjs`（硬）**：每 run `knowledge/privacy.json` 声明
+   `anon_map{真:假}` / `face_assets` / `keep_assets` / `keep_brands`；prototype 出现任一真键或 PII 正则即 fail；
+   `face_assets` 里任何资产 provenance（`prototype/assets-manifest.json`）非 `genimg` 即 fail。
+3b. 视觉资产（M44c 收紧）：**个人真人脸/真人照片一律 genimg 虚构替换**（同名覆盖，含群成员/联系人/owner 头像与封面）；
+   官方/系统头像与商家/品牌素材可保留真裁剪（进 keep_assets/keep_brands）。
+   姓名→可爱假名，**称呼（爸/姐/妈妈/家）保留**；账号/ID/密码/手机号/SSID 一律不真实展示。
+   素材溯源：extract-assets/genimg 自动写 assets-manifest.json；头像类不得手猜 bbox（tree-bbox 或 genimg）。
+   拼贴/多主体头像（裁到照片墙）由 asset-qa collage 检测硬阻断。
 群设置/好友设置/联系人卡片等含联系人真实信息页：允许捕获（用户授权），
-但**截屏后立即生成 mask 版资产**，views 只引用 mask 版。
+但**views 只引用虚构化资产**（genimg 头像 + 假名），不引用真人脸/真名。
+
+**营销素材豁免（M44f）**：公开营销/电商页自带的 stock 模特图（如云厂商 hero 演示图）属第三方公开商业素材，经用户逐次批准后可保留；须在 run 的 knowledge/privacy.json 写 exemptions[{asset,kind:"marketing-stock-photos",reason,approved}] 备查。个人自拍/联系人脸/聊天记录脸不在此豁免内，仍须 genimg 虚构。
+
+**生图内容安全（M44g，不可豁免）**：所有 genimg/gen-loop 产物自动附加 SAFETY 后缀（family-safe、fully clothed、no nudity/partial nudity、no suggestive pose）；cover/scene 默认不含人物（--with-people 才允许）；palette 从 run tokens 注入保证与页面风格一致。违反即重生成。

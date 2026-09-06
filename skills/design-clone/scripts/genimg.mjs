@@ -17,7 +17,18 @@ const STYLES = {
   "clay-icon": "3d clay icon, soft matte clay material, rounded shapes, gentle studio lighting, solid pastel background, blender render, minimal",
   sticker: "die-cut sticker art, bold clean outline, flat vibrant colors, thin white border",
   flat: "flat vector illustration, minimal geometric shapes, limited palette",
+  anime: "anime style character art, clean confident lineart, cel shading with soft gradients, expressive eyes, hand-drawn feel, studio quality key visual, obviously hand-drawn 2d animation cel, NOT photoreal",
+  disney: "modern disney-style 2d animation character, warm painterly shading, rounded friendly features, storybook lighting, theatrical color script, hand-painted 2d NOT photoreal",
+  illustration: "textured editorial gouache illustration, visible brush strokes and paper grain, matte hand-painted picture-book quality, slightly stylized proportions, muted harmonious palette, cozy imperfect hand-made feel, clearly painted NOT photoreal NOT 3d render",
+  cyberpunk: "cyberpunk neon art, rain-slick reflections, magenta-cyan rim light, holographic ui glow, gritty detailed textures, moody night atmosphere",
+  guofeng: "Chinese guofeng ink-wash illustration, xuan paper texture, flowing brush lines, subtle mineral pigments, classical poetic composition,留白 negative space",
+  photographic: "candid documentary photograph, natural available light, shallow depth of field, real skin texture and fabric detail, slight film grain, unposed moment",
+  "flat-corporate": "clean flat corporate illustration, geometric simplified shapes, consistent 2-tone brand palette, crisp edges, professional saas marketing style",
 };
+// M44g 内容安全后缀（不可关闭）：禁低俗/裸露/暗示姿态
+const SAFETY = "family-safe content, fully clothed subjects, no nudity or partial nudity, no suggestive pose or framing";
+// M44e 反 AI 味后缀：破除"塑料对称灰底"特征（可 --no-anti 关闭）
+const ANTI_TELL = "asymmetric composition and lighting, natural imperfections and fine texture detail, avoid plastic glossy skin, avoid perfect symmetry, avoid plain studio gray background, cohesive art-directed color palette";
 
 
 if (process.argv.includes("--help") || process.argv.includes("-h")) {
@@ -28,14 +39,14 @@ const { values } = parseArgs({
   options: {
     prompt: { type: "string" }, out: { type: "string" }, style: { type: "string" },
     w: { type: "string", default: "512" }, h: { type: "string", default: "512" },
-    seeds: { type: "string" }, "ref-url": { type: "string" },
+    seeds: { type: "string" }, "ref-url": { type: "string" }, "no-anti": { type: "boolean", default: false },
   },
 });
 if (!values.prompt || !values.out) {
-  console.log("用法: node genimg.mjs --prompt \"...\" --out <file> [--style ...] [--seeds 1,2,3]");
+  console.log("用法: node genimg.mjs --prompt \"...\" --out <file> [--style pixar-3d|clay-icon|sticker|flat|anime|disney|illustration|cyberpunk|guofeng|photographic|flat-corporate] [--seeds 1,2,3] [--no-anti]");
   process.exit(1);
 }
-const full = values.style ? `${values.prompt}, ${STYLES[values.style] || ""}` : values.prompt;
+const full = [values.prompt, values.style ? (STYLES[values.style] || "") : "", SAFETY, values["no-anti"] ? "" : ANTI_TELL].filter(Boolean).join(", ");
 const outAbs = path.resolve(values.out);
 const outDir = path.dirname(outAbs);
 const cacheDir = path.join(outDir, ".cache");
@@ -85,3 +96,18 @@ for (const seed of seeds) {
   list.push({ at: new Date().toISOString(), prompt: values.prompt, style: values.style || null, seed, engine: "pollinations", out: path.basename(target) });
 }
 fs.writeFileSync(manifest, JSON.stringify(list, null, 2));
+// M44c 素材溯源：生图资产登记进 prototype/assets-manifest.json（source=genimg），供 privacy/asset 门禁核验
+{
+  const mp = path.join(outDir, "..", "assets-manifest.json");
+  if (path.basename(outDir) === "assets") {
+    try {
+      const prev = fs.existsSync(mp) ? JSON.parse(fs.readFileSync(mp, "utf8")) : { assets: {} };
+      for (const seed of seeds) {
+        const target = seeds.length > 1 ? outAbs.replace(/(\.\w+)$/, `-${seed}$1`) : outAbs;
+        prev.assets[path.basename(target)] = { file: path.basename(target), source: "genimg", prompt: values.prompt, style: values.style || null, seed, at: new Date().toISOString() };
+      }
+      prev.generated_at = new Date().toISOString();
+      fs.writeFileSync(mp, JSON.stringify(prev, null, 1));
+    } catch (e) { console.warn("manifest skip:", e.message.slice(0, 80)); }
+  }
+}

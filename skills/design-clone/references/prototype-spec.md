@@ -73,6 +73,8 @@ eval `live_ratio` 必须=1。"截图+热点"是截图集不是原型——历史
 live 是便宜路径，先抄组件再填内容，不许拿 pixel 偷懒。
 DC.pages[].fidelity 标注，Pages 面板出徽标（绿=pixel/蓝=live-high/灰=live-low）。
 验收：fidelity.mjs 对比原型截屏与源图，差异率写 report/fidelity.json。
+**源帧配对（M44 修缺陷）**：view id 与 capture 文件名不一致时（常见于多页/改名/`-full` 全页帧）必须写 `knowledge/source-map.json`（`{view: "capture/screens/x.png"}`），
+否则 fidelity 会错配出假高/假低分；批量复测用 `qa/fidelity-all.mjs`（source-map 配对 + `?chrome=0` 截屏，防长页滚动拼接渗入固定外壳）。
 
 ### 素材来源优先级与生图
 图标/矢量：裁剪证据 > iconify（免 key CDN）/Simple Icons（品牌 CC0）> VLM 重画 SVG。
@@ -85,13 +87,20 @@ DC.pages[].fidelity 标注，Pages 面板出徽标（绿=pixel/蓝=live-high/灰
 - 异步动作要见 loading+success+失败恢复；集合要有 empty；被门禁的动作要说明为何 disabled
 - 不相关的态不硬塞进主流程；**省略的态在交付 handoff 里显式声明**
 
-## 交互完整性契约（a11y）
+## 交互完整性契约（a11y + M44 全控件可交互）
 
-- 语义化原生元素；建模流程全程键盘可用；focus 可见且转场后有意安置
-- dialog：可访问名、焦点圈闭、Esc 关闭、焦点归还触发器
+- **每个可见控件点击必须有可观测反应**——不是只有导航。控件目录与 `data-act` 见
+  `templates/components/controls.md`，运行时 `templates/prototype/runtime.js`（事件委托，自动补 role/tabindex/aria）：
+  导航 `data-goto`；开关 `toggle`、单选 `radio`、多选 `checkbox`、下拉 `select`、折叠 `accordion`、
+  分段 `tab`、弹层 `sheet`/`dialog`、提示 `toast`、步进 `step`、滑杆 `slider`、输入 `input`、返回 `back`、占位 `noop`。
+  **微信只是控件子集**：别的 app 有下拉/面包屑/单选/多选/stepper，一律按目录接线，不假设只有开关。
+- **门（强制）**：`node scripts/qa/interact.mjs --run <run> --base <url>` 逐视图真实点击每个控件并断言状态变化；
+  `dead=0`（无死控件）且 `act_pass=1`（点了都有反应）且 `goto_pass=1`（跳转目标存在）。inspect `interactive-controls` 硬阻断、eval 计 `interactivity`。
+- 语义化原生元素；建模流程全程键盘可用（Enter/Space 触发、Tab 可达）；focus 可见且转场后有意安置
+- dialog/sheet：可访问名、焦点圈闭、Esc 关闭、点遮罩关闭、焦点归还触发器
 - 表单错误关联控件；重要状态变更要播报；本质行为不藏在 hover 后
-- 尊重 `prefers-reduced-motion` 但保留状态反馈；触摸目标可用；无横向溢出
-- **死按钮不允许**：属于真实系统的动作要么实现，要么解释边界（占位提示），不假装完成
+- 尊重 `prefers-reduced-motion` 但保留状态反馈；触摸目标可用；**无横向溢出**（inspect `no-h-overflow` 硬阻断，390 宽装不下要换行/收缩）
+- **死按钮不允许**：属于真实系统的动作要么实现（data-act），要么 `noop`/`toast` 解释边界（占位提示），不假装完成、也不留无响应
 
 ## 构建契约
 
@@ -178,7 +187,7 @@ flows:
 1. 布局结构一致：区域数量、顺序、层级与原截图一致
 2. 视觉 tokens 一致：主色/背景/字阶取自 tokens.css，与原图对照无明显色差
 3. 文案真实：与原图一致或同级真实感
-4. 交互连通：`flows[]` 声明的每条跳转都能点通，返回可用
+4. 交互连通：`flows[]` 声明的每条跳转都能点通，返回可用，**且每个控件点击都有可观测反应**（`qa/interact.mjs` dead=0、act_pass=1）
 5. 工具条"对照原图"模式下，肉眼相似度可接受
 
 不达标 → 只返工该屏（改 spec → 重新生成该 view），不整站重来。
@@ -205,10 +214,15 @@ flows:
 目标：live-high = 真控件 + **与原版视觉近 1:1**。资产只许"有效图"：不模糊/无空白/不截断/无无关因素。
 阶梯（依次尝试，禁止跳级直接占位）：
 1. **源原图**：web 用 `capture.mjs --assets <n>`（naturalWidth≥300 下载到 capture/assets/+manifest）；app 用 extract-assets 从 capture 真裁（头像/图标/插画/产品图）
-2. **截图候选必过 `img/asset-qa.mjs`**：blur/blank 阈值复用 extract-assets；截断=贴边启发 edgeRatio>2.2 flag；fail 走处理梯（重拍 settle/加边重裁/换原图/sharp 增强/genimg）；contact sheet 交宿主 VLM 复核
+2. **截图候选必过 `img/asset-qa.mjs`**：blur/blank 阈值复用 extract-assets；**截断=贴边启发 edgeRatio>2.2 判 fail 阻断（M44：裁错的头像/图标是真缺陷）**；**拼贴/多主体（裁到照片墙/宫格）collage 判 fail 阻断（M44c）**；确属全出血照片/网格设计用 `--waive` 豁免；fail 走处理梯（重拍 settle/加边重裁/换原图/sharp 增强/genimg）；contact sheet 交宿主 VLM 复核
+2b. **隐私门 `qa/privacy.mjs`（M44c，硬）**：每 run `knowledge/privacy.json`（anon_map/face_assets/keep_assets/keep_brands，`--discover` 起草）。姓名→可爱假名、称呼保留；账号/ID/密码/手机号/SSID 不真实展示；**个人真人脸/真人照片 genimg 虚构替换**（同名覆盖），官方/商家素材保留；素材溯源 `prototype/assets-manifest.json`（extract-assets/genimg 自动写），face_assets 非 genimg 即 fail。
 3. **genimg 风格锚**（pixar-3d/clay-icon/sticker/flat）对齐原版质感
 4. 占位仅限 loading 状态（inspect `placeholder-scan` 硬检查）
-保真验收：每核心视图 `fidelity.mjs` 原型截屏 vs 源 ratio 达标（阈值见 eval-protocol，先校准）+ critique 六维。
+布局几何门（M44f，inspect `layout-sanity` 硬）：元素级裁切（非 ellipsis 元素 scroll 溢出>8px）/空槽（>120×120 无子无背景图纯色块）/坏图（naturalWidth=0）/视图内重复窗口 chrome 均 fail；豁免透明 tap-catcher、模态 scrim、装饰 orb；full 硬、demo warn。no-emoji 对 full 升硬（标签内 emoji 也算，内容型 emoji 用 data-emoji-ok 豁免）。shell 尺寸由 inspector inline 兜底（四档），视图禁自带标题栏/窗口框。
+保真验收：每核心视图 `fidelity.mjs`/`fidelity-all.mjs` 原型截屏 vs 源 ratio 达标（阈值见 eval-protocol）+ **结构 critique 硬门（M44d）**：
+`qa/viewsheet.mjs` 出全视图拼图 → 宿主 VLM 对照 capture 逐视图打 layout(1-5) 写 `qa/critique.json`（`critique.mjs --skeleton/--set`）→
+`qa/critique.mjs` 门禁：full run 必须存在，且"客观可疑视图（ratio>0.2 / recall<0.9）+ 前 3 视图"layout≥3（<3 须 fixed 并重修）。
+**pixelmatch 对浅色稀疏 UI 的缺栏/错页失明**（M44d 教训），桌面 capture 含 OS chrome 时 stage-only ratio 虚高（desktop run 该 ratio 仅参考、以 critique 为准）；report 附 `struct` 墨度网格分作辅助信号。
 视觉资产政策：所有者 run 默认**真视觉+文本匿名**（头像/配图用真图，昵称/ID/聊天文字虚构或打码）；他人使用先询问（safety-rules §10）。
 桌面截图源必须 `-l <wid>` 窗裁（除无关窗）；手机源必须 settle 稳帧（除转圈/通知遮挡）。
 
@@ -226,3 +240,13 @@ flows:
 - R1 替换保护：覆盖已 PASS 视图前必须先渲染新稿+audit/truncated/目检过门，并保留旧稿 fallback。
 - R2 验收代理修正：fidelity 像素比仅辅助；交付门=视觉 QA+truncated+逐控件召回。
 - R3 编译定位：平铺绝对定位=坏模式禁用；组件/层级模式=好模式。
+
+## 风格丰富度门（M44g）
+fidelity-all 对每视图计算 style-parity：capture vs 原型的 Hasler-Susstrunk colorfulness 与饱和像素占比差值；Δcolorfulness>30 → eval warn「原型偏素/风格不一致」，须补品牌资产（autocrop-icons 真裁图标/tile）或彩色层次。
+生图安全（不可豁免）：genimg 全局 SAFETY 后缀（family-safe/fully-clothed/no suggestive pose）；cover/scene 默认 no people；palette 从 run tokens 注入以保风格一致。
+
+## 路径=真实交互逻辑（M44j）
+边四分类：module（持久 chrome/hub≥60%，切模块不进路径）/ drill（back-pair 父子）/ task（内容 CTA）/ modal（sheet/dialog）/ back（仅校验）。
+场景树与路径仅沿 drill/task/modal 枚举；roots=模块入口；nav 平铺于节点下；画布 nav 淡虚线。
+数据优先级：flows.json（capture/events.jsonl 录制=ground-truth > agent 目视推断）> 结构推导 > 朴素 DFS（标 source:derived）。
+门禁 qa/paths-qa：禁 hub-chain/giant-chain；模块根须有 ≥1 content 流或显式 nav；drill 应有 back-pair（warn）。

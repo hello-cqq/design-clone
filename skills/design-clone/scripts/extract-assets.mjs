@@ -4,8 +4,9 @@
  * 用法:
  *   node extract-assets.mjs <runDir> <spec.json>
  *   spec.json: [{ "src": "capture/screens/01-x.png", "bbox": [x,y,w,h], "out": "icon-pay.png" }]
- *   node extract-assets.mjs <runDir> --from-uitree <uitree.json> <screen.png>
- *     （web 目标自动档：裁 tag 为 img/svg/canvas 或 role=img 的元素 rect）
+ *   node extract-assets.mjs <runDir> --from-uitree <tree> <screen.png> [--out-prefix p] [--kinds image|icon] [--min-size N] [--region x,y,w,h]
+ *     <tree> 三种格式通吃：android uiautomator XML / uitree2spec JSON / web ui-tree JSON（有树必量，bbox 取自真实控件框）
+ *     （web 裁 tag=img/svg/canvas 或 role=img；android 裁 ImageView/kind=image；--region 限定区域、行主序命名 p1..pN）
  */
 import sharp from "sharp";
 import fs from "node:fs";
@@ -62,20 +63,60 @@ if (args.includes("--icon")) {
 }
 
 const [a, b] = args.slice(1).map((p) => (p.startsWith("-") ? p : path.resolve(p)));
-let spec = [];
-if (a === "--from-uitree") {
-  const tree = JSON.parse(fs.readFileSync(b, "utf8"));
-  const png = path.resolve(process.argv[4]);
+const flag = (k, d) => (args.includes(k) ? args[args.indexOf(k) + 1] : d);
+const outPrefix = flag("--out-prefix", null);
+const kinds = flag("--kinds", "image");
+const minSize = parseInt(flag("--min-size", "12"), 10);
+const region = flag("--region", null) ? flag("--region", "").split(",").map(Number) : null;
+
+/* 统一节点加载：android uiautomator XML / uitree2spec JSON / web ui-tree JSON。有树必量，杜绝手猜 bbox。 */
+function loadNodes(p) {
+  if (p.toLowerCase().endsWith(".xml")) {
+    const xml = fs.readFileSync(p, "utf8");
+    const out = []; const re = /<node[^>]*>/g; let m, i = 0;
+    while ((m = re.exec(xml))) {
+      const g = (k) => { const r = m[0].match(new RegExp(k + '="([^"]*)"')); return r ? r[1] : ""; };
+      const bb = g("bounds").match(/\[(\d+),(\d+)\]\[(\d+),(\d+)\]/); if (!bb) continue;
+      const x1 = +bb[1], y1 = +bb[2], x2 = +bb[3], y2 = +bb[4]; const w = x2 - x1, h = y2 - y1;
+      if (w <= 4 || h <= 4) continue;
+      const cls = g("class");
+      out.push({ id: "n" + i++, bbox: [x1, y1, w, h], cls, kind: /ImageView/.test(cls) ? "image" : (g("text") ? "text" : "box") });
+    }
+    return out;
+  }
+  const tree = JSON.parse(fs.readFileSync(p, "utf8"));
   const nodes = tree.elements || tree.nodes || tree;
-  const list = Array.isArray(nodes) ? nodes : [];
-  for (const n of list) {
-    const tag = (n.tag || n.type || "").toLowerCase();
-    if (!["img", "svg", "canvas", "image"].includes(tag) && n.role !== "img") continue;
-    const r = n.rect || n.bbox || n.bounds;
-    if (!r) continue;
-    const [x, y, w, h] = Array.isArray(r) ? r : [r.x, r.y, r.width, r.height];
-    if (w < 12 || h < 12) continue;
-    spec.push({ src: path.relative(runDir, png), bbox: [x, y, w, h], out: `auto-${spec.length + 1}-${tag}.png` });
+  return Array.isArray(nodes) ? nodes : [];
+}
+const isImage = (n) => {
+  const tag = (n.tag || n.type || "").toLowerCase();
+  if (["img", "svg", "canvas", "image"].includes(tag) || n.role === "img") return true;
+  if (n.kind === "image") return true;
+  if (/ImageView/.test(n.cls || n.class || "")) return true;
+  return false;
+};
+const rectOf = (n) => {
+  const r = n.rect || n.bbox || n.bounds;
+  if (!r) return null;
+  return Array.isArray(r) ? r : [r.x, r.y, r.width, r.height];
+};
+
+let spec = [];
+const isTree = (a === "--from-uitree");
+const manifest = [];
+if (a === "--from-uitree") {
+  const ti = args.findIndex((p) => path.resolve(p) === b);
+  const png = path.resolve(args[ti + 1]);
+  let list = loadNodes(b).filter(isImage).map((n) => ({ n, r: rectOf(n) })).filter((e) => e.r);
+  if (kinds === "icon") list = list.filter((e) => e.r[2] <= 96 && e.r[3] <= 96);
+  if (region) { const [rx, ry, rw, rh] = region; list = list.filter((e) => { const cx = e.r[0] + e.r[2] / 2, cy = e.r[1] + e.r[3] / 2; return cx >= rx && cx <= rx + rw && cy >= ry && cy <= ry + rh; }); }
+  list = list.filter((e) => e.r[2] >= minSize && e.r[3] >= minSize);
+  list.sort((p, q) => (Math.round(p.r[1] / 24) - Math.round(q.r[1] / 24)) || (p.r[0] - q.r[0])); // 行主序，命名稳定
+  let idx = 0;
+  for (const { n, r } of list) {
+    idx++;
+    const tag = (n.tag || n.kind || n.cls || "img").toString().toLowerCase().replace(/[^a-z]/g, "").slice(0, 10) || "img";
+    spec.push({ src: path.relative(runDir, png), bbox: r.map(Math.round), out: outPrefix ? `${outPrefix}${idx}.png` : `auto-${idx}-${tag}.png` });
   }
 } else {
   spec = JSON.parse(fs.readFileSync(a, "utf8"));
@@ -89,6 +130,7 @@ for (const s of spec) {
   const q = await quality(base);
   if (q.blank) console.warn(`⚠ ${s.out}: 疑似空白/纯色帧（stddev=${q.stddev}），重选源帧或 bbox`);
   else if (q.sharp < (s.min_sharp ?? 12)) console.warn(`⚠ ${s.out}: 清晰度低（lap-var=${q.sharp}），源帧模糊或 bbox 过界，建议换帧/收紧 bbox`);
+  manifest.push({ file: s.out, source: isTree ? "tree-bbox" : "spec", bbox: [x, y, w, h], src: s.src, tree: isTree ? path.relative(runDir, b) : null, at: new Date().toISOString() });
   if (s.matte === "light") {
     const thr = s.matte_thr || 205, fe = s.matte_feather || 45;
     const rgb = await base.clone().raw().toBuffer({ resolveWithObject: true });
@@ -110,5 +152,13 @@ for (const s of spec) {
     await base.png().toFile(path.join(outDir, s.out));
     console.log("cropped:", s.out, `${w}x${h}`);
   }
+}
+// M44c 素材溯源 manifest：每个资产记录来源（tree-bbox/spec/genimg/iconify），供 privacy/asset 门禁核验"头像必须树测量或生图，不得手猜"
+if (manifest.length) {
+  const mp = path.join(outDir, "..", "assets-manifest.json");
+  const prev = fs.existsSync(mp) ? JSON.parse(fs.readFileSync(mp, "utf8")) : { assets: {} };
+  for (const m of manifest) prev.assets[m.file] = m;
+  prev.generated_at = new Date().toISOString();
+  fs.writeFileSync(mp, JSON.stringify(prev, null, 1));
 }
 console.log(`共 ${spec.length} 个素材 → ${path.relative(process.cwd(), outDir)}`);

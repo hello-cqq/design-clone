@@ -20,3 +20,21 @@
 .wm-table { margin: 24px 64px; border-collapse: collapse; width: calc(100% - 128px); font-size: 13px; }
 .wm-table th, .wm-table td { border-bottom: 1px solid var(--color-border, #d2d2d7); padding: 10px 14px; text-align: left; }
 .wm-table th { color: var(--color-text-secondary, #6e6e73); font-weight: 500; }
+
+/* M44f 防溢出/防裁切：任何图不得撑破容器（左切/右空槽的根因之一） */
+img { max-width: 100%; }
+.ap-tile img, .wm-hero img { display: block; margin: 0 auto; object-fit: contain; }
+
+/* M44f 修 flex 子项 min-width:auto 导致宽图把信息卡挤出容器（右卡被裁根因） */
+.wm-prod > * { min-width: 0; }
+.wm-prod img { width: 100%; min-height: 260px; object-fit: cover; }
+
+/* M44f 防裁切：导航/标题省略号 */
+.wm-nav a, .wm-nav span { white-space: nowrap; }
+.wm-hero h1, .ap-tile h1 { min-width: 0; }
+
+/* M44f sweep：大标题不裁切 */
+#dc-stage h1, #dc-stage h2 { overflow: visible; line-height: 1.15; }
+
+/* M44g 交互可见性：导航/链接/表格行给出 pointer 仿仿（interact 门依赖 computed cursor） */
+.wm-nav a, .wm-nav span, .ap-links a, .wm-table tbody tr, .ap-table tbody tr { cursor: pointer; }

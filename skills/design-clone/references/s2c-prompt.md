@@ -4,7 +4,16 @@
 - 在 prompt/skill 里 baked **任何 app 的视觉约定**（如"微信 outgoing 带右头像"）——其他聊天 app 约定不同，套用微信=错。
 **誊写前强制逐 capture 盘点**（帮宿主模型 attending 每元素，弱模型补偿）：
 对每行/每格/每消息列清单——头像有/无/左/右/形状、图标形状+色、行结构、开关态、名字单/多行——再照清单誊写。
-**自渲染目检**增："capture 有的元素，渲染是否逐一存在且形状/位置一致？"（抓"画虎"）。
+**誊写前再盘点"控件类型"**（M44，app 无关）：这页有哪些可交互控件？逐项归类——
+导航(行/卡/头像/tab/面包屑/返回)、选择(单选 radio/多选 checkbox/下拉 select/Picker)、
+设置(开关 toggle/stepper ±/slider)、输入(文本框/搜索框)、动作(按钮/icon 钮/FAB)、
+反馈(弹层 sheet/dialog/toast/折叠 accordion)。**微信只是子集，别假设别的 app 也只有开关。**
+**每个控件誊写时同时接线**（杜绝"像放了张图片"）：导航 `data-goto="<目标视图>"`；
+其余 `data-act="toggle|radio|checkbox|select|accordion|tab|sheet|dialog|toast|step|slider|input|back"`
+（运行时见 `templates/prototype/runtime.js`，属性如 data-group/data-tab/data-items/data-target/data-msg/data-title）。
+无对应目标页的行/按钮一律 `data-act="toast"` 或 `sheet` 兜底，**不留死按钮**。
+**自渲染目检**增两问："capture 有的元素，渲染是否逐一存在且形状/位置一致？"（抓"画虎"）；
+"每个控件点了有没有可观测反应（翻转/选中/展开/弹层/提示/跳转）？"（抓"静态图"，跑 `qa/interact.mjs` 验）。
 s2c 同机制：高清晰截图(detail:high)喂视觉模型+extract_assets 真裁+screenshot_preview 自渲染循环；无 app 约定。
 
 # s2c 效果 = 宿主 agent 当生成器（M38，零 key，跨 agent）
@@ -15,7 +24,7 @@ screenshot-to-code 的魔法=**视觉模型+SYSTEM_PROMPT+自渲染循环**，ke
 ## 生成协议（每视图）
 1. 读高清 capture（view.mjs --max 1400）。
 2. 按 s2c prompt 逐像素誊写**单文件保真 HTML**：复刻布局/色彩/间距/图标/文本；图标用内联 SVG 或真裁；不拉伸低清图。
-3. 翻译/包成 view（组件类 mi-row/mi-cell 或单文件 iframe），wire data-goto，个人文本匿名。
+3. 翻译/包成 view（组件类 mi-row/mi-cell 或单文件 iframe），**wire data-goto（导航）+ data-act（其余全控件交互，见 runtime.js 目录）**，个人文本匿名。
 4. **自渲染循环**：viewshot 渲染→与源并排目检→不对就 edit 修→重渲，循环到像（=s2c 循环）。
 5. 有 env key 时可选 `gen/s2c-adapter.mjs` 调外部视觉 API 加速（opt-in，不假设）。
 
@@ -29,9 +38,10 @@ screenshot-to-code 的魔法=**视觉模型+SYSTEM_PROMPT+自渲染循环**，ke
 s2c 演示"一次完美"=render→目检→修 循环在内部自动跑完。本 skill 同：用户只发"克隆 X"，
 agent 对每页自动循环，**不向用户提问**，直到全过：
 1. audit 输出 per-view fidelity 排序，从最差页开始。
-2. 每页：读高清 capture→按 s2c prompt 誊写 HTML→viewshot 并排→fidelity≤0.15 且 truncated=0？
+2. 每页：读高清 capture→按 s2c prompt 誊写 HTML（同时接线 data-goto/data-act）→viewshot 并排→
+   fidelity≤0.15 且 truncated=0 且 **interact 死控件=0（每控件点击有反应）**？
    否→自己 edit→重渲；是→下一页。单页上限 3 轮防死循环。
-3. 全页 bad=[] 后一次性交付用户验收。
+3. 全页 bad=[]（audit/interact/inspect/eval 四门）后一次性交付用户验收。
 禁止把"修一版等用户指问题"当流程——那是把自主循环外推给人工。
 
 ## 通用保真管线=唯一生成路径（M40，不再打地鼠）

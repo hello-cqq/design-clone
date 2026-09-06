@@ -356,3 +356,10 @@ body.dc-chromeless #dc-flow-canvas { padding: 24px; }
   .wires path.band.flow { animation: none; opacity: .5; stroke-dasharray: none; }
   .fc-card.pulse, #dc-stage.dc-fade, .dc-ring { animation: none; }
 }
+
+/* M44g：路径/标注覆盖层文字减重减黑（用户反馈"太黑太粗"） */
+.dc-card { color: var(--sh-mut); font-weight: 500; font-size: 10.5px; }
+.dc-card b, .dc-card .k { font-weight: 600; color: var(--sh-mut); }
+.dc-pin { background: var(--sh-mut); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,.2), 0 0 0 2px var(--sh-canvas); }
+.wires .elabel { font-weight: 500; font-size: 9.5px; fill: var(--sh-mut); }
+.fc-link .elabel { font-weight: 500; color: var(--sh-mut); }

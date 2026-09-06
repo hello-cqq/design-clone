@@ -154,8 +154,37 @@ function scoreRun(runDir, base, runInspect) {
         if (v.waive) issues.push({ dim: "ux", kind: "warn", check: "fidelity-waived", note: `${k} ratio=${v.ratio} 豁免(${v.waive})`, fix: "eval-protocol#fidelity" });
         else if (v.ratio > hardF) issues.push({ dim: "ux", kind: "hard", check: "fidelity", note: `${k} ratio=${v.ratio}>${hardF}`, fix: "prototype-spec#资产阶梯" });
         else if (v.ratio > warnF) issues.push({ dim: "ux", kind: "warn", check: "fidelity", note: `${k} ratio=${v.ratio}>${warnF}`, fix: "prototype-spec#资产阶梯" });
+        if (v.style && v.style.c > 30 && !v.waive) issues.push({ dim: "ux", kind: "warn", check: "style-parity", note: `${k} 色彩丰富度Δ=${v.style.c}（原型偏素/风格不一致，补品牌资产/彩色 tile）`, fix: "prototype-spec#风格丰富度" });
       }
       if (iaCov != null && iaCov < 0.8) issues.push({ dim: "ux", kind: "warn", check: "completeness-ia", note: `ia_coverage=${iaCov}`, fix: "completeness-protocol#3" });
+    }
+
+    // ---- interactivity（M44）：每个控件点击必须有可观测反应 ----
+    let inter = null;
+    try {
+      const ij = JSON.parse(fs.readFileSync(path.join(runDir, "qa/interact.json"), "utf8"));
+      const vs = Object.values(ij);
+      const dead = vs.reduce((s, v) => s + ((v.dead && v.dead.length) || 0), 0);
+      const acted = vs.reduce((s, v) => s + (v.acted || 0), 0);
+      const resp = vs.reduce((s, v) => s + (v.responded || 0), 0);
+      const gotoBad = vs.reduce((s, v) => s + ((v.gotoBad && v.gotoBad.length) || 0), 0);
+      inter = { dead, goto_bad: gotoBad, ratio: acted ? Math.round((resp / acted) * 100) / 100 : 1 };
+    } catch {}
+    if (scopeMode === "full") {
+      if (!inter) issues.push({ dim: "ux", kind: "warn", check: "interact-not-run", note: "缺 qa/interact.json（M44 交互门：node qa/interact.mjs）", fix: "qa/interact.mjs" });
+      else {
+        if (inter.dead > 0) issues.push({ dim: "ux", kind: "hard", check: "dead-controls", note: `dead=${inter.dead}（控件点击无反应=像静态图）`, fix: "qa/interact.mjs" });
+        if (inter.goto_bad > 0) issues.push({ dim: "ux", kind: "hard", check: "broken-goto", note: `goto_bad=${inter.goto_bad}（跳转目标视图缺失）`, fix: "qa/interact.mjs" });
+        if (inter.ratio < 1) issues.push({ dim: "ux", kind: "warn", check: "interactivity", note: `interactive_ratio=${inter.ratio}<1`, fix: "qa/interact.mjs" });
+      }
+    }
+
+    // ---- privacy（M44c）：真名/PII/真人脸未虚构 = 硬缺陷 ----
+    let pv = null;
+    try { pv = JSON.parse(fs.readFileSync(path.join(runDir, "qa/privacy.json"), "utf8")); } catch {}
+    if (scopeMode === "full") {
+      if (!pv) issues.push({ dim: "ux", kind: "warn", check: "privacy-not-run", note: "缺 qa/privacy.json（node qa/privacy.mjs --run <run>）", fix: "qa/privacy.mjs" });
+      else if (!pv.ok) issues.push({ dim: "ux", kind: "hard", check: "privacy-leak", note: `leaks=${(pv.leaks || []).length} pii=${(pv.pii || []).length} face_bad=${(pv.face_bad || []).length}`, fix: "qa/privacy.mjs" });
     }
 
     const total = Math.round(perfScore * 0.3 + uxScore * 0.4 + stabScore * 0.3);
@@ -163,7 +192,7 @@ function scoreRun(runDir, base, runInspect) {
     const out = {
       run: path.basename(runDir), at: new Date().toISOString(),
       perf: perfScore, ux: uxScore, stab: stabScore, total,
-      detail: { ...perf, hard_pass: s.pass, hard_fail: s.fail, warn_fail: s.warnFail, coverage: covBits, idempotent: idem, console_errors: (b.consoleErrors || []).length, page_errors: (b.pageErrors || []).length, scope: scopeMode, views, ia_coverage: iaCov, ia: iaDetail, live_ratio: liveRatio },
+      detail: { ...perf, hard_pass: s.pass, hard_fail: s.fail, warn_fail: s.warnFail, coverage: covBits, idempotent: idem, console_errors: (b.consoleErrors || []).length, page_errors: (b.pageErrors || []).length, scope: scopeMode, views, ia_coverage: iaCov, ia: iaDetail, live_ratio: liveRatio, interactivity: inter, privacy: pv ? { ok: pv.ok, leaks: (pv.leaks || []).length, face_bad: (pv.face_bad || []).length } : null },
       issues, verdict,
     };
     const hist = path.join(qd, "eval-history.jsonl");

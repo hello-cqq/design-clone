@@ -100,3 +100,19 @@
 
 ## s2c 集成形态（M35，opt-in 不假设 key）
 gen/s2c-adapter.mjs 通用检测（任意 provider key 或本地 backend :7001）→启用 s2c+翻译器(HTML→views/tokens/data-goto/匿名)；无 key 回落内置宿主-agent 管线。不假设特定 agent 的 env（跨 claudecode/opencode/codex）。
+
+## 开源对比（M44h 终检）
+| 能力 | screenshot-to-code | Design2Code | talk-to-figma-mcp | midscene | **design-clone** |
+|---|---|---|---|---|---|
+| 截图→代码 | ✅ | ✅(bench) | — | — | ✅ |
+| 录屏/视频→原型 | ✅ video mode | — | — | — | ✅ record+keyframes+link 六级梯 |
+| 真资产提取 | Gemini/Replicate | — | — | — | ✅ extract-assets/autocrop/gen-loop |
+| 自渲染自检 | screenshot preview | — | — | ✅ | ✅ viewshot+fidelity+layout-sanity+style-parity |
+| 设备 GUI 采集(mac/android/ios) | — | — | — | ✅ | ✅ + consent 收据红线 |
+| 隐私门(真名/真脸/PII) | — | — | — | — | ✅ privacy.mjs+anon-map+face genimg |
+| 交互门(每控件有反应) | — | — | — | — | ✅ interact.mjs dead=0 |
+| 路径=交互逻辑 | — | — | — | — | ✅ paths-gen v2(flows 优先) |
+| Figma 导出 | — | — | ✅ | — | ✅ export.mjs(plan+validate+nodeid 回填) |
+| 迭代+保留原版 | 部分 | — | ✅ | — | ✅ remix --variant+?variant= |
+| 多端 shell/展示契约 | — | — | — | — | ✅ 四档 shell+appicon+showcase.json |
+结论：我们在"设备采集+隐私+交互+路径逻辑+展示契约"上领先；借鉴其 video-mode 直接入与多模型变体对比（已有 variants.html 三 iframe）。

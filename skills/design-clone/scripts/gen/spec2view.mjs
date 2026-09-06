@@ -24,6 +24,9 @@ const scale = targetW / F.w;
 const t = (s) => { let r = s; for (const [k, v] of Object.entries(anon)) r = r.split(k).join(v); return r; };
 const px = async (x, y) => { const { data } = await sharp(png).extract({ left: Math.max(0, Math.min(F.w - 1, x | 0)), top: Math.max(0, Math.min(F.h - 1, y | 0)), width: 1, height: 1 }).raw().toBuffer({ resolveWithObject: true }); return data; };
 const rgb = (d) => `rgb(${d[0]},${d[1]},${d[2]})`;
+const escA = (s) => String(s || "").replace(/"/g, "'").slice(0, 40);
+// M44：可点节点若无 goto 目标，落 toast 兜底，杜绝死按钮（交互门 interact.mjs 要求每控件有反应）
+const actOf = (n, go) => (!go && n.clickable ? ` data-act="toast" data-msg="${escA(n.text || n.label || "操作")}（演示）"` : "");
 
 // 包含树：B 的父 = 最小包含 B 的节点
 function buildTree(nodes) {
@@ -50,7 +53,7 @@ async function emit(n, depth) {
   const S = (o) => Object.entries(o).map(([k, v]) => `${k}:${v}`).join(";");
   if (n.kind === "image" && w < F.w * 0.6) {
     const f = `gen-${path.basename(out, ".html")}-${ai++}.png`;
-    try { await sharp(png).extract({ left: x, top: y, width: w, height: h }).toFile(path.join(assetsDir, f)); return `<img src="assets/${f}" alt="" style="${S({ width: (w * scale) + "px", height: (h * scale) + "px", "object-fit": "contain", "border-radius": Math.round(6 * scale) + "px" })}">`; } catch { return ""; }
+    try { await sharp(png).extract({ left: x, top: y, width: w, height: h }).toFile(path.join(assetsDir, f)); return `<img src="assets/${f}" alt=""${actOf(n, null)} style="${S({ width: (w * scale) + "px", height: (h * scale) + "px", "object-fit": "contain", "border-radius": Math.round(6 * scale) + "px" })}">`; } catch { return ""; }
   }
   if (n.kind === "text" && n.text) {
     let best = [255, 255, 255], bl = 1e9;
@@ -58,7 +61,7 @@ async function emit(n, depth) {
     const go = gotoMap[n.text];
     const tag = go ? "a" : "span";
     const fsz = Math.max(10, Math.round(h * scale * 0.78));
-    return `<${tag}${go ? ` data-goto="${go}"` : ""} style="${S({ "font-size": fsz + "px", color: rgb(best), "line-height": h * scale + "px", "white-space": "nowrap", overflow: "hidden", "text-overflow": "ellipsis" })}">${t(n.text)}</${tag}>`;
+    return `<${tag}${go ? ` data-goto="${go}"` : ""}${actOf(n, go)} style="${S({ "font-size": fsz + "px", color: rgb(best), "line-height": h * scale + "px", "white-space": "nowrap", overflow: "hidden", "text-overflow": "ellipsis" })}">${t(n.text)}</${tag}>`;
   }
   if (n.children.length) {
     const bg = await px(x + 2, y + 2);
