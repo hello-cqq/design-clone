@@ -86,6 +86,6 @@ Three layers, each with a different failure class:
 
 ## 6. Distribution
 
-- Agent-Skills clients: `npx skills add tt-a1i/design-clone`.
+- Agent-Skills clients: `npx skills add hello-cqq/design-clone`.
 - CLI-less platforms: CI packages `dist/design-clone.zip` via `scripts/package.mjs` (excludes node_modules, runs, tests); never hand-edited.
 - Prototypes themselves: static bundle, offline-openable, no runtime CDN (Tailwind browser build is being replaced by a generated local utility CSS, see `docs/THIRD-PARTY.md`).

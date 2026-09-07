@@ -11,7 +11,7 @@ license: MIT
 compatibility: opencode, claude-code, codex, qoder, qwen-code, trae
 metadata:
   version: "0.5.0"
-  homepage: https://github.com/tt-a1i/design-clone
+  homepage: https://github.com/hello-cqq/design-clone
 ---
 
 # Design Clone（设计克隆）
