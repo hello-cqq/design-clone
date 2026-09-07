@@ -69,9 +69,9 @@ Every gate is a script you can run yourself; `scripts/regress.mjs` runs all of t
 
 ```bash
 # any Agent-Skills client
-npx skills add tt-a1i/design-clone
+npx skills add hello-cqq/design-clone
 # or clone / or dist/*.zip for CLI-less platforms
-git clone https://github.com/tt-a1i/design-clone && cd design-clone
+git clone https://github.com/hello-cqq/design-clone && cd design-clone
 cd skills/design-clone/scripts && npm install && npx playwright install chromium
 node doctor.mjs
 ```

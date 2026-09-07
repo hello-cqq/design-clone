@@ -54,13 +54,13 @@ doctor（环境）→ interact（**真点每个控件**，dead=0）→ inspect�
 
 ```bash
 # 一条命令安装到你的 agent（按需选择 -a 参数，可多个）
-npx skills add tt-a1i/design-clone -a opencode
-npx skills add tt-a1i/design-clone -a claude-code
-npx skills add tt-a1i/design-clone -a codex
-npx skills add tt-a1i/design-clone -a qoder -a qwen-code -a trae
+npx skills add hello-cqq/design-clone -a opencode
+npx skills add hello-cqq/design-clone -a claude-code
+npx skills add hello-cqq/design-clone -a codex
+npx skills add hello-cqq/design-clone -a qoder -a qwen-code -a trae
 
 # 全局安装
-npx skills add tt-a1i/design-clone -g -a opencode
+npx skills add hello-cqq/design-clone -g -a opencode
 ```
 
 WorkBuddy 等无 CLI 的平台：下载 `dist/design-clone.zip`，在"添加技能 → 上传技能"中导入。
