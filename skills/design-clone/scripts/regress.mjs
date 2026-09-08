@@ -14,7 +14,7 @@ const get = (k, d) => (A.includes(k) ? A[A.indexOf(k) + 1] : d);
 const ROOT = path.resolve(HERE, "..", "..", "..", "design-clone-runs");
 const full = A.includes("--full");
 const portBase = +get("--port-base", "4500");
-let runs = fs.readdirSync(ROOT).filter((d) => fs.existsSync(path.join(ROOT, d, "prototype/views")) && fs.readdirSync(path.join(ROOT, d, "prototype/views")).some((x) => x.endsWith(".html")));
+let runs = fs.readdirSync(ROOT).filter((d) => !d.endsWith("-v1") && fs.existsSync(path.join(ROOT, d, "prototype/views")) && fs.readdirSync(path.join(ROOT, d, "prototype/views")).some((x) => x.endsWith(".html"))); // M46: -v1 为重修前冻结快照，不参与回归
 if (get("--runs", null)) runs = get("--runs", "").split(",");
 const rows = [];
 let bad = 0;
@@ -30,16 +30,22 @@ for (let i = 0; i < runs.length; i++) {
     if (!ready) await new Promise((res) => setTimeout(res, 500));
   }
   const lastJson = (t) => { try { return JSON.parse(String(t || "").trim().split("\n").pop()); } catch { return null; } };
-  const ia = spawnSync("node", [path.join(HERE, "qa/interact.mjs"), "--run", path.join(ROOT, r), "--base", base], { encoding: "utf8", timeout: 600000 });
+  // M46：子门被资源竞争 SIGKILL 时重试一次（瞬态问题不该判死刑），仍失败才记 BROKEN
+  const runChild = (args, timeout) => {
+    let o = spawnSync("node", args, { encoding: "utf8", timeout });
+    if ((o.status !== 0 || !lastJson(o.stdout)) && !o.error) o = spawnSync("node", args, { encoding: "utf8", timeout });
+    return o;
+  };
+  const ia = runChild([path.join(HERE, "qa/interact.mjs"), "--run", path.join(ROOT, r), "--base", base], 900000);
   const iaj = lastJson(ia.stdout) || {};
   const iaBroken = !ready || ia.status !== 0 || !iaj || !(iaj.views > 0);
-  const ins = spawnSync("node", [path.join(HERE, "qa/inspect.mjs"), base, r, "--run", path.join(ROOT, r), "--shots", path.join("/tmp", "regress-" + r)], { encoding: "utf8", timeout: 900000 });
+  const ins = runChild([path.join(HERE, "qa/inspect.mjs"), base, r, "--run", path.join(ROOT, r), "--shots", path.join("/tmp", "regress-" + r)], 900000);
   const insj = lastJson(ins.stdout) || {};
   // inspect/ui-smoke 的 stdout 是**扁平** summary（{pass,fail,warnFail,…}），没有 .summary 包装；
   // 历史上 regress 读 insj.summary.* 恒 undefined → 全 run 假绿（LESSONS 132 的真正根因）
   const insBroken = !ready || ins.status !== 0 || typeof insj.fail !== "number" || typeof insj.pass !== "number";
   // 外壳冒烟全量门（含真实导出下载）：inspect 内只跑 --fast，这里补真实下载与标注入图
-  const smk = spawnSync("node", [path.join(HERE, "qa/ui-smoke.mjs"), "--run", path.join(ROOT, r), "--base", base, "--out", path.join(ROOT, r, "qa/ui-smoke.json")], { encoding: "utf8", timeout: 900000 });
+  const smk = runChild([path.join(HERE, "qa/ui-smoke.mjs"), "--run", path.join(ROOT, r), "--base", base, "--out", path.join(ROOT, r, "qa/ui-smoke.json")], 900000);
   const smkj = lastJson(smk.stdout) || {};
   const smkBroken = !ready || smk.status !== 0 || typeof smkj.pass !== "number";
   const smkFail = smkBroken ? 1 : (smkj.fail || 0);

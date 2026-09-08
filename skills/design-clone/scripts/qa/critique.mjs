@@ -43,19 +43,32 @@ const j = JSON.parse(fs.readFileSync(P, "utf8"));
 let fid = {}, aud = {};
 try { fid = JSON.parse(fs.readFileSync(path.join(run, "report/fidelity.json"), "utf8")).checks || {}; } catch {}
 try { aud = JSON.parse(fs.readFileSync(path.join(run, "qa/audit.json"), "utf8")); } catch {}
-const required = new Set(views.slice(0, 3));
+const required = new Set(views.slice(0, 3)); // --all-views 时扩为全视图（见下）
 for (const v of views) {
   const f = fid[v], a = aud[v];
   if (f && f.ratio > 0.2) required.add(v);
   if (a && (a.recall != null && a.recall < 0.9)) required.add(v);
 }
+// M46 加严（回应用户"简陋页也绿"）：--min-layout 抬及格线；--all-views 全视图必评；
+// --require-evidence 要求 notes 含具体证据（数字/资产名/结构词），模板句判不达标
+const minLayout = parseInt(get("--min-layout", "3"), 10);
+const reqEvidence = A.includes("--require-evidence");
+if (A.includes("--all-views")) for (const v of views) required.add(v);
+const BOILER = /栏结构与 capture 一致/;
+const evidenceOk = (n) => {
+  n = (n || "").trim();
+  if (n.length < 12) return false;
+  if (BOILER.test(n) && n.length < 28) return false;
+  return /\d|\.(png|jpe?g|svg|webp)|栏|行|表|图标|rail|footer|nav|卡|图|渐变|对齐|字体|资产|列/.test(n);
+};
 const bad = [];
 for (const v of required) {
   const e = (j.views || {})[v];
   if (!e || !e.layout) bad.push(v + ":unscored");
-  else if (e.layout < 3 && !e.fixed) bad.push(v + ":layout" + e.layout);
+  else if (e.layout < minLayout && !e.fixed) bad.push(v + ":layout" + e.layout + "<" + minLayout);
   // M44k：--skeleton 会写占位 notes「TODO: VLM 对照并排图打分」——若打分时只填分数不改 notes，视为没真做对照
   else if (/TODO:/.test(e.notes || "")) bad.push(v + ":todo-notes");
+  else if (reqEvidence && !evidenceOk(e.notes)) bad.push(v + ":weak-notes");
 }
 console.log(JSON.stringify({ ok: !bad.length, scope, required: [...required], bad: bad.slice(0, 8), scored: Object.keys(j.views || {}).length }));
 process.exit(bad.length && scope === "full" ? 4 : 0);

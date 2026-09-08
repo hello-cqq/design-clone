@@ -36,6 +36,15 @@ test("static serving works for in-root files", async () => {
   assert.match(await r.text(), /hi/);
 });
 
+test("shell assets are never cached (M46: stale-shell bug regression)", async () => {
+  fs.writeFileSync(path.join(tmp, "prototype", "inspector.css"), "body{color:#123456}");
+  fs.writeFileSync(path.join(tmp, "prototype", "inspector.js"), "console.log(1)");
+  for (const f of ["inspector.css", "inspector.js", "index.html"]) {
+    const r = await fetch(base + "/prototype/" + f);
+    assert.match(r.headers.get("cache-control") || "", /no-store/, f + " must be no-store");
+  }
+});
+
 test("traversal outside root is 404", async () => {
   const r = await fetch(base + "/prototype/../../etc/passwd");
   assert.ok([400, 404].includes(r.status), "got " + r.status);

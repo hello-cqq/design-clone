@@ -27,7 +27,9 @@ export function makeStaticHandler(root) {
     }
     const ext = path.extname(file);
     const headers = { "content-type": MIME[ext] || "application/octet-stream" };
-    if (ext === ".html") headers["cache-control"] = "no-store";
+    // M46：全部 no-store。历史 bug：只给 .html 发 no-store，用户浏览器缓存旧 inspector.css/js，
+    // 导致"修了但看起来没修"反复出现（门禁跑无缓存上下文全绿，真人浏览器吃旧壳）。本地服务无需缓存换性能。
+    headers["cache-control"] = "no-store, must-revalidate";
     res.writeHead(200, headers);
     fs.createReadStream(file).pipe(res);
   };

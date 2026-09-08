@@ -33,7 +33,8 @@ if (process.argv.includes("--help") || process.argv.includes("-h")) {
 }
 const tplIndex = fs.readFileSync(path.join(TPL, "index.html"), "utf8");
 const targets = process.argv.slice(2).filter((a) => !a.startsWith("-")).map((p) => path.resolve(p));
-const dirs = targets.length ? targets : findRuns();
+// M46：跳过 *-v1 重修备份目录（备份必须保持重修前原状）
+const dirs = (targets.length ? targets : findRuns()).filter((d) => !/[-/]v1(\/|$)/.test(d.replace(/\/prototype\/?$/, "")) && !d.endsWith("-v1/prototype"));
 
 let ok = 0, skip = 0;
 for (const dir of dirs) {
