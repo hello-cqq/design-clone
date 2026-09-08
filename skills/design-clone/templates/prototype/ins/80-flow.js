@@ -28,17 +28,36 @@
       const chips = paths.length > 1
         ? `<div class="fc-chips">${paths.map((pp, pi) => `<button class="fc-chip${pi === S.selPath ? " on" : ""}" data-pi="${pi}">路径 ${pi + 1}<i>${pp.length + 1} 屏</i></button>`).join("")}</div>`
         : "";
+      // M47：hub 型节点无内容路径时，用 nav 边合成"巡游链"展示（仅展示/演播用，不进 paths.json，paths-qa 不受影响）
+      const navTour = !paths.length ? ((P.perNode[S.selNode] || {}).nav || [])
+        .map((tid) => P.edges.findIndex((e) => e.from === S.selNode && e.to === tid)).filter((ei) => ei >= 0) : [];
+      const shown = p.length ? p : navTour;
       let cur = S.selNode;
       let chain = cardHTML(cur);
-      p.forEach((ei) => { const e = P.edges[ei]; chain += `<div class="fc-link" data-edge="${ei}"><span class="elabel">${esc(e.label || e.kind || "")}</span></div>` + cardHTML(e.to); cur = e.to; });
+      shown.forEach((ei) => { const e = P.edges[ei]; chain += `<div class="fc-link${p.length ? "" : " nav"}" data-edge="${ei}"><span class="elabel">${esc(e.label || e.kind || "")}</span></div>` + cardHTML(e.to); cur = e.to; });
       // data-pathrow：serve 的 path 导出按此选择器截图（缺失会 5s 超时 → 500）
-      W.canvas.innerHTML = paths.length ? chips + `<div class="fc-chain" data-pathrow="${S.selPath}">${chain}</div>` : `<div style="color:var(--sh-mut);padding:40px">该节点无出向路径</div>`;
+      W.canvas.innerHTML = shown.length
+        ? chips + `<div class="fc-chain${p.length ? "" : " navtour"}" data-pathrow="${S.selPath}">${chain}</div>`
+        : `<div style="color:var(--sh-mut);padding:40px">该节点无出向路径</div>`;
       W.canvas.querySelectorAll(".fc-chip").forEach((c) => (c.onclick = () => { if (+c.dataset.pi === S.selPath) return; S.selPath = +c.dataset.pi; renderFlow(); fillDetail(); syncURL(true); updateCrumb(); }));
       W.canvas.querySelectorAll(".fc-card").forEach((c) => (c.onclick = () => {
         S.selNode = c.dataset.node; S.selPath = 0; renderSceneTree(); renderFlow(); fillDetail(); syncURL(true); updateCrumb();
       }));
     } else {
-      const mk = (t) => `<div class="fc-h">${cardHTML(t.node)}${t.children.length ? `<div class="fc-kids">${t.children.map((c) => `<div class="fc-edge-slot" data-edge="${c.edge}">${mk(c.child)}</div>`).join("")}</div>` : ""}</div>`;
+      // M47：hub 型应用（边多为 module/nav）树不再只剩孤根——nav 边作淡虚线叶铺在节点下
+      const mk = (t, expandNav = true) => {
+        const pn = P.perNode[t.node] || {};
+        const childNodes = new Set(t.children.map((c) => c.child.node));
+        // perNode[].nav 存的是目标节点 id（70-nav 契约）→ 这里映射回边索引
+        const navEdges = (expandNav ? (pn.nav || []) : [])
+          .map((tid) => P.edges.findIndex((e) => e.from === t.node && e.to === tid))
+          .filter((ei) => ei >= 0);
+        const navKids = navEdges
+          .filter((ei) => !childNodes.has(P.edges[ei].to))
+          .map((ei) => ({ edge: ei, child: { node: P.edges[ei].to, children: [] }, navleaf: true }));
+        const kids = [...t.children, ...navKids];
+        return `<div class="fc-h${t.navleaf ? " fc-navleaf" : ""}">${cardHTML(t.node)}${kids.length ? `<div class="fc-kids">${kids.map((c) => `<div class="fc-edge-slot${c.navleaf ? " nav" : ""}" data-edge="${c.edge}">${mk(c.child, false)}</div>`).join("")}</div>` : ""}</div>`;
+      };
       const roots = Q.get("root") === "__all__" ? P.roots : [S.selNode];
       W.canvas.innerHTML = roots.map((r) => mk((P.perNode[r] || {}).tree || { node: r, children: [] })).join(`<div style="width:80px;display:inline-block"></div>`);
       W.canvas.querySelectorAll(".fc-card").forEach((c) => {
@@ -106,6 +125,7 @@
       const x2 = (b.left - cb.left) / z + W.canvas.scrollLeft, y2 = (b.top - cb.top) / z + W.canvas.scrollTop + b.height / 2 / z;
       const num = S.paths.edges.indexOf(e) + 1;
       wirePair(svgNS, svg, x1, y1, x2, y2, e.from, false);
+      if (e.role === "module") { const ws = svg.querySelectorAll("path.wire"); ws[ws.length - 1].classList.add("nav"); }
       const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
       const g = document.createElementNS(svgNS, "g");
       // M44k：JS 只写几何（translate + 1/z 反向缩放），排版/配色全部交给 inspector.css 的 .wbadge/.wnum/.elabel

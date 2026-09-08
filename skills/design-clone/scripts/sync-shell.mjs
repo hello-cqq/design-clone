@@ -8,6 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { buildInspector } from "./build-shell.mjs";
+import { createHash } from "node:crypto";
 
 const HERE = path.dirname(new URL(import.meta.url).pathname);
 const TPL = path.join(HERE, "../templates/prototype");
@@ -56,14 +57,21 @@ for (const dir of dirs) {
   // run 额外 css 在前、组件库在后（库为权威，更新可传播；run 特有类保留）
   let viewCss = (runExtra ? runExtra + "\n" : "") + libCss;
 
+  // M47：壳资源构建哈希 → index.html ?v=__BUILD__，废掉浏览器启发式旧缓存（"修了没生效"根因之一）
+  const buildJs = buildInspector();
+  const buildHash = createHash("md5").update(
+    buildJs + fs.readFileSync(path.join(TPL, "inspector.css"), "utf8") +
+    fs.readFileSync(path.join(TPL, "runtime.js"), "utf8") +
+    fs.readFileSync(path.join(TPL, "zipstore.js"), "utf8")).digest("hex").slice(0, 8);
   const html = tplIndex
     .replaceAll("__TITLE__", title)
     .replaceAll("__VIEW_CSS__", viewCss)
-    .replaceAll("__DC_JSON__", mDC[1].trim());
+    .replaceAll("__DC_JSON__", mDC[1].trim())
+    .replaceAll("__BUILD__", buildHash);
   fs.writeFileSync(old, html);
   fs.copyFileSync(path.join(TPL, "inspector.css"), path.join(dir, "inspector.css"));
   // inspector.js 是 ins/* 分段的拼接产物（build-shell.mjs），不再手维护单文件
-  fs.writeFileSync(path.join(dir, "inspector.js"), buildInspector());
+  fs.writeFileSync(path.join(dir, "inspector.js"), buildJs);
   fs.copyFileSync(path.join(TPL, "runtime.js"), path.join(dir, "runtime.js"));
   fs.copyFileSync(path.join(TPL, "zipstore.js"), path.join(dir, "zipstore.js"));
   // M45：utility 子集本地编译（替代 Tailwind CDN）；失败不阻断换壳，但必须可见

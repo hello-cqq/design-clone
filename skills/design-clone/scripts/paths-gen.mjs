@@ -41,11 +41,13 @@ if (fs.existsSync(graphPath)) {
     const tgt = (e.action && e.action.target) || "";
     raw.push({ from: f, to: t, label: `${act} · ${tgt}`.trim(), chrome: CHROME_RE.test((e.action && e.action.container) || ""), back: act === "back" || BACK_RE.test(tgt), modal: act === "sheet" || act === "dialog" || MODAL_RE.test(tgt) });
   }
-} else {
+}
+// M47：视图内 data-goto 始终参与（capture graph 可能只爬到部分页；交付视图的导航才是用户能点到的图）
+{
   const viewsDir = path.join(proto, "views");
   const dc = (fs.existsSync(path.join(proto, "index.html")) ? fs.readFileSync(path.join(proto, "index.html"), "utf8").match(/window\.DC = ([^\n]+?);<\/script>/) : null);
   const pages = dc ? (Function("return " + dc[1])()).pages : [];
-  for (const p of pages) nodes[p.id] = { title: p.name || p.id, index: p.id.slice(0, 2) };
+  for (const p of pages) if (!nodes[p.id]) nodes[p.id] = { title: p.name || p.id, index: p.id.slice(0, 2) };
   if (fs.existsSync(viewsDir)) for (const f of fs.readdirSync(viewsDir).filter((x) => x.endsWith(".html"))) {
     const from = f.replace(/\.html$/, "");
     const html = fs.readFileSync(path.join(viewsDir, f), "utf8");

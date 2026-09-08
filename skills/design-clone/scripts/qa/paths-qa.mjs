@@ -27,8 +27,10 @@ else {
     }
     const contentPaths = (pn.paths || []).filter((p) => (Array.isArray(p) ? p : p.edges || []).some((ei) => { const e = j.edges[ei]; return e && e.role !== "module" && e.role !== "back"; }));
     if (!contentPaths.length && !((pn.nav || []).length)) out.warn.push(`isolated-root@${r}`);
-    for (const p of pn.paths || []) {
-      const roles = (Array.isArray(p) ? p : p.edges || []).map((ei) => (j.edges[ei] || {}).role);
+    for (const pi of pn.paths || []) {
+      const info = (pn.pathInfo || [])[pn.paths.indexOf(pi)] || {};
+      if (info.source === "flow") continue; // flows.json=录制/作者真值，豁免 hub-chain（ADR：flows 优先）
+      const roles = (Array.isArray(pi) ? pi : pi.edges || []).map((ei) => (j.edges[ei] || {}).role);
       if (roles.length && roles.every((x) => x === "module")) out.hard.push(`hub-chain@${r}`);
     }
   }

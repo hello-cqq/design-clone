@@ -352,6 +352,36 @@ await step("variant-save", async () => {
   return "variants/_smoke 落盘 + 索引登记";
 });
 
+/* ---------- M47：小控件可选中进看板（选中回退链） ---------- */
+await step("board-select-fallback", async () => {
+  const has = await page.evaluate(() => [...document.querySelectorAll("#dc-stage [data-act]")]
+    .some((x) => !x.closest("[data-dc]") && !/^(goto|back)$/.test(x.getAttribute("data-act") || "")));
+  if (!has) return "视图无未挂 data-dc 的接线小控件，跳过";
+  await page.evaluate(() => {
+    const t = [...document.querySelectorAll("#dc-stage [data-act]")]
+      .find((x) => !x.closest("[data-dc]") && !/^(goto|back)$/.test(x.getAttribute("data-act") || ""));
+    t.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+  });
+  await page.waitForTimeout(500);
+  const shown = await page.evaluate(() => ((document.querySelector("#dc-board-detail") || {}).textContent || "").includes("选中元素"));
+  if (!shown) throw new Error("点接线小控件后右看板未展示选中元素（选中回退链失效）");
+});
+
+/* ---------- M47：场景树不为空（hub 型 run 的 nav 叶必须渲染） ---------- */
+await step("scene-tree-not-empty", async () => {
+  const nPages = await page.evaluate(() => ((window.DC && window.DC.pages) || []).length);
+  if (nPages < 3) return "页面过少，跳过";
+  await focusBody();
+  await page.keyboard.press("2");
+  await page.waitForTimeout(1800);
+  const cards = await page.locator("#dc-flow-canvas .fc-card").count();
+  await focusBody();
+  await page.keyboard.press("1");
+  await page.waitForTimeout(500);
+  if (cards < 2) throw new Error("场景树仅 " + cards + " 张卡（hub 型 run 的 nav 叶未渲染，画布近似空白）");
+  return cards + " 张卡";
+});
+
 /* ---------- 画布连线标签排版（"太黑太粗"反复出现的回归锁） ---------- */
 await ensureChrome();
 await step("canvas-label-style", async () => {
