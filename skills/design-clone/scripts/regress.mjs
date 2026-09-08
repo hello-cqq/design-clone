@@ -31,14 +31,15 @@ for (let i = 0; i < runs.length; i++) {
   }
   const lastJson = (t) => { try { return JSON.parse(String(t || "").trim().split("\n").pop()); } catch { return null; } };
   // M46：子门被资源竞争 SIGKILL 时重试一次（瞬态问题不该判死刑），仍失败才记 BROKEN
+  // 重试只针对"拿不到 summary"的瞬态崩溃（SIGKILL/超时）；门失败退出码(2/4)带 summary，是有效结果不得重试
   const runChild = (args, timeout) => {
     let o = spawnSync("node", args, { encoding: "utf8", timeout });
-    if ((o.status !== 0 || !lastJson(o.stdout)) && !o.error) o = spawnSync("node", args, { encoding: "utf8", timeout });
+    if (!lastJson(o.stdout) && !o.error) o = spawnSync("node", args, { encoding: "utf8", timeout });
     return o;
   };
   const ia = runChild([path.join(HERE, "qa/interact.mjs"), "--run", path.join(ROOT, r), "--base", base], 900000);
   const iaj = lastJson(ia.stdout) || {};
-  const iaBroken = !ready || ia.status !== 0 || !iaj || !(iaj.views > 0);
+  const iaBroken = !ready || !iaj || !(iaj.views > 0);
   const ins = runChild([path.join(HERE, "qa/inspect.mjs"), base, r, "--run", path.join(ROOT, r), "--shots", path.join("/tmp", "regress-" + r)], 900000);
   const insj = lastJson(ins.stdout) || {};
   // inspect/ui-smoke 的 stdout 是**扁平** summary（{pass,fail,warnFail,…}），没有 .summary 包装；
