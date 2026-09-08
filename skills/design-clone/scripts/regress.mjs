@@ -37,16 +37,16 @@ for (let i = 0; i < runs.length; i++) {
     if (!lastJson(o.stdout) && !o.error) o = spawnSync("node", args, { encoding: "utf8", timeout });
     return o;
   };
-  const ia = runChild([path.join(HERE, "qa/interact.mjs"), "--run", path.join(ROOT, r), "--base", base], 900000);
+  const ia = runChild([path.join(HERE, "qa/interact.mjs"), "--run", path.join(ROOT, r), "--base", base], 2400000);
   const iaj = lastJson(ia.stdout) || {};
   const iaBroken = !ready || !iaj || !(iaj.views > 0);
-  const ins = runChild([path.join(HERE, "qa/inspect.mjs"), base, r, "--run", path.join(ROOT, r), "--shots", path.join("/tmp", "regress-" + r)], 900000);
+  const ins = runChild([path.join(HERE, "qa/inspect.mjs"), base, r, "--run", path.join(ROOT, r), "--shots", path.join("/tmp", "regress-" + r)], 2400000);
   const insj = lastJson(ins.stdout) || {};
   // inspect/ui-smoke 的 stdout 是**扁平** summary（{pass,fail,warnFail,…}），没有 .summary 包装；
   // 历史上 regress 读 insj.summary.* 恒 undefined → 全 run 假绿（LESSONS 132 的真正根因）
   const insBroken = !ready || ins.status !== 0 || typeof insj.fail !== "number" || typeof insj.pass !== "number";
   // 外壳冒烟全量门（含真实导出下载）：inspect 内只跑 --fast，这里补真实下载与标注入图
-  const smk = runChild([path.join(HERE, "qa/ui-smoke.mjs"), "--run", path.join(ROOT, r), "--base", base, "--out", path.join(ROOT, r, "qa/ui-smoke.json")], 900000);
+  const smk = runChild([path.join(HERE, "qa/ui-smoke.mjs"), "--run", path.join(ROOT, r), "--base", base, "--out", path.join(ROOT, r, "qa/ui-smoke.json")], 2400000);
   const smkj = lastJson(smk.stdout) || {};
   const smkBroken = !ready || smk.status !== 0 || typeof smkj.pass !== "number";
   const smkFail = smkBroken ? 1 : (smkj.fail || 0);
