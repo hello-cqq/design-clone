@@ -44,11 +44,12 @@ for (let i = 0; i < runs.length; i++) {
   const insj = lastJson(ins.stdout) || {};
   // inspect/ui-smoke 的 stdout 是**扁平** summary（{pass,fail,warnFail,…}），没有 .summary 包装；
   // 历史上 regress 读 insj.summary.* 恒 undefined → 全 run 假绿（LESSONS 132 的真正根因）
-  const insBroken = !ready || ins.status !== 0 || typeof insj.fail !== "number" || typeof insj.pass !== "number";
+  // 同 iaBroken：带扁平 summary 即有效结果；门失败 exit 2 由 insj.fail 计入，不得当 BROKEN
+  const insBroken = !ready || typeof insj.fail !== "number" || typeof insj.pass !== "number";
   // 外壳冒烟全量门（含真实导出下载）：inspect 内只跑 --fast，这里补真实下载与标注入图
   const smk = runChild([path.join(HERE, "qa/ui-smoke.mjs"), "--run", path.join(ROOT, r), "--base", base, "--out", path.join(ROOT, r, "qa/ui-smoke.json")], 2400000);
   const smkj = lastJson(smk.stdout) || {};
-  const smkBroken = !ready || smk.status !== 0 || typeof smkj.pass !== "number";
+  const smkBroken = !ready || typeof smkj.pass !== "number";
   const smkFail = smkBroken ? 1 : (smkj.fail || 0);
   if (process.env.REGRESS_DEBUG) fs.writeFileSync("/tmp/regress-dbg.json", JSON.stringify({ r, iaStatus: ia.status, iaOut: (ia.stdout || "").length, insStatus: ins.status, insSignal: ins.signal, insOut: (ins.stdout || "").slice(-200), insErr: (ins.stderr || "").slice(-300), smkStatus: smk.status, smkSignal: smk.signal, smkOut: (smk.stdout || "").slice(-200), smkErr: (smk.stderr || "").slice(-300) }, null, 1));
   let fid = "";
