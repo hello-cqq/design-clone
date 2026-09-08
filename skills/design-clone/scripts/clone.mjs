@@ -19,6 +19,7 @@ import { spawnSync, spawn } from "node:child_process";
 import { parseArgs } from "node:util";
 import http from "node:http";
 import { buildInspector } from "./build-shell.mjs";
+import { createHash } from "node:crypto";
 
 const HERE = path.dirname(new URL(import.meta.url).pathname);
 const TPL = path.join(HERE, "..", "templates", "prototype");
@@ -163,7 +164,11 @@ if (!values["gates-only"]) {
   const pages = views.map((id) => ({ id, name: names[id] || id, fidelity: "live-high" }));
   const dc = { pages, shell, platform: { platform } };
   let html = fs.readFileSync(path.join(TPL, "index.html"), "utf8");
-  html = html.replaceAll("__TITLE__", values.target).replaceAll("__VIEW_CSS__", viewCss).replace("__DC_JSON__", JSON.stringify(dc));
+  const buildHash = createHash("md5").update(
+    buildInspector() + fs.readFileSync(path.join(TPL, "inspector.css"), "utf8") +
+    fs.readFileSync(path.join(TPL, "runtime.js"), "utf8") +
+    fs.readFileSync(path.join(TPL, "zipstore.js"), "utf8")).digest("hex").slice(0, 8);
+  html = html.replaceAll("__TITLE__", values.target).replaceAll("__VIEW_CSS__", viewCss).replace("__DC_JSON__", JSON.stringify(dc)).replaceAll("__BUILD__", buildHash);
   fs.writeFileSync(path.join(protoDir, "index.html"), html);
   ok(`index.html（${views.length} 视图，shell=${platform}）+ runtime.js + inspector.*`);
 } else {

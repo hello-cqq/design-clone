@@ -13,7 +13,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>__TITLE__ — design-clone 原型</title>
 <link rel="stylesheet" href="../knowledge/tokens.css">
-<link rel="stylesheet" href="inspector.css">
+<link rel="stylesheet" href="inspector.css?v=__BUILD__">
 <!-- M45：utility 子集本地编译（scripts/gen/utility-css.mjs），移除 @tailwindcss/browser CDN ——
      原型离线/file:// / zip 分发不再依赖网络，也无第三方运行时 -->
 <link rel="stylesheet" href="utilities.css">
@@ -122,8 +122,8 @@
 <div id="dc-modal-root"></div>
 
 <script>window.DC = __DC_JSON__;</script>
-<script src="zipstore.js"></script>
-<script src="runtime.js"></script>
-<script src="inspector.js"></script>
+<script src="zipstore.js?v=__BUILD__"></script>
+<script src="runtime.js?v=__BUILD__"></script>
+<script src="inspector.js?v=__BUILD__"></script>
 </body>
 </html>

@@ -16,6 +16,13 @@
         if (p && p.length) { startPlay(p, idx, node); return; }
       }
     }
+    const navTour = P && node ? ((P.perNode[node] || {}).nav || [])
+      .map((tid) => P.edges.findIndex((e) => e.from === node && e.to === tid)).filter((ei) => ei >= 0) : [];
+    if (navTour.length) {
+      toast("该节点无内容路径，按导航巡游播放");
+      startPlay(navTour, 0, node);
+      return;
+    }
     if (S.journeys.length) {
       toast("该节点无出向路径，改用演示旅程播放");
       if (S.journeys.length > 1) demoChooser(); else startDemo(0);

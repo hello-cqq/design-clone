@@ -52,7 +52,9 @@
         const o = ((S.overrides[S.page] || {})[S.selected] || {}).style || {};
         const row = (label, key, val, type) =>
           `<div class="kv"><label>${label}</label>${type === "color" ? `<input type="color" data-sk="${key}" value="${val.startsWith("#") && val.length === 7 ? val : "#ffffff"}">` : ""}<input class="dc-inp" data-sk="${key}" value="${esc(val)}" style="width:110px" ${S.edit ? "" : "readonly"}></div>`;
-        html += `<h4>选中元素 · ${esc(S.selected)}</h4>&lt;${t.tagName.toLowerCase()}&gt;
+        const autoMeta = String(S.selected).startsWith("auto:")
+          ? `<div class="hint">自动选中控件 · 交互=${esc(t.getAttribute("data-act") || t.getAttribute("data-goto") || t.getAttribute("role") || "-")} · ${esc((t.getAttribute("data-msg") || t.textContent || "").trim().slice(0, 40))}</div>` : "";
+        html += `<h4>选中元素 · ${esc(S.selected)}</h4>${autoMeta}&lt;${t.tagName.toLowerCase()}&gt;
           ${row("背景", "backgroundColor", rgb2hex(cs.backgroundColor), "color")}${row("文字", "color", rgb2hex(cs.color), "color")}${row("圆角", "borderRadius", cs.borderRadius, "text")}${row("边框", "border", cs.borderWidth + " solid " + rgb2hex(cs.borderColor), "text")}
           ${row("字体", "fontFamily", cs.fontFamily.split(",")[0], "text")}${row("字号", "fontSize", cs.fontSize, "text")}${row("字重", "fontWeight", cs.fontWeight, "text")}
           <div style="margin-top:4px;color:var(--sh-mut);font-size:11px">${S.edit ? "可直接改值，Ctrl+Z 撤销" : "编辑模式可改（底栏 ✎）"}</div>

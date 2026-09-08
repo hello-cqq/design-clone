@@ -31,7 +31,11 @@
     { id: "server", label: "仅存服务端" },
   ];
 
-  const el = (sel) => W.stage.querySelector(`[data-dc="${sel}"]`);
+  const el = (sel) => String(sel || "").startsWith("auto:")
+    ? W.stage.querySelector(`[data-dc-auto="${sel}"]`)
+    : W.stage.querySelector(`[data-dc="${sel}"]`);
+  // M47：无 data-dc 的小控件合成选中 id（能点有反应的就该能选中/进看板）
+  const synthId = (t) => "auto:" + t.tagName.toLowerCase() + ":" + (t.getAttribute("data-act") || t.getAttribute("data-goto") || t.getAttribute("role") || "ctl") + ":" + String(t.getAttribute("data-msg") || t.textContent || t.getAttribute("name") || "").trim().replace(/\s+/g, "").slice(0, 12);
   const toWS = (r) => { const w = W.workspace.getBoundingClientRect(); return { x: r.left - w.left, y: r.top - w.top, r: r.right - w.left, b: r.bottom - w.top, cx: (r.left + r.right) / 2 - w.left, cy: (r.top + r.bottom) / 2 - w.top, w: r.width, h: r.height }; };
   const rgb2hex = (c) => { const m = c.match(/rgba?\(([\d.]+), ([\d.]+), ([\d.]+)/); if (!m) return c; return "#" + [m[1], m[2], m[3]].map((v) => Math.round(+v).toString(16).padStart(2, "0")).join(""); };
   const idxOf = (id) => (id || "").slice(0, 2);

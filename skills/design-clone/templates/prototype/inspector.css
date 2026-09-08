@@ -437,3 +437,9 @@ body.dc-chromeless #dc-flow-canvas { padding: 24px; }
   #dc-export-btn { padding: 5px 8px; }
   #dc-zoombar { right: 14px; }
 }
+
+/* M47：hub 型应用的 nav 叶/巡游链——淡虚线+半透明卡，与内容路径区分 */
+.wires path.wire.nav { stroke-dasharray: 3 5; opacity: .3; }
+.fc-edge-slot.nav > .fc-h > .fc-node > .fc-card, .fc-navleaf > .fc-card { opacity: .8; }
+.fc-link.nav .elabel { opacity: .8; }
+.fc-chain.navtour .fc-card { box-shadow: 0 0 0 1px var(--sh-mark-line) inset; }

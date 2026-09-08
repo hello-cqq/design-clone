@@ -378,12 +378,14 @@ await step("demo", async () => {
 });
 
 await step("code-view", async () => {
+  // M47：与当前页状态解耦——先落到列表首页再验，避免前置步骤留下的状态造成假失败
   await page.click("#dc-rail [data-ia=pages]");
   await page.waitForTimeout(300);
+  await page.locator("#dc-pages [data-nav]").first().click();
+  await page.waitForTimeout(500);
   await page.click("#dc-viewmode [data-vm=code]");
-  await page.waitForTimeout(300);
-  const t = await page.textContent("#dc-code-pre");
-  if (!t || t.length < 20) throw new Error("code empty");
+  try { await page.waitForFunction(() => ((document.querySelector("#dc-code-pre") || {}).textContent || "").length > 20, null, { timeout: 4000 }); }
+  catch { throw new Error("code empty"); }
   await page.click("#dc-viewmode [data-vm=preview]");
 });
 
@@ -416,13 +418,16 @@ await step("tweaks-zone", async () => {
 });
 
 await step("compare-chain", async () => {
+  // M47：先落到有列表首页（必有 capture 配对概率最高），并等回退链走完再判定
+  await page.locator("#dc-pages [data-nav]").first().click();
+  await page.waitForTimeout(500);
   await page.click("#dc-compare-btn");
-  await page.waitForTimeout(800);
-  const st = await page.evaluate(() => {
-    const img = document.querySelector("#dc-compare-body img");
-    return { miss: !!document.querySelector("#dc-compare .miss"), ok: img && img.complete && img.naturalWidth > 0 };
-  });
-  if (!st.ok && !st.miss) throw new Error("compare broken img");
+  try {
+    await page.waitForFunction(() => {
+      const img = document.querySelector("#dc-compare-body img");
+      return !!document.querySelector("#dc-compare .miss") || (img && img.complete && img.naturalWidth > 0);
+    }, null, { timeout: 6000 });
+  } catch { throw new Error("compare broken img"); }
   await shot("compare");
   await page.click("#dc-compare-x");
 });
@@ -471,7 +476,9 @@ await step("layout-sanity", async () => {
       const rgba = cs.backgroundColor.match(/rgba\([^)]*,\s*([0-9.]+)\)/);
       const scrim = (cs.position === "absolute" || cs.position === "fixed") && rgba && parseFloat(rgba[1]) < 0.6;
       const decorative = cs.borderRadius === "50%" || /gradient/.test(cs.backgroundImage);
-      if (!tapCatcher && !scrim && !decorative && el.children.length === 0 && !(el.textContent || "").trim() &&
+      // M47：源忠实空态（未选会话的空主区等）用 data-placeholder-ok 显式声明后豁免
+      const intentional = el.hasAttribute("data-placeholder-ok") || !!el.closest("[data-placeholder-ok],[data-state=loading]");
+      if (!tapCatcher && !scrim && !decorative && !intentional && el.children.length === 0 && !(el.textContent || "").trim() &&
         !cs.backgroundImage.includes("url") && el.tagName !== "IMG" &&
         rect.width >= 120 && rect.height >= 120) {
         if (out.empty.length < 5) out.empty.push((el.getAttribute("data-dc") || el.className || el.tagName) + ":" + Math.round(rect.width) + "x" + Math.round(rect.height));

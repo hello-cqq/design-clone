@@ -125,12 +125,23 @@
     }, true);
     W.stage.addEventListener("click", (e) => {
       if (S.ia !== "pages" || S.demo.active) return;
+      // M47：选中回退链——凡"可点且有反应"的控件都能选中进看板/可标注，不限 data-dc
+      const selElem = (root) => root.closest("[data-dc]") ||
+        root.closest('[data-act],[data-goto],button,a,input,select,textarea,[role=button],[role=tab],[role=switch],[role=checkbox],[role=radio]');
+      const selId = (t) => {
+        if (!t || !W.stage.contains(t)) return null;
+        const d = t.getAttribute("data-dc");
+        if (d) return d;
+        const id = synthId(t);
+        t.setAttribute("data-dc-auto", id);
+        return id;
+      };
       // 标注模式：点元素=编辑批注（不触发原型交互，避免"边标注边跳页"）
       if (S.ann && !S.edit) {
-        const at = e.target.closest("[data-dc]");
+        const at = selElem(e.target);
         if (at) {
           e.preventDefault(); e.stopPropagation();
-          S.selected = at.getAttribute("data-dc");
+          S.selected = selId(at);
           fillDetail(); redraw();
           editAnnotation(S.selected);
           return;
@@ -140,7 +151,7 @@
       if (actEl && !S.edit && window.DCRuntime) {
         e.preventDefault(); e.stopPropagation();
         window.DCRuntime.handleClick(actEl, e);
-        const d = actEl.getAttribute("data-dc");
+        const d = selId(actEl);
         if (d) { S.selected = d; fillDetail(); redraw(); }
         return;
       }
@@ -152,8 +163,7 @@
         else loadView(t).catch((err) => notify("加载失败", esc(err.message)));
         return;
       }
-      const t = e.target.closest("[data-dc]");
-      S.selected = t && t.getAttribute ? t.getAttribute("data-dc") : null;
+      S.selected = selId(selElem(e.target));
       fillDetail();
       redraw();
     }, true);
