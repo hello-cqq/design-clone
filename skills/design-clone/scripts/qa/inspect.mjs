@@ -608,6 +608,9 @@ await step("placeholder-blocks", async () => {
       if (cs.backgroundImage !== "none") continue;
       const bg = cs.backgroundColor;
       if (bg === "rgba(0, 0, 0, 0)" || bg === "transparent") continue;
+      // 模态 scrim（absolute/fixed + 半透明）不是占位色块（与 layout-sanity 同口径）
+      const rgba = bg.match(/rgba\([^)]*,\s*([0-9.]+)\)/);
+      if ((cs.position === "absolute" || cs.position === "fixed") && rgba && parseFloat(rgba[1]) < 0.6) continue;
       if (n.children.length) continue; // 有子元素说明是容器而非色块
       out.push((n.getAttribute("data-dc") || n.className || n.tagName).toString().slice(0, 40) + `@${Math.round(r.width)}x${Math.round(r.height)}`);
     }
