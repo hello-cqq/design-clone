@@ -570,13 +570,43 @@ await step("paths-sanity", async () => {
 
 await step("structural-critique", async () => {
   if (!values.run) return;
-  const r = spawnSync("node", [path.join(HERE, "critique.mjs"), "--run", values.run], { encoding: "utf8" });
+  // M46：桌面/网页壳的 run 及格线抬到 4 + 全视图必评 + notes 必须带证据（简陋页不再靠 3 分蒙混）
+  const args = [path.join(HERE, "critique.mjs"), "--run", values.run];
+  let plat = "";
+  try { plat = JSON.stringify(JSON.parse(fs.readFileSync(path.join(values.run, "knowledge/platform.json"), "utf8"))); } catch {}
+  let scopeMode = "demo";
+  try { scopeMode = (JSON.parse(fs.readFileSync(path.join(values.run, "knowledge/scope.json"), "utf8")).scope) || "demo"; } catch {}
+  if (scopeMode === "full" && /desktop|browser|web/.test(plat)) args.push("--min-layout", "4", "--all-views", "--require-evidence");
+  const r = spawnSync("node", args, { encoding: "utf8" });
   let j = {}; try { j = JSON.parse((r.stdout || "").trim().split("\n").pop()); } catch {}
   if (j.missing) {
     if (j.scope === "full") throw new Error("critique-not-run（full 必须 VLM 对照并排图逐视图打 layout 分：qa/critique.mjs --skeleton 后 --set 填写；pixelmatch/recall 抓不到缺栏/错页）");
     ok("structural-critique", true, "demo 无 critique.json（建议补）"); R.checks["structural-critique"].warn = true; return;
   }
   if (!j.ok) throw new Error("结构 critique 不达标: " + (j.bad || []).join(","));
+});
+
+// M46 硬门：空色块占位（capture 有图/有图标而视图放空色块）——"简陋/不像"的最直接信号。
+// 规则通用：stage 内 ≥28×28、无文本、无 img、无背景图的实底色块 = 占位嫌疑；loading 骨架豁免。
+await step("placeholder-blocks", async () => {
+  const bad = await page.evaluate(() => {
+    const out = [];
+    for (const n of document.querySelectorAll("#dc-stage div, #dc-stage span, #dc-stage section, #dc-stage a, #dc-stage li")) {
+      if (n.closest("[data-state=loading], [data-placeholder-ok]")) continue;
+      const r = n.getBoundingClientRect();
+      if (r.width < 28 || r.height < 28) continue;
+      if ((n.textContent || "").trim()) continue;
+      if (n.querySelector("img, svg, video, canvas")) continue;
+      const cs = getComputedStyle(n);
+      if (cs.backgroundImage !== "none") continue;
+      const bg = cs.backgroundColor;
+      if (bg === "rgba(0, 0, 0, 0)" || bg === "transparent") continue;
+      if (n.children.length) continue; // 有子元素说明是容器而非色块
+      out.push((n.getAttribute("data-dc") || n.className || n.tagName).toString().slice(0, 40) + `@${Math.round(r.width)}x${Math.round(r.height)}`);
+    }
+    return out;
+  });
+  if (bad.length) throw new Error(bad.length + " 空色块占位: " + bad.slice(0, 5).join(","));
 });
 
 // M44k 外壳冒烟门：真点播放/导出/分享/设备/标注写回，并锁画布标签排版。

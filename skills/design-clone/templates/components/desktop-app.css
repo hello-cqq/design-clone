@@ -70,3 +70,8 @@
 .da-agentcard { border-radius: 12px; background: #eef4ff; padding: 16px 18px; }
 .da-agentcard .at { color: #2563eb; font-size: 15px; font-weight: 600; }
 .da-agentcard .as { color: #2563eb; font-size: 13px; margin-top: 6px; }
+
+/* M46：侧栏顶部落款（头像+添加）——lark/workbuddy 等桌面壳通用 */
+.da-side .top { display: flex; align-items: center; justify-content: space-between; padding: 14px 14px 6px; }
+.da-side .ava { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
+.da-side .grp { font-size: 12px; color: #8f959e; padding: 10px 22px 4px; }
