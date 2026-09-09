@@ -536,16 +536,18 @@ await step("interactive-controls", async () => {
 });
 
 await step("unstyled-view-classes", async () => {
-  // M48：视图引用了 class 却无任何 CSS 规则=静默坏块（link-xhs5 教训：整 run 无样式表门却全绿）
+  // M48：视图"带类却无任何视觉处理"=静默坏块（link-xhs5 教训）。 styled 判定三选一：
+  // inline style / 任一 class 有 CSS 规则（选择器词边界匹配，含后代选择器）/ computed 有视觉处理
   const st = await page.evaluate(() => {
     const cache = {};
     const hasRule = (cls) => {
       if (cls in cache) return cache[cls];
       const sel = "." + CSS.escape(cls);
+      const rx = new RegExp("(^|[,:\\s])" + sel.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "([^a-zA-Z0-9_-]|$)");
       let hit = false;
       for (const sh of document.styleSheets) {
         let rules; try { rules = sh.cssRules; } catch { continue; }
-        for (const r of rules) { if (r.selectorText && r.selectorText.split(",").some((x) => x.trim().split(/[:\s[.]/).includes(sel) || x.trim().startsWith(sel))) { hit = true; break; } }
+        for (const r of rules) { if (r.selectorText && rx.test(r.selectorText)) { hit = true; break; } }
         if (hit) break;
       }
       return (cache[cls] = hit);
@@ -556,8 +558,11 @@ await step("unstyled-view-classes", async () => {
       const cls = [...n.classList].filter((c) => !/^(on|active|sel|ld|show)$/.test(c));
       if (!cls.length) continue;
       withCls++;
-      if (n.getAttribute("style") && /background|border-radius|display/.test(n.getAttribute("style"))) continue;
-      if (cls.every((c) => !hasRule(c))) unstyled++;
+      const cs = getComputedStyle(n);
+      const treated = (n.getAttribute("style") || "") !== "" ||
+        cs.backgroundColor !== "rgba(0, 0, 0, 0)" || cs.borderRadius !== "0px" ||
+        cs.padding !== "0px" || /flex|grid/.test(cs.display) || cs.boxShadow !== "none";
+      if (!treated && cls.every((c) => !hasRule(c))) unstyled++;
     }
     return { withCls, unstyled };
   });
