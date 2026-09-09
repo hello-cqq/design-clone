@@ -535,6 +535,22 @@ await step("interactive-controls", async () => {
   if (bad.length) throw new Error(bad.length + " 视图存在死控件/无响应（每个控件点击必须有可观测反应）: " + bad.slice(0, 5).join(","));
 });
 
+await step("view-weight-budget", async () => {
+  // M48：视图文本字重预算 <=600（700/800 在 CJK 下观感=黑粗；OS 状态栏保真豁免）
+  const bad = await page.evaluate(() => {
+    const out = [];
+    for (const n of document.querySelectorAll("#dc-stage *")) {
+      if (n.closest(".dc-statusbar")) continue;
+      const t = (n.childNodes.length === 1 && n.firstChild && n.firstChild.nodeType === 3) ? n.textContent.trim() : "";
+      if (!t) continue;
+      const w = parseInt(getComputedStyle(n).fontWeight, 10) || 400;
+      if (w > 600 && out.length < 6) out.push((n.className || n.tagName).toString().slice(0, 20) + ":" + w);
+    }
+    return out;
+  });
+  if (bad.length) throw new Error(bad.length + " 处视图文本字重>600: " + bad.slice(0, 4).join(","));
+});
+
 await step("privacy-anon", async () => {
   if (!values.run) return;
   const r = spawnSync("node", [path.join(HERE, "privacy.mjs"), "--run", values.run], { encoding: "utf8" });

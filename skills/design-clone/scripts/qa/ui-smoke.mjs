@@ -368,6 +368,24 @@ await step("board-select-fallback", async () => {
 });
 
 /* ---------- M47：场景树不为空（hub 型 run 的 nav 叶必须渲染） ---------- */
+await step("canvas-text-budget", async () => {
+  // M48：画布/看板为"工具 chrome"，文本字重一律 <=500（用户多轮反馈"粗黑"）；OS 状态栏与代码视图保真豁免
+  const bad = await page.evaluate(() => {
+    const out = [];
+    for (const scope of ["#dc-canvas", "#dc-board", "#dc-top"]) {
+      for (const n of document.querySelectorAll(scope + " *")) {
+        if (n.closest(".dc-statusbar, #dc-code-pre, #dc-player")) continue;
+        const t = (n.childNodes.length === 1 && n.firstChild && n.firstChild.nodeType === 3) ? n.textContent.trim() : "";
+        if (!t) continue;
+        const w = parseInt(getComputedStyle(n).fontWeight, 10) || 400;
+        if (w > 500 && out.length < 6) out.push(scope + " " + (n.className || n.tagName).toString().slice(0, 24) + ":" + w + " " + t.slice(0, 10));
+      }
+    }
+    return out;
+  });
+  if (bad.length) throw new Error(bad.length + " 处 chrome 文本字重>500: " + bad.slice(0, 4).join(" | "));
+});
+
 await step("scene-tree-not-empty", async () => {
   const nPages = await page.evaluate(() => ((window.DC && window.DC.pages) || []).length);
   if (nPages < 3) return "页面过少，跳过";
