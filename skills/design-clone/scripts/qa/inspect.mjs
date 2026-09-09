@@ -535,6 +535,35 @@ await step("interactive-controls", async () => {
   if (bad.length) throw new Error(bad.length + " 视图存在死控件/无响应（每个控件点击必须有可观测反应）: " + bad.slice(0, 5).join(","));
 });
 
+await step("unstyled-view-classes", async () => {
+  // M48：视图引用了 class 却无任何 CSS 规则=静默坏块（link-xhs5 教训：整 run 无样式表门却全绿）
+  const st = await page.evaluate(() => {
+    const cache = {};
+    const hasRule = (cls) => {
+      if (cls in cache) return cache[cls];
+      const sel = "." + CSS.escape(cls);
+      let hit = false;
+      for (const sh of document.styleSheets) {
+        let rules; try { rules = sh.cssRules; } catch { continue; }
+        for (const r of rules) { if (r.selectorText && r.selectorText.split(",").some((x) => x.trim().split(/[:\s[.]/).includes(sel) || x.trim().startsWith(sel))) { hit = true; break; } }
+        if (hit) break;
+      }
+      return (cache[cls] = hit);
+    };
+    let withCls = 0, unstyled = 0;
+    for (const n of document.querySelectorAll("#dc-stage [class]")) {
+      if (n.closest(".dc-statusbar")) continue;
+      const cls = [...n.classList].filter((c) => !/^(on|active|sel|ld|show)$/.test(c));
+      if (!cls.length) continue;
+      withCls++;
+      if (n.getAttribute("style") && /background|border-radius|display/.test(n.getAttribute("style"))) continue;
+      if (cls.every((c) => !hasRule(c))) unstyled++;
+    }
+    return { withCls, unstyled };
+  });
+  if (st.withCls >= 8 && st.unstyled / st.withCls > 0.5) throw new Error(`视图 ${st.unstyled}/${st.withCls} 带类元素无 CSS 规则（缺样式表）`);
+});
+
 await step("view-weight-budget", async () => {
   // M48：视图文本字重预算 <=600（700/800 在 CJK 下观感=黑粗；OS 状态栏保真豁免）
   const bad = await page.evaluate(() => {
