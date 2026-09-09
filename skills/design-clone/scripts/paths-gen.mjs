@@ -94,6 +94,24 @@ edges.forEach((e) => { if (e.role !== "module" && e.role !== "back") indeg[e.to]
 let roots = Object.keys(nodes).filter((id) => !indeg[id]).sort();
 if (!roots.length && N) roots = [Object.keys(nodes).sort()[0]];
 
+// M48 方向化：真实产品路径从根出发只往"更深层或同层横跳"走；depth[to]<depth[from] 的边=回退，
+// 降为 role=back（返回键仍可用），不再进入 perNode.paths / 场景树 / nav 叶 —— 杜绝 01->02 与 02->01 互现。
+let depths = {};
+function applyDirection() {
+  depths = {};
+  roots.forEach((r) => (depths[r] = 0));
+  const q = roots.slice();
+  while (q.length) {
+    const n = q.shift();
+    for (const e of edges) if (e.role !== "back" && e.from === n && depths[e.to] === undefined) { depths[e.to] = depths[n] + 1; q.push(e.to); }
+  }
+  for (const e of edges) {
+    if (e.role === "back" || e.flow) continue;
+    if (depths[e.from] !== undefined && depths[e.to] !== undefined && depths[e.to] < depths[e.from]) e.role = "back";
+  }
+}
+applyDirection();
+
 function enumPaths(start) {
   const res = [];
   const walk = (cur, acc, visited) => {
@@ -130,6 +148,7 @@ const perNode = {};
 if (flows && flows.length) {
   // flows 为主：每个 flow 是一条真实路径；trie 按起点合并；source=flow
   roots = [...new Set(flows.map((f) => f.steps[0] && f.steps[0].node).filter(Boolean))].sort();
+  applyDirection();
   const byStart = {};
   flows.forEach((f) => { (byStart[f.steps[0].node] = byStart[f.steps[0].node] || []).push(f); });
   for (const id of Object.keys(nodes)) {
@@ -142,6 +161,8 @@ if (flows && flows.length) {
         const a = f.steps[s - 1].node, b = f.steps[s].node;
         let e = edges.find((x) => x.from === a && x.to === b);
         if (!e) { e = { i: edges.length, from: a, to: b, label: f.steps[s].action || "tap", kind: "navigate", role: "drill", flow: f.id }; edges.push(e); }
+        // 录制流里的回退步（depth 变浅）不计入展示路径/树：路径=前向子序列
+        if (e.role === "back" || (depths[a] !== undefined && depths[b] !== undefined && depths[b] < depths[a])) { if (e.role !== "back") e.role = "back"; continue; }
         eAcc.push(e.i);
         let kid = cur.children.find((k) => k.child.node === b);
         if (!kid) { kid = { edge: e.i, child: { node: b, children: [] } }; cur.children.push(kid); }
@@ -156,7 +177,7 @@ if (flows && flows.length) {
   for (const id of Object.keys(nodes)) { const pp = enumPaths(id); perNode[id] = { paths: pp, pathInfo: pp.map(() => ({ source: "derived" })), tree: buildTree(id), nav: navOf(id) }; }
 }
 
-const result = { generated_at: new Date().toISOString(), version: 2, flowsUsed: !!(flows && flows.length), nodes, edges, roots, perNode };
+const result = { generated_at: new Date().toISOString(), version: 3, flowsUsed: !!(flows && flows.length), nodes, edges, roots, depths, perNode };
 fs.mkdirSync(proto, { recursive: true });
 fs.writeFileSync(path.join(proto, "paths.json"), JSON.stringify(result, null, 2));
 const roles = {};

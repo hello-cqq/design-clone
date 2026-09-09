@@ -13,6 +13,30 @@ const out = { ok: true, hard: [], warn: [] };
 if (!fs.existsSync(P)) { out.warn.push("no-paths.json"); }
 else {
   const j = JSON.parse(fs.readFileSync(P, "utf8"));
+  // M48 方向门：路径=从根出发的前向旅程。回边不得出现在 paths；nav 叶不得指向更浅节点；
+  // 互反边对若深度不同必须一正一 back（否则 01->02 与 02->01 互现，违反产品交互逻辑）
+  const D = j.depths || {};
+  const isBackEdge = (e) => e.role === "back" || (D[e.from] !== undefined && D[e.to] !== undefined && D[e.to] < D[e.from]);
+  for (const r of Object.keys(j.perNode || {})) {
+    const pn = j.perNode[r];
+    for (const pa of pn.paths || []) {
+      for (const ei of (Array.isArray(pa) ? pa : pa.edges || [])) {
+        const e = j.edges[ei]; if (e && isBackEdge(e)) out.hard.push(`back-in-path@${r}->${e.from}>${e.to}`);
+      }
+    }
+    for (const t of pn.nav || []) {
+      if (D[r] !== undefined && D[t] !== undefined && D[t] < D[r]) out.hard.push(`nav-back-leaf@${r}->${t}`);
+    }
+  }
+  const seen = new Set();
+  for (const e of j.edges || []) {
+    const k = [e.from, e.to].sort().join(">");
+    if (seen.has(k)) continue; seen.add(k);
+    const rev = (j.edges || []).find((x) => x.from === e.to && x.to === e.from);
+    if (rev && !isBackEdge(e) && !isBackEdge(rev) && D[e.from] !== undefined && D[e.to] !== undefined && D[e.from] !== D[e.to]) {
+      out.hard.push(`mutual-forward@${k}`);
+    }
+  }
   const N = Object.keys(j.nodes || {}).length;
   // M45：giant-chain 只在该链**主要由 module/nav 边**构成时才硬判（那才是"导航被当路径"）；
   // 线性内容流（视频/教程型 demo，边全是 task）覆盖全图是正常形态，降为 warn 供人工确认（dy-qa3 误判修正）

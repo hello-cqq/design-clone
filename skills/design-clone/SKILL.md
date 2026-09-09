@@ -301,6 +301,12 @@ Tweaks 调参（**「存为变体」落 prototype/variants/<名>/{tokens.json,to
 
 ---
 
+## 生成期自检（M48，任何新 run 产出后必跑，红即修不得交付）
+1. `node scripts/qa/paths-qa.mjs <runDir>` —— 路径方向硬门：回边入路径/反向互现/回退 nav 叶 = hard。
+2. `node scripts/qa/inspect.mjs <base> <name> --run <runDir>` —— 含 view-weight-budget（视图文本字重 ≤600，OS 状态栏豁免）。
+3. `node scripts/qa/ui-smoke.mjs --run <runDir> --base <base>` —— 含 canvas-text-budget（画布/看板 chrome 字重 ≤500）。
+4. 按 references/critique-loop.md「M48 追加清单」核 overlay 三要素（容器/底色/scrim 对 capture）与无规则类审计。
+
 ## §E QA 模式（全链路验收，触发即按协议执行）
 
 用户说"全链路验收/QA/产品验收/设计走查/全量测试/回归"时，**完整执行** `references/qa-protocol.md` 四阶段：
