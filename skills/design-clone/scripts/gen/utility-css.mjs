@@ -34,7 +34,7 @@ const only = values.views ? new Set(values.views.split(",")) : null;
 const SP = { 0: 0, 0.5: 2, 1: 4, 1.5: 6, 2: 8, 2.5: 10, 3: 12, 3.5: 14, 4: 16, 5: 20, 6: 24, 7: 28, 8: 32, 9: 36, 10: 40, 11: 44, 12: 48, 14: 56, 16: 64, 20: 80, 24: 96, 28: 112, 32: 128, 40: 160, 48: 192, 56: 224, 64: 256, 72: 288, 80: 320, 96: 384 };
 const RD = { "": 4, none: 0, sm: 2, md: 6, lg: 8, xl: 12, "2xl": 16, "3xl": 24, full: 9999, 10: 10 };
 const MW = { xs: 320, sm: 384, md: 448, lg: 512, xl: 576, "2xl": 672, "3xl": 768, "4xl": 896, "5xl": 1024, "6xl": 1152, "7xl": 1280, full: "100%", min: "min-content", max: "max-content", fit: "fit-content" };
-const FW = { thin: 100, extralight: 200, light: 300, normal: 400, medium: 500, semibold: 600, bold: 700, extrabold: 800, black: 900 };
+const FW = { thin: 300, light: 300, normal: 400, medium: 500, semibold: 600, bold: 600, extrabold: 600, black: 600 } // M48 排版预算：CJK 观感 700+=黑粗，封顶 600;
 const TR = { tighter: "-0.05em", tight: "-0.025em", normal: "0", wide: "0.025em", wider: "0.05em", widest: "0.1em" };
 const SH = { "": "0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06)", sm: "0 1px 2px rgba(0,0,0,.05)", md: "0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1)", lg: "0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1)", xl: "0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1)", none: "none" };
 const escSel = (tok) => "." + tok.replace(/([/:.[\]%#,()])/g, "\\$1");
@@ -144,6 +144,8 @@ function decl(x, isNeg) {
     const v = len(m[1]); if (v) return `font-size:${v}`;
     return null;
   }
+  if ((m = x.match(/^shadow-\[(.+)\]$/))) return "box-shadow:" + m[1].replace(/_/g, " ");
+  if ((m = x.match(/^drop-shadow-\[(.+)\]$/))) return "filter:drop-shadow(" + m[1].replace(/_/g, " ") + ")";
   if ((m = x.match(/^font-(.+)$/))) {
     if (FW[m[1]]) return "font-weight:" + FW[m[1]];
     if (m[1] === "mono") return "font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace";
