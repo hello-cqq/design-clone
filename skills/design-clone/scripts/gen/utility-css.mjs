@@ -277,6 +277,7 @@ const PREFLIGHT = `:where(#dc-stage),:where(#dc-stage *),:where(#dc-stage *::bef
 :where(#dc-stage){line-height:1.5;-webkit-text-size-adjust:100%}
 :where(#dc-stage) :where(h1,h2,h3,h4,h5,h6,p,figure,blockquote,dl,dd,pre){margin:0}
 :where(#dc-stage) :where(h1,h2,h3,h4,h5,h6){font-size:inherit;font-weight:inherit}
+:where(#dc-stage) :where(b,strong){font-weight:600} /* M48 排版预算：裸 b/strong 默认 700=黑粗 */
 :where(#dc-stage) :where(ul,ol,menu){list-style:none;margin:0;padding:0}
 :where(#dc-stage) :where(img,svg,video,canvas,audio,iframe,embed,object){display:block;vertical-align:middle}
 :where(#dc-stage) :where(img,video){max-width:100%;height:auto}
