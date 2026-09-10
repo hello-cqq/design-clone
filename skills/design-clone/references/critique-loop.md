@@ -38,3 +38,5 @@ node scripts/shotdiff.mjs <runDir> 01-home  # 单视图
 - overlay 三要素核对 capture：容器（有/无）、胶囊/卡片底色、scrim 色与透明度；禁止自造深色容器。
 - 路径方向：从根出发只前向（更深层或同层横跳）；回退边不得进入 paths/场景树/nav 叶（paths-gen 自动方向化，paths-qa 硬门拦截）。
 - 无规则类审计：overlay 型 class（modal/menu/pop/sheet/dim/scrim）必须有 CSS 规则或 inline 视觉，否则=隐形坏块（M48 da-modal 教训）。
+
+- M52：整屏/整块 capture 裁切禁止作视图背景（"贴图感"）；地图/信息流大图区=矢量底(SVG)+独立元素层；照片裁切仅限小缩略图/气泡（<=90px 级）。视图内艺术 SVG 须豁免壳图标描边约定（局部 css `svg, svg *{stroke:none}`，见 inspector.css 全局 svg{stroke:currentColor}）。自检：viewshot 并排参考图，出现"照片当背景+控件浮贴"即重构。

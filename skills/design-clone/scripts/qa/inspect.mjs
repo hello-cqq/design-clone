@@ -474,7 +474,9 @@ await step("layout-sanity", async () => {
       const cs = getComputedStyle(el);
       const rect = el.getBoundingClientRect();
       if (rect.width < 4 || rect.height < 4) continue;
-      const scrollable = /auto|scroll/.test(cs.overflowX + cs.overflowY);
+      // M52：SVG 艺术元素（地图 rect/文本）无盒模型裁剪语义，clipped/empty 判定豁免
+      if (el.closest("svg") || el.tagName.toLowerCase() === "svg") continue;
+      const scrollable = /auto|scroll/.test(cs.overflowX + cs.overflowY) || el.hasAttribute("data-scroll-ok"); // M52：设计性横滑裁剪行豁免
       const ellipsis = cs.textOverflow === "ellipsis";
       if (!scrollable && !ellipsis && (el.textContent || "").trim() &&
         (el.scrollWidth - el.clientWidth > 8 || el.scrollHeight - el.clientHeight > 8)) {
@@ -576,6 +578,27 @@ await step("unstyled-view-classes", async () => {
     return { withCls, unstyled };
   });
   if (st.withCls >= 8 && st.unstyled / st.withCls > 0.5) throw new Error(`视图 ${st.unstyled}/${st.withCls} 带类元素无 CSS 规则（缺样式表）`);
+});
+
+await step("pasted-screenshot", async () => {
+  // M52：禁"整屏贴图"——单张 <img> 覆盖 >=45% 舞台且同根无绝对定位兄弟元素（=把 capture 当背景贴）；
+  // 有 overlay 组件的真全幅照片页不受影响（xhs 封面等）
+  const bad = await page.evaluate(() => {
+    const stage = document.querySelector("#dc-stage");
+    if (!stage) return [];
+    const sr = stage.getBoundingClientRect();
+    const out = [];
+    for (const img of stage.querySelectorAll("img")) {
+      const r = img.getBoundingClientRect();
+      const cov = (r.width * r.height) / (sr.width * sr.height);
+      if (cov < 0.45) continue;
+      const root = img.parentElement;
+      const overlays = root ? [...root.children].filter((n) => n !== img && /absolute|fixed/.test(getComputedStyle(n).position)).length : 0;
+      if (!overlays) out.push((img.getAttribute("src") || "img").split("/").pop() + "@" + Math.round(cov * 100) + "%");
+    }
+    return out;
+  });
+  if (bad.length) throw new Error("整屏贴图视图: " + bad.slice(0, 3).join(","));
 });
 
 await step("view-weight-budget", async () => {

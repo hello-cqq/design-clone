@@ -302,6 +302,7 @@ Tweaks 调参（**「存为变体」落 prototype/variants/<名>/{tokens.json,to
 ---
 
 ## 生成期自检（M48，任何新 run 产出后必跑，红即修不得交付）
+0. 贴图自检（M52）：viewshot 每视图并排参考图；出现"整屏照片当背景+控件浮贴"=重构为矢量底+组件层（inspect pasted-screenshot 门会拦）。
 1. `node scripts/qa/paths-qa.mjs <runDir>` —— 路径方向硬门：回边入路径/反向互现/回退 nav 叶 = hard。
 2. `node scripts/qa/inspect.mjs <base> <name> --run <runDir>` —— 含 view-weight-budget（视图文本字重 ≤600，OS 状态栏豁免）。
 3. `node scripts/qa/ui-smoke.mjs --run <runDir> --base <base>` —— 含 canvas-text-budget（画布/看板 chrome 字重 ≤500）。
