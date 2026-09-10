@@ -285,28 +285,18 @@ Tweaks 调参（**「存为变体」落 prototype/variants/<名>/{tokens.json,to
 
 ---
 
-## §D Export 模式（导出 Figma，可选）
+## §D Export 模式（设计产物：生成期初始 + 编辑后重导出）
+心智模型（M51 用户定稿）：**初始 figma 源与每页产品设计 JSON 在生成期就存在**；"导出"按钮的意义=
+用户可能在 inspector 里编辑过（edit-overrides/标注/产品三要素），故对 **live 状态重采集**再打包。
 
-仅在用户明确要求且环境具备时执行：
-1. `node {SKILL_DIR}/scripts/figma/export.mjs <run目录>` 生成 report/figma-plan.json
-   （计算样式→Figma 0-1 浮点，MCP 无关中间层）
-2. 优先检测 Figma 官方远程 MCP（`https://mcp.figma.com/mcp`，免费账号可用）；
-   其次 talk-to-figma-mcp（需 bun + WebSocket + Figma 插件，见 `references/figma-export.md`）
-3. 按 plan 逐页创建 Frame，完成后 `export.mjs --apply-nodeids map.json` 回填
-   （后续增量修改靠 nodeId 定向 patch，禁止整页重建）
-3. 没有任何 Figma 接入时：明确告知用户原型 HTML 本身即可作为开发依据，不强推
-
-**演示视频**（不依赖 Figma）：`node {SKILL_DIR}/scripts/export-walkthrough.mjs <产物目录> [--journey <i>] [--gif]`
-驱动演示模式录屏 → webm/mp4/gif，PRD 可直接内嵌。
-
----
-
-## 生成期自检（M48，任何新 run 产出后必跑，红即修不得交付）
-0. 贴图自检（M52）：viewshot 每视图并排参考图；出现"整屏照片当背景+控件浮贴"=重构为矢量底+组件层（inspect pasted-screenshot 门会拦）。
-1. `node scripts/qa/paths-qa.mjs <runDir>` —— 路径方向硬门：回边入路径/反向互现/回退 nav 叶 = hard。
-2. `node scripts/qa/inspect.mjs <base> <name> --run <runDir>` —— 含 view-weight-budget（视图文本字重 ≤600，OS 状态栏豁免）。
-3. `node scripts/qa/ui-smoke.mjs --run <runDir> --base <base>` —— 含 canvas-text-budget（画布/看板 chrome 字重 ≤500）。
-4. 按 references/critique-loop.md「M48 追加清单」核 overlay 三要素（容器/底色/scrim 对 capture）与无规则类审计。
+1. 生成期（clone.mjs 收口自动跑）：`scripts/gen/collect-design.mjs --run <run> --base <url>` 产出
+   - `prototype/pages/<id>.spec.json`：每页完整产品设计 JSON（过 schema/page.spec.schema.json：meta/画布/证据/产品三要素/regions+components+交互契约）；
+   - `prototype/design/figma-source.json`：Figma 初始源（tokens→variables + 每页 frame/nodes 真 computed 值）。
+2. 导出按钮（inspector）：范围项含"产品设计 JSON（每页 spec）+ Figma 源"，并进"导出全部"；
+   serve 对 live base 重采集（edit-overrides 运行时已作用于 DOM → computed 天然含编辑）→ 入 zip 下载。
+3. Figma 真画布（可选）：.fig 二进制离线不可生成；figma-source.json 可经插件/官方 MCP 导入，
+   或按 references/figma-export.md 路线一/二推上画布并回填 nodeId（`figma/export.mjs --apply-nodeids`）。
+4. 门：inspect `design-artifacts`（新 run 硬拦/存量 warn）、ui-smoke `export-design-artifacts`（zip 必含两产物）。
 
 ## §E QA 模式（全链路验收，触发即按协议执行）
 

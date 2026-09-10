@@ -220,6 +220,13 @@ const up = await waitUp();
 if (!up) { fail(`服务未就绪（${base}）；端口可能被占，serve 会自动 +1，请用实际端口重跑门禁`); process.exit(5); }
 ok(`服务已起：${base}/prototype/`);
 
+// M51：生成期即产出设计产物（每页 spec.json + figma-source.json）；导出按钮之后只做"编辑后重采集"
+try {
+  const { collectDesign } = await import("./gen/collect-design.mjs");
+  const cd = await collectDesign(runDir, base);
+  ok(`设计产物已生成：prototype/pages/*.spec.json ×${cd.pages} + prototype/design/figma-source.json`);
+} catch (e) { log(`  ⚠ collect-design 失败（不阻断）：${String(e.message || e).slice(0, 120)}`); }
+
 mark("shell", "ok");
 let exitCode = 0;
 const gate = (name, args) => { const r = run("node", args); return r.status; };

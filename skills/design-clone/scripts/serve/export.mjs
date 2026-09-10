@@ -38,6 +38,25 @@ export async function runExport({ root, base, job, res }) {
       files.push(`path-${videoItem.path || 0}.webm`);
     }
     for (const it of items) {
+      // M51：设计产物=对 live base 重采集（edit-overrides 运行时已作用 → 天然含用户编辑）
+      if (it.type === "design-json" || it.type === "figma") {
+        // M51：对 live base 重采集（edit-overrides 运行时已作用 → 天然含用户编辑），产物落 outDir/design/ 随 zip 下载
+        const { collectDesign } = await import("../gen/collect-design.mjs");
+        await collectDesign(root, base, it.id || undefined);
+        fs.mkdirSync(path.join(outDir, "design"), { recursive: true });
+        if (it.type === "design-json") {
+          const pagesDir = path.join(root, "prototype", "pages");
+          for (const f of fs.readdirSync(pagesDir).filter((x) => x.endsWith(".spec.json"))) {
+            if (it.id && f !== it.id + ".spec.json") continue;
+            fs.copyFileSync(path.join(pagesDir, f), path.join(outDir, "design", f));
+            files.push("design/" + f);
+          }
+        } else {
+          fs.copyFileSync(path.join(root, "prototype", "design", "figma-source.json"), path.join(outDir, "design", "figma-source.json"));
+          files.push("design/figma-source.json");
+        }
+        continue;
+      }
       if (it.type === "board") {
         fs.writeFileSync(path.join(outDir, "board.json"), JSON.stringify(it.board, null, 2));
         files.push("board.json"); continue;

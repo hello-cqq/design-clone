@@ -409,14 +409,16 @@ await step("zoom-hand", async () => {
 
 await step("export-menu-two", async () => {
   await page.click("#dc-export-btn");
-  // M45 新契约：方式档(data-m)恰好 3 + 范围项(data-x) 1–2 且首项=导出全部（ADR-048 取代 A42 的"恰两项"）
+  // M45 契约 + M51：方式档(data-m)恰好 3；范围项(data-x) 1–3、首项=导出全部、且含"产品设计 JSON"入口（设计产物可重导出）
   const nm = await page.locator("#dc-export-dd [data-m]").count();
   const n = await page.locator("#dc-export-dd [data-x]").count();
-  const first = await page.locator("#dc-export-dd [data-x]").first().textContent();
+  const labels = await page.locator("#dc-export-dd [data-x]").allTextContents();
+  const first = labels[0] || "";
   await shot("export");
   await page.click("#dc-export-btn");
   if (nm !== 3) throw new Error(`export modes ${nm} (应 3)`);
-  if (n < 1 || n > 2 || !/导出全部/.test(first)) throw new Error(`export items ${n}: ${first}`);
+  if (n < 1 || n > 3 || !/导出全部/.test(first)) throw new Error(`export items ${n}: ${first}`);
+  if (!labels.some((t) => /产品设计 JSON|Figma/.test(t))) throw new Error("导出菜单缺设计产物入口（M51）");
 });
 
 await step("tweaks-zone", async () => {
@@ -578,6 +580,32 @@ await step("unstyled-view-classes", async () => {
     return { withCls, unstyled };
   });
   if (st.withCls >= 8 && st.unstyled / st.withCls > 0.5) throw new Error(`视图 ${st.unstyled}/${st.withCls} 带类元素无 CSS 规则（缺样式表）`);
+});
+
+await step("design-artifacts", async () => {
+  // M51：生成期设计产物必须在场：每页 pages/<id>.spec.json（schema 必填）+ design/figma-source.json；
+  // 存量 run（M51 门前创建）=warn 公示，新 run=hard（与 parity 同口径）
+  if (!values.run) return;
+  const pagesDir = path.join(values.run, "prototype", "pages");
+  const fig = path.join(values.run, "prototype", "design", "figma-source.json");
+  const nPages = await page.evaluate(() => ((window.DC && window.DC.pages) || []).length);
+  let specs = [];
+  try { specs = fs.readdirSync(pagesDir).filter((x) => x.endsWith(".spec.json")); } catch {}
+  const hasFig = fs.existsSync(fig);
+  let legacy = false;
+  try { legacy = fs.statSync(path.join(values.run, "knowledge/scope.json")).mtimeMs < 1789084800000; } catch {}
+  const miss = specs.length < nPages || !hasFig;
+  for (const f of specs) {
+    const j = JSON.parse(fs.readFileSync(path.join(pagesDir, f), "utf8"));
+    if (!j.meta || !j.meta.page_id || !j.meta.canvas || !Array.isArray(j.regions) || !j.regions.length) {
+      if (!legacy) throw new Error("spec 缺必填字段: " + f);
+    }
+  }
+  if (miss) {
+    if (legacy) { ok("design-artifacts", true, `存量缺设计产物（warn）: specs ${specs.length}/${nPages}, figma=${hasFig}`); R.checks["design-artifacts"].warn = true; }
+    else throw new Error(`缺设计产物: specs ${specs.length}/${nPages}, figma-source=${hasFig}（跑 scripts/gen/collect-design.mjs）`);
+  }
+  return specs.length + " specs + figma-source";
 });
 
 await step("pasted-screenshot", async () => {

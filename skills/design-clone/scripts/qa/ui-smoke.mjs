@@ -445,6 +445,18 @@ await step("path-rows-all", async () => {
   if (st.want != null && st.rows !== st.want) throw new Error(`路径行 ${st.rows} ≠ perNode.paths ${st.want}`);
 });
 
+await step("export-design-artifacts", async () => {
+  // M51：导出 zip 必含每页设计 JSON + figma 源（对 live 重采集=含编辑）
+  const r = await page.evaluate(async () => {
+    const res = await fetch("/__dc_export__", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ items: [{ type: "design-json" }, { type: "figma" }], returnFiles: true }) });
+    return res.json();
+  });
+  const names = (r.files || []).map((f) => f.name || f);
+  if (!names.some((n) => /figma-source\.json$/.test(n))) throw new Error("导出缺 figma-source.json");
+  if (!names.some((n) => /\.spec\.json$/.test(n))) throw new Error("导出缺 pages/*.spec.json");
+  return names.length + " 设计文件入 zip";
+});
+
 await step("canvas-text-budget", async () => {
   // M48：画布/看板为"工具 chrome"，文本字重一律 <=500（用户多轮反馈"粗黑"）；OS 状态栏与代码视图保真豁免
   const bad = await page.evaluate(() => {
