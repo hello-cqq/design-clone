@@ -250,3 +250,8 @@ fidelity-all 对每视图计算 style-parity：capture vs 原型的 Hasler-Susst
 场景树与路径仅沿 drill/task/modal 枚举；roots=模块入口；nav 平铺于节点下；画布 nav 淡虚线。
 数据优先级：flows.json（capture/events.jsonl 录制=ground-truth > agent 目视推断）> 结构推导 > 朴素 DFS（标 source:derived）。
 门禁 qa/paths-qa：禁 hub-chain/giant-chain；模块根须有 ≥1 content 流或显式 nav；drill 应有 back-pair（warn）。
+
+## M52 大图区结构规则
+- 禁整屏 capture 裁切作背景；地图/画布类大区=内联 SVG 矢量底（水域/陆地/路网/标签分层）+ 独立 POI/气泡/控件层。
+- 艺术 SVG 加局部 stroke 豁免（壳全局 svg{stroke:currentColor} 会描黑艺术图形）。
+- 照片裁切仅小缩略图（文件夹/头像/气泡），单张 <=90px 级来源区域。
