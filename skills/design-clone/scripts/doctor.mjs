@@ -6,7 +6,7 @@
  * 安装命令按平台给出，权威清单见 references/install-guide.md
  */
 import { execSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import net from "node:net";
 import { createRequire } from "node:module";
 import path from "node:path";
@@ -14,6 +14,14 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const platform = process.platform;
+// M54：版本+渠道打印（报障定位：快照/正式/开发副本）
+try {
+  const sk = readFileSync(path.join(__dirname, "..", "SKILL.md"), "utf8");
+  const ver = (sk.match(/version:\s*"([^"]+)"/) || [])[1] || "?";
+  const channel = ver.includes("snapshot") ? "snapshot" : "stable";
+  const managed = existsSync(path.join(__dirname, "..", ".dc-managed")) ? "installer" : (existsSync(path.join(__dirname, "..", "..", "..", ".git")) ? "dev-repo" : "manual");
+  console.log(`design-clone v${ver}（渠道 ${channel} · 来源 ${managed}）`);
+} catch {}
 const rows = [];
 const add = (level, name, detail) => rows.push({ level, name, detail });
 

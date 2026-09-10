@@ -1,3 +1,21 @@
+# 安装器（M54）
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/main/install.sh | bash -s -- [flags]
+```
+| flag | 作用 |
+|---|---|
+| --agent opencode\|claude\|codex\|all\|auto | 目标 agent（auto=探测已有配置目录，全无则三家） |
+| --ref <tag> | 钉版（默认=最新稳定 release→无则最新 snapshot→main） |
+| --channel snapshot | 装快照 prerelease |
+| --skip-deps | 秒装档（不装 npm/playwright；首次跑门前手动装） |
+| --project | 装项目级（.opencode/.claude/.codex skills） |
+| --force | 覆盖非本安装器管理的同名目录 |
+
+幂等：重跑=rsync --delete 更新（排除 node_modules）。管理标记 `.dc-managed`。
+npx skills 生态：`npx skills add hello-cqq/design-clone -g -y --copy`；大仓克隆超时报错时加 `SKILLS_CLONE_TIMEOUT_MS=600000`。
+
+---
 # 安装指南（跨平台）
 
 doctor 会按当前平台给出对应命令。本表为权威参考。

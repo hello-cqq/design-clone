@@ -65,16 +65,33 @@ Every gate is a script you can run yourself; `scripts/regress.mjs` runs all of t
 - `qa/privacy.mjs` — real names/faces/PII must be anonymized or genimg-replaced; brand assets require `knowledge/consent.json`.
 - `eval.mjs` — aggregate score (fidelity/interactivity/perf/ux/stability/privacy).
 
-## Install
+## Install (one command)
 
 ```bash
-# any Agent-Skills client
-npx skills add hello-cqq/design-clone
-# or clone / or dist/*.zip for CLI-less platforms
-git clone https://github.com/hello-cqq/design-clone && cd design-clone
-cd skills/design-clone/scripts && npm install && npx playwright install chromium
-node doctor.mjs
+# 推荐：一键安装器（自动装依赖 playwright/chromium；重跑=更新；--skip-deps 秒装档）
+curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/main/install.sh | bash
+# 指定 agent / 钉版 / 快照渠道 / 项目级：
+curl -fsSL .../install.sh | bash -s -- --agent opencode          # opencode | claude | codex | all | auto
+curl -fsSL .../install.sh | bash -s -- --ref v0.6.0 --skip-deps   # 钉版 / 秒装
+curl -fsSL .../install.sh | bash -s -- --channel snapshot         # 快照渠道（prerelease）
 ```
+
+| 方式 | 命令 | 说明 |
+|---|---|---|
+| install.sh（推荐） | 见上 | 三 agent 全局目录 + 依赖一步到位，幂等更新 |
+| npx skills | `npx skills add hello-cqq/design-clone -g -y --copy` | Agent-Skills 生态；大仓加 `SKILLS_CLONE_TIMEOUT_MS=600000` |
+| 手动 cp | `git clone --depth 1 … && cp -r …/skills/design-clone ~/.claude/skills/` | 目录表见下 |
+| dist zip | GitHub Release 资产 | 无 CLI 平台解压到 skills 目录 |
+
+Agent 全局 skills 目录：opencode `~/.config/opencode/skills`（兼容 `~/.agents/skills`）· claude `~/.claude/skills` · codex `~/.codex/skills`（兼容 `~/.agents/skills`）。
+装后首句（粘进 agent 即可）：**用 design-clone 克隆 <某个 app 或网址> 的设计原型**。环境自检：`node <skill>/scripts/doctor.mjs`。
+Windows 请走 WSL2 / Git Bash。
+
+## Releases & pinning
+
+- SemVer；**手动发布车**：快照 `vX.Y.Z-snapshot.YYYYMMDD`（GitHub prerelease，install.sh `--channel snapshot`），正式 `vX.Y.Z`（Release 页带 zip 资产与钉版一行命令）。
+- 钉版：`install.sh --ref <tag>`；npx skills 取 main 渠道；zip 按 Release tag 下载。
+- 版本真源 `SKILL.md metadata.version`（同步 package.json / CHANGELOG；CI version-sync 门防漂移）；变更记录见 [CHANGELOG.md](CHANGELOG.md)。
 
 ## Quick start (one command)
 
