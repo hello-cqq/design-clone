@@ -40,10 +40,20 @@ else {
   const N = Object.keys(j.nodes || {}).length;
   // M45：giant-chain 只在该链**主要由 module/nav 边**构成时才硬判（那才是"导航被当路径"）；
   // 线性内容流（视频/教程型 demo，边全是 task）覆盖全图是正常形态，降为 warn 供人工确认（dy-qa3 误判修正）
-  const countTree = (t) => { let c = 1, d = 0; const roles = []; const walk = (n, dep) => { d = Math.max(d, dep); (n.children || []).forEach((k) => { c++; roles.push((j.edges[k.edge] || {}).role); walk(k.child, dep + 1); }); }; walk(t, 0); return { c, d, roles }; };
+  // M50：树=前向可达子树（含 nav，用户心智），故 giant-chain 只评 PATHS（导航被当"路径"才是病）
+  const countPaths = (pn, r) => {
+    const nodesSeen = new Set(); const roles = []; let d = 0;
+    for (const p of pn.paths || []) {
+      const es = Array.isArray(p) ? p : p.edges || [];
+      d = Math.max(d, es.length);
+      let cur = r; nodesSeen.add(cur);
+      for (const ei of es) { const e = j.edges[ei]; if (!e) continue; roles.push(e.role); nodesSeen.add(e.to); cur = e.to; }
+    }
+    return { c: nodesSeen.size, d, roles };
+  };
   for (const r of j.roots || []) {
     const pn = j.perNode[r] || {};
-    const { c, d, roles } = countTree(pn.tree || { children: [] });
+    const { c, d, roles } = countPaths(pn, r);
     const navFrac = roles.length ? roles.filter((x) => x === "module").length / roles.length : 0;
     if (N > 3 && c > Math.max(3, N * 0.6) && d > 4) {
       if (navFrac >= 0.5) out.hard.push(`giant-chain@${r}(覆盖${c}/${N}深${d}：导航被当路径)`);

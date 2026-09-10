@@ -27,7 +27,10 @@
   function renderSceneTree() {
     const P = S.paths; const box = $("#dc-tree");
     if (!P) { box.innerHTML = `<div style="padding:8px;color:var(--sh-mut);font-size:11px">无 paths.json<br>跑 scripts/paths-gen.mjs 生成</div>`; return; }
-    const kids = (id) => [...new Set((P.edges || []).filter((e) => e.from === id && (e.role ? (e.role !== "module" && e.role !== "back") : e.dir !== "back")).map((e) => e.to))];
+    // M49.2：目录层级=前向边（含 nav，仅排 back）——与画布树同语义
+    // M50：目录=层级树：子节点仅 BFS 严格下一层（与画布树同语义；hub 同层横跳不进目录）
+    const D = P.depths || {};
+    const kids = (id) => [...new Set((P.edges || []).filter((e) => e.from === id && (e.role ? e.role !== "back" : e.dir !== "back") && D[e.to] !== undefined && D[id] !== undefined && D[e.to] === D[id] + 1).map((e) => e.to))];
     const row = (id, depth, seen) => {
       const k = kids(id).filter((c) => !seen.has(c));
       const n = P.nodes[id] || { title: id };
