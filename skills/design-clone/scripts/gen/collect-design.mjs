@@ -126,7 +126,12 @@ export async function collectDesign(runDir, base, only) {
   const html = fs.readFileSync(path.join(proto, "index.html"), "utf8");
   const m = html.match(/window\.DC = (\{[\s\S]*?\});?<\/script>/) || html.match(/window\.DC = (\{[\s\S]*?\})<\/script>/);
   if (!m) throw new Error("index.html 缺 window.DC");
-  const DC = JSON.parse(m[1]);
+  let DC;
+  try { DC = JSON.parse(m[1]); }
+  catch {
+    // 旧 run 的 window.DC 是 JS 对象字面量（键未加引号）→ 宽松化后再 parse
+    DC = JSON.parse(m[1].replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_-]*)(\s*:)/g, '$1"$2"$3'));
+  }
   const shell = DC.shell || "c_mobile";
   const surface = SURFACE[shell] || "c_mobile";
   let products = {};
