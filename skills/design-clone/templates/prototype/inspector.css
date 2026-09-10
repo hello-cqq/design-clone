@@ -8,6 +8,8 @@
   --sh-line: #111; --sh-band: #0d99ff;
   /* M44k：画布连线上的编号/标签专用浅色（此前复用 --sh-line=#111，用户反馈"太黑太粗"） */
   --sh-mark: #8a9099; --sh-mark-bg: rgba(255, 255, 255, .92); --sh-mark-line: #c9ced4;
+  /* M49：数据线=细浅黑（亮）/细灰白（暗）；线上标注/序号=不黑不粗的中间色 */
+  --sh-wire: #44484d; --sh-wiremark: #6f757c;
   --w-rail: 56px; --w-left: 216px; --w-right: 280px;
 }
 :root[data-theme="dark"] {
@@ -18,6 +20,7 @@
   --sh-accent-soft: rgba(13, 153, 255, .16); --sh-shadow: rgba(0, 0, 0, .35);
   --sh-line: #ddd; --sh-band: #0d99ff;
   --sh-mark: #8b9099; --sh-mark-bg: rgba(44, 44, 44, .92); --sh-mark-line: #4a4a4a;
+  --sh-wire: #cdd2d8; --sh-wiremark: #b9bfc6;
 }
 html, body { margin: 0; height: 100%; }
 body { display: flex; flex-direction: column; overflow: hidden;
@@ -162,21 +165,21 @@ body.dc-chromeless .dc-framebar, body.dc-chromeless .dc-statusbar { display: non
 #dc-flow-toggle button.on { background: var(--sh-accent-soft); color: var(--sh-accent); font-weight: 500; }
 #dc-flow-canvas { position: relative; padding: 40px 48px 80px; width: max-content; min-width: 100%; }
 #dc-flow-canvas svg.wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
-.wires path.wire { stroke: var(--sh-mark); stroke-width: 1; fill: none; opacity: .55; }
-.wires path.wire.back { stroke-dasharray: 4 4; opacity: .3; }
-.wires path.band { stroke: var(--sh-band); stroke-width: 1.6; fill: none; opacity: 0; }
+.wires path.wire { stroke: var(--sh-wire); stroke-width: 1; fill: none; opacity: .85; }
+.wires path.wire.back { stroke-dasharray: 4 4; opacity: .35; }
+.wires path.band { stroke: var(--sh-wire); stroke-width: 1.2; fill: none; opacity: 0; }
 .wires path.band.flow { opacity: .9; stroke-dasharray: 60 600; animation: dc-band 1.2s ease-out 1 forwards; }
 @keyframes dc-band { from { stroke-dashoffset: 660; opacity: .9; } to { stroke-dashoffset: 0; opacity: 0; } }
 .wires path.band.flow-loop { opacity: .95; stroke-width: 2.2; stroke-dasharray: 22 78; animation: dc-band-loop 1.6s linear infinite; }
-.fc-link .wire { stroke-width: 1.4; opacity: .8; }
+.fc-link .wire { stroke-width: 1.1; opacity: .85; }
 .fc-link .band.flow-loop { stroke-width: 2.4; }
 @keyframes dc-band-loop { to { stroke-dashoffset: -100; } }
 /* M44k：连线编号与标签的排版**只在此处**定义（JS 只写几何 cx/cy/x/y），
    并按画布 zoom 反向缩放（<g scale(1/z)> / --fc-inv），保证任何缩放下都是恒定的小浅字。
    旧实现把 font/fill 写在 inline style 且复用 --sh-line(#111)，既压过 CSS 又随 zoom 放大 → "太黑太粗"反复出现的根因。 */
-.wires .elabel { fill: var(--sh-mark); font: 400 9px -apple-system, "PingFang SC", "Helvetica Neue", sans-serif; letter-spacing: .02em; }
-.wires .wbadge { fill: var(--sh-mark-bg); stroke: var(--sh-mark-line); stroke-width: 1; }
-.wires .wnum { fill: var(--sh-mark); font: 500 8px ui-monospace, SFMono-Regular, Menlo, monospace; text-anchor: middle; }
+.wires .elabel { fill: var(--sh-wiremark); font: 400 9px -apple-system, "PingFang SC", "Helvetica Neue", sans-serif; letter-spacing: .02em; }
+.wires .wbadge { fill: var(--sh-mark-bg); stroke: var(--sh-wire); stroke-width: 1; }
+.wires .wnum { fill: var(--sh-wiremark); font: 400 8px ui-monospace, SFMono-Regular, Menlo, monospace; text-anchor: middle; }
 .fc-node { position: relative; display: inline-block; vertical-align: top; }
 .fc-card { background: var(--sh-canvas); border: 1px solid var(--sh-border); border-radius: 16px; overflow: hidden;
   box-shadow: 0 4px 18px var(--sh-shadow); cursor: pointer; position: relative; }
@@ -201,8 +204,12 @@ body.dc-chromeless .dc-framebar, body.dc-chromeless .dc-statusbar { display: non
 .fc-chain { display: flex; align-items: center; }
 .fc-link { width: 76px; position: relative; flex: none; height: 1px; }
 .fc-link .elabel { position: absolute; left: 50%; top: -18px; transform: translateX(-50%) scale(var(--fc-inv, 1)); transform-origin: 50% 100%;
-  font-size: 9.5px; font-weight: 400; color: var(--sh-mark); letter-spacing: .02em; white-space: nowrap; background: var(--sh-canvas); padding: 0 4px; }
+  font-size: 9.5px; font-weight: 400; color: var(--sh-wiremark); letter-spacing: .02em; white-space: nowrap; background: var(--sh-canvas); padding: 0 4px; }
 
+
+/* M49：路径模式多行链 */
+.fc-chain { margin: 0 0 30px; cursor: pointer; }
+.fc-chain.sel > .fc-card:first-of-type { border-color: var(--sh-sel); box-shadow: 0 0 0 1.5px var(--sh-sel); }
 /* 右详情看板 */
 #dc-right { width: var(--w-right); flex: none; background: var(--sh-panel); border-left: 1px solid var(--sh-border);
   display: flex; flex-direction: column; min-height: 0; position: relative; }
@@ -439,7 +446,7 @@ body.dc-chromeless #dc-flow-canvas { padding: 24px; }
 }
 
 /* M47：hub 型应用的 nav 叶/巡游链——淡虚线+半透明卡，与内容路径区分 */
-.wires path.wire.nav { stroke-dasharray: 3 5; opacity: .3; }
+.wires path.wire.nav { stroke-dasharray: 3 5; opacity: .45; }
 .fc-edge-slot.nav > .fc-h > .fc-node > .fc-card, .fc-navleaf > .fc-card { opacity: .8; }
 .fc-link.nav .elabel { opacity: .8; }
 .fc-chain.navtour .fc-card { box-shadow: 0 0 0 1px var(--sh-mark-line) inset; }

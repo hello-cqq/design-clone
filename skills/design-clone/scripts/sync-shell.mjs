@@ -70,6 +70,10 @@ for (const dir of dirs) {
     .replaceAll("__BUILD__", buildHash);
   fs.writeFileSync(old, html);
   fs.copyFileSync(path.join(TPL, "inspector.css"), path.join(dir, "inspector.css"));
+  // M49：文件名哈希副本（启发式缓存忽略查询串，文件名哈希才是真破缓存）
+  for (const [name, content] of [["inspector." + buildHash + ".css", fs.readFileSync(path.join(TPL, "inspector.css"), "utf8")], ["inspector." + buildHash + ".js", buildJs], ["runtime." + buildHash + ".js", fs.readFileSync(path.join(TPL, "runtime.js"), "utf8")], ["zipstore." + buildHash + ".js", fs.readFileSync(path.join(TPL, "zipstore.js"), "utf8")]]) {
+    fs.writeFileSync(path.join(dir, name), content);
+  }
   // inspector.js 是 ins/* 分段的拼接产物（build-shell.mjs），不再手维护单文件
   fs.writeFileSync(path.join(dir, "inspector.js"), buildJs);
   fs.copyFileSync(path.join(TPL, "runtime.js"), path.join(dir, "runtime.js"));

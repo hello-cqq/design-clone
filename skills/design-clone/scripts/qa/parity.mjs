@@ -43,7 +43,10 @@ const b = await chromium.launch();
 const page = await b.newPage({ viewport: { width: 1280, height: 900 } });
 const out = {};
 for (const v of views) {
+  const hasScreen = fs.existsSync(path.join(run, "capture/screens", v + ".png"));
   const tree = androidTree(v) || webTree(v);
+  // M49：无 capture 配对的视图（crawl 未覆盖页）= 范围外证据不可得 → mode "na"，门跳过（不再假红）
+  if (!tree && !hasScreen) { out[v] = { mode: "na", ctrl_src: null, ctrl_proto: 0, control_coverage: null, interaction_coverage: 1, inter_src: 0, inter_match: 0 }; continue; }
   await page.goto(base + "/prototype/#pages/" + v, { waitUntil: "networkidle" }).catch(() => {});
   await page.waitForTimeout(500);
   const proto = await page.evaluate(() => ({
@@ -65,5 +68,5 @@ for (const v of views) {
 }
 await b.close();
 fs.writeFileSync(path.join(run, "qa/parity.json"), JSON.stringify(out, null, 1));
-const bad = Object.entries(out).filter(([k, v]) => (v.control_coverage != null && v.control_coverage < 0.8) || v.interaction_coverage < 0.9 || v.mode === "none");
+const bad = Object.entries(out).filter(([k, v]) => v.mode !== "na" && ((v.control_coverage != null && v.control_coverage < 0.8) || v.interaction_coverage < 0.9 || v.mode === "none"));
 console.log(JSON.stringify({ views: Object.keys(out).length, bad: bad.map(([k]) => k) }));

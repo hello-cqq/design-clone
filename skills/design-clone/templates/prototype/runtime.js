@@ -218,7 +218,7 @@
     injectCSS();
     const act = el.getAttribute("data-act");
     switch (act) {
-      case "toggle": flipSwitch(el); break;
+      case "toggle": flipSwitch(resolve(el, el.dataset.target) || el); break; // M49：标签可指向开关（data-target），点击文字=拨开关
       case "radio": selectRadio(el); break;
       case "checkbox": flipSwitch(el); break;
       case "select": toggleSelect(el); break;
