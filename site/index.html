@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>design-clone — clone any app into a playable prototype</title>
+<meta name="description" content="Agent skill that captures real apps, sites, or videos and rebuilds them as fully interactive web prototypes with exportable design specs. Open community gallery on GitHub Pages.">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="index.html"><span class="mk"><svg width="14" height="14" viewBox="0 0 24 24" style="fill:#fff"><ellipse cx="7" cy="8" rx="2.4" ry="3.1"/><ellipse cx="12" cy="6.6" rx="2.4" ry="3.1"/><ellipse cx="17" cy="8" rx="2.4" ry="3.1"/><path d="M12 11c3.4 0 6 2.6 6 5.2 0 1.7-1.3 2.8-3 2.8-1.2 0-2-.5-3-.5s-1.8.5-3 .5c-1.7 0-3-1.1-3-2.8C9 13.6 11.6 11 12 11z"/></svg></span>design-clone</a>
+  <nav class="main">
+    <a href="index.html" class="on" data-i18n="nav_home">Home</a>
+    <a href="gallery.html" data-i18n="nav_gallery">Gallery</a>
+    <a href="guide.html" data-i18n="nav_guide">Guide</a>
+    <a href="start.html" data-i18n="nav_start">Install</a>
+    <a href="https://github.com/hello-cqq/design-clone" data-i18n="nav_github">GitHub</a>
+  </nav>
+  <span class="sp"></span>
+  <span class="ver" id="verbadge">v—</span>
+  <button class="pillbtn" id="langbtn">中文</button>
+  <button class="pillbtn" id="themebtn">☀</button>
+</div></header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="kick" data-i18n="kick">Agent Skill · MIT · runs in opencode / claude code / codex</div>
+    <h1><span data-i18n="h1a">Clone any app into</span><br><em data-i18n="h1b">a playable prototype.</em></h1>
+    <p class="lead" data-i18n="lead">design-clone captures real apps, sites, or videos and rebuilds them as fully interactive local web prototypes — pages, journeys, design tokens, and exportable Figma-grade specs. Then share them on the open gallery.</p>
+    <div class="installbox">
+      <span style="color:var(--mut);font-size:12.5px" data-i18n="install_label">One command, your agent:</span>
+      <div class="agents" id="agentswitch"></div>
+      <code id="installcmd"></code>
+      <button class="pillbtn" id="copycmd">copy</button>
+    </div>
+    <div class="cta">
+      <a class="btn pri" href="gallery.html" data-i18n="cta_gallery">Explore prototypes</a>
+      <a class="btn gh" href="guide.html#publish" data-i18n="cta_publish">Publish yours</a>
+      <a class="btn gh" href="https://github.com/hello-cqq/design-clone" data-i18n="cta_gh">GitHub</a>
+    </div>
+  </section>
+
+  <section class="proof">
+    <div class="frame">
+      <div class="bar"><span class="dot"></span><span data-i18n="proof_title">Live proof — petpark, a 2.5D clay-style pet park app (community seed)</span><span style="flex:1"></span><span data-i18n="proof_note">served straight from GitHub Pages · tap around, play journeys, export design assets</span></div>
+      <iframe src="https://hello-cqq.github.io/design-clone-prototype/petpark/mobile/prototype/" title="petpark prototype" loading="lazy"></iframe>
+    </div>
+  </section>
+
+  <div class="stats" id="stats"></div>
+
+  <section class="blk">
+    <h2 data-i18n="feat_h">What the skill does</h2>
+    <p class="sub" data-i18n="feat_sub">Five capabilities, one workflow, gated end-to-end.</p>
+    <div class="grid3">
+      <div class="fcard"><div class="tagline">CAPTURE</div><h3 data-i18n="f1t">Capture anything</h3><p data-i18n="f1d">Android via adb/scrcpy, web via crawl, video/link frames — with UI trees, tokens, and journey graphs.</p></div>
+      <div class="fcard"><div class="tagline">REBUILD</div><h3 data-i18n="f2t">Rebuild playable</h3><p data-i18n="f2d">Static HTML prototypes with an inspector shell: scene tree, path mode, play, compare, annotations.</p></div>
+      <div class="fcard"><div class="tagline">ARTIFACTS</div><h3 data-i18n="f3t">Design artifacts</h3><p data-i18n="f3d">Per-page product spec JSON + Figma-source (variables, frames, nodes) generated at build time, re-exported after edits.</p></div>
+      <div class="fcard"><div class="tagline">GATES</div><h3 data-i18n="f4t">Gated quality</h3><p data-i18n="f4d">Dead-control, parity, privacy, typography, and paste-screenshot gates — red means not shippable.</p></div>
+      <div class="fcard"><div class="tagline">PUBLISH</div><h3 data-i18n="f5t">Publish &amp; remix</h3><p data-i18n="f5d">One command opens a PR to the community gallery; every prototype stays remixable.</p></div>
+      <div class="fcard"><div class="tagline">ZERO SERVER</div><h3 data-i18n="f6t">Zero server</h3><p data-i18n="f6d">Prototypes are fully offline static bundles — GitHub Pages hosts them as live apps.</p></div>
+    </div>
+  </section>
+
+  <section class="blk">
+    <h2 data-i18n="gal_h">Community gallery</h2>
+    <p class="sub" data-i18n="gal_sub">Every card is a real, playable prototype hosted on GitHub Pages.</p>
+    <div class="cards" id="cards"></div>
+    <p style="margin-top:18px"><a href="gallery.html">→ <span data-i18n="cta_gallery">Explore prototypes</span></a></p>
+  </section>
+</div>
+
+<footer class="ft"><div class="wrap">
+  <span>design-clone</span><span class="ver" id="verfoot"></span>
+  <span data-i18n="ft_note">MIT · prototypes carry their own license · brand replicas are unofficial study works</span>
+  <span style="flex:1"></span>
+  <a href="https://github.com/hello-cqq/design-clone">GitHub</a>
+  <a href="https://github.com/hello-cqq/design-clone-prototype">prototype repo</a>
+</div></footer>
+<script src="assets/site.js"></script>
+<script>
+fetch("https://api.github.com/repos/hello-cqq/design-clone/releases/latest").then(r => r.ok ? r.json() : Promise.reject()).then(j => {
+  document.getElementById("verbadge").textContent = j.tag_name || "";
+  document.getElementById("verfoot").textContent = j.tag_name || "";
+}).catch(() => { document.getElementById("verbadge").textContent = "snapshot"; });
+</script>
+</body>
+</html>

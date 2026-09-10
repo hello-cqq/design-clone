@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install — design-clone</title>
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="index.html"><span class="mk"><svg width="14" height="14" viewBox="0 0 24 24" style="fill:#fff"><ellipse cx="7" cy="8" rx="2.4" ry="3.1"/><ellipse cx="12" cy="6.6" rx="2.4" ry="3.1"/><ellipse cx="17" cy="8" rx="2.4" ry="3.1"/><path d="M12 11c3.4 0 6 2.6 6 5.2 0 1.7-1.3 2.8-3 2.8-1.2 0-2-.5-3-.5s-1.8.5-3 .5c-1.7 0-3-1.1-3-2.8C9 13.6 11.6 11 12 11z"/></svg></span>design-clone</a>
+  <nav class="main">
+    <a href="index.html" data-i18n="nav_home">Home</a>
+    <a href="gallery.html" data-i18n="nav_gallery">Gallery</a>
+    <a href="guide.html" data-i18n="nav_guide">Guide</a>
+    <a href="start.html" class="on" data-i18n="nav_start">Install</a>
+  </nav>
+  <span class="sp"></span>
+  <button class="pillbtn" id="langbtn">中文</button>
+  <button class="pillbtn" id="themebtn">☀</button>
+</div></header>
+<div class="wrap">
+  <section class="blk">
+    <h2 data-i18n="start_h">Install in one command</h2>
+    <p class="sub">Pick your agent — the command installs the skill globally plus its gate dependencies (Node ≥20.19, Playwright Chromium). Re-run anytime to update.</p>
+    <div class="installbox" style="max-width:900px">
+      <div class="agents" id="agentswitch"></div>
+      <code id="installcmd"></code>
+      <button class="pillbtn" id="copycmd">copy</button>
+    </div>
+    <div class="grid3" style="margin-top:26px">
+      <div class="fcard"><h3>Fast channel</h3><p>Add <code>-- --skip-deps</code> for a seconds-fast install; the skill's <code>doctor</code> will guide dependency install on first gate run.</p></div>
+      <div class="fcard"><h3>Pinned / snapshot</h3><p><code>-- --ref v0.6.0</code> pins a release; <code>-- --channel snapshot</code> tracks prerelease snapshots.</p></div>
+      <div class="fcard"><h3>No CLI / air-gapped</h3><p>Grab the zip from <a href="https://github.com/hello-cqq/design-clone/releases">Releases</a> and unpack into your agent's skills directory.</p></div>
+    </div>
+    <p style="margin-top:22px;color:var(--mut);font-size:13px">First sentence after install — open your agent and say: <em>“Use design-clone to clone &lt;your app or url&gt;.”</em></p>
+  </section>
+</div>
+<footer class="ft"><div class="wrap"><span data-i18n="ft_note">MIT · prototypes carry their own license · brand replicas are unofficial study works</span></div></footer>
+<script src="assets/site.js"></script>
+</body>
+</html>

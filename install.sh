@@ -60,7 +60,7 @@ detect_agents() {
   if [[ ${#out[@]} -eq 0 ]]; then out=(opencode claude codex); fi
   echo "${out[@]}"
 }
-if [[ "$AGENT" == "auto" ]]; then AGENTS=$(detect_agents); else AGENTS="$AGENT"; fi
+if [[ "$AGENT" == "auto" ]]; then AGENTS=$(detect_agents); elif [[ "$AGENT" == "all" ]]; then AGENTS="opencode claude codex"; else AGENTS="$AGENT"; fi
 
 # ---- 取源码 ----
 TMP=""
@@ -81,16 +81,16 @@ else
     [[ -z "$REF" ]] && REF="main"
   fi
   TMP=$(mktemp -d)
-  log "克隆 $REPO @ $REF（depth 1）"
+  log "克隆 $REPO @ ${REF}（depth 1）"
   git clone --depth 1 --branch "$REF" "$REPO" "$TMP/repo" >/dev/null 2>&1 || git clone --depth 1 "$REPO" "$TMP/repo" >/dev/null 2>&1 || die "克隆失败（网络/ref 不存在）"
   SRC_ROOT="$TMP/repo"
 fi
 SKILL_DIR="$SRC_ROOT/skills/design-clone"
-log "源: $SKILL_DIR（ref=${REF:-local}）"
+log "源: ${SKILL_DIR}（ref=${REF:-local}）"
 
 # ---- 安装 ----
 for a in $AGENTS; do
-  case "$a" in opencode|claude|codex) ;; *) die "未知 agent: $a（可选 opencode/claude/codex/all/auto）";; esac
+  case "$a" in opencode|claude|codex) ;; *) die "未知 agent: ${a}（可选 opencode/claude/codex/all/auto）";; esac
   if [[ "$PROJECT" == "1" ]]; then DEST=$(project_dest "$a"); else DEST=$(global_dest "$a"); fi
   TARGET="$DEST/design-clone"
   if [[ -e "$TARGET" && "$FORCE" != "1" && ! -e "$TARGET/.dc-managed" ]]; then
@@ -113,7 +113,7 @@ if [[ "$DEPS" == "1" ]]; then
   for a in $AGENTS; do
     if [[ "$PROJECT" == "1" ]]; then DEST=$(project_dest "$a"); else DEST=$(global_dest "$a"); fi
     SD="$DEST/design-clone/scripts"
-    log "依赖安装: $SD（npm i + playwright chromium，首次约数分钟）"
+    log "依赖安装: ${SD}（npm i + playwright chromium，首次约数分钟）"
     (cd "$SD" && npm install --no-audit --no-fund >/dev/null 2>&1 && npx playwright install chromium >/dev/null 2>&1) \
       || log "⚠ 依赖安装未完成（可稍后手动: cd $SD && npm install && npx playwright install chromium）"
   done
@@ -123,7 +123,7 @@ fi
 
 cat <<EOF
 
-✅ 安装完成（agent: $AGENTS）
+✅ 安装完成（agent: ${AGENTS}）
 下一步：打开你的 agent，粘贴首句即可开始——
   用 design-clone 克隆 <某个 app 或网址> 的设计原型
 环境自检（可选）：node ~/.claude/skills/design-clone/scripts/doctor.mjs   # 路径按 agent 替换

@@ -298,6 +298,20 @@ Tweaks 调参（**「存为变体」落 prototype/variants/<名>/{tokens.json,to
    或按 references/figma-export.md 路线一/二推上画布并回填 nodeId（`figma/export.mjs --apply-nodeids`）。
 4. 门：inspect `design-artifacts`（新 run 硬拦/存量 warn）、ui-smoke `export-design-artifacts`（zip 必含两产物）。
 
+## §F Publish 模式（把原型发布到 community 画廊）
+一条命令把本地 run 的标准原型发布到 [design-clone-prototype](https://github.com/hello-cqq/design-clone-prototype)
+（GitHub Pages 托管、点开即玩的社区原型平台），自动提 PR：
+
+```bash
+node {SKILL_DIR}/scripts/publish.mjs --run <runDir> --app <app> --flavor <flavor> --title "<标题>" \
+  [--attest original|licensed|public-material] [--version 1.0.0] [--tags a,b] [--dry]
+```
+
+- 前置强验：interact dead=0 / inspect 0 fail / ui-smoke 0 fail / privacy.json 在场；PII grep + 80MB + 禁名单本地先拦。
+- flavor 受控词表与目录契约见 proto 仓 SPEC.md（`app/flavor/prototype`，版本=meta.version+version.json，合并自动 Release）。
+- `--dry` 只产 `publish-out/` 供自检；正式跑建分支提 PR，maintainer 人工审批合并后上线画廊。
+- 细则：references/publish-guide.md。
+
 ## §E QA 模式（全链路验收，触发即按协议执行）
 
 用户说"全链路验收/QA/产品验收/设计走查/全量测试/回归"时，**完整执行** `references/qa-protocol.md` 四阶段：
