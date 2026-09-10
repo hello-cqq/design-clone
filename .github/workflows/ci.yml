@@ -31,6 +31,16 @@ jobs:
           node skills/design-clone/scripts/build-shell.mjs --out /tmp/a.js
           node skills/design-clone/scripts/build-shell.mjs --out /tmp/b.js
           cmp /tmp/a.js /tmp/b.js && node --check /tmp/a.js
+      - name: version sync (SKILL.md == package.json == CHANGELOG top)
+        run: |
+          node -e '
+            const fs=require("fs");
+            const sk=fs.readFileSync("skills/design-clone/SKILL.md","utf8").match(/version: "([^"]+)"/)[1];
+            const pk=JSON.parse(fs.readFileSync("package.json","utf8")).version;
+            const cl=fs.readFileSync("CHANGELOG.md","utf8").match(/## \[([^\]]+)\]/)[1];
+            if(!(sk===pk&&pk===cl)){console.error(`version drift: skill=${sk} pkg=${pk} changelog=${cl}`);process.exit(1)}
+            console.log("version sync ok:",sk);
+          '
       - name: doctor (environment probe, advisory)
         run: node skills/design-clone/scripts/doctor.mjs || true
   package:

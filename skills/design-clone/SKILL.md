@@ -332,5 +332,10 @@ node {SKILL_DIR}/scripts/eval/eval.mjs --run <run目录> --base <base-url>   # M
 - **合规**：产物仅限个人学习与内部参考；提醒用户不得将复刻产物冒充原创发布或商用
 - **预算**：全量遍历必须有步数预算，达到预算先汇报，由用户决定是否继续
 
-## 安装三法（M20）
-1. `npx skills add <repo>`（推荐）；2. `git clone` 后软链到 agent skills 目录；3. 无 CLI 平台：CI 产物 `dist/design-clone.zip` 解压即用。
+## 安装四法（M20/M54）
+1. **一键安装器（推荐）**：`curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/main/install.sh | bash`
+   （三 agent 全局目录+依赖一步到位；`--agent opencode|claude|codex|all`、`--ref <tag>` 钉版、`--channel snapshot`、`--skip-deps` 秒装、重跑=更新）；
+2. `npx skills add hello-cqq/design-clone -g -y --copy`（大仓加 `SKILLS_CLONE_TIMEOUT_MS=600000`）；
+3. `git clone` 后 cp/软链到 agent skills 目录（opencode `~/.config/opencode/skills`、claude `~/.claude/skills`、codex `~/.codex/skills`）；
+4. 无 CLI 平台：GitHub Release 资产 `design-clone.zip` 解压即用。
+装后首句：「用 design-clone 克隆 <某个 app 或网址> 的设计原型」；自检 `node <skill>/scripts/doctor.mjs`（打印版本+渠道）。

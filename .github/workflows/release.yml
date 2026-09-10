@@ -1,0 +1,34 @@
+name: release
+on:
+  push:
+    tags: ["v*"]
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    permissions: { contents: write }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - name: package zip
+        run: node skills/design-clone/scripts/package.mjs --out dist/design-clone.zip
+      - name: extract changelog section
+        id: cl
+        run: |
+          V="${GITHUB_REF_NAME#v}"
+          awk -v v="## [$V]" 'index($0, v)==1{f=1;next} f&&/^## \[/&&index($0,v)!=1{exit} f{print}' CHANGELOG.md > /tmp/notes.md
+          {
+            echo "## 安装（钉版 ${GITHUB_REF_NAME}）"
+            echo '```bash'
+            echo "curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/${GITHUB_REF_NAME}/install.sh | bash -s -- --ref ${GITHUB_REF_NAME}"
+            echo '```'
+            echo "或 npx skills add hello-cqq/design-clone（main 渠道）；无 CLI 平台解压下方 zip 到 agent skills 目录。"
+            echo
+            cat /tmp/notes.md
+          } > /tmp/body.md
+      - name: create github release
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: ${{ contains(github.ref_name, 'snapshot') }}
+          files: dist/design-clone.zip
+          body_path: /tmp/body.md

@@ -48,24 +48,16 @@
 doctor（环境）→ interact（**真点每个控件**，dead=0）→ inspect（live-views / placeholder-scan / asset-qa / layout-sanity / privacy-anon / paths-sanity / appicon-present / structural-critique / **ui-smoke 外壳冒烟**）→ fidelity（按 source-map 正确配对的像素+风格差）→ critique（VLM 结构对照）→ eval（总分）。
 外壳功能（播放/导出/分享/设备/标注写回/画布排版）由 `qa/ui-smoke.mjs` 真点验证——用户按的按钮就是门。
 
-## 安装
-
-适用于所有支持 Agent Skills 的客户端（opencode / Claude Code / Codex / Qoder / Qwen Code / Trae 等）：
+## 安装（一条命令）
 
 ```bash
-# 一条命令安装到你的 agent（按需选择 -a 参数，可多个）
-npx skills add hello-cqq/design-clone -a opencode
-npx skills add hello-cqq/design-clone -a claude-code
-npx skills add hello-cqq/design-clone -a codex
-npx skills add hello-cqq/design-clone -a qoder -a qwen-code -a trae
-
-# 全局安装
-npx skills add hello-cqq/design-clone -g -a opencode
+curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/main/install.sh | bash
+# 指定 agent / 钉版 / 快照渠道：--agent opencode|claude|codex|all --ref <tag> --channel snapshot --skip-deps
 ```
 
-WorkBuddy 等无 CLI 的平台：下载 `dist/design-clone.zip`，在"添加技能 → 上传技能"中导入。
-
-安装后在 agent 里说一句 **"运行 design-clone doctor"** 完成环境自检与依赖初始化。
+或 `npx skills add hello-cqq/design-clone -g -y --copy`（大仓加 SKILLS_CLONE_TIMEOUT_MS=600000）；或 Release zip 解压。
+装后粘进 agent 首句：**用 design-clone 克隆 <某个 app 或网址> 的设计原型**；自检 `node <skill>/scripts/doctor.mjs`。
+版本与钉版见 README.md「Releases & pinning」与 CHANGELOG.md。
 
 ## 平台支持
 
