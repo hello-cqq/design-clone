@@ -11,14 +11,16 @@
     const all = { id: "all", label: "导出全部（页面±标注 + 全场景树）", run: () => {
       const its = [];
       (DC.pages || []).forEach((p) => { its.push({ type: "page", id: p.id, ann: false }); its.push({ type: "page", id: p.id, ann: true }); });
-      its.push({ type: "scene-full" }, boardItem());
+      its.push({ type: "scene-full" }, boardItem(), { type: "design-json" }, { type: "figma" });
       return its;
     } };
     let ctx = null;
     if (S.ia === "scene" && S.flowMode === "tree" && S.selNode) ctx = { id: "sel-node", label: `导出选中树 ${idxOf(S.selNode)} ${nodeTitle(S.selNode)}`, run: () => [{ type: "node", id: S.selNode }, boardItem()] };
     else if (S.ia === "scene" && S.flowMode === "path" && S.selNode) ctx = { id: "sel-path", label: `导出选中路径 #${S.selPath + 1}`, run: () => [{ type: "path", id: S.selPath, root: S.selNode }, boardItem()] };
-    else if (S.page) ctx = { id: "sel-page", label: `导出选中页 ${idxOf(S.page)} ${nodeTitle(S.page)} ±标注`, run: () => [{ type: "page", id: S.page, ann: false }, { type: "page", id: S.page, ann: true }, boardItem()] };
-    return [{ h: "", items: ctx ? [all, ctx] : [all] }];
+    else if (S.page) ctx = { id: "sel-page", label: `导出选中页 ${idxOf(S.page)} ${nodeTitle(S.page)} ±标注`, run: () => [{ type: "page", id: S.page, ann: false }, { type: "page", id: S.page, ann: true }, boardItem(), { type: "design-json", id: S.page }] };
+    // M51：设计产物独立入口（生成期已有初始版；此处=编辑后重采集）
+    const design = { id: "design", label: "产品设计 JSON（每页 spec）+ Figma 源", run: () => [{ type: "design-json" }, { type: "figma" }] };
+    return [{ h: "", items: ctx ? [all, ctx, design] : [all, design] }];
   }
   /* ---------- M44k：导出真正落到用户本地 ----------
      旧实现只把文件写进服务端 run/export/<ts>/，浏览器里"导出"看不到任何下载（用户报的 bug）。
