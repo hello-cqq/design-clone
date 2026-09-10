@@ -50,7 +50,7 @@ for (const v of views) {
   await page.goto(base + "/prototype/#pages/" + v, { waitUntil: "networkidle" }).catch(() => {});
   await page.waitForTimeout(500);
   const proto = await page.evaluate(() => ({
-    ctrl: document.querySelectorAll("#dc-stage a[href],#dc-stage a[data-goto],#dc-stage button,#dc-stage input,#dc-stage select,#dc-stage [role=button]").length,
+    ctrl: document.querySelectorAll("#dc-stage a[href],#dc-stage [data-goto],#dc-stage [data-act],#dc-stage button,#dc-stage input,#dc-stage select,#dc-stage [role=button]").length,
     goto: [...document.querySelectorAll("#dc-stage [data-goto]")].map((e) => e.getAttribute("data-goto")),
   }));
   const edges = graph.edges.filter((e) => e.from === v);
