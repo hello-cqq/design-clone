@@ -2,7 +2,16 @@
  * 源文件按文件名顺序拼接为 prototype/inspector.js（scripts/build-shell.mjs），同一 IIFE 闭包。
  * 约定：JS 只写几何与状态；排版/配色一律 inspector.css 类 + 主题变量。
  */
-  /* ---------- boot ---------- */
+    /* M49 缓存自愈：查询串破缓存会被启发式缓存/代理忽略（"修了没生效"真根因）。
+     文件名哈希为主；boot 时校验已生效的 inspector.<build>.css，不匹配则 cache:reload 强刷一次（sessionStorage 防环）。 */
+  (function selfHealCache() {
+    const b = window.DC_BUILD; if (!b) return;
+    const ok = [...document.styleSheets].some((sh) => (sh.href || "").includes("inspector." + b + ".css"));
+    if (ok) return;
+    try { if (sessionStorage.getItem("dc-cb") === b) return; sessionStorage.setItem("dc-cb", b); } catch {}
+    fetch("inspector." + b + ".css", { cache: "reload" }).then(() => location.reload()).catch(() => {});
+  })();
+/* ---------- boot ---------- */
   let a11yQueued = false;
   async function boot() {
     const saved = localStorage.getItem("dc-theme");

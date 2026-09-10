@@ -368,6 +368,83 @@ await step("board-select-fallback", async () => {
 });
 
 /* ---------- M47：场景树不为空（hub 型 run 的 nav 叶必须渲染） ---------- */
+await step("tree-dir-clean", async () => {
+  // M49：左栏=纯节点目录（用户：不要一堆 tag）
+  await page.click("#dc-rail [data-ia=scene]").catch(() => {});
+  await page.waitForTimeout(500);
+  const n = await page.locator("#dc-tree .tr-nav").count();
+  if (n) throw new Error("左栏仍有 " + n + " 处导航标签块");
+});
+
+await step("wire-ink", async () => {
+  // M49：数据线=细线（亮浅黑/暗灰白），band 同色不蓝；亮暗双主题验
+  const probe = async () => {
+    await page.click("#dc-rail [data-ia=scene]").catch(() => {});
+    await page.waitForTimeout(500);
+    await page.locator("#dc-flow-toggle [data-fm=tree], #dc-flow-toggle button:has-text(\"树\")").first().click().catch(() => {});
+    // hub 根无子树线：逐行找有内容子树的节点（数据线只在真子树上）
+    const rowsN = await page.locator("#dc-tree .tr-row").count();
+    for (let i = 0; i < Math.min(rowsN, 12); i++) {
+      await page.locator("#dc-tree .tr-row").nth(i).click();
+      await page.waitForTimeout(500);
+      if (await page.locator(".wires path.wire").count()) break;
+    }
+    await page.waitForTimeout(500);
+    return page.evaluate(() => {
+      const w = document.querySelector(".wires path.wire");
+      const b = document.querySelector(".wires path.band");
+      if (!w) return null;
+      const cw = getComputedStyle(w), cb = b ? getComputedStyle(b) : null;
+      return { stroke: cw.stroke, width: parseFloat(cw.strokeWidth), band: cb ? cb.stroke : null };
+    });
+  };
+  const lum = (rgb) => { const m = rgb.match(/\d+/g).map(Number); return (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255; };
+  const light = await probe();
+  if (!light) throw new Error("树模式无数据线可验");
+  if (light.width > 1.2) throw new Error("数据线过粗 " + light.width);
+  const ll = lum(light.stroke);
+  if (!(ll > 0.15 && ll < 0.5)) throw new Error("亮色数据线应浅黑，实际 " + light.stroke);
+  if (light.band && light.band !== light.stroke) throw new Error("band 与数据线不同色: " + light.band);
+  await page.click("#dc-theme").catch(() => {});
+  await page.waitForTimeout(500);
+  const dark = await probe();
+  await page.click("#dc-theme").catch(() => {});
+  if (dark && lum(dark.stroke) < 0.6) throw new Error("暗色数据线应灰白，实际 " + dark.stroke);
+});
+
+await step("wire-label-lite", async () => {
+  // M49：线上标注/序号不黑不粗（两模式共用 svg 样式）
+  const st = await page.evaluate(() => {
+    const el = document.querySelector(".wires .elabel");
+    const nu = document.querySelector(".wires .wnum");
+    if (!el) return null;
+    const ce = getComputedStyle(el), cn = nu ? getComputedStyle(nu) : null;
+    return { fw: parseInt(ce.fontWeight, 10), fs: parseFloat(ce.fontSize), nfw: cn ? parseInt(cn.fontWeight, 10) : 400 };
+  });
+  if (!st) return;
+  if (st.fw > 400 || st.nfw > 400) throw new Error("线上标注/序号字重>400: " + st.fw + "/" + st.nfw);
+  if (st.fs > 10) throw new Error("线上标注字号过大: " + st.fs);
+});
+
+await step("path-rows-all", async () => {
+  // M49：路径模式=列出所选根节点全部路径行
+  await page.click("#dc-rail [data-ia=scene]").catch(() => {});
+  await page.waitForTimeout(500);
+  await page.locator("#dc-tree .tr-row").first().click();
+  await page.waitForTimeout(300);
+  await page.locator("#dc-flow-toggle [data-fm=path], #dc-flow-toggle button:has-text(\"路径\")").first().click().catch(() => {});
+  await page.waitForTimeout(900);
+  const st = await page.evaluate(async () => {
+    const rows = document.querySelectorAll("#dc-flow-canvas .fc-chain, #dc-canvas .fc-chain").length;
+    const node = (location.hash.match(/#scene\/path\/([^/]+)/) || [])[1];
+    let want = null;
+    if (node) { try { const j = await (await fetch("paths.json")).json(); const ps = ((j.perNode || {})[decodeURIComponent(node)] || {}).paths || []; want = ps.length ? ps.length : 1; } catch {} }
+    return { rows, want };
+  });
+  if (!st.rows) throw new Error("路径模式无路径行");
+  if (st.want != null && st.rows !== st.want) throw new Error(`路径行 ${st.rows} ≠ perNode.paths ${st.want}`);
+});
+
 await step("canvas-text-budget", async () => {
   // M48：画布/看板为"工具 chrome"，文本字重一律 <=500（用户多轮反馈"粗黑"）；OS 状态栏与代码视图保真豁免
   const bad = await page.evaluate(() => {
@@ -393,11 +470,20 @@ await step("scene-tree-not-empty", async () => {
   await page.keyboard.press("2");
   await page.waitForTimeout(1800);
   const cards = await page.locator("#dc-flow-canvas .fc-card").count();
+  // M49：树=纯子树（用户指令），hub 孤根合法；"不空白"改由路径模式兜底：树≥2 卡 或 路径行≥1
+  let rows = 0;
+  if (cards < 2) {
+    await page.locator("#dc-flow-toggle [data-fm=path]").click().catch(() => {});
+    await page.waitForTimeout(900);
+    rows = await page.locator("#dc-canvas .fc-chain, #dc-flow-canvas .fc-chain").count();
+    await page.locator("#dc-flow-toggle [data-fm=tree]").click().catch(() => {});
+    await page.waitForTimeout(400);
+  }
   await focusBody();
   await page.keyboard.press("1");
   await page.waitForTimeout(500);
-  if (cards < 2) throw new Error("场景树仅 " + cards + " 张卡（hub 型 run 的 nav 叶未渲染，画布近似空白）");
-  return cards + " 张卡";
+  if (cards < 2 && rows < 1) throw new Error("树仅 " + cards + " 卡且路径模式 0 行（真空白画布）");
+  return cards + " 卡/路径 " + rows + " 行";
 });
 
 /* ---------- 画布连线标签排版（"太黑太粗"反复出现的回归锁） ---------- */

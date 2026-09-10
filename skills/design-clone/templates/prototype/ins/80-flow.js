@@ -16,47 +16,37 @@
   }
   function arrowDef() {
     // 用 inline style 而非 fill 属性：全局 svg{} CSS 会覆盖表现属性（同 SB_ICONS 的约定）；颜色走 --sh-mark 主题变量
-    return `<defs><marker id="dc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--sh-mark)"/></marker></defs>`;
+    return `<defs><marker id="dc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--sh-wire)"/></marker></defs>`;
   }
   function renderFlow() {
     const P = S.paths; if (!P || !S.selNode) { W.canvas.innerHTML = ""; return; }
     $$("#dc-flow-toggle [data-fm]").forEach((b) => b.classList.toggle("on", b.dataset.fm === S.flowMode));
     if (S.flowMode === "path") {
+      // M49：路径模式=列出所选根节点的全部路径（每行一条链，行点选=选中供播放/导出）；hub 无内容路径时巡游链兜底
       const paths = (P.perNode[S.selNode] || {}).paths || [];
       if (S.selPath >= paths.length) S.selPath = 0;
-      const p = paths[S.selPath] || [];
-      const chips = paths.length > 1
-        ? `<div class="fc-chips">${paths.map((pp, pi) => `<button class="fc-chip${pi === S.selPath ? " on" : ""}" data-pi="${pi}">路径 ${pi + 1}<i>${pp.length + 1} 屏</i></button>`).join("")}</div>`
-        : "";
-      // M47：hub 型节点无内容路径时，用 nav 边合成"巡游链"展示（仅展示/演播用，不进 paths.json，paths-qa 不受影响）
       const navTour = !paths.length ? ((P.perNode[S.selNode] || {}).nav || [])
         .map((tid) => P.edges.findIndex((e) => e.from === S.selNode && e.to === tid)).filter((ei) => ei >= 0) : [];
-      const shown = p.length ? p : navTour;
-      let cur = S.selNode;
-      let chain = cardHTML(cur);
-      shown.forEach((ei) => { const e = P.edges[ei]; chain += `<div class="fc-link${p.length ? "" : " nav"}" data-edge="${ei}"><span class="elabel">${esc(e.label || e.kind || "")}</span></div>` + cardHTML(e.to); cur = e.to; });
-      // data-pathrow：serve 的 path 导出按此选择器截图（缺失会 5s 超时 → 500）
-      W.canvas.innerHTML = shown.length
-        ? chips + `<div class="fc-chain${p.length ? "" : " navtour"}" data-pathrow="${S.selPath}">${chain}</div>`
-        : `<div style="color:var(--sh-mut);padding:40px">该节点无出向路径</div>`;
-      W.canvas.querySelectorAll(".fc-chip").forEach((c) => (c.onclick = () => { if (+c.dataset.pi === S.selPath) return; S.selPath = +c.dataset.pi; renderFlow(); fillDetail(); syncURL(true); updateCrumb(); }));
+      const rows = paths.length ? paths.map((pp, pi) => ({ pp, pi, nav: false })) : (navTour.length ? [{ pp: navTour, pi: 0, nav: true }] : []);
+      W.canvas.innerHTML = rows.length ? rows.map(({ pp, pi, nav }) => {
+        let chain = cardHTML(S.selNode);
+        pp.forEach((ei) => { const e = P.edges[ei]; chain += `<div class="fc-link${nav ? " nav" : ""}" data-edge="${ei}"><span class="elabel">${esc(e.label || e.kind || "")}</span></div>` + cardHTML(e.to); });
+        return `<div class="fc-chain${nav ? " navtour" : ""}${pi === S.selPath ? " sel" : ""}" data-pathrow="${pi}" title="点选此路径（播放/导出按选中行）">${chain}</div>`;
+      }).join("") : `<div style="color:var(--sh-mut);padding:40px">该节点无出向路径</div>`;
+      W.canvas.querySelectorAll(".fc-chain").forEach((ch) => (ch.onclick = (ev) => {
+        if (ev.target.closest(".fc-card")) return;
+        const pi = +ch.dataset.pathrow; if (pi === S.selPath) return;
+        S.selPath = pi; renderFlow(); fillDetail(); syncURL(true); updateCrumb();
+      }));
       W.canvas.querySelectorAll(".fc-card").forEach((c) => (c.onclick = () => {
         S.selNode = c.dataset.node; S.selPath = 0; renderSceneTree(); renderFlow(); fillDetail(); syncURL(true); updateCrumb();
       }));
     } else {
       // M47：hub 型应用（边多为 module/nav）树不再只剩孤根——nav 边作淡虚线叶铺在节点下
-      const mk = (t, expandNav = true) => {
-        const pn = P.perNode[t.node] || {};
-        const childNodes = new Set(t.children.map((c) => c.child.node));
-        // perNode[].nav 存的是目标节点 id（70-nav 契约）→ 这里映射回边索引
-        const navEdges = (expandNav ? (pn.nav || []) : [])
-          .map((tid) => P.edges.findIndex((e) => e.from === t.node && e.to === tid))
-          .filter((ei) => ei >= 0);
-        const navKids = navEdges
-          .filter((ei) => !childNodes.has(P.edges[ei].to))
-          .map((ei) => ({ edge: ei, child: { node: P.edges[ei].to, children: [] }, navleaf: true }));
-        const kids = [...t.children, ...navKids];
-        return `<div class="fc-h${t.navleaf ? " fc-navleaf" : ""}">${cardHTML(t.node)}${kids.length ? `<div class="fc-kids">${kids.map((c) => `<div class="fc-edge-slot${c.navleaf ? " nav" : ""}" data-edge="${c.edge}">${mk(c.child, false)}</div>`).join("")}</div>` : ""}</div>`;
+      // M49：树模式=纯前向子树（用户：选中节点只展示以它为根的树；nav 横跳不属于树，路径模式/巡游兜底负责）
+      const mk = (t) => {
+        const kids = t.children;
+        return `<div class="fc-h">${cardHTML(t.node)}${kids.length ? `<div class="fc-kids">${kids.map((c) => `<div class="fc-edge-slot" data-edge="${c.edge}">${mk(c.child)}</div>`).join("")}</div>` : ""}</div>`;
       };
       const roots = Q.get("root") === "__all__" ? P.roots : [S.selNode];
       W.canvas.innerHTML = roots.map((r) => mk((P.perNode[r] || {}).tree || { node: r, children: [] })).join(`<div style="width:80px;display:inline-block"></div>`);

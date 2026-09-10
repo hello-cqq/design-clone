@@ -31,14 +31,12 @@
     const row = (id, depth, seen) => {
       const k = kids(id).filter((c) => !seen.has(c));
       const n = P.nodes[id] || { title: id };
-      const nav = ((P.perNode || {})[id] || {}).nav || [];
       const s2 = new Set(seen); s2.add(id);
       return `<div class="tr-node">
         <div class="tr-row" data-node="${id}" style="padding-left:${8 + depth * 4}px">
           <span class="tr-caret" data-tg="${id}">${k.length ? "▸" : ""}</span>
           <span class="idx" style="color:var(--sh-mut);font-size:11px">${idxOf(id)}</span><span>${esc(n.title || id)}</span>
         </div>
-        ${nav.length ? `<div class="tr-nav" style="padding-left:${8 + (depth + 1) * 4}px;display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 4px">${nav.map((t) => `<span class="tr-row" data-node="${t}" style="display:inline-flex;padding:2px 8px;border:1px solid var(--sh-border);border-radius:999px;font-size:10.5px;color:var(--sh-mut);cursor:pointer"><span class="idx" style="color:var(--sh-mut);font-size:10px">${idxOf(t)}</span>${esc(((P.nodes || {})[t] || {}).title || t)}</span>`).join("")}<span style="font-size:10px;color:var(--sh-mut);align-self:center">导航</span></div>` : ""}
         <div class="tr-kids" data-kids="${id}" hidden>${k.map((c) => row(c, depth + 1, s2)).join("")}</div>
       </div>`;
     };

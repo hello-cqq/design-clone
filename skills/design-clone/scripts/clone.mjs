@@ -151,6 +151,15 @@ if (!values["gates-only"]) {
   }
   // inspector.js = ins/* 分段拼接产物（build-shell.mjs）
   fs.writeFileSync(path.join(protoDir, "inspector.js"), buildInspector());
+  // M49：文件名哈希副本（与 sync-shell 同口径，真破启发式缓存）
+  const bh0 = createHash("md5").update(
+    buildInspector() + fs.readFileSync(path.join(TPL, "inspector.css"), "utf8") +
+    fs.readFileSync(path.join(TPL, "runtime.js"), "utf8") +
+    fs.readFileSync(path.join(TPL, "zipstore.js"), "utf8")).digest("hex").slice(0, 8);
+  fs.writeFileSync(path.join(protoDir, "inspector." + bh0 + ".css"), fs.readFileSync(path.join(TPL, "inspector.css"), "utf8"));
+  fs.writeFileSync(path.join(protoDir, "inspector." + bh0 + ".js"), buildInspector());
+  fs.writeFileSync(path.join(protoDir, "runtime." + bh0 + ".js"), fs.readFileSync(path.join(TPL, "runtime.js"), "utf8"));
+  fs.writeFileSync(path.join(protoDir, "zipstore." + bh0 + ".js"), fs.readFileSync(path.join(TPL, "zipstore.js"), "utf8"));
   // M45：utility 子集本地编译（替代 Tailwind CDN）
   run("node", [path.join(HERE, "gen/utility-css.mjs"), "--run", runDir, "--out", path.join(protoDir, "utilities.css")]);
   // 组件库 css 并入 index 的 __VIEW_CSS__
