@@ -75,11 +75,48 @@ raw.forEach((e) => { if ((linkers[e.to] || new Set()).size / N >= 0.6) e.chrome 
 
 // back-pair：A→B 且 B→A(back) ⇒ A→B 为 drill
 const hasBack = (a, b) => raw.some((e) => e.from === b && e.to === a && e.back);
-const edges = raw.map((e, i) => {
+let edges = raw.map((e, i) => {
   let role = e.back ? "back" : e.chrome ? "module" : e.modal ? "modal" : "task";
   if (role === "task" && hasBack(e.from, e.to)) role = "drill";
   return { i, from: e.from, to: e.to, label: e.label, kind: role === "modal" ? "dialog" : "navigate", role };
 });
+
+// M49.2 双 id 空间归一：capture graph 节点 id（01-index）与视图文件 id（01-home）并存 →
+// 白卡（无视图文件）+ 双根（两个 01）。按数字前缀别名（多候选用标题词重叠消歧），重映射边、合并重复边。
+{
+  const viewIds = Object.keys(nodes).filter((id) => fs.existsSync(path.join(proto, "views", id + ".html")));
+  const byPrefix = {};
+  viewIds.forEach((v) => { const m = v.match(/^(\d+)/); if (m) (byPrefix[m[1]] = byPrefix[m[1]] || []).push(v); });
+  const alias = {};
+  for (const id of Object.keys(nodes)) {
+    if (viewIds.includes(id)) continue;
+    const m = id.match(/^(\d+)/); if (!m || !byPrefix[m[1]]) continue;
+    const cands = byPrefix[m[1]];
+    if (cands.length === 1) { alias[id] = cands[0]; continue; }
+    const t = String((nodes[id] || {}).title || "").toLowerCase();
+    let best = null, bs = 0;
+    for (const c of cands) {
+      const ct = String((nodes[c] || {}).title || c).toLowerCase();
+      const ov = ct.split(/[^a-z0-9\u4e00-\u9fa5]+/).filter((w) => w.length > 1 && t.includes(w)).length;
+      if (ov > bs) { bs = ov; best = c; }
+    }
+    if (best && bs > 0) alias[id] = best;
+  }
+  if (Object.keys(alias).length) {
+    for (const e of edges) { if (alias[e.from]) e.from = alias[e.from]; if (alias[e.to]) e.to = alias[e.to]; }
+    const prio = { drill: 3, task: 3, modal: 3, module: 2, back: 1 };
+    const seen = new Map();
+    edges = edges.filter((e) => {
+      if (e.from === e.to) return false;
+      const k = e.from + ">" + e.to;
+      if (seen.has(k)) { const prev = seen.get(k); if (prio[e.role] > prio[prev.role]) { prev.role = e.role; prev.label = e.label || prev.label; } return false; }
+      seen.set(k, e); return true;
+    });
+    edges.forEach((e, i) => (e.i = i));
+    for (const id of Object.keys(alias)) delete nodes[id];
+    console.log(`  alias 归一: ${Object.entries(alias).map(([a, b]) => a + "→" + b).join(", ")}`);
+  }
+}
 
 // flows.json 优先（真实交互流）
 let flows = null;
@@ -87,10 +124,16 @@ const flowsPath = path.join(run, "knowledge", "flows.json");
 if (fs.existsSync(flowsPath)) { try { flows = JSON.parse(fs.readFileSync(flowsPath, "utf8")).flows || null; } catch {} }
 
 const contentOf = (id) => edges.filter((e) => e.from === id && (e.role === "drill" || e.role === "task" || e.role === "modal"));
+// M49.2：树=以选中节点为根的前向子树（含 nav 横跳child，仅排除 back）——用户心智"以它为根的树"；回边永不出现在树/路径
+const forwardOf = (id) => edges.filter((e) => e.from === id && e.role !== "back");
+// M50：树=层级概览：子边仅取 BFS 严格下一层（depth+1）。同层横跳/跨层边不进树（否则 hub 完全图=毛发球，apple 80 卡乱线）；
+// 完整旅程归路径模式。回边与"1->2 后不出现 2->1"由 depth 单调性天然保证。
+const treeKidsOf = (id) => forwardOf(id).filter((e) => depths[e.to] !== undefined && depths[id] !== undefined && depths[e.to] === depths[id] + 1);
 const navOf = (id) => edges.filter((e) => e.from === id && e.role === "module").map((e) => e.to);
 
 const indeg = {};
-edges.forEach((e) => { if (e.role !== "module" && e.role !== "back") indeg[e.to] = (indeg[e.to] || 0) + 1; });
+// M49.2：根=无前向入边（nav 入边也算入边）→ hub 站唯一真根（apple 只余 01-home）
+edges.forEach((e) => { if (e.role !== "back") indeg[e.to] = (indeg[e.to] || 0) + 1; });
 let roots = Object.keys(nodes).filter((id) => !indeg[id]).sort();
 if (!roots.length && N) roots = [Object.keys(nodes).sort()[0]];
 
@@ -129,11 +172,16 @@ function enumPaths(start) {
   walk(start, [], new Set([start]));
   return res.length ? res : [];
 }
+// M50：前向树含 nav 横跳后，hub 型完全图会组合爆炸（apple 曾渲染 8660 张卡/iframe，页面卡死）。
+// 全局预算封顶：超出即收为叶（树是"层级概览"，不是全排列枚举；完整旅程归路径模式）。
+const TREE_BUDGET = 80;
 function buildTree(start) {
+  let budget = TREE_BUDGET;
   const mk = (cur, depth, visited) => {
     const kids = [];
-    if (depth >= MAXD) return { node: cur, children: kids };
-    for (const n of contentOf(cur)) {
+    if (budget-- <= 0 || depth >= MAXD) return { node: cur, children: kids };
+    for (const n of treeKidsOf(cur)) {
+      if (budget <= 0) break;
       if (visited.has(n.to)) continue;
       visited.add(n.to);
       kids.push({ edge: n.i, child: mk(n.to, depth + 1, visited) });
