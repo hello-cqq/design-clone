@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>宠物乐园 · 03-map — 自研原创示例站</title>
+<style>html,body{margin:0;padding:0}body{max-width:430px;margin:0 auto;box-shadow:0 0 40px rgba(120,90,60,.12);min-height:100vh}</style>
+<style>
+  .pp-root{font-family:ui-rounded,-apple-system,"PingFang SC","Segoe UI",sans-serif;color:#4a3f35;background:
+    radial-gradient(120% 60% at 50% -10%, #fff7ea 0%, #fdf3e3 45%, #fbeeda 100%);min-height:100%;position:relative;padding:52px 0 0;box-sizing:border-box;overflow:hidden}
+  .pp-clay{background:#fffdf8;border-radius:24px;box-shadow:0 10px 24px rgba(180,140,90,.16), inset 0 2px 0 rgba(255,255,255,.95), inset 0 -3px 0 rgba(190,150,100,.10);border:1px solid rgba(210,180,140,.25)}
+  .pp-head{display:flex;align-items:center;gap:10px;margin:0 18px 10px}
+  .pp-head .t{font-size:19px;font-weight:600}
+  .pp-head .loc{margin-left:auto;font-size:11px;color:#a08d76;cursor:pointer}
+  .pp-map{position:relative;height:52%}
+  .pp-map svg{width:100%;height:100%;display:block}
+  .pp-pin{position:absolute;transform:translate(-50%,-100%);text-align:center;cursor:pointer}
+  .pp-pin .b{width:40px;height:40px;margin:0 auto;border-radius:50%;background:#fffdf8;display:grid;place-items:center;box-shadow:0 8px 14px rgba(120,90,60,.24), inset 0 2px 0 rgba(255,255,255,.9)}
+  .pp-pin .lb{font-size:10px;font-weight:600;margin-top:3px;color:#4a3f35;text-shadow:0 1px 0 rgba(255,255,255,.8)}
+  .pp-sheet{position:absolute;left:0;right:0;bottom:0;height:44%;background:#fffdf8;border-radius:26px 26px 0 0;padding:10px 18px 96px;box-shadow:0 -8px 26px rgba(180,140,90,.18);overflow:auto;z-index:6}
+  .pp-sheet .grab{width:36px;height:4px;border-radius:2px;background:#eadbc4;margin:2px auto 12px}
+  .pp-sheet .t{font-size:16px;font-weight:600;margin-bottom:10px}
+  .pp-zones{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .pp-zone{border-radius:999px;padding:8px 14px;font-size:12px;font-weight:500;cursor:pointer;background:#f7ecdb;color:#8a7660}
+  .pp-zone.on{background:linear-gradient(140deg,#7fd8be,#5cc9ab);color:#fff;box-shadow:0 6px 12px rgba(127,216,190,.4)}
+  .pp-slot{display:flex;gap:8px;margin-bottom:14px}
+  .pp-slot span{flex:1;text-align:center;border-radius:14px;padding:10px 0;font-size:12px;background:#f7ecdb;color:#8a7660;cursor:pointer}
+  .pp-slot span.on{background:#fffdf8;color:#c05e2a;font-weight:600;box-shadow:0 4px 10px rgba(180,140,90,.16), inset 0 0 0 1.5px #ffb38a}
+  .pp-book{width:100%;border:none;border-radius:999px;padding:14px 0;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(140deg,#ffb38a,#ff9d6b);box-shadow:0 10px 20px rgba(255,157,107,.4), inset 0 2px 0 rgba(255,255,255,.5);cursor:pointer;font-family:inherit}
+  .pp-tabs{position:absolute;left:14px;right:14px;bottom:26px;background:#fffdf8;border-radius:999px;display:flex;justify-content:space-around;padding:10px 6px;box-shadow:0 10px 24px rgba(180,140,90,.2), inset 0 2px 0 rgba(255,255,255,.9);z-index:8}
+  .pp-tabs span{font-size:12px;color:#b3a28c;cursor:pointer;padding:6px 10px;border-radius:999px}
+  .pp-tabs span.on{background:linear-gradient(140deg,#ffe3d1,#ffd2b8);color:#c05e2a;font-weight:600}
+</style>
+</head>
+<body>
+<div data-dc="pp/root" class="pp-root">
+  <div class="pp-head" data-dc="pp/head"><span class="t">乐园地图</span><span class="loc" data-act="toast" data-msg="已定位：云朵宠物乐园 · 1 号门（演示）">定位 · 1 号门</span></div>
+  <div class="pp-map" data-dc="pp/map">
+    <svg viewBox="0 0 390 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="390" height="300" fill="#f6efdf"></rect>
+      <g stroke="#fffdf8" stroke-width="7" fill="none" opacity=".9"><path d="M0 90 H390"></path><path d="M120 0 V300"></path><path d="M260 0 V300"></path><path d="M0 210 H390"></path></g>
+      <ellipse cx="70" cy="60" rx="62" ry="42" fill="#c9efd9"></ellipse>
+      <ellipse cx="320" cy="70" rx="60" ry="44" fill="#bfe6f7"></ellipse>
+      <ellipse cx="80" cy="250" rx="66" ry="40" fill="#efe7fb"></ellipse>
+      <ellipse cx="310" cy="245" rx="64" ry="42" fill="#ffe3d1"></ellipse>
+      <g fill="#8fd8ae"><circle cx="46" cy="48" r="8"></circle><circle cx="92" cy="70" r="6"></circle></g>
+      <g fill="#9ed4ef"><circle cx="300" cy="58" r="7"></circle><circle cx="338" cy="84" r="5"></circle></g>
+    </svg>
+    <span class="pp-pin" style="left:18%;top:26%" data-act="toast" data-msg="草坪区：开放中 · 当前 12 只（演示）"><span class="b"><svg width="18" height="18" viewBox="0 0 24 24" style="fill:#3fae83"><path d="M4 20c2-6 5-9 8-9s6 3 8 9z"></path><circle cx="12" cy="7" r="3"></circle></svg></span><span class="lb">草坪区</span></span>
+    <span class="pp-pin" style="left:82%;top:30%" data-act="toast" data-msg="戏水区：水温 28° · 需穿救生衣（演示）"><span class="b"><svg width="18" height="18" viewBox="0 0 24 24" style="fill:#4aa3e8"><path d="M3 15c3-3 6-3 9 0s6 3 9 0v4H3z"></path><path d="M3 9c3-3 6-3 9 0s6 3 9 0" fill="none" stroke="#4aa3e8" stroke-width="2"></path></svg></span><span class="lb">戏水区</span></span>
+    <span class="pp-pin" style="left:20%;top:86%" data-act="toast" data-msg="猫爬架区：限猫咪 · 3 层攀爬（演示）"><span class="b"><svg width="18" height="18" viewBox="0 0 24 24" style="fill:#8a63d2"><rect x="5" y="4" width="4" height="16" rx="2"></rect><rect x="11" y="8" width="4" height="12" rx="2"></rect><rect x="17" y="12" width="4" height="8" rx="2"></rect></svg></span><span class="lb">猫爬架区</span></span>
+    <span class="pp-pin" style="left:80%;top:84%" data-act="toast" data-msg="宠物咖啡区：人宠共餐 · 有低敏菜单（演示）"><span class="b"><svg width="18" height="18" viewBox="0 0 24 24" style="fill:#e07b39"><path d="M5 8h11v7a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"></path><path d="M16 9h2a3 3 0 0 1 0 6h-2" fill="none" stroke="#e07b39" stroke-width="2"></path></svg></span><span class="lb">咖啡区</span></span>
+  </div>
+  <div class="pp-sheet" data-dc="pp/sheet">
+    <div class="grab"></div>
+    <div class="t">预约入园</div>
+    <div class="pp-zones" data-dc="pp/zones"><span class="pp-zone on" data-act="radio" data-group="zone">草坪区</span><span class="pp-zone" data-act="radio" data-group="zone">戏水区</span><span class="pp-zone" data-act="radio" data-group="zone">猫爬架区</span><span class="pp-zone" data-act="radio" data-group="zone">咖啡区</span></div>
+    <div class="pp-slot" data-dc="pp/slots"><span class="on" data-act="radio" data-group="slot">今天 14:00</span><span data-act="radio" data-group="slot">今天 16:00</span><span data-act="radio" data-group="slot">明天 10:00</span></div>
+    <button class="pp-book" data-act="toast" data-msg="预约成功：草坪区 今天 14:00（演示）">确认预约</button>
+  </div>
+  <div class="pp-tabs" data-dc="pp/tabs"><span data-goto="01-home">首页</span><span data-goto="02-pets">档案</span><span class="on" data-goto="03-map">地图</span><span data-goto="04-community">社区</span><span data-goto="05-me">我的</span></div>
+</div>
+
+<script>
+document.addEventListener("click", (e) => {
+  const g = e.target.closest("[data-goto]");
+  if (g) { location.href = g.getAttribute("data-goto") + ".html"; }
+});
+</script>
+</body>
+</html>
