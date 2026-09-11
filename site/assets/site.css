@@ -23,9 +23,6 @@ header.top { position: sticky; top: 0; z-index: 30; backdrop-filter: blur(14px);
 header.top .wrap { display: flex; align-items: center; gap: 14px; height: 62px; }
 .logo { display: flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 600; font-size: 16.5px; letter-spacing: .01em; }
 .logo svg { display: block; width: 40px; height: 35px; }
-.logo .ninja-ghost { animation: ghostWalk 2.6s ease-in-out infinite; }
-@keyframes ghostWalk { 0%, 100% { transform: translate(0, 0); opacity: .18; } 45% { transform: translate(7px, -1px); opacity: .42; } 70% { transform: translate(10px, 0); opacity: .3; } }
-@media (prefers-reduced-motion: reduce) { .logo .ninja-ghost { animation: none; } }
 .navwrap { position: relative; margin-left: 10px; display: flex; gap: 2px; }
 .navwrap a { position: relative; z-index: 2; color: var(--mut); font-size: 14px; padding: 7px 16px; border-radius: 999px; transition: color .25s; }
 .navwrap a.on { color: var(--ink); }
@@ -214,19 +211,29 @@ footer.ft .wrap { display: flex; gap: 18px; flex-wrap: wrap; align-items: center
 .animstage .flylink { stroke-dashoffset: 40; animation: flylink 1.6s linear infinite; }
 @keyframes flylink { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
 
-/* M58 hero logo idle animation */
-.herologo svg { animation: heroFloat 3.4s ease-in-out infinite; }
-@keyframes heroFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
-.herologo .ninja-ghost { animation: ghostStep 3.4s ease-in-out infinite; }
-@keyframes ghostStep { 0% { transform: translate(1px, 0); opacity: .12; } 40% { transform: translate(11px, -2px); opacity: .5; } 75% { transform: translate(15px, 0); opacity: .26; } 100% { transform: translate(1px, 0); opacity: .12; } }
-.herologo .nj-scarf { transform-box: fill-box; transform-origin: left center; animation: scarfSway 2.8s ease-in-out infinite; }
-@keyframes scarfSway { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(7deg); } }
-.herologo .nj-eye { transform-box: fill-box; transform-origin: center; animation: blink 4.2s infinite; }
-@keyframes blink { 0%, 91%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.12); } }
-.herologo .nj-sealglow { animation: sealPulse 2.2s ease-in-out infinite; }
-@keyframes sealPulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) {
-  .herologo svg, .herologo .ninja-ghost, .herologo .nj-scarf, .herologo .nj-eye, .herologo .nj-sealglow { animation: none; }
-}
 .stagefail { position: absolute; inset: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--bg2) 80%, transparent); z-index: 6; }
 .stagefail button { margin-top: 10px; }
+
+/* M59 chibi designer mascot animation */
+.herologo svg { animation: dzFloat 3.2s ease-in-out infinite; }
+@keyframes dzFloat { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-8px) rotate(-2deg); } }
+.dz-bob { animation: dzBob 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes dzBob { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-2.5px) rotate(2deg); } }
+.dz-clone { animation: dzClone 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes dzClone { 0% { transform: translate(-8px, 4px) scale(.6); opacity: 0; } 25% { opacity: .5; } 55% { transform: translate(0, 0) scale(1); opacity: .38; } 85% { transform: translate(4px, -1px) scale(1.02); opacity: .3; } 100% { transform: translate(-8px, 4px) scale(.6); opacity: 0; } }
+.dz-poof { animation: dzPoof 3.2s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.dz-poof2 { animation: dzPoof 3.2s .25s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes dzPoof { 0% { transform: scale(.3); opacity: .7; } 40% { transform: scale(1.7); opacity: 0; } 100% { transform: scale(.3); opacity: 0; } }
+.dz-draw { animation: dzDraw 2.4s ease-in-out infinite; }
+@keyframes dzDraw { 0% { stroke-dashoffset: 30; opacity: .3; } 50% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: -30; opacity: .3; } }
+.dz-wire { animation: dzWire 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes dzWire { 0%, 15% { opacity: 0; transform: scale(.7); } 45%, 80% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(.85); } }
+.dz-cast { animation: dzCast 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes dzCast { 0%, 100% { transform: scale(.8); opacity: .3; } 50% { transform: scale(1.25); opacity: .6; } }
+.dz-sway { animation: dzSway 2s ease-in-out infinite; transform-box: fill-box; transform-origin: center bottom; }
+@keyframes dzSway { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(8deg); } }
+.dz-blink { animation: dzBlink 4.4s infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes dzBlink { 0%, 90%, 100% { transform: scaleY(1); } 94% { transform: scaleY(.12); } }
+@media (prefers-reduced-motion: reduce) {
+  .herologo svg, .dz-bob, .dz-clone, .dz-poof, .dz-poof2, .dz-draw, .dz-wire, .dz-cast, .dz-sway, .dz-blink { animation: none; }
+}
