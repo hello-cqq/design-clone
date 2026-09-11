@@ -1,70 +1,88 @@
-/* ident.js v4 —— 首页片头：透明浮景双视频 ident（M65）
+/* ident.js v5 —— 首页片头：透明浮景双视频 ident + 双联图叙事节点（M69）
    亮=女生（坐→躺→描云）·暗=男生（朝右行走→弯腰看水面）；片尾含 1.4s 冻结定格。
-   循环：ended → hold .8s → .4s 淡出 → 回 0 播放 → 淡入（无缝缝合）。
-   主题切换：双 video/halo 叠层 .7s 交叉淡化，非活动片 pause。
-   无 lockup 文字、无 replay 提示；点击舞台=无提示重播；reduced-motion=poster 静帧不循环。 */
+   双联图（昼|夜背靠背）双用途：
+     · seam  = 每循环片尾定格卡：video 冻结尾 → 双联淡入 hold 1.4s → 淡出+视频回 0（循环缝合点）
+     · bridge = 主题转场桥：旧视频 → 双联（两世界之门）→ 新视频
+   reduced-motion = poster 静帧，无循环无 duo。点击舞台=重播。
+   调试钩子 window.__ident.phase() → 'play' | 'seam' | 'bridge'。 */
 window.DCIdent = {
   build() {
     return `
   <div class="idf-halo" data-k="light" style="background-image:url(assets/ident-light-poster.jpg)"></div>
   <div class="idf-halo" data-k="dark" style="background-image:url(assets/ident-dark-poster.jpg)"></div>
   <video class="idf-video" data-k="light" src="assets/ident-light.mp4" poster="assets/ident-light-poster.jpg" muted playsinline preload="metadata" tabindex="-1"></video>
-  <video class="idf-video" data-k="dark" src="assets/ident-dark.mp4" poster="assets/ident-dark-poster.jpg" muted playsinline preload="metadata" tabindex="-1"></video>`;
+  <video class="idf-video" data-k="dark" src="assets/ident-dark.mp4" poster="assets/ident-dark-poster.jpg" muted playsinline preload="metadata" tabindex="-1"></video>
+  <div class="idf-duo" style="background-image:url(assets/logo-main.png)"></div>`;
   },
   wire(el) {
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const vids = { light: el.querySelector('.idf-video[data-k="light"]'), dark: el.querySelector('.idf-video[data-k="dark"]') };
     const halos = { light: el.querySelector('.idf-halo[data-k="light"]'), dark: el.querySelector('.idf-halo[data-k="dark"]') };
     let cur = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
-    let dipping = false;
+    let phase = "play";
+    let busy = false;
+    const setPhase = (p) => { phase = p; };
+    window.__ident = { phase: () => phase };
 
-    const loop = (k) => {
-      const v = vids[k];
-      v.addEventListener("ended", () => {
-        if (k !== cur || reduced) return;
-        setTimeout(() => {
-          if (k !== cur || dipping) return;
-          dipping = true;
-          el.classList.add("dip");
-          setTimeout(() => {
-            v.currentTime = 0;
-            const p = v.play(); if (p && p.catch) p.catch(() => {});
-            el.classList.remove("dip");
-            dipping = false;
-          }, 420);
-        }, 800);
-      });
+    const playVid = (k) => { vids[k].currentTime = 0; const pr = vids[k].play(); if (pr && pr.catch) pr.catch(() => {}); };
+
+    const seam = (k) => {
+      if (busy || reduced) return;
+      busy = true; setPhase("seam");
+      el.classList.add("duo");
+      setTimeout(() => {
+        el.classList.remove("duo");
+        playVid(k);
+        setPhase("play");
+        busy = false;
+      }, 1900); // .5s 淡入 + 1.4s 定格
     };
-    loop("light"); loop("dark");
+
+    vids.light.addEventListener("ended", () => { if (cur === "light") seam("light"); });
+    vids.dark.addEventListener("ended", () => { if (cur === "dark") seam("dark"); });
 
     const setActive = (theme, restart) => {
+      if (theme === cur && !restart) return;
+      const prev = cur;
       cur = theme;
-      for (const k of ["light", "dark"]) {
-        const on = k === theme;
-        vids[k].classList.toggle("on", on);
-        halos[k].classList.toggle("on", on);
-        if (on) {
-          if (restart && !reduced) { vids[k].currentTime = 0; const p = vids[k].play(); if (p && p.catch) p.catch(() => {}); }
-          else if (reduced) { vids[k].pause(); vids[k].currentTime = 0; }
-        } else {
-          setTimeout(() => { if (cur !== k) vids[k].pause(); }, 750);
+      if (reduced) {
+        for (const k of ["light", "dark"]) {
+          vids[k].classList.toggle("on", k === theme);
+          halos[k].classList.toggle("on", k === theme);
+          vids[k].pause(); vids[k].currentTime = 0;
         }
+        return;
+      }
+      if (prev !== theme) {
+        // bridge：旧视频 → 双联 → 新视频
+        setPhase("bridge");
+        el.classList.add("duo");
+        vids[prev].classList.remove("on");
+        setTimeout(() => {
+          vids[theme].classList.add("on");
+          halos[theme].classList.add("on");
+          halos[prev].classList.remove("on");
+          playVid(theme);
+          setTimeout(() => { el.classList.remove("duo"); setPhase("play"); }, 420);
+        }, 430);
+      } else if (restart) {
+        playVid(theme);
+      }
+      for (const k of ["light", "dark"]) {
+        vids[k].classList.toggle("on", k === theme);
+        halos[k].classList.toggle("on", k === theme);
+        if (k !== theme) setTimeout(() => { if (cur !== k) vids[k].pause(); }, 900);
       }
     };
 
     el.onclick = () => {
-      if (reduced || dipping) return;
-      dipping = true;
-      el.classList.add("dip");
-      setTimeout(() => {
-        vids[cur].currentTime = 0;
-        const p = vids[cur].play(); if (p && p.catch) p.catch(() => {});
-        el.classList.remove("dip");
-        dipping = false;
-      }, 420);
+      if (reduced || busy || phase !== "play") return;
+      el.classList.add("duo");
+      setPhase("seam");
+      setTimeout(() => { el.classList.remove("duo"); playVid(cur); setPhase("play"); }, 500);
     };
 
-    setActive(cur, !reduced);
-    return { swap: (theme) => setActive(theme, true) };
+    setActive(cur, true);
+    return { swap: (theme) => setActive(theme, false), phase: () => phase };
   },
 };

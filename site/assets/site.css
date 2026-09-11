@@ -270,3 +270,9 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
 @media (prefers-reduced-motion: reduce) { .wm-echo { transition: none; } .logo:hover .wm-echo { transform: translate(1.6px, 1.6px); } }
 .logo .wordmark { width: auto; height: 28px; }
 .logo .wordmark--ft { height: 18px; }
+/* M69 duo narrative layer — loop end-card + theme bridge */
+.idf-duo { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity .5s ease; pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 58% 52% at 50% 47%, #000 50%, rgba(0, 0, 0, .6) 66%, transparent 80%);
+  mask-image: radial-gradient(ellipse 58% 52% at 50% 47%, #000 50%, rgba(0, 0, 0, .6) 66%, transparent 80%); }
+.ident.duo .idf-duo { opacity: 1; }
+.ident.duo .idf-video.on { opacity: 0; transition: opacity .45s ease; }
