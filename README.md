@@ -1,5 +1,7 @@
 # design-clone
 
+> Official site & community gallery: **https://hello-cqq.github.io/design-clone/** — playable prototypes hosted on GitHub Pages, contributed via [design-clone-prototype](https://github.com/hello-cqq/design-clone-prototype).
+
 **Clone any app's design into a production-grade "living PRD"** — an interactive local web prototype plus structured design assets (screenshots, state captures, design tokens, design-rationale docs), captured automatically from real apps, websites, desktop apps, or video/link sources.
 
 > Clone is the starting point, not the destination. design-clone rebuilds a mature product's visual language, interaction paths and product rationale as *your* project's baseline: inspectable, annotatable, editable, exportable — and honest about what it is (a clone, with provenance and consent rules baked in).
