@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Guide — design-clone</title>
-<link rel="icon" type="image/png" href="assets/logo-light.png">
+<link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
@@ -29,7 +29,8 @@
       <div class="fcard"><div class="tagline">2 · CLONE</div><h3>Ask your agent</h3>
         <p>“Use design-clone to clone &lt;app or url&gt;.” The skill captures, rebuilds a playable prototype, runs its gates, and serves it locally.</p></div>
       <div class="fcard"><div class="tagline">3 · PUBLISH</div><h3 id="publish">Share to the gallery</h3>
-        <p><code>node &lt;skill&gt;/scripts/publish.mjs --run &lt;run&gt; --app &lt;app&gt; --flavor &lt;flavor&gt; --title "…" </code> opens a PR to <a href="https://github.com/hello-cqq/design-clone-prototype">design-clone-prototype</a>; after review it goes live here with your avatar on it.</p></div>
+        <p><code>node &lt;skill&gt;/scripts/publish.mjs --run &lt;run&gt; --app &lt;app&gt; --title "…" [--title-zh --desc --desc-zh --tags --version]</code> opens a PR to <a href="https://github.com/hello-cqq/design-clone-prototype">design-clone-prototype</a>; after review it goes live here with your avatar on it. Generation already emits the gallery trio (<code>meta.json</code> bilingual + <code>icon.png</code> + 3:2 <code>cover.png</code>) and design specs (<code>pages/*.spec.json</code>, <code>design/figma-source.json</code>) — publish carries them; gates must be green first.</p>
+        <p lang="zh">发布一行命令：<code>publish.mjs --run &lt;run&gt; --app &lt;app&gt; --title "…"</code>（中英描述/标签/版本可覆盖）。生成期已产画廊三件套（双语 meta.json + icon.png + 3:2 cover.png）与设计规格（pages/*.spec.json、design/figma-source.json），publish 自动搬运；三门绿+gallery-ready 才放行，PR 经维护者审核后上线并署贡献者头像。</p></div>
     </div>
   </section>
   <section class="blk">

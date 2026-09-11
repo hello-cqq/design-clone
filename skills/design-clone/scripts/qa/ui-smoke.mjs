@@ -459,8 +459,8 @@ await step("export-design-artifacts", async () => {
 
 await step("cover-geometry", async () => {
   // M62-A：cover.png 严格 3:2、≤300KB、宽≥900；icon.png ≥256
-  const cp = path.join(values.run, "cover.png");
-  const ip = path.join(values.run, "icon.png");
+  const cp = path.join(run, "cover.png");
+  const ip = path.join(run, "icon.png");
   if (!fs.existsSync(cp) || !fs.existsSync(ip)) return "存量 run 无三件套，跳过（inspect gallery-ready 记 warn）";
   const sharp = require("sharp");
   const cm = await sharp(cp).metadata();
