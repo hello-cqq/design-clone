@@ -26,9 +26,24 @@ ctx.on("pageerror", (e) => errs.push("pageerror:" + String(e.message).slice(0, 1
 // ---- index
 await ctx.goto(base + "/index.html", { waitUntil: "networkidle" });
 await ctx.waitForTimeout(2500);
-ok("ident stage", await ctx.locator(".ident svg").count() === 1);
-ok("ident rig", await ctx.locator(".ident .id-torso").count() === 1 && await ctx.locator(".ident .id-refl").count() === 1 && await ctx.locator(".ident .id-cloud1").count() === 1);
-ok("ident lockup", await ctx.locator(".ident .id-lockup").count() === 1);
+ok("ident video", await ctx.locator(".ident .idf-video").count() === 1);
+ok("ident mask (no rectangle)", await ctx.evaluate(() => { const v = document.querySelector(".idf-video"); const cs = getComputedStyle(v); return (cs.maskImage || cs.webkitMaskImage || "").includes("radial-gradient"); }));
+ok("ident wrapper frameless", await ctx.evaluate(() => { const el = document.querySelector(".ident"); const cs = getComputedStyle(el); return cs.backgroundImage === "none" && cs.backgroundColor === "rgba(0, 0, 0, 0)" && cs.borderTopWidth === "0px"; }));
+ok("ident lockup", await ctx.locator(".ident .idf-lockup").count() === 1);
+{
+  const t0 = await ctx.evaluate(() => document.querySelector(".idf-video").currentTime);
+  await ctx.waitForTimeout(1200);
+  const t1 = await ctx.evaluate(() => document.querySelector(".idf-video").currentTime);
+  ok("ident plays", t1 > t0 || (await ctx.evaluate(() => document.querySelector(".idf-lockup").classList.contains("on"))));
+}
+{
+  const srcDark = await ctx.evaluate(() => document.querySelector(".idf-video").src);
+  await ctx.click("#themebtn"); await ctx.waitForTimeout(900);
+  const srcLight = await ctx.evaluate(() => document.querySelector(".idf-video").src);
+  const logoSrc = await ctx.evaluate(() => document.querySelector(".logoimg").src);
+  ok("theme swaps video+logo", srcDark !== srcLight && logoSrc.includes("logo-light"));
+  await ctx.click("#themebtn"); await ctx.waitForTimeout(700);
+}
 ok("nav logo img", await ctx.locator(".logo img.logoimg").count() === 1);
 ok("install cmd", (await ctx.locator("#installcmd").textContent()).includes("install.sh"));
 ok("exp iframe", (await ctx.locator("#expframe").getAttribute("src") || "").includes("/prototype/"));

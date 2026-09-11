@@ -90,6 +90,8 @@
   }
   function applyTheme() {
     document.documentElement.dataset.theme = state.theme;
+    document.querySelectorAll(".logoimg").forEach((im) => { im.src = "assets/logo-" + state.theme + ".png"; });
+    if (window.__identCtrl && window.__identCtrl.swap) window.__identCtrl.swap(state.theme);
     const tb = document.getElementById("themebtn");
     if (tb) tb.innerHTML = state.theme === "dark"
       ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>'
@@ -192,14 +194,11 @@
   }
 
   function wireNav() {
-    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", '<img class="logoimg" src="assets/ident-head.png" alt="" width="34" height="34">'); });
+    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", '<img class="logoimg" src="assets/logo-dark.png" alt="" width="34" height="34">'); });
     const idn = document.getElementById("ident");
-    if (idn && window.DCIdent) {
-      idn.innerHTML = window.DCIdent + '<span class="replay-hint">replay</span>';
-      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const playIt = () => { idn.classList.remove("play"); void idn.offsetWidth; idn.classList.add("play"); };
-      if (!reduced) setTimeout(playIt, 250);
-      idn.addEventListener("click", playIt);
+    if (idn && window.DCIdent && window.DCIdent.build) {
+      idn.innerHTML = window.DCIdent.build(state.theme);
+      window.__identCtrl = window.DCIdent.wire(idn);
     }
 
     const nw = document.querySelector(".navwrap");
