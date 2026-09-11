@@ -62,63 +62,7 @@
     },
   };
 
-  const designer = (size = 40, anim = false) => {
-    const c = (n) => (anim ? n : "");
-    return `
-  <svg width="${size}" height="${size}" viewBox="0 0 96 96" fill="none" aria-hidden="true">
-    <defs>
-      <linearGradient id="dzSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe3c4"/><stop offset="1" stop-color="#ffcf9d"/></linearGradient>
-      <linearGradient id="dzBean" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3d5170"/><stop offset="1" stop-color="#26364f"/></linearGradient>
-      <linearGradient id="dzHood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9d6b"/><stop offset="1" stop-color="#e0603a"/></linearGradient>
-    </defs>
-    <g class="${c("dz-clone")}" opacity=".35">
-      <circle cx="70" cy="30" r="12" fill="#6fd3b2"/>
-      <rect x="58" y="42" width="24" height="20" rx="9" fill="#6fd3b2"/>
-      <path d="M60 48 L52 44" stroke="#6fd3b2" stroke-width="6" stroke-linecap="round"/>
-      <rect x="46" y="38" width="10" height="14" rx="3" fill="#6fd3b2" opacity=".8"/>
-    </g>
-    <circle class="${c("dz-poof")}" cx="62" cy="66" r="5" fill="none" stroke="#6fd3b2" stroke-width="2" opacity=".5"/>
-    <circle class="${c("dz-poof2")}" cx="72" cy="62" r="3" fill="none" stroke="#6fd3b2" stroke-width="1.6" opacity=".4"/>
-    <g class="${c("dz-bob")}">
-      <path d="M52 72 q10 6 16 -2" stroke="#26364f" stroke-width="7" stroke-linecap="round" fill="none"/>
-      <circle cx="70" cy="69" r="4.5" fill="#fff"/>
-      <path d="M42 74 q-2 8 4 10" stroke="#26364f" stroke-width="7" stroke-linecap="round" fill="none"/>
-      <circle cx="47" cy="86" r="4.5" fill="#fff"/>
-      <rect x="34" y="48" width="28" height="26" rx="11" fill="url(#dzHood)"/>
-      <path d="M40 66 q8 4 16 0" stroke="#c94f2c" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M44 50 q4 4 8 0" stroke="#c94f2c" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M46 52 v6 M50 52 v6" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>
-      <path d="M48 56 l0 8" stroke="#26364f" stroke-width="1.4"/>
-      <rect x="45" y="63" width="7" height="9" rx="1.5" fill="#fff" stroke="#26364f" stroke-width="1"/>
-      <path d="M36 56 L24 50" stroke="#e0603a" stroke-width="7" stroke-linecap="round"/>
-      <circle cx="22" cy="49" r="4" fill="url(#dzSkin)"/>
-      <g transform="rotate(-24 20 48)">
-        <rect x="16" y="26" width="6" height="32" rx="3" fill="#26364f"/>
-        <rect x="16.8" y="22" width="4.4" height="6" rx="2" fill="#6fd3b2"/>
-      </g>
-      <path class="${c("dz-draw")}" d="M18 20 q-6 -6 -4 -12" stroke="#6fd3b2" stroke-width="1.8" fill="none" stroke-dasharray="4 3" stroke-linecap="round"/>
-      <g class="${c("dz-wire")}">
-        <rect x="2" y="2" width="14" height="10" rx="2" fill="#fff" stroke="#26364f" stroke-width="1.2"/>
-        <path d="M4.5 5 h9 M4.5 7.5 h6" stroke="#8b95a3" stroke-width="1.2" stroke-linecap="round"/>
-      </g>
-      <path d="M58 54 L70 46" stroke="#e0603a" stroke-width="7" stroke-linecap="round"/>
-      <circle cx="72" cy="44" r="4.2" fill="url(#dzSkin)"/>
-      <circle class="${c("dz-cast")}" cx="76" cy="41" r="5" fill="#6fd3b2" opacity=".45"/>
-      <circle cx="48" cy="30" r="17" fill="url(#dzSkin)"/>
-      <path d="M31 28 a17 17 0 0 1 34 0 l-2 4 h-30 z" fill="url(#dzBean)"/>
-      <rect x="30" y="28" width="36" height="6" rx="3" fill="#1d2b40"/>
-      <circle class="${c("dz-sway")}" cx="48" cy="11" r="4.5" fill="#6fd3b2"/>
-      <path d="M35 34 q3 -3 6 0 M43 34 q3 -3 6 0 M51 34 q3 -3 6 0" stroke="#e8b28a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-      <ellipse class="${c("dz-blink")}" cx="42" cy="38" rx="2.6" ry="3.2" fill="#20242a"/>
-      <ellipse class="${c("dz-blink")}" cx="54" cy="38" rx="2.6" ry="3.2" fill="#20242a"/>
-      <circle cx="43" cy="36.8" r=".9" fill="#fff"/>
-      <circle cx="55" cy="36.8" r=".9" fill="#fff"/>
-      <circle cx="37.5" cy="43" r="2.6" fill="#ff9d86" opacity=".55"/>
-      <circle cx="58.5" cy="43" r="2.6" fill="#ff9d86" opacity=".55"/>
-      <path d="M44 44 q4 3.4 8 0" stroke="#a4552f" stroke-width="2" fill="none" stroke-linecap="round"/>
-    </g>
-  </svg>`;
-  };
+;
 
   const state = {
     lang: localStorage.getItem("dc-lang") || "en",
@@ -248,9 +192,16 @@
   }
 
   function wireNav() {
-    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", designer(38, false)); });
+    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", '<img class="logoimg" src="assets/mascot-head.png" alt="" width="34" height="34">'); });
     const hl = document.getElementById("herologo");
-    if (hl) hl.innerHTML = designer(120, true);
+    if (hl) hl.innerHTML = `<img class="ms-clone" src="assets/mascot.png" alt="">
+      <img class="ms-main" src="assets/mascot.png" alt="">
+      <svg class="ms-fx" viewBox="0 0 200 200" aria-hidden="true">
+        <circle class="ms-poof" cx="152" cy="148" r="14" fill="none" stroke="#6fd3b2" stroke-width="3"/>
+        <circle class="ms-poof2" cx="170" cy="116" r="8" fill="none" stroke="#6fd3b2" stroke-width="2"/>
+        <path class="ms-spark" d="M34 44 l4 8 8 4 -8 4 -4 8 -4 -8 -8 -4 8 -4 z" fill="#ffd166"/>
+      </svg>
+      <span class="ms-shadow"></span>`;
     const nw = document.querySelector(".navwrap");
     if (!nw) return;
     const pill = document.createElement("span");

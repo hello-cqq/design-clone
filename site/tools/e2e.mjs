@@ -26,7 +26,8 @@ ctx.on("pageerror", (e) => errs.push("pageerror:" + String(e.message).slice(0, 1
 // ---- index
 await ctx.goto(base + "/index.html", { waitUntil: "networkidle" });
 await ctx.waitForTimeout(2500);
-ok("hero logo", await ctx.locator(".herologo svg").count() === 1);
+ok("hero logo", await ctx.locator(".herologo img.ms-main").count() === 1);
+ok("nav logo img", await ctx.locator(".logo img.logoimg").count() === 1);
 ok("install cmd", (await ctx.locator("#installcmd").textContent()).includes("install.sh"));
 ok("exp iframe", (await ctx.locator("#expframe").getAttribute("src") || "").includes("/prototype/"));
 ok("featured cards", await ctx.locator("#featured .pcard").count() >= 4);
