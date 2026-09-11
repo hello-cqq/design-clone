@@ -343,22 +343,10 @@
     if (code0) code0.textContent = STABLE_CMD;
     // M62-B(G2, 与 M67 单命令设计共存)：渠道 pill 切换 stable/snapshot + release 徽章
     let relTag = "";
-    fetch("data/release.json", { cache: "default" }).then((r) => r.json()).then((j) => {
+    fetch("data/release.json", { cache: "default" }).then((r) => (r.ok ? r.json() : {})).catch(() => ({})).then((j) => {
       relTag = j.tag_name || "";
       const rb = document.getElementById("relbadge");
       if (rb && relTag) { rb.textContent = (j.prerelease ? "◐ " : "● ") + relTag; rb.style.cursor = "pointer"; rb.onclick = () => { window.open("https://github.com/hello-cqq/design-clone/releases", "_blank"); }; }
-      const cbox = document.getElementById("chanswitch");
-      if (cbox) {
-        cbox.innerHTML = ["stable", "snapshot"].map((c) => `<button class="agentbtn" data-c="${c}">${c}</button>`).join("");
-        cbox.querySelector('[data-c="stable"]').classList.add("on");
-        cbox.addEventListener("click", (e) => {
-          const b = e.target.closest(".agentbtn"); if (!b || !code0) return;
-          cbox.querySelectorAll(".agentbtn").forEach((x) => x.classList.toggle("on", x === b));
-          code0.textContent = b.dataset.c === "snapshot" && relTag
-            ? `curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/${relTag}/install.sh | bash -s -- --ref ${relTag}`
-            : STABLE_CMD;
-        });
-      }
     }).catch(() => {});
     const cp = document.getElementById("copycmd");
     if (cp) cp.onclick = () => { navigator.clipboard.writeText(document.getElementById("installcmd").textContent); cp.textContent = "✓"; setTimeout(() => (cp.textContent = "copy"), 1200); };
