@@ -75,7 +75,7 @@ try {
   await ctx.waitForTimeout(1600);
 }
 ok("wordmark svg", await ctx.locator(".logo svg.wordmark").count() === 1);
-ok("wordmark clone motif", await ctx.locator(".logo .wm-hyphen rect").count() === 2 && await ctx.locator(".logo .wm-echo").count() === 1);
+ok("wordmark clone motif", await ctx.locator(".logo .wm-hyphen rect").count() === 2 && await ctx.locator(".logo .wm-clone-echo").count() === 1);
 ok("wordmark no plain text", await ctx.evaluate(() => ![...document.querySelector(".logo").childNodes].some((n) => n.nodeType === 3 && n.textContent.trim() === "design-clone")));
 ok("footer wordmark", await ctx.locator("footer .wordmark--ft").count() === 1);
 ok("favicon diptych", await ctx.evaluate(() => (document.querySelector("link[rel=icon]") || {}).href.includes("favicon.png")));
