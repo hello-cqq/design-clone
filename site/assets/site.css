@@ -43,23 +43,6 @@ header.top .wrap { gap: 10px; }
 .hero .kick { color: var(--acc2); font: 11.5px var(--mono); letter-spacing: .16em; text-transform: uppercase; }
 .hero h1 { font-size: clamp(30px, 4.6vw, 52px); line-height: 1.15; margin: 18px auto 22px; font-weight: 600; letter-spacing: -.01em; max-width: 900px; }
 .hero h1 em { font-style: normal; color: var(--acc); }
-.herologo { position: relative; width: 158px; height: 158px; margin: 0 auto; filter: drop-shadow(0 16px 34px var(--glow)); }
-.herologo .ms-main, .herologo .ms-clone { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; border-radius: 34px; }
-.herologo .ms-main { animation: msFloat 3s ease-in-out infinite; }
-.herologo .ms-clone { opacity: .3; filter: saturate(.5) hue-rotate(120deg) brightness(1.15); animation: msClone 3s ease-in-out infinite; }
-@keyframes msFloat { 0%, 100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-9px) rotate(1.5deg); } }
-@keyframes msClone { 0% { transform: translate(-16px, 8px) scale(.8); opacity: 0; } 30% { opacity: .42; } 60% { transform: translate(18px, -2px) scale(1); opacity: .32; } 100% { transform: translate(-16px, 8px) scale(.8); opacity: 0; } }
-.herologo .ms-fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.ms-poof { animation: msPoof 3s ease-out infinite; transform-box: fill-box; transform-origin: center; }
-.ms-poof2 { animation: msPoof 3s .3s ease-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes msPoof { 0% { transform: scale(.3); opacity: .8; } 45% { transform: scale(1.8); opacity: 0; } 100% { transform: scale(.3); opacity: 0; } }
-.ms-spark { animation: msSpark 1.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes msSpark { 0%, 100% { transform: scale(.6) rotate(0deg); opacity: .4; } 50% { transform: scale(1.2) rotate(24deg); opacity: 1; } }
-.ms-shadow { position: absolute; left: 50%; bottom: -8px; width: 78px; height: 15px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, .38), transparent); animation: msSh 3s ease-in-out infinite; }
-:root[data-theme="light"] .ms-shadow { background: radial-gradient(50% 50% at 50% 50%, rgba(120, 90, 60, .28), transparent); }
-@keyframes msSh { 0%, 100% { transform: translateX(-50%) scale(1); opacity: .55; } 50% { transform: translateX(-50%) scale(.78); opacity: .3; } }
-.logoimg { width: 34px; height: 34px; border-radius: 10px; object-fit: cover; box-shadow: 0 4px 10px rgba(0, 0, 0, .28); }
-@media (prefers-reduced-motion: reduce) { .herologo .ms-main, .herologo .ms-clone, .ms-poof, .ms-poof2, .ms-spark, .ms-shadow { animation: none; } }
 .installbox { display: flex; align-items: center; justify-content: center; gap: 12px; background: var(--bg2); border: 1px solid var(--line); border-radius: 16px; padding: 13px 16px; max-width: 860px; margin: 0 auto; box-shadow: var(--shadow); flex-wrap: wrap; }
 .installbox code { font: 12.5px var(--mono); color: var(--ink); flex: 1; min-width: 280px; overflow: auto; white-space: nowrap; }
 .installbox .agents { display: flex; gap: 6px; }
@@ -230,3 +213,38 @@ footer.ft .wrap { display: flex; gap: 18px; flex-wrap: wrap; align-items: center
 .stagefail { position: absolute; inset: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--bg2) 80%, transparent); z-index: 6; }
 .stagefail button { margin-top: 10px; }
 
+
+/* M61 water-mirror micro-film */
+.hero-scene { max-width: 900px; margin: 26px auto 8px; border-radius: 24px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); background: #eaf7fb; }
+.hero-scene svg { display: block; width: 100%; height: auto; }
+.hs-cam { transform-box: view-box; transform-origin: 50% 50%; animation: hsCam 14s cubic-bezier(.45, .05, .35, .95) infinite; }
+@keyframes hsCam {
+  0% { transform: translate(390px, -109px) scale(2.6); }
+  26% { transform: translate(397px, -111px) scale(2.65); }
+  50% { transform: translate(-264px, -92px) scale(2.2); }
+  72% { transform: translate(-252px, -88px) scale(2.1); }
+  100% { transform: translate(0px, 0px) scale(1.15); }
+}
+#hs-sit { opacity: 0; animation: hsSit 14s linear infinite; }
+@keyframes hsSit { 0%, 26% { opacity: 1; } 40%, 100% { opacity: 0; } }
+#hs-lie { opacity: 1; animation: hsLie 14s linear infinite; }
+@keyframes hsLie { 0%, 26% { opacity: 0; } 40%, 100% { opacity: 1; } }
+.hs-refl { opacity: .35; animation: hsRefl 14s linear infinite, hsRipple 5s ease-in-out infinite alternate; }
+@keyframes hsRefl { 0%, 48% { opacity: 0; } 62%, 100% { opacity: .35; } }
+@keyframes hsRipple { from { transform: skewX(.5deg); } to { transform: skewX(-.5deg); } }
+.hs-fade { animation: hsFade 14s linear infinite; }
+@keyframes hsFade { 0% { opacity: .55; } 7%, 93% { opacity: 0; } 100% { opacity: .55; } }
+.hs-w1 { animation: hsWave 7s ease-in-out infinite alternate; }
+.hs-w2 { animation: hsWave 9s ease-in-out infinite alternate-reverse; }
+.hs-w3 { animation: hsWave 11s ease-in-out infinite alternate; }
+@keyframes hsWave { from { transform: translateX(-26px); } to { transform: translateX(26px); } }
+.hs-clouds { animation: hsClouds 46s ease-in-out infinite alternate; }
+@keyframes hsClouds { from { transform: translateX(-40px); } to { transform: translateX(46px); } }
+.hs-birds { animation: hsBirds 30s linear infinite; }
+@keyframes hsBirds { 0% { transform: translate(60px, 10px); opacity: 0; } 12% { opacity: .8; } 55% { opacity: .8; } 70%, 100% { transform: translate(-160px, -26px); opacity: 0; } }
+.hs-glitter { animation: hsGlitter 3.2s ease-in-out infinite; }
+@keyframes hsGlitter { 0%, 100% { opacity: .25; } 50% { opacity: .65; } }
+@media (prefers-reduced-motion: reduce) {
+  .hs-cam, #hs-sit, #hs-lie, .hs-refl, .hs-fade, .hs-w1, .hs-w2, .hs-w3, .hs-clouds, .hs-birds, .hs-glitter { animation: none; }
+  #hs-sit { opacity: 0; } #hs-lie { opacity: 1; } .hs-refl { opacity: .35; }
+}
