@@ -43,7 +43,23 @@ header.top .wrap { gap: 10px; }
 .hero .kick { color: var(--acc2); font: 11.5px var(--mono); letter-spacing: .16em; text-transform: uppercase; }
 .hero h1 { font-size: clamp(30px, 4.6vw, 52px); line-height: 1.15; margin: 18px auto 22px; font-weight: 600; letter-spacing: -.01em; max-width: 900px; }
 .hero h1 em { font-style: normal; color: var(--acc); }
-.herologo { display: inline-flex; filter: drop-shadow(0 10px 26px var(--glow)); }
+.herologo { position: relative; width: 158px; height: 158px; margin: 0 auto; filter: drop-shadow(0 16px 34px var(--glow)); }
+.herologo .ms-main, .herologo .ms-clone { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; border-radius: 34px; }
+.herologo .ms-main { animation: msFloat 3s ease-in-out infinite; }
+.herologo .ms-clone { opacity: .3; filter: saturate(.5) hue-rotate(120deg) brightness(1.15); animation: msClone 3s ease-in-out infinite; }
+@keyframes msFloat { 0%, 100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-9px) rotate(1.5deg); } }
+@keyframes msClone { 0% { transform: translate(-16px, 8px) scale(.8); opacity: 0; } 30% { opacity: .42; } 60% { transform: translate(18px, -2px) scale(1); opacity: .32; } 100% { transform: translate(-16px, 8px) scale(.8); opacity: 0; } }
+.herologo .ms-fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.ms-poof { animation: msPoof 3s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.ms-poof2 { animation: msPoof 3s .3s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes msPoof { 0% { transform: scale(.3); opacity: .8; } 45% { transform: scale(1.8); opacity: 0; } 100% { transform: scale(.3); opacity: 0; } }
+.ms-spark { animation: msSpark 1.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes msSpark { 0%, 100% { transform: scale(.6) rotate(0deg); opacity: .4; } 50% { transform: scale(1.2) rotate(24deg); opacity: 1; } }
+.ms-shadow { position: absolute; left: 50%; bottom: -8px; width: 78px; height: 15px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, .38), transparent); animation: msSh 3s ease-in-out infinite; }
+:root[data-theme="light"] .ms-shadow { background: radial-gradient(50% 50% at 50% 50%, rgba(120, 90, 60, .28), transparent); }
+@keyframes msSh { 0%, 100% { transform: translateX(-50%) scale(1); opacity: .55; } 50% { transform: translateX(-50%) scale(.78); opacity: .3; } }
+.logoimg { width: 34px; height: 34px; border-radius: 10px; object-fit: cover; box-shadow: 0 4px 10px rgba(0, 0, 0, .28); }
+@media (prefers-reduced-motion: reduce) { .herologo .ms-main, .herologo .ms-clone, .ms-poof, .ms-poof2, .ms-spark, .ms-shadow { animation: none; } }
 .installbox { display: flex; align-items: center; justify-content: center; gap: 12px; background: var(--bg2); border: 1px solid var(--line); border-radius: 16px; padding: 13px 16px; max-width: 860px; margin: 0 auto; box-shadow: var(--shadow); flex-wrap: wrap; }
 .installbox code { font: 12.5px var(--mono); color: var(--ink); flex: 1; min-width: 280px; overflow: auto; white-space: nowrap; }
 .installbox .agents { display: flex; gap: 6px; }
@@ -214,26 +230,3 @@ footer.ft .wrap { display: flex; gap: 18px; flex-wrap: wrap; align-items: center
 .stagefail { position: absolute; inset: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--bg2) 80%, transparent); z-index: 6; }
 .stagefail button { margin-top: 10px; }
 
-/* M59 chibi designer mascot animation */
-.herologo svg { animation: dzFloat 3.2s ease-in-out infinite; }
-@keyframes dzFloat { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-8px) rotate(-2deg); } }
-.dz-bob { animation: dzBob 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes dzBob { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-2.5px) rotate(2deg); } }
-.dz-clone { animation: dzClone 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes dzClone { 0% { transform: translate(-8px, 4px) scale(.6); opacity: 0; } 25% { opacity: .5; } 55% { transform: translate(0, 0) scale(1); opacity: .38; } 85% { transform: translate(4px, -1px) scale(1.02); opacity: .3; } 100% { transform: translate(-8px, 4px) scale(.6); opacity: 0; } }
-.dz-poof { animation: dzPoof 3.2s ease-out infinite; transform-box: fill-box; transform-origin: center; }
-.dz-poof2 { animation: dzPoof 3.2s .25s ease-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes dzPoof { 0% { transform: scale(.3); opacity: .7; } 40% { transform: scale(1.7); opacity: 0; } 100% { transform: scale(.3); opacity: 0; } }
-.dz-draw { animation: dzDraw 2.4s ease-in-out infinite; }
-@keyframes dzDraw { 0% { stroke-dashoffset: 30; opacity: .3; } 50% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: -30; opacity: .3; } }
-.dz-wire { animation: dzWire 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes dzWire { 0%, 15% { opacity: 0; transform: scale(.7); } 45%, 80% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(.85); } }
-.dz-cast { animation: dzCast 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes dzCast { 0%, 100% { transform: scale(.8); opacity: .3; } 50% { transform: scale(1.25); opacity: .6; } }
-.dz-sway { animation: dzSway 2s ease-in-out infinite; transform-box: fill-box; transform-origin: center bottom; }
-@keyframes dzSway { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(8deg); } }
-.dz-blink { animation: dzBlink 4.4s infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes dzBlink { 0%, 90%, 100% { transform: scaleY(1); } 94% { transform: scaleY(.12); } }
-@media (prefers-reduced-motion: reduce) {
-  .herologo svg, .dz-bob, .dz-clone, .dz-poof, .dz-poof2, .dz-draw, .dz-wire, .dz-cast, .dz-sway, .dz-blink { animation: none; }
-}
