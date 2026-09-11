@@ -208,7 +208,22 @@
   }
 
   function wireNav() {
-    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", '<img class="logoimg" src="assets/logo-girl.png" alt="" width="38" height="38">'); });
+    const WORDMARK = `<svg class="wordmark" viewBox="0 0 172 34" role="img" aria-label="design-clone">
+      <defs><linearGradient id="wmG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--acc2)"/><stop offset="1" stop-color="var(--acc)"/></linearGradient></defs>
+      <g class="wm-echo" aria-hidden="true">
+        <text x="0" y="24" class="wm-t" fill="var(--acc2)">design</text>
+        <text x="104" y="24" class="wm-t" fill="var(--acc2)">clone</text>
+      </g>
+      <text x="0" y="24" class="wm-t" fill="var(--ink)">design</text>
+      <g class="wm-hyphen" aria-hidden="true"><rect x="72" y="14.2" width="15" height="4.8" rx="2.4" fill="var(--acc2)"/><rect x="74.6" y="16.8" width="15" height="4.8" rx="2.4" fill="var(--acc)" opacity=".92"/></g>
+      <text x="104" y="24" class="wm-t" fill="url(#wmG)">clone</text>
+    </svg>`;
+    document.querySelectorAll(".logo").forEach((el) => {
+      el.insertAdjacentHTML("afterbegin", '<img class="logoimg" src="assets/logo-girl.png" alt="" width="38" height="38">');
+      el.insertAdjacentHTML("beforeend", WORDMARK);
+      el.childNodes.forEach((n) => { if (n.nodeType === 3 && n.textContent.trim() === "design-clone") n.remove(); });
+    });
+    document.querySelectorAll(".ftbrand").forEach((el) => { el.innerHTML = WORDMARK.replace('class="wordmark"', 'class="wordmark wordmark--ft"'); });
     const idn = document.getElementById("ident");
     if (idn && window.DCIdent && window.DCIdent.build) {
       idn.innerHTML = window.DCIdent.build(state.theme);

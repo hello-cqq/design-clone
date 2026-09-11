@@ -64,3 +64,4 @@
 | **M66 生成式干净头像 logo** | ✅ 2026-09-11 | genimg 肖像（女左/男右视线）→rembg 抠像+裁水印带→合成主题渐变底；导航/标签栏干净头像观感达标；e2e 10 轮全绿；LESSONS 158 |
 | **M62 画廊就绪+petpark 3D 萌宠+README 重设计+站点适配** | ✅ 2026-09-11 | A 三件套生成期产出（gallery-meta/appicon 真图标链/cover.mjs 合成 3:2）+clone 串链+gallery-ready/cover-geometry 门+publish 搬运合并&design 强验&version channel；D petpark 按 docs/petpark-design-brief.md 重建（pixar-3d 三宠+keybg 抠底+五视图粘土糖果材质+微动效），门全绿；B 站点：proto 详情 Spec 入口、安装区 stable/snapshot 渠道+release 徽章（pages.yml 嵌 release.json）、guide publish 双语更新；C README EN/ZH 八块重设计+docs/GATES.md；E 六 run 回填三件套、petpark v2.0.0 重发布 PR#7 已合并、三 agent 重装、LESSONS 151-152 |
 | **M67 定稿 logo 融合+安装单命令+删副标题** | ✅ 2026-09-11 | 用户定稿三图（女昼/男夜/双联）入仓裁水印；导航头像+首页主 logo 羽毛 mask 融合无方块；favicon=双联 64；安装框删 agent 切换=单条通用 curl（auto 探测）+标签「安装/Install」；删三处副标题；e2e 增融合/单命令/删文断言 10 轮全绿；负载 1000req 0 错 p95 104ms；LESSONS 159 |
+| **M68 定制 SVG 字标** | ✅ 2026-09-11 | design+克隆对连字符+渐变 clone+回声残影(hover 微交互)；CSS 变量主题自适应；导航+footer 单源注入；e2e 增字标断言 10 轮全绿；LESSONS 160 |
