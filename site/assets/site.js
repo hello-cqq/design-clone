@@ -192,9 +192,15 @@
   }
 
   function wireNav() {
-    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", '<img class="logoimg" src="assets/logo-head.svg" alt="" width="34" height="34">'); });
-    const hs = document.getElementById("heroscene");
-    if (hs && window.DCScene) hs.innerHTML = window.DCScene;
+    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", '<img class="logoimg" src="assets/ident-head.png" alt="" width="34" height="34">'); });
+    const idn = document.getElementById("ident");
+    if (idn && window.DCIdent) {
+      idn.innerHTML = window.DCIdent + '<span class="replay-hint">replay</span>';
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const playIt = () => { idn.classList.remove("play"); void idn.offsetWidth; idn.classList.add("play"); };
+      if (!reduced) setTimeout(playIt, 250);
+      idn.addEventListener("click", playIt);
+    }
 
     const nw = document.querySelector(".navwrap");
     if (!nw) return;
