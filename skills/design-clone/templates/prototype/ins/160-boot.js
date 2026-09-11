@@ -16,6 +16,15 @@
   async function boot() {
     const saved = localStorage.getItem("dc-theme");
     document.documentElement.dataset.theme = saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    // M70：宿主站点主题联动（?theme= 初始 + postMessage 实时）
+    const qt = Q.get("theme");
+    if (qt === "dark" || qt === "light") { document.documentElement.dataset.theme = qt; localStorage.setItem("dc-theme", qt); }
+    window.addEventListener("message", (ev) => {
+      const d = ev.data;
+      if (d && d.type === "dc-theme" && (d.theme === "dark" || d.theme === "light")) {
+        document.documentElement.dataset.theme = d.theme; localStorage.setItem("dc-theme", d.theme);
+      }
+    });
     if (Q.get("embed")) document.body.classList.add("dc-embed");
     if (Q.get("card") === "1") document.body.classList.add("dc-cardview");
     if (Q.get("chrome") === "0") document.body.classList.add("dc-chromeless");

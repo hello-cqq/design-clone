@@ -150,5 +150,28 @@ await ctx.waitForTimeout(1500);
 ok("console clean", errs.length === 0, errs.slice(0, 3).join(" | "));
 
 await browser.close();
+
 console.log(JSON.stringify({ pass: fails.length === 0, fails }, null, 1));
-process.exit(fails.length ? 1 : 0);
+process.exit(fails.length ? 1 : 0);{
+  await ctx.goto(base + "/proto.html?app=wechat", { waitUntil: "networkidle" });
+  await ctx.waitForTimeout(2500);
+  ok("dl release link", await ctx.evaluate(() => (document.getElementById("dlbtn") || {}).href.includes("/releases/download/wechat-")));
+  ok("contrib avatars only", await ctx.evaluate(() => {
+    const avs = [...document.querySelectorAll(".contrib-avs .cav")];
+    return avs.length >= 1 && avs.every((a) => a.href.startsWith("https://github.com/") && a.querySelector("img")) && !document.querySelector(".contrib-avs .cav + .n") && !document.body.innerText.includes("1 commits");
+  }));
+  ok("creator first", await ctx.evaluate(() => { const c = document.querySelector(".contrib-avs .cav"); return c && c.classList.contains("creator"); }));
+  ok("iframe theme param", await ctx.evaluate(() => document.getElementById("stageframe").src.includes("theme=")));
+  await ctx.click("#themebtn"); await ctx.waitForTimeout(600);
+  ok("theme post to iframe", await ctx.evaluate(() => window.__postedTheme === "dark"));
+  await ctx.click("#themebtn"); await ctx.waitForTimeout(600);
+  await ctx.goto(base + "/gallery.html", { waitUntil: "networkidle" });
+}
+{
+  await ctx.waitForTimeout(1800);
+  ok("gallery no h2 title", await ctx.evaluate(() => !document.querySelector("#cards")?.closest(".wrap").querySelector("h2")));
+  ok("search full width", await ctx.evaluate(() => { const q = document.getElementById("q"); const row = q.parentElement; return q.getBoundingClientRect().width > row.getBoundingClientRect().width * 0.6; }));
+  ok("icon tile covers", await ctx.evaluate(() => document.querySelectorAll("#cards .th.tile .appicon").length >= 4));
+}
+
+

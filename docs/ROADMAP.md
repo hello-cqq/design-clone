@@ -66,3 +66,4 @@
 | **M67 定稿 logo 融合+安装单命令+删副标题** | ✅ 2026-09-11 | 用户定稿三图（女昼/男夜/双联）入仓裁水印；导航头像+首页主 logo 羽毛 mask 融合无方块；favicon=双联 64；安装框删 agent 切换=单条通用 curl（auto 探测）+标签「安装/Install」；删三处副标题；e2e 增融合/单命令/删文断言 10 轮全绿；负载 1000req 0 错 p95 104ms；LESSONS 159 |
 | **M68 定制 SVG 字标** | ✅ 2026-09-11 | design+克隆对连字符+渐变 clone+回声残影(hover 微交互)；CSS 变量主题自适应；导航+footer 单源注入；e2e 增字标断言 10 轮全绿；LESSONS 160 |
 | **M69 双联图织入动画（片尾卡+主题桥）** | ✅ 2026-09-11 | 移除首页静态双联 mark；双联=seam 循环片尾定格卡（hold 1.4s 兼循环缝合）+bridge 主题转场桥（昼夜之门）；相位机+__ident.phase() 钩子；e2e 断言 seam/bridge 相位 10 轮全绿；负载 0 错 p95 129ms；LESSONS 161 |
+| **M70 下载可用+贡献者头像+主题联动+图标瓷砖** | ✅ 2026-09-11 | 下载=release 资产直链+files.json 客户端 zip 兜底；贡献者=圆头像排（creator 金环首位、排 bot、链主页）；原型 iframe 主题 postMessage+?theme= 联动；画廊封面=appicon 瓷砖、去标题、搜索铺满；proto 仓 index v4（creator/icon/files.json）；e2e 增 8 断言 10 轮全绿；负载 0 错 p95 99ms；LESSONS 162 |

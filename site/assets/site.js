@@ -92,6 +92,8 @@
     document.documentElement.dataset.theme = state.theme;
     document.querySelectorAll(".logoimg").forEach((im) => { im.src = state.theme === "dark" ? "assets/logo-boy.png" : "assets/logo-girl.png"; });
     if (window.__identCtrl && window.__identCtrl.swap) window.__identCtrl.swap(state.theme);
+    const sf = document.getElementById("stageframe");
+    if (sf && sf.contentWindow) { try { sf.contentWindow.postMessage({ type: "dc-theme", theme: state.theme }, "*"); window.__postedTheme = state.theme; } catch {} }
     const tb = document.getElementById("themebtn");
     if (tb) tb.innerHTML = state.theme === "dark"
       ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>'
@@ -108,6 +110,30 @@
     return { version: 3, apps: [] };
   }
 
+  async function clientZip(app) {
+    const base = "https://hello-cqq.github.io/design-clone-prototype";
+    const list = await (await fetch(`${base}/${app}/files.json`)).json();
+    const entries = [];
+    for (const f of list) {
+      const r = await fetch(`${base}/${app}/${f}`);
+      if (!r.ok) continue;
+      entries.push({ name: `${app}/${f}`, data: new Uint8Array(await r.arrayBuffer()) });
+    }
+    const blob = window.DCZip.zipStore(entries);
+    const a2 = document.createElement("a");
+    a2.href = URL.createObjectURL(blob);
+    a2.download = `${app}-prototype.zip`;
+    a2.click();
+    setTimeout(() => URL.revokeObjectURL(a2.href), 4000);
+  }
+  function cavHtml(a) {
+    const list = (a.contributors || []).slice().sort((x, y) => (x.login === a.creator ? -1 : y.login === a.creator ? 1 : y.commits - x.commits));
+    return list.map((c) => {
+      const cr = c.login === a.creator ? " creator" : "";
+      const ti = c.login + (c.login === a.creator ? " · creator" : "");
+      return '<a class="cav' + cr + '" href="https://github.com/' + c.login + '" target="_blank" rel="noopener" title="' + ti + '"><img src="https://github.com/' + c.login + '.png?size=64" alt="' + c.login + '"></a>';
+    }).join("");
+  }
   const fmtHeat = (n) => {
     n = n || 0;
     if (n >= 10000) { const w = n / 10000; return (w >= 10 ? Math.floor(w) : Math.round(w * 10) / 10) + "w+"; }
@@ -122,7 +148,7 @@
     const cover = a.cover ? `${PROTO_BASE}/${a.cover}` : "";
     const name = L(a.name, a.app);
     return `<a class="pcard" href="proto.html?app=${encodeURIComponent(a.app)}">
-      <div class="th">${cover ? `<img src="${cover}" alt="" loading="lazy">` : ""}
+      <div class="th tile">${a.icon ? `<img class="appicon" src="${PROTO_BASE}/${a.icon}" alt="" loading="lazy">` : (cover ? `<img src="${PROTO_BASE}/${cover}" alt="" loading="lazy">` : "")}
         <span class="heat"><svg width="11" height="11" viewBox="0 0 24 24" style="fill:#ff8a5c"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>${fmtHeat(a.downloads)}</span></div>
       <div class="bd"><div class="t"><span class="nm">${name}</span>
         <span class="avs">${(a.contributors || []).slice(0, 3).map((c) => av(c)).join("")}${(a.contributors || []).length > 3 ? `<span class="av">+${(a.contributors || []).length - 3}</span>` : ""}</span></div></div></a>`;
@@ -175,7 +201,7 @@
     const side = document.getElementById("side");
     if (!a || !side) return;
     document.title = `${L(a.name, a.app)} — design-clone gallery`;
-    document.getElementById("stageframe").src = a.url;
+    document.getElementById("stageframe").src = a.url + (a.url.includes("?") ? "&" : "?") + "theme=" + state.theme;
     document.getElementById("jump").href = a.repo_dir;
     const crumb = document.getElementById("crumb");
     if (crumb) crumb.innerHTML = `<a href="gallery.html">${t("nav_gallery")}</a><span>/</span><b>${L(a.name, a.app)}</b>`;
@@ -200,8 +226,8 @@
       <h4>${t("proto_spec")}</h4>
       <div class="specrow" id="specrow" style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 4px"></div>
       <h4>${t("proto_contrib")}</h4>
-      <div class="contrib">${(a.contributors || []).map((c, i2) => `<div class="c">${av(c, 26)}<span class="n">${i2 === 0 ? "★ " : ""}${c.name}${c.login ? ` <a href="https://github.com/${c.login}">@${c.login}</a>` : ""}<small>${c.commits} commits</small></span></div>`).join("") || "—"}</div>
-      <div class="cta"><a class="btn pri dlbtn" href="${rel}" target="_blank" rel="noopener">
+      <div class="contrib-avs">${cavHtml(a)}</div>
+      <div class="cta"><a class="btn pri dlbtn" id="dlbtn" href="${`https://github.com/hello-cqq/design-clone-prototype/releases/download/${a.app}-${a.version}/${a.app}-${a.version}.zip`}" data-app="${a.app}">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M6 11l6 6 6-6M4 21h16"/></svg>
         ${t("proto_dl")} <span class="cnt">↓ ${fmtHeat(a.downloads)}</span></a></div>
       ${a.brand_disclaimer ? `<div class="footnote">${a.brand_disclaimer}</div>` : ""}`;
@@ -302,6 +328,16 @@
       sfr.onclick = () => { const src = frame.src; frame.src = ""; frame.src = src + (src.includes("?") ? "&" : "?") + "r=" + Date.now(); arm(); };
       new MutationObserver(() => arm()).observe(frame, { attributes: true, attributeFilter: ["src"] });
     }
+    const dlb = document.getElementById("dlbtn");
+    if (dlb) dlb.addEventListener("click", async (e) => {
+      const url = dlb.getAttribute("href");
+      try {
+        const r = await fetch(url, { method: "HEAD" });
+        if (r.ok) return; // 直链可用，放行默认下载
+      } catch {}
+      e.preventDefault();
+      await clientZip(dlb.dataset.app);
+    });
     const fsb = document.getElementById("fsbtn");
     if (fsb) fsb.onclick = () => { const f = document.getElementById("stageframe"); if (f.requestFullscreen) f.requestFullscreen(); };
     const code0 = document.getElementById("installcmd");
