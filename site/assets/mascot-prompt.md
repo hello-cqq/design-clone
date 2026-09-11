@@ -8,3 +8,7 @@ Prompt（原创 Q 版设计师，零 IP 参照）：
 
 后处理：ffmpeg crop 去水印带 + 头部方裁；分身层=CSS `hue-rotate+saturate+opacity` 薄荷虚影（同源同姿）。
 抠像尝试：colorkey 会洗掉角色同色系衣物 → 弃，改"原图+CSS 分身层+SVG 烟雾/星点+接地投影"装配。
+
+
+## M61 更新
+位图吉祥物（M60）已下线：首页改为 **SVG 水镜微电影**（圆框眼镜设计师：抱膝坐→镜头缓移→躺下→水面镜像，水天一色=克隆隐喻），单 14s master timeline；favicon/导航=静态头像 `logo-head.svg`。位图仅存于此档案与 git 历史。

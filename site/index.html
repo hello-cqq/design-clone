@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>design-clone — clone any app into a playable prototype</title>
 <meta name="description" content="Agent skill that captures real apps, sites, or shared links and rebuilds them as fully interactive prototypes with exportable design specs. Open community gallery on GitHub Pages.">
-<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="icon" type="image/svg+xml" href="assets/logo-head.svg">
 <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
@@ -26,7 +26,6 @@
 
 <div class="wrap">
   <section class="hero">
-    <div class="herologo" id="herologo"></div>
     <h1><span data-i18n="h1a">Clone any app into</span> <em data-i18n="h1b">a playable prototype.</em></h1>
     <div class="installbox">
       <span style="color:var(--mut);font-size:12.5px" data-i18n="install_label">Copy → paste into your agent:</span>
@@ -34,6 +33,7 @@
       <code id="installcmd"></code>
       <button class="iconbtn" id="copycmd">copy</button>
     </div>
+    <div class="hero-scene" id="heroscene"></div>
   </section>
 
   <section class="exp">
@@ -64,6 +64,7 @@
   <span>design-clone</span>
   <span data-i18n="ft_note">MIT · prototypes carry their own license · brand replicas are unofficial study works</span>
 </div></footer>
+<script src="assets/hero-scene.js"></script>
 <script src="assets/demo-anim.js"></script>
 <script src="assets/site.js"></script>
 </body>

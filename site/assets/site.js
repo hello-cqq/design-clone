@@ -192,16 +192,10 @@
   }
 
   function wireNav() {
-    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", '<img class="logoimg" src="assets/mascot-head.png" alt="" width="34" height="34">'); });
-    const hl = document.getElementById("herologo");
-    if (hl) hl.innerHTML = `<img class="ms-clone" src="assets/mascot.png" alt="">
-      <img class="ms-main" src="assets/mascot.png" alt="">
-      <svg class="ms-fx" viewBox="0 0 200 200" aria-hidden="true">
-        <circle class="ms-poof" cx="152" cy="148" r="14" fill="none" stroke="#6fd3b2" stroke-width="3"/>
-        <circle class="ms-poof2" cx="170" cy="116" r="8" fill="none" stroke="#6fd3b2" stroke-width="2"/>
-        <path class="ms-spark" d="M34 44 l4 8 8 4 -8 4 -4 8 -4 -8 -8 -4 8 -4 z" fill="#ffd166"/>
-      </svg>
-      <span class="ms-shadow"></span>`;
+    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", '<img class="logoimg" src="assets/logo-head.svg" alt="" width="34" height="34">'); });
+    const hs = document.getElementById("heroscene");
+    if (hs && window.DCScene) hs.innerHTML = window.DCScene;
+
     const nw = document.querySelector(".navwrap");
     if (!nw) return;
     const pill = document.createElement("span");
