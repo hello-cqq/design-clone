@@ -26,23 +26,32 @@ ctx.on("pageerror", (e) => errs.push("pageerror:" + String(e.message).slice(0, 1
 // ---- index
 await ctx.goto(base + "/index.html", { waitUntil: "networkidle" });
 await ctx.waitForTimeout(2500);
-ok("ident video", await ctx.locator(".ident .idf-video").count() === 1);
+ok("ident video", await ctx.locator(".ident .idf-video").count() === 2);
 ok("ident mask (no rectangle)", await ctx.evaluate(() => { const v = document.querySelector(".idf-video"); const cs = getComputedStyle(v); return (cs.maskImage || cs.webkitMaskImage || "").includes("radial-gradient"); }));
 ok("ident wrapper frameless", await ctx.evaluate(() => { const el = document.querySelector(".ident"); const cs = getComputedStyle(el); return cs.backgroundImage === "none" && cs.backgroundColor === "rgba(0, 0, 0, 0)" && cs.borderTopWidth === "0px"; }));
-ok("ident lockup", await ctx.locator(".ident .idf-lockup").count() === 1);
+ok("no lockup/hint text", await ctx.locator(".ident .idf-lockup, .ident .idf-hint").count() === 0);
+ok("dual video layers", await ctx.locator(".ident .idf-video").count() === 2 && await ctx.locator(".ident .idf-halo").count() === 2);
 {
-  const t0 = await ctx.evaluate(() => document.querySelector(".idf-video").currentTime);
-  await ctx.waitForTimeout(1200);
-  const t1 = await ctx.evaluate(() => document.querySelector(".idf-video").currentTime);
-  ok("ident plays", t1 > t0 || (await ctx.evaluate(() => document.querySelector(".idf-lockup").classList.contains("on"))));
+  const t0 = await ctx.evaluate(() => document.querySelector(".idf-video.on").currentTime);
+  await ctx.waitForTimeout(2600);
+  const t1 = await ctx.evaluate(() => document.querySelector(".idf-video.on").currentTime);
+  ok("ident plays+loops", t1 > t0 + 0.05 || t1 < t0 - 0.5);
 }
 {
-  const srcDark = await ctx.evaluate(() => document.querySelector(".idf-video").src);
-  await ctx.click("#themebtn"); await ctx.waitForTimeout(900);
-  const srcLight = await ctx.evaluate(() => document.querySelector(".idf-video").src);
-  const logoSrc = await ctx.evaluate(() => document.querySelector(".logoimg").src);
-  ok("theme swaps video+logo", srcDark !== srcLight && logoSrc.includes("logo-light"));
-  await ctx.click("#themebtn"); await ctx.waitForTimeout(700);
+  await ctx.click("#themebtn"); await ctx.waitForTimeout(1000);
+  const st = await ctx.evaluate(() => ({
+    lightOn: document.querySelector('.idf-video[data-k="light"]').classList.contains("on"),
+    darkOn: document.querySelector('.idf-video[data-k="dark"]').classList.contains("on"),
+    logo: document.querySelector(".logoimg").src,
+  }));
+  ok("theme crossfade swap", st.lightOn && !st.darkOn && st.logo.includes("logo-light"));
+  await ctx.click("#themebtn"); await ctx.waitForTimeout(1000);
+  const st2 = await ctx.evaluate(() => ({
+    lightOn: document.querySelector('.idf-video[data-k="light"]').classList.contains("on"),
+    darkOn: document.querySelector('.idf-video[data-k="dark"]').classList.contains("on"),
+    logo: document.querySelector(".logoimg").src,
+  }));
+  ok("theme crossfade back", st2.darkOn && !st2.lightOn && st2.logo.includes("logo-dark"));
 }
 ok("nav logo img", await ctx.locator(".logo img.logoimg").count() === 1);
 ok("install cmd", (await ctx.locator("#installcmd").textContent()).includes("install.sh"));

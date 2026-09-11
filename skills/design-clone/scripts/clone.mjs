@@ -227,6 +227,14 @@ try {
   ok(`设计产物已生成：prototype/pages/*.spec.json ×${cd.pages} + prototype/design/figma-source.json`);
 } catch (e) { log(`  ⚠ collect-design 失败（不阻断）：${String(e.message || e).slice(0, 120)}`); }
 
+// M62-A：画廊就绪三件套（meta.json + icon.png + cover.png）生成期即产出
+try {
+  run("node", [path.join(HERE, "gen/gallery-meta.mjs"), "--run", runDir]);
+  if (!fs.existsSync(path.join(runDir, "icon.png"))) run("node", [path.join(HERE, "gen/appicon.mjs"), "--run", runDir]);
+  if (!fs.existsSync(path.join(runDir, "cover.png"))) run("node", [path.join(HERE, "gen/cover.mjs"), "--run", runDir, "--base", base]);
+  ok("画廊就绪: meta.json + icon.png + cover.png");
+} catch (e) { log(`  ⚠ 画廊三件套未完成（publish 时会补）：${String(e.message || e).slice(0, 120)}`); }
+
 mark("shell", "ok");
 let exitCode = 0;
 const gate = (name, args) => { const r = run("node", args); return r.status; };

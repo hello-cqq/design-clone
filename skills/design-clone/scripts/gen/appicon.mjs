@@ -32,6 +32,54 @@ let spec = {};
 const specP = path.join(outDir, "icon-spec.json");
 if (regen && fs.existsSync(specP)) spec = JSON.parse(fs.readFileSync(specP, "utf8"));
 
+// M62-A：真图标优先链——输入/系统获取（web favicon/manifest、mac icns）先于 autocrop/生成
+async function pickSystem() {
+  const manual = path.join(run, "knowledge", "source-icon.png");
+  if (fs.existsSync(manual)) return { base: manual, how: "system:manual" };
+  const scope = (() => { try { return JSON.parse(fs.readFileSync(path.join(run, "knowledge", "scope.json"), "utf8")); } catch { return {}; } })();
+  const manifest = (() => { try { return JSON.parse(fs.readFileSync(path.join(run, "capture", "manifest.json"), "utf8")); } catch { return {}; } })();
+  const url = manifest.url || "";
+  if (/^https?:/.test(url)) {
+    try {
+      const html = await (await fetch(url, { headers: { "user-agent": "Mozilla/5.0" } })).text();
+      const cand = [...html.matchAll(/<link[^>]+rel=["']?(?:apple-touch-icon|icon|shortcut icon)["']?[^>]*>/gi)]
+        .map((m) => (m[0].match(/href=["']([^"']+)["']/) || [])[1]).filter(Boolean);
+      const manHref = (html.match(/<link[^>]+rel=["']?manifest["']?[^>]*>/i) || [""])[0].match(/href=["']([^"']+)["']/);
+      let best = null, bestSize = 0;
+      for (const h of cand) {
+        const abs = new URL(h, url).href;
+        const sz = parseInt((h.match(/-(\d+)x\d+/) || h.match(/\/(\d+)\.png/) || [])[1] || "0", 10);
+        if (sz >= bestSize) { bestSize = sz; best = abs; }
+      }
+      if (manHref) {
+        const mj = await (await fetch(new URL(manHref[1], url).href)).json().catch(() => null);
+        const ic = (mj?.icons || []).sort((a, b) => parseInt(b.sizes || "0") - parseInt(a.sizes || "0"))[0];
+        if (ic) { best = new URL(ic.src, url).href; bestSize = 999; }
+      }
+      if (best) {
+        const buf = Buffer.from(await (await fetch(best)).arrayBuffer());
+        const dst = path.join(run, "knowledge", "source-icon.png");
+        await sharp(buf).resize(512, 512, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toFile(dst);
+        return { base: dst, how: "system:web" };
+      }
+    } catch {}
+  }
+  if (/mac|desktop/.test(scope.platform || "") && fs.existsSync("/Applications")) {
+    const t = String(scope.target || "").toLowerCase();
+    for (const app of fs.readdirSync("/Applications").filter((x) => x.endsWith(".app"))) {
+      if (t && !app.toLowerCase().includes(t.split(/[-_]/)[0])) continue;
+      const res = path.join("/Applications", app, "Contents", "Resources");
+      if (!fs.existsSync(res)) continue;
+      const icns = fs.readdirSync(res).find((x) => x.endsWith(".icns"));
+      if (!icns) continue;
+      const dst = path.join(run, "knowledge", "source-icon.png");
+      const r = spawnSync("sips", ["-s", "format", "png", path.join(res, icns), "--out", dst], { encoding: "utf8" });
+      if (r.status === 0 && fs.existsSync(dst)) return { base: dst, how: "system:mac" };
+    }
+  }
+  return null;
+}
+
 async function pickCloned() {
   if (get("--src", null)) {
     const b = get("--bbox", null);
@@ -93,11 +141,14 @@ async function compose(base, sp) {
 let base = null, how = "";
 if (regen && spec.base && fs.existsSync(spec.base)) { base = spec.base; how = spec.source || "regen"; }
 else {
-  if (mode !== "generated") { const c = await pickCloned(); if (c) { base = c.base; how = "cloned:" + c.how; } }
+  if (mode !== "generated") { const sy = await pickSystem(); if (sy) { base = sy.base; how = sy.how; } }
+  if (!base && mode !== "generated") { const c = await pickCloned(); if (c) { base = c.base; how = "cloned:" + c.how; } }
   if (!base && mode !== "cloned") { const g = await genBase(); if (g) { base = g.base; how = "generated"; spec.style = g.style; spec.prompt = g.prompt; } }
 }
 if (!base) { console.log(JSON.stringify({ ok: false, reason: "no icon source" })); process.exit(3); }
-spec = { ...spec, source: how.startsWith("cloned") ? "cloned" : "generated", mode, base, radius: spec.radius != null ? spec.radius : 0.22, generated_at: new Date().toISOString() };
+// M62-A：画廊三件套之 icon.png（run 根，512）
+try { fs.copyFileSync(path.join(outDir, "icon-512.png"), path.join(run, "icon.png")); } catch {}
+spec = { ...spec, source: how.startsWith("cloned") ? "cloned" : how.startsWith("system") ? "system" : "generated", icon_how: how, mode, base, radius: spec.radius != null ? spec.radius : 0.22, generated_at: new Date().toISOString() };
 await compose(base, spec);
 fs.writeFileSync(specP, JSON.stringify(spec, null, 1));
 

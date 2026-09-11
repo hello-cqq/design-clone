@@ -608,6 +608,30 @@ await step("design-artifacts", async () => {
   return specs.length + " specs + figma-source";
 });
 
+await step("gallery-ready", async () => {
+  // M62-A：画廊就绪三件套——run 根 meta.json(SPEC v2 双语+tags3-6) + icon.png(≥256) + cover.png(3:2/≤300KB/宽≥900)
+  if (!values.run) return;
+  const meta = (() => { try { return JSON.parse(fs.readFileSync(path.join(values.run, "meta.json"), "utf8")); } catch { return null; } })();
+  const iconP = path.join(values.run, "icon.png");
+  const coverP = path.join(values.run, "cover.png");
+  let legacy = false;
+  try { legacy = fs.statSync(path.join(values.run, "knowledge/scope.json")).mtimeMs < 1789084800000; } catch {}
+  const problems = [];
+  if (!meta) problems.push("缺 meta.json");
+  else {
+    if (!meta.name || !meta.name.zh || !meta.name.en) problems.push("meta 双语 name 缺");
+    if (!meta.description || !meta.description.zh || !meta.description.en) problems.push("meta 双语 description 缺");
+    if (!Array.isArray(meta.tags) || meta.tags.length < 3 || meta.tags.length > 6) problems.push("meta tags 需 3-6");
+  }
+  if (!fs.existsSync(iconP)) problems.push("缺 icon.png");
+  if (!fs.existsSync(coverP)) problems.push("缺 cover.png");
+  if (problems.length) {
+    if (legacy) { ok("gallery-ready", true, "存量 run 缺三件套（warn）: " + problems.join(",")); R.checks["gallery-ready"].warn = true; return; }
+    throw new Error(problems.join("；") + "（跑 gen/gallery-meta.mjs + gen/appicon.mjs + gen/cover.mjs）");
+  }
+  return "meta+icon+cover 在场";
+});
+
 await step("pasted-screenshot", async () => {
   // M52：禁"整屏贴图"——单张 <img> 覆盖 >=45% 舞台且同根无绝对定位兄弟元素（=把 capture 当背景贴）；
   // 有 overlay 组件的真全幅照片页不受影响（xhs 封面等）

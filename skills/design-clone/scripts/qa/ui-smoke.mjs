@@ -457,6 +457,21 @@ await step("export-design-artifacts", async () => {
   return names.length + " 设计文件入 zip";
 });
 
+await step("cover-geometry", async () => {
+  // M62-A：cover.png 严格 3:2、≤300KB、宽≥900；icon.png ≥256
+  const cp = path.join(values.run, "cover.png");
+  const ip = path.join(values.run, "icon.png");
+  if (!fs.existsSync(cp) || !fs.existsSync(ip)) return "存量 run 无三件套，跳过（inspect gallery-ready 记 warn）";
+  const sharp = require("sharp");
+  const cm = await sharp(cp).metadata();
+  if (cm.width !== 1200 || cm.height !== 800) throw new Error(`cover 非 3:2 1200x800: ${cm.width}x${cm.height}`);
+  const kb = fs.statSync(cp).size / 1024;
+  if (kb > 300) throw new Error(`cover ${Math.round(kb)}KB > 300KB`);
+  const im = await sharp(ip).metadata();
+  if (Math.min(im.width, im.height) < 256) throw new Error(`icon 过小: ${im.width}x${im.height}`);
+  return `cover ${cm.width}x${cm.height} ${Math.round(kb)}KB`;
+});
+
 await step("canvas-text-budget", async () => {
   // M48：画布/看板为"工具 chrome"，文本字重一律 <=500（用户多轮反馈"粗黑"）；OS 状态栏与代码视图保真豁免
   const bad = await page.evaluate(() => {
