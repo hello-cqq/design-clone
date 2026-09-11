@@ -14,7 +14,7 @@
       install_label: "Copy → paste into your agent:",
       cta_gallery: "Browse gallery", cta_gh: "GitHub", cta_publish: "Publish yours",
       exp_title: "Try it live", exp_note: "hosted on GitHub Pages · tap, play, export",
-      feat_h: "Four ways in", feat_sub: "Pick a source — the skill handles capture, rebuild, gates, and publishing.",
+      feat_h: "Feature demos", feat_sub: "Four sources, one workflow — watch each 4-step story.",
       f_a_t: "Mobile GUI capture", f_a_d: "adb/scrcpy mirror captures every screen and gesture of a phone app, then rebuilds it as a playable mobile prototype.",
       f_a_1: "Phone app runs — pages, gestures, tokens observed", f_a_2: "GUI mirror capture (adb/scrcpy) frames every screen", f_a_3: "Frames + UI tree feed the spec-driven generator", f_a_4: "Playable prototype assembled — gates green",
       f_b_t: "Douyin / RED links", f_b_d: "Share a Douyin or Xiaohongshu link: the skill parses the video/note frames and rebuilds the experience as a prototype.",
@@ -41,7 +41,7 @@
       install_label: "复制 → 粘贴进你的 agent：",
       cta_gallery: "浏览画廊", cta_gh: "GitHub", cta_publish: "发布你的原型",
       exp_title: "在线体验", exp_note: "GitHub Pages 托管 · 可点可玩可导出",
-      feat_h: "四种入口", feat_sub: "选一种来源——捕获、重建、门禁、发布全由 skill 完成。",
+      feat_h: "功能演示", feat_sub: "四种来源、同一条工作流——看四步演示。",
       f_a_t: "手机 GUI 抓取", f_a_d: "adb/scrcpy 镜像逐屏捕获手机应用的页面与手势，重建为可玩移动原型。",
       f_a_1: "手机 App 运行——采集页面、手势与 tokens", f_a_2: "GUI 镜像抓取（adb/scrcpy）逐屏截帧", f_a_3: "帧 + UI 树喂给规格驱动生成器", f_a_4: "可玩原型组装完成——门禁全绿",
       f_b_t: "抖音 / 小红书链接", f_b_d: "分享抖音或小红书链接：解析视频/图文帧，把体验重建为原型。",
@@ -62,28 +62,47 @@
     },
   };
 
-  const NINJA = `
-  <svg width="34" height="30" viewBox="0 0 44 38" fill="none" aria-hidden="true">
+  const ninja = (size = 40) => `
+  <svg width="${size}" height="${size * 0.89}" viewBox="0 0 72 64" fill="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="njSuit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4d5c74"/><stop offset="1" stop-color="#242c39"/></linearGradient>
+      <linearGradient id="njPlate" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eef2f6"/><stop offset="1" stop-color="#8fa0b2"/></linearGradient>
+      <radialGradient id="njGlow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ff8a5c" stop-opacity=".38"/><stop offset="1" stop-color="#ff8a5c" stop-opacity="0"/></radialGradient>
+    </defs>
+    <ellipse cx="34" cy="36" rx="30" ry="22" fill="url(#njGlow)"/>
     <g class="ninja-ghost" opacity=".3">
-      <g transform="translate(12,2)">
-        <circle cx="10" cy="8" r="7" fill="#8b95a3"/>
-        <rect x="3.5" y="6" width="13" height="3.4" rx="1.7" fill="#0b0e13"/>
-        <circle cx="7.6" cy="7.7" r="1.1" fill="#e8ecf1"/><circle cx="12.4" cy="7.7" r="1.1" fill="#e8ecf1"/>
-        <path d="M6 15 q4 -3 8 0 l1.5 8 q-5.5 2.5 -11 0 z" fill="#8b95a3"/>
-        <path d="M14 17 l6 -4" stroke="#8b95a3" stroke-width="2.4" stroke-linecap="round"/>
+      <g transform="translate(16,1)">
+        <circle cx="24" cy="16" r="9.5" fill="#7d8a9c"/>
+        <rect x="14.5" y="12.5" width="19" height="4.2" rx="2.1" fill="#5b6879"/>
+        <path d="M16 26 q8 -4.5 16 0 l3.5 9 q-11.5 5.5 -23 0 z" fill="#7d8a9c"/>
+        <path d="M17 36 q-4.5 8 1.5 12.5 l6.5 .5 q-3.5 -6.5 -.5 -11 z" fill="#6a7688"/>
+        <path d="M31 36 q4.5 8 -1.5 12.5 l-6.5 .5 q3.5 -6.5 .5 -11 z" fill="#6a7688"/>
       </g>
     </g>
-    <g transform="translate(2,2)">
-      <circle cx="10" cy="8" r="7" fill="#39424e"/>
-      <rect x="3.5" y="6" width="13" height="3.4" rx="1.7" fill="#0b0e13"/>
-      <circle cx="7.6" cy="7.7" r="1.15" fill="#ffd7a8"/><circle cx="12.4" cy="7.7" r="1.15" fill="#ffd7a8"/>
-      <path d="M16.5 4.5 l4 -2.4 M16.8 6.4 l4.6 -1" stroke="#ff8a5c" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M6 15 q4 -3 8 0 l1.5 8 q-5.5 2.5 -11 0 z" fill="#39424e"/>
-      <path d="M8 18 q2 2 4 0" stroke="#6fd3b2" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M14 17 l5.5 -4.5 M15 19 l6 -2.5" stroke="#39424e" stroke-width="2.6" stroke-linecap="round"/>
-      <circle cx="20.5" cy="11.6" r="1.7" fill="#39424e"/>
+    <g>
+      <path d="M33 24 q10 -3 15 2" stroke="#ff8a5c" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+      <path d="M34 27 q9 0 13 5" stroke="#ff8a5c" stroke-width="2.4" stroke-linecap="round" opacity=".7"/>
+      <path d="M17 37 q-5 8.5 1.5 13.5 l7 .5 q-4 -7 -.5 -11.5 z" fill="#1b222d"/>
+      <path d="M31 37 q5 8.5 -1.5 13.5 l-7 .5 q4 -7 .5 -11.5 z" fill="#1b222d"/>
+      <path d="M15.5 49.5 l8.5 1 M24.5 50.5 l8.5 -1" stroke="#0e1319" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M16 26 q8 -5 16 0 l4 10 q-12 6 -24 0 z" fill="url(#njSuit)"/>
+      <path d="M18 27.5 q6 -3 12 0" stroke="rgba(255,255,255,.16)" stroke-width="2" stroke-linecap="round"/>
+      <path d="M20 31 L30 37.5 M32 31 L22 37.5" stroke="#39455a" stroke-width="4.4" stroke-linecap="round"/>
+      <circle cx="24.6" cy="36.4" r="2.7" fill="#f6d7b8"/>
+      <circle cx="27.6" cy="35.2" r="2.7" fill="#f6d7b8"/>
+      <path d="M21 26.5 q3 2.5 6 0" stroke="#ff8a5c" stroke-width="2.2" stroke-linecap="round" opacity=".85"/>
+      <circle cx="24" cy="16" r="9.5" fill="url(#njSuit)"/>
+      <path d="M16.5 12 a9.5 9.5 0 0 1 12 -3.5" stroke="rgba(255,255,255,.22)" stroke-width="2.2" stroke-linecap="round"/>
+      <ellipse cx="24" cy="18.4" rx="6.6" ry="4.2" fill="#f6d7b8"/>
+      <ellipse cx="21.4" cy="18.2" rx="1.5" ry="1.9" fill="#20242a"/><ellipse cx="26.8" cy="18.2" rx="1.5" ry="1.9" fill="#20242a"/>
+      <circle cx="21.9" cy="17.5" r=".5" fill="#fff"/><circle cx="27.3" cy="17.5" r=".5" fill="#fff"/>
+      <path d="M19.6 15.4 l3 -.8 M25.6 14.6 l3 .8" stroke="#20242a" stroke-width="1.1" stroke-linecap="round"/>
+      <rect x="14.5" y="10.6" width="19" height="4.2" rx="2.1" fill="#2b3442"/>
+      <rect x="20.5" y="10" width="7.4" height="5.4" rx="1.4" fill="url(#njPlate)"/>
+      <path d="M24.2 11.4 a1.6 1.6 0 1 0 .1 2.6" stroke="#5b6879" stroke-width=".9" fill="none"/>
     </g>
   </svg>`;
+  const NINJA = ninja(40);
 
   const state = {
     lang: localStorage.getItem("dc-lang") || "en",
@@ -127,21 +146,24 @@
     return { version: 3, apps: [] };
   }
 
-  const av = (c, size = 20) => c.login
+  const fmtHeat = (n) => {
+    n = n || 0;
+    if (n >= 10000) { const w = n / 10000; return (w >= 10 ? Math.floor(w) : Math.round(w * 10) / 10) + "w+"; }
+    if (n >= 1000) { const k = n / 1000; return (k >= 10 ? Math.floor(k) : Math.round(k * 10) / 10) + "k+"; }
+    return String(n);
+  };
+  const av = (c, size = 20) => (c.login && !c.login.includes("["))
     ? `<span class="av" style="width:${size}px;height:${size}px" title="${c.name} (@${c.login}) · ${c.commits}"><img src="https://github.com/${c.login}.png?size=48" alt=""></span>`
     : `<span class="av" style="width:${size}px;height:${size}px" title="${c.name} · ${c.commits}">${(c.name || "?").slice(0, 1).toUpperCase()}</span>`;
 
   function card(a) {
     const cover = a.cover ? `${PROTO_BASE}/${a.cover}` : "";
     const name = L(a.name, a.app);
-    const desc = L(a.description, "");
     return `<a class="pcard" href="proto.html?app=${encodeURIComponent(a.app)}">
       <div class="th">${cover ? `<img src="${cover}" alt="" loading="lazy">` : ""}
-        <span class="heat"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 10l7-7 7 7"/></svg>${a.downloads || 0}</span></div>
-      <div class="bd"><div class="t">${a.icon ? `<img src="${PROTO_BASE}/${a.icon}" alt="">` : ""}${name}</div>
-      <div class="d">${desc}</div>
-      <div class="m"><span class="avs">${(a.contributors || []).slice(0, 4).map((c) => av(c)).join("")}</span>
-      ${(a.tags || []).slice(0, 3).map((x) => `<span class="chip">${x}</span>`).join("")}</div></div></a>`;
+        <span class="heat"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 10l7-7 7 7"/></svg>${fmtHeat(a.downloads)}</span></div>
+      <div class="bd"><div class="t"><span class="nm">${name}</span>
+        <span class="avs">${(a.contributors || []).slice(0, 3).map((c) => av(c)).join("")}${(a.contributors || []).length > 3 ? `<span class="av">+${(a.contributors || []).length - 3}</span>` : ""}</span></div></div></a>`;
   }
 
   async function renderFeatured() {
@@ -149,14 +171,6 @@
     const apps = (idx.apps || []).slice().sort((a, b) => (b.downloads || 0) - (a.downloads || 0)).slice(0, 4);
     const el = document.getElementById("featured");
     if (el) el.innerHTML = apps.map(card).join("");
-    const st = document.getElementById("stats");
-    if (st) {
-      const dl = (idx.apps || []).reduce((s, a) => s + (a.downloads || 0), 0);
-      const nc = new Set((idx.apps || []).flatMap((a) => (a.contributors || []).map((c) => c.name))).size;
-      st.innerHTML = `<div class="stat"><b>${(idx.apps || []).length}</b><span>${t("stat_apps")}</span></div>
-        <div class="stat"><b>${dl}</b><span>${t("stat_dl")}</span></div>
-        <div class="stat"><b>${nc}</b><span>${t("stat_contrib")}</span></div>`;
-    }
     const sel = document.getElementById("expselect");
     if (sel && !sel.options.length) {
       const apps = idx.apps || [];
@@ -201,28 +215,26 @@
     document.title = `${L(a.name, a.app)} — design-clone gallery`;
     document.getElementById("stageframe").src = a.url;
     document.getElementById("jump").href = a.repo_dir;
+    const crumb = document.getElementById("crumb");
+    if (crumb) crumb.innerHTML = `<a href="gallery.html">${t("nav_gallery")}</a><span>/</span><b>${L(a.name, a.app)}</b>`;
     const rel = `hello-cqq/design-clone-prototype/releases?q=${encodeURIComponent(a.app + "-")}`;
     side.innerHTML = `
       <h1>${a.icon ? `<img src="${PROTO_BASE}/${a.icon}" alt="">` : ""}${L(a.name, a.app)}</h1>
       <div class="desc">${L(a.description)}</div>
-      ${a.brand_disclaimer ? `<div class="disc">${a.brand_disclaimer}</div>` : ""}
-      <h4>${t("proto_meta")}</h4>
-      <div class="kv"><span class="k">${t("proto_ver")}</span><span>v${a.version} · ${a.shell}</span></div>
-      <div class="kv"><span class="k">${t("proto_src")}</span><span>${(a.source || {}).kind || ""} · ${(a.source || {}).ref || ""}</span></div>
-      <div class="kv"><span class="k">${t("proto_license")}</span><span>${a.license} · ${a.ip_attestation}</span></div>
       <h4>${t("proto_tags")}</h4>
       <div class="tagrow" style="margin:0">${(a.tags || []).map((x) => `<a class="chip" href="gallery.html?q=${x}">${x}</a>`).join("")}</div>
       <h4>${t("proto_contrib")}</h4>
-      <div class="contrib">${(a.contributors || []).map((c, i) => `<div class="c">${av(c, 26)}<span class="n">${i === 0 ? "★ " : ""}${c.name}${c.login ? ` <a href="https://github.com/${c.login}">@${c.login}</a>` : ""}<small>${c.commits} commits</small></span></div>`).join("") || "—"}</div>
-      <h4>${t("proto_clone")}</h4>
-      <div class="cmd">npx skills add ${"hello-cqq/design-clone"} -g && echo "clone ${a.url}"</div>
+      <div class="contrib">${(a.contributors || []).map((c, i2) => `<div class="c">${av(c, 26)}<span class="n">${i2 === 0 ? "★ " : ""}${c.name}${c.login ? ` <a href="https://github.com/${c.login}">@${c.login}</a>` : ""}<small>${c.commits} commits</small></span></div>`).join("") || "—"}</div>
       <div class="cta"><a class="btn pri dlbtn" href="${rel}" target="_blank" rel="noopener">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M6 11l6 6 6-6M4 21h16"/></svg>
-        ${t("proto_dl")} <span class="cnt">↓ ${a.downloads || 0}</span></a></div>`;
+        ${t("proto_dl")} <span class="cnt">↓ ${fmtHeat(a.downloads)}</span></a></div>
+      ${a.brand_disclaimer ? `<div class="footnote">${a.brand_disclaimer}</div>` : ""}`;
   }
 
   function wireNav() {
-    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", NINJA); });
+    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", ninja(40)); });
+    const hl = document.getElementById("herologo");
+    if (hl) hl.innerHTML = ninja(104);
     const nw = document.querySelector(".navwrap");
     if (!nw) return;
     const pill = document.createElement("span");
@@ -248,7 +260,7 @@
     try {
       const r = await fetch(`https://api.github.com/repos/${REPO}`);
       const j = await r.json();
-      el.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="color:#ffd166"><path d="M12 3l2.7 5.8 6.3.8-4.6 4.3 1.2 6.1-5.6-3-5.6 3 1.2-6.1L3 9.6l6.3-.8z"/></svg> ${(j.stargazers_count ?? 0) >= 1000 ? ((j.stargazers_count / 1000).toFixed(1) + "k") : (j.stargazers_count ?? 0)}`;
+      el.textContent = "★ " + ((j.stargazers_count ?? 0) >= 1000 ? ((j.stargazers_count / 1000).toFixed(1) + "k") : (j.stargazers_count ?? 0));
     } catch { el.textContent = "★"; }
   }
 
@@ -259,16 +271,12 @@
     wrap.innerHTML = Object.entries(scenes).map(([k], i) => `<button class="ftab${i === 0 ? " on" : ""}" data-s="${k}">${t("f_" + k + "_t")}</button>`).join("");
     const stage = document.getElementById("animstage");
     window.DCAnim.mount(stage, scenes.a);
-    const txt0 = document.getElementById("ftext");
-    if (txt0) txt0.innerHTML = `<h3>${t("f_a_t")}</h3><p>${t("f_a_d")}</p>`;
     wrap.addEventListener("click", (e) => {
       const b = e.target.closest(".ftab");
       if (!b) return;
       wrap.querySelectorAll(".ftab").forEach((x) => x.classList.toggle("on", x === b));
       const key = b.dataset.s;
       window.DCAnim.mount(stage, scenes[key]);
-      const txt = document.getElementById("ftext");
-      if (txt) txt.innerHTML = `<h3>${t("f_" + key + "_t")}</h3><p>${t("f_" + key + "_d")}</p>`;
     });
   }
 
