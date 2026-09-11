@@ -23,7 +23,7 @@ const { values } = parseArgs({
   },
 });
 const die = (m) => { console.error("✗ " + m); process.exit(1); };
-if (!values.run || !values.app || !values.title) die("需 --run --app --title（v2 已去 flavor，变体=独立 app）");
+if (!values.run || !values.app) die("需 --run --app（v2 已去 flavor，变体=独立 app）");
 if (!/^[a-z0-9][a-z0-9-]{1,39}$/.test(values.app)) die("app 名非法");
 
 const run = path.resolve(values.run);
@@ -76,6 +76,11 @@ const form = (scope.platform || "").split("-")[0];
 if (dcShell !== (SHELL_GUESS[form] || dcShell)) console.log(`⚠ run shell=${dcShell} 与 platform 推断不一致，meta.shell 以 run 实际 shell 为准`);
 // M62-A：gallery 三件套搬运+合并（run/meta.json 为基线，CLI 旗标覆盖；缺则现场补）
 const runMeta = readJ(path.join(run, "meta.json"));
+if (!values.title) values.title = (runMeta && runMeta.name && runMeta.name.en) || values.app;
+if (!values["title-zh"] && runMeta && runMeta.name) values["title-zh"] = runMeta.name.zh || "";
+if (!values.desc && runMeta && runMeta.description) values.desc = runMeta.description.en || "";
+if (!values["desc-zh"] && runMeta && runMeta.description) values["desc-zh"] = runMeta.description.zh || "";
+if (!values.tags && runMeta && runMeta.tags) values.tags = runMeta.tags.join(",");
 if (!fs.existsSync(path.join(run, "icon.png"))) {
   const r = spawnSync("node", [path.join(path.dirname(new URL(import.meta.url).pathname), "gen/appicon.mjs"), "--run", run], { encoding: "utf8" });
   if (r.status !== 0) die("缺 icon.png 且自动补失败：" + String(r.stderr || "").slice(0, 120));
@@ -92,7 +97,8 @@ if (!["original", "licensed", "public-material"].includes(attest)) die("--attest
 const skillVer = (() => { try { const m = fs.readFileSync(path.join(path.dirname(new URL(import.meta.url).pathname), "..", "SKILL.md"), "utf8").match(/version:\s*"([^"]+)"/); return m ? m[1] : "dev"; } catch { return "dev"; } })();
 const version = values.version || "1.0.0";
 if (!/^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/.test(version)) die("--version 非 SemVer");
-fs.writeFileSync(path.join(pdir, "version.json"), JSON.stringify({ app: values.app, version, published_at: new Date().toISOString(), skill_version: skillVer }, null, 1));
+const skillChannel = skillVer.includes("snapshot") ? "snapshot" : "stable";
+fs.writeFileSync(path.join(pdir, "version.json"), JSON.stringify({ app: values.app, version, published_at: new Date().toISOString(), skill_version: skillVer, skill_channel: skillChannel }, null, 1));
 fs.copyFileSync(path.join(run, "icon.png"), path.join(fdir, "icon.png"));
 fs.copyFileSync(path.join(run, "cover.png"), path.join(fdir, "cover.png"));
 const baseMeta = runMeta || {};

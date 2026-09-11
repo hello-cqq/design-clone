@@ -11,7 +11,7 @@
       kick: "Agent Skill · MIT · opencode / claude code / codex",
       h1a: "Clone any app into", h1b: "a playable prototype.",
       lead: "One sentence: design-clone captures real apps, sites, or shared links and rebuilds them as fully interactive prototypes — with design specs your team can ship.",
-      install_label: "Copy → paste into your agent:",
+      install_label: "Install",
       cta_gallery: "Browse gallery", cta_gh: "GitHub", cta_publish: "Publish yours",
       exp_title: "Try it live", exp_note: "hosted on GitHub Pages · tap, play, export",
       feat_h: "Feature demos", feat_sub: "Four sources, one workflow — watch each 4-step story.",
@@ -27,7 +27,7 @@
       more: "More → full gallery",
       gal_h: "Gallery", gal_sub: "Community prototypes on GitHub Pages. Search, filter by tag, play, download, remix.",
       gal_search: "search name or tag…", gal_sort_dl: "most downloads", gal_sort_upd: "recently updated",
-      proto_dl: "Download offline zip", proto_jump: "source on GitHub", proto_meta: "Details", proto_contrib: "Creator & contributors",
+      proto_dl: "Download offline zip", proto_jump: "source on GitHub", proto_meta: "Details", proto_contrib: "Creator & contributors", proto_spec: "Design specs",
       proto_tags: "Tags", proto_ver: "Version", proto_license: "License", proto_src: "Source", proto_clone: "Clone & remix",
       stat_apps: "prototypes", stat_dl: "total downloads", stat_contrib: "contributors",
       ft_note: "MIT · prototypes carry their own license · brand replicas are unofficial study works",
@@ -38,7 +38,7 @@
       kick: "Agent Skill · MIT · opencode / claude code / codex",
       h1a: "把任意应用克隆成", h1b: "可玩的原型。",
       lead: "一句话：design-clone 捕获真实 App、网站或分享链接，重建为完全可交互的原型——并附上团队可直接开工的设计规格。",
-      install_label: "复制 → 粘贴进你的 agent：",
+      install_label: "安装",
       cta_gallery: "浏览画廊", cta_gh: "GitHub", cta_publish: "发布你的原型",
       exp_title: "在线体验", exp_note: "GitHub Pages 托管 · 可点可玩可导出",
       feat_h: "功能演示", feat_sub: "四种来源、同一条工作流——看四步演示。",
@@ -54,7 +54,7 @@
       more: "更多 → 完整画廊",
       gal_h: "画廊", gal_sub: "GitHub Pages 上的社区原型。搜索、按标签筛选、玩、下载、再混。",
       gal_search: "搜索名称或标签…", gal_sort_dl: "最多下载", gal_sort_upd: "最近更新",
-      proto_dl: "下载离线 zip", proto_jump: "GitHub 源码", proto_meta: "详情", proto_contrib: "创建者与贡献者",
+      proto_dl: "下载离线 zip", proto_jump: "GitHub 源码", proto_meta: "详情", proto_contrib: "创建者与贡献者", proto_spec: "设计规格",
       proto_tags: "标签", proto_ver: "版本", proto_license: "许可", proto_src: "来源", proto_clone: "克隆并再混",
       stat_apps: "原型", stat_dl: "总下载", stat_contrib: "贡献者",
       ft_note: "MIT · 原型各自携带许可 · 品牌复刻为非官方学习作品",
@@ -90,7 +90,7 @@
   }
   function applyTheme() {
     document.documentElement.dataset.theme = state.theme;
-    document.querySelectorAll(".logoimg").forEach((im) => { im.src = "assets/logo-" + state.theme + ".png"; });
+    document.querySelectorAll(".logoimg").forEach((im) => { im.src = state.theme === "dark" ? "assets/logo-boy.png" : "assets/logo-girl.png"; });
     if (window.__identCtrl && window.__identCtrl.swap) window.__identCtrl.swap(state.theme);
     const tb = document.getElementById("themebtn");
     if (tb) tb.innerHTML = state.theme === "dark"
@@ -180,11 +180,25 @@
     const crumb = document.getElementById("crumb");
     if (crumb) crumb.innerHTML = `<a href="gallery.html">${t("nav_gallery")}</a><span>/</span><b>${L(a.name, a.app)}</b>`;
     const rel = `hello-cqq/design-clone-prototype/releases?q=${encodeURIComponent(a.app + "-")}`;
+    // M62-B(G1)：设计规格入口（pages/*.spec.json + figma-source.json，随原型发布在 Pages）
+    (async () => {
+      const box = document.getElementById("specrow");
+      if (!box) return;
+      try {
+        const html = await (await fetch(a.url, { cache: "default" })).text();
+        const id = ((html.match(/window\.DC = (\{[\s\S]*?\});/) || [])[1] ? JSON.parse(html.match(/window\.DC = (\{[\s\S]*?\});/)[1]).pages[0].id : null);
+        if (!id) { box.style.display = "none"; return; }
+        box.innerHTML = `<a class="chip" href="${a.url}pages/${id}.spec.json" target="_blank" rel="noopener">pages/${id}.spec.json</a>
+          <a class="chip" href="${a.url}design/figma-source.json" target="_blank" rel="noopener">figma-source.json</a>`;
+      } catch { box.style.display = "none"; }
+    })();
     side.innerHTML = `
       <h1>${a.icon ? `<img src="${PROTO_BASE}/${a.icon}" alt="">` : ""}${L(a.name, a.app)}</h1>
       <div class="desc">${L(a.description)}</div>
       <h4>${t("proto_tags")}</h4>
       <div class="tagrow" style="margin:0">${(a.tags || []).map((x) => `<a class="chip" href="gallery.html?q=${x}">${x}</a>`).join("")}</div>
+      <h4>${t("proto_spec")}</h4>
+      <div class="specrow" id="specrow" style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 4px"></div>
       <h4>${t("proto_contrib")}</h4>
       <div class="contrib">${(a.contributors || []).map((c, i2) => `<div class="c">${av(c, 26)}<span class="n">${i2 === 0 ? "★ " : ""}${c.name}${c.login ? ` <a href="https://github.com/${c.login}">@${c.login}</a>` : ""}<small>${c.commits} commits</small></span></div>`).join("") || "—"}</div>
       <div class="cta"><a class="btn pri dlbtn" href="${rel}" target="_blank" rel="noopener">
@@ -194,7 +208,7 @@
   }
 
   function wireNav() {
-    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", '<img class="logoimg" src="assets/logo-dark.png" alt="" width="34" height="34">'); });
+    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", '<img class="logoimg" src="assets/logo-girl.png" alt="" width="38" height="38">'); });
     const idn = document.getElementById("ident");
     if (idn && window.DCIdent && window.DCIdent.build) {
       idn.innerHTML = window.DCIdent.build(state.theme);
@@ -275,21 +289,10 @@
     }
     const fsb = document.getElementById("fsbtn");
     if (fsb) fsb.onclick = () => { const f = document.getElementById("stageframe"); if (f.requestFullscreen) f.requestFullscreen(); };
+    const code0 = document.getElementById("installcmd");
+    if (code0) code0.textContent = "curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/main/install.sh | bash";
     const cp = document.getElementById("copycmd");
     if (cp) cp.onclick = () => { navigator.clipboard.writeText(document.getElementById("installcmd").textContent); cp.textContent = "✓"; setTimeout(() => (cp.textContent = "copy"), 1200); };
-    const AG = {
-      opencode: "curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/main/install.sh | bash -s -- --agent opencode",
-      claude: "curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/main/install.sh | bash -s -- --agent claude",
-      codex: "curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/main/install.sh | bash -s -- --agent codex",
-      npx: "npx skills add hello-cqq/design-clone -g",
-    };
-    const box = document.getElementById("agentswitch");
-    const code = document.getElementById("installcmd");
-    if (box && code) {
-      const set = (k) => { code.textContent = AG[k]; box.querySelectorAll(".agentbtn").forEach((b) => b.classList.toggle("on", b.dataset.a === k)); };
-      box.innerHTML = Object.keys(AG).map((k) => `<button class="agentbtn" data-a="${k}">${k}</button>`).join("");
-      box.addEventListener("click", (e) => { const b = e.target.closest(".agentbtn"); if (b) set(b.dataset.a); });
-      set("opencode");
-    }
+
   });
 })();
