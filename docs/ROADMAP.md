@@ -68,3 +68,4 @@
 | **M69 双联图织入动画（片尾卡+主题桥）** | ✅ 2026-09-11 | 移除首页静态双联 mark；双联=seam 循环片尾定格卡（hold 1.4s 兼循环缝合）+bridge 主题转场桥（昼夜之门）；相位机+__ident.phase() 钩子；e2e 断言 seam/bridge 相位 10 轮全绿；负载 0 错 p95 129ms；LESSONS 161 |
 | **M70 下载可用+贡献者头像+主题联动+图标瓷砖** | ✅ 2026-09-11 | 下载=release 资产直链+files.json 客户端 zip 兜底；贡献者=圆头像排（creator 金环首位、排 bot、链主页）；原型 iframe 主题 postMessage+?theme= 联动；画廊封面=appicon 瓷砖、去标题、搜索铺满；proto 仓 index v4（creator/icon/files.json）；e2e 增 8 断言 10 轮全绿；负载 0 错 p95 99ms；LESSONS 162 |
 | **M71 字标v2+更多文案+移动端适配** | ✅ 2026-09-11 | 字标紧凑单行+clone 自克隆残影+细镜像横；精选按钮「更多」；移动 820/560 断点全页适配+e2e 移动套件（390×844 三页无横溢）；删 M62-B 渠道 pill 残留+release.json 落盘；e2e 全绿+负载 0 错 p95 100ms；LESSONS 163 |
+| **M72+M73 安装框清净+卡片语义+移动端重做** | ✅ 2026-09-11 | 删 release 徽章/渠道 pill 残留（断言防回潮）；卡片=封面截图全幅+名称行右原型图标+贡献者只留详情页；移动端 proto=chromeless 嵌入+页面 chips（index v5 pages 字段）、首页体验条竖排注记隐藏+chromeless 首屏、安装命令换行、jump 让位；e2e 移动套件扩 6 断言全绿；负载 0 错 p95 99ms；LESSONS 164-165 |

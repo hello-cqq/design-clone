@@ -330,3 +330,6 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
   .installbox code { white-space: normal; word-break: break-all; }
   .pagechips { display: flex; }
 }
+@media (max-width: 820px) {
+  .stage .jump { top: auto; bottom: 8px; right: 8px; padding: 4px 10px; font-size: 11px; }
+}
