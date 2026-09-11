@@ -286,3 +286,33 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
 .contrib-avs .cav:hover { transform: scale(1.12); border-color: var(--acc); }
 .contrib-avs .cav.creator { border-color: var(--acc); box-shadow: 0 0 0 2px color-mix(in srgb, var(--acc) 35%, transparent); }
 .contrib-avs .cav img { width: 100%; height: 100%; display: block; }
+/* M71 wordmark v2 — compact, clone-word echo */
+.wm-t { font-family: var(--sans); font-size: 20px; font-weight: 650; letter-spacing: -.2px; }
+.wm-clone-echo { opacity: .35; transform: translate(1.4px, 1.4px); transition: transform .3s ease; }
+.logo:hover .wm-clone-echo { transform: translate(3px, 3px); }
+.logo .wm-echo { display: none; }
+@media (prefers-reduced-motion: reduce) { .wm-clone-echo { transition: none; } .logo:hover .wm-clone-echo { transform: translate(1.4px, 1.4px); } }
+/* M71 mobile */
+@media (max-width: 820px) {
+  header.top .wrap { gap: 8px; height: 56px; }
+  .logo .wordmark { height: 22px; }
+  .starbadge { display: none; }
+  .hero h1 { font-size: clamp(26px, 7.2vw, 40px); }
+  .installbox { flex-wrap: wrap; }
+  .installbox code { flex-basis: 100%; min-width: 0; order: 3; }
+  .installbox #copycmd { order: 4; margin-left: auto; }
+  .proto-layout { grid-template-columns: 1fr; height: auto; }
+  .stage { height: 55vh; min-height: 340px; }
+  .side { height: auto; overflow: visible; }
+  body.proto-page { height: auto; overflow: auto; }
+  .cards { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .filters { flex-wrap: wrap; }
+  .filters select { flex: 1; }
+  footer.ft .wrap { flex-direction: column; gap: 10px; align-items: flex-start; }
+}
+@media (max-width: 560px) {
+  .cards { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .navwrap a { padding: 6px 10px; font-size: 13px; }
+  .iconbtn { padding: 6px 10px; }
+  .logoimg { width: 32px; height: 32px; }
+}

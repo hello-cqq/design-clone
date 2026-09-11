@@ -24,7 +24,7 @@
       f_d_1: "Open the site — crawl starts from the URL", f_d_2: "Page graph grows (nav + content edges)", f_d_3: "Every page rebuilt as a view", f_d_4: "Whole-site prototype, playable offline",
       f_b_1: "Scroll the Douyin / RED note or video", f_b_2: "Share → copy link", f_b_3: "Paste the link into your agent", f_b_4: "Frames parsed → prototype generated",
       top_h: "Top prototypes", top_sub: "Ranked by downloads — every card is playable and downloadable.",
-      more: "More → full gallery",
+      more: "More",
       gal_h: "Gallery", gal_sub: "Community prototypes on GitHub Pages. Search, filter by tag, play, download, remix.",
       gal_search: "search name or tag…", gal_sort_dl: "most downloads", gal_sort_upd: "recently updated",
       proto_dl: "Download offline zip", proto_jump: "source on GitHub", proto_meta: "Details", proto_contrib: "Creator & contributors", proto_spec: "Design specs",
@@ -51,7 +51,7 @@
       f_d_1: "打开网站——从 URL 开始爬取", f_d_2: "页面图生长（导航 + 内容边）", f_d_3: "每页重建为视图", f_d_4: "整站原型，离线可玩",
       f_b_1: "刷抖音 / 小红书视频或图文", f_b_2: "分享 → 复制链接", f_b_3: "把链接粘贴进 Agent", f_b_4: "解析帧 → 生成原型",
       top_h: "精选原型", top_sub: "按下载量排序——每张卡都可玩可下载。",
-      more: "更多 → 完整画廊",
+      more: "更多",
       gal_h: "画廊", gal_sub: "GitHub Pages 上的社区原型。搜索、按标签筛选、玩、下载、再混。",
       gal_search: "搜索名称或标签…", gal_sort_dl: "最多下载", gal_sort_upd: "最近更新",
       proto_dl: "下载离线 zip", proto_jump: "GitHub 源码", proto_meta: "详情", proto_contrib: "创建者与贡献者", proto_spec: "设计规格",
@@ -206,18 +206,7 @@
     const crumb = document.getElementById("crumb");
     if (crumb) crumb.innerHTML = `<a href="gallery.html">${t("nav_gallery")}</a><span>/</span><b>${L(a.name, a.app)}</b>`;
     const rel = `hello-cqq/design-clone-prototype/releases?q=${encodeURIComponent(a.app + "-")}`;
-    // M62-B(G1)：设计规格入口（pages/*.spec.json + figma-source.json，随原型发布在 Pages）
-    (async () => {
-      const box = document.getElementById("specrow");
-      if (!box) return;
-      try {
-        const html = await (await fetch(a.url, { cache: "default" })).text();
-        const id = ((html.match(/window\.DC = (\{[\s\S]*?\});/) || [])[1] ? JSON.parse(html.match(/window\.DC = (\{[\s\S]*?\});/)[1]).pages[0].id : null);
-        if (!id) { box.style.display = "none"; return; }
-        box.innerHTML = `<a class="chip" href="${a.url}pages/${id}.spec.json" target="_blank" rel="noopener">pages/${id}.spec.json</a>
-          <a class="chip" href="${a.url}design/figma-source.json" target="_blank" rel="noopener">figma-source.json</a>`;
-      } catch { box.style.display = "none"; }
-    })();
+
     side.innerHTML = `
       <h1>${a.icon ? `<img src="${PROTO_BASE}/${a.icon}" alt="">` : ""}${L(a.name, a.app)}</h1>
       <div class="desc">${L(a.description)}</div>
@@ -231,18 +220,27 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M6 11l6 6 6-6M4 21h16"/></svg>
         ${t("proto_dl")} <span class="cnt">↓ ${fmtHeat(a.downloads)}</span></a></div>
       ${a.brand_disclaimer ? `<div class="footnote">${a.brand_disclaimer}</div>` : ""}`;
+    // M62-B(G1)：设计规格入口（pages/*.spec.json + figma-source.json，随原型发布在 Pages）
+    (async () => {
+      const box = document.getElementById("specrow");
+      if (!box) return;
+      try {
+        const html = await (await fetch(a.url, { cache: "default" })).text();
+        const id = ((html.match(/window\.DC = (\{[\s\S]*?\});/) || [])[1] ? JSON.parse(html.match(/window\.DC = (\{[\s\S]*?\});/)[1]).pages[0].id : null);
+        if (!id) { box.style.display = "none"; return; }
+        box.innerHTML = `<a class="chip" href="${a.url}pages/${id}.spec.json" target="_blank" rel="noopener">pages/${id}.spec.json</a>
+          <a class="chip" href="${a.url}design/figma-source.json" target="_blank" rel="noopener">figma-source.json</a>`;
+      } catch { box.style.display = "none"; }
+    })();
   }
 
   function wireNav() {
-    const WORDMARK = `<svg class="wordmark" viewBox="0 0 172 34" role="img" aria-label="design-clone">
+    const WORDMARK = `<svg class="wordmark" viewBox="0 0 128 30" role="img" aria-label="design-clone">
       <defs><linearGradient id="wmG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--acc2)"/><stop offset="1" stop-color="var(--acc)"/></linearGradient></defs>
-      <g class="wm-echo" aria-hidden="true">
-        <text x="0" y="24" class="wm-t" fill="var(--acc2)">design</text>
-        <text x="104" y="24" class="wm-t" fill="var(--acc2)">clone</text>
-      </g>
-      <text x="0" y="24" class="wm-t" fill="var(--ink)">design</text>
-      <g class="wm-hyphen" aria-hidden="true"><rect x="72" y="14.2" width="15" height="4.8" rx="2.4" fill="var(--acc2)"/><rect x="74.6" y="16.8" width="15" height="4.8" rx="2.4" fill="var(--acc)" opacity=".92"/></g>
-      <text x="104" y="24" class="wm-t" fill="url(#wmG)">clone</text>
+      <text x="0" y="21" class="wm-t" fill="var(--ink)">design</text>
+      <g class="wm-hyphen" aria-hidden="true"><rect x="61" y="12.4" width="12" height="2.6" rx="1.3" fill="url(#wmG)"/><rect x="62.4" y="14.4" width="12" height="2.6" rx="1.3" fill="var(--acc)" opacity=".55"/></g>
+      <text x="77.4" y="22.4" class="wm-t wm-clone-echo" aria-hidden="true" fill="var(--acc2)">clone</text>
+      <text x="76" y="21" class="wm-t" fill="url(#wmG)">clone</text>
     </svg>`;
     document.querySelectorAll(".logo").forEach((el) => {
       el.insertAdjacentHTML("afterbegin", '<img class="logoimg" src="assets/logo-girl.png" alt="" width="38" height="38">');

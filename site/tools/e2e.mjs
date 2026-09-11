@@ -174,4 +174,27 @@ process.exit(fails.length ? 1 : 0);{
   ok("icon tile covers", await ctx.evaluate(() => document.querySelectorAll("#cards .th.tile .appicon").length >= 4));
 }
 
+// ---- M71 mobile suite 390x844 ----
+{
+  const mp = await b.newPage({ viewport: { width: 390, height: 844 } });
+  await mp.goto(base + "/index.html", { waitUntil: "networkidle" });
+  await mp.waitForTimeout(1800);
+  ok("mobile index no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+  ok("mobile ident visible", await mp.locator(".ident .idf-video").first().isVisible());
+  ok("mobile install code visible", await mp.locator("#installcmd").isVisible());
+  await mp.goto(base + "/gallery.html", { waitUntil: "networkidle" });
+  await mp.waitForTimeout(1800);
+  ok("mobile gallery no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+  ok("mobile gallery cards", await mp.locator("#cards .pcard").count() >= 4);
+  await mp.goto(base + "/proto.html?app=petpark", { waitUntil: "networkidle" });
+  await mp.waitForTimeout(2500);
+  ok("mobile proto no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+  ok("mobile proto stacked", await mp.evaluate(() => {
+    const st = document.querySelector(".stage").getBoundingClientRect();
+    const sd = document.querySelector(".side").getBoundingClientRect();
+    return sd.top >= st.bottom - 4;
+  }));
+  ok("mobile dl reachable", await mp.locator("#dlbtn").isVisible());
+  await mp.close();
+}
 
