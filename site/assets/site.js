@@ -148,10 +148,10 @@
     const cover = a.cover ? `${PROTO_BASE}/${a.cover}` : "";
     const name = L(a.name, a.app);
     return `<a class="pcard" href="proto.html?app=${encodeURIComponent(a.app)}">
-      <div class="th tile">${a.icon ? `<img class="appicon" src="${PROTO_BASE}/${a.icon}" alt="" loading="lazy">` : (cover ? `<img src="${PROTO_BASE}/${cover}" alt="" loading="lazy">` : "")}
+      <div class="th${cover ? "" : " tile"}">${cover ? `<img src="${PROTO_BASE}/${cover}" alt="" loading="lazy">` : (a.icon ? `<img class="appicon" src="${PROTO_BASE}/${a.icon}" alt="" loading="lazy">` : "")}
         <span class="heat"><svg width="11" height="11" viewBox="0 0 24 24" style="fill:#ff8a5c"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>${fmtHeat(a.downloads)}</span></div>
       <div class="bd"><div class="t"><span class="nm">${name}</span>
-        <span class="avs">${(a.contributors || []).slice(0, 3).map((c) => av(c)).join("")}${(a.contributors || []).length > 3 ? `<span class="av">+${(a.contributors || []).length - 3}</span>` : ""}</span></div></div></a>`;
+        ${a.icon ? `<img class="tic" src="${PROTO_BASE}/${a.icon}" alt="" loading="lazy">` : ""}</div></div></a>`;
   }
 
   async function renderFeatured() {
@@ -171,7 +171,7 @@
     const idx = state.index;
     const a = (idx && idx.apps || []).find((x) => x.app === app);
     const fl = document.getElementById("expframe");
-    if (fl) fl.src = a ? a.url : `${PROTO_BASE}/petpark/prototype/`;
+    if (fl) fl.src = a ? (isMobile() ? a.url + (a.url.includes("?") ? "&" : "?") + "chrome=0&embed=1&theme=" + state.theme : a.url) : `${PROTO_BASE}/petpark/prototype/`;
   }
 
   async function renderGallery() {
@@ -193,6 +193,12 @@
     grid.innerHTML = apps.map(card).join("") || `<p style="color:var(--mut)">${t("empty")} <a href="guide.html#publish">publish</a></p>`;
   }
 
+  const isMobile = () => matchMedia("(max-width: 820px)").matches;
+  const protoSrc = (a, theme, pageId) => {
+    const base = a.url + (a.url.includes("?") ? "&" : "?");
+    if (isMobile()) return base + "chrome=0&embed=1&theme=" + theme + (pageId ? "#pages/" + pageId : "");
+    return base + "theme=" + theme;
+  };
   async function renderProto() {
     const params = new URLSearchParams(location.search);
     const app = params.get("app");
@@ -201,7 +207,17 @@
     const side = document.getElementById("side");
     if (!a || !side) return;
     document.title = `${L(a.name, a.app)} — design-clone gallery`;
-    document.getElementById("stageframe").src = a.url + (a.url.includes("?") ? "&" : "?") + "theme=" + state.theme;
+    document.getElementById("stageframe").src = protoSrc(a, state.theme);
+    const chips = document.getElementById("pagechips");
+    if (chips) {
+      chips.innerHTML = (a.pages || []).map((p, i) => `<button class="pchip${i === 0 ? " on" : ""}" data-p="${p.id}">${p.name || p.id}</button>`).join("");
+      chips.onclick = (e) => {
+        const b = e.target.closest(".pchip"); if (!b) return;
+        chips.querySelectorAll(".pchip").forEach((x) => x.classList.toggle("on", x === b));
+        document.getElementById("stageframe").src = protoSrc(a, state.theme, b.dataset.p);
+      };
+      chips.style.display = isMobile() && (a.pages || []).length ? "" : "none";
+    }
     document.getElementById("jump").href = a.repo_dir;
     const crumb = document.getElementById("crumb");
     if (crumb) crumb.innerHTML = `<a href="gallery.html">${t("nav_gallery")}</a><span>/</span><b>${L(a.name, a.app)}</b>`;
@@ -248,6 +264,7 @@
       el.childNodes.forEach((n) => { if (n.nodeType === 3 && n.textContent.trim() === "design-clone") n.remove(); });
     });
     document.querySelectorAll(".ftbrand").forEach((el) => { el.innerHTML = WORDMARK.replace('class="wordmark"', 'class="wordmark wordmark--ft"'); });
+    matchMedia("(max-width: 820px)").addEventListener("change", () => { if (document.getElementById("stageframe")) renderProto(); });
     const idn = document.getElementById("ident");
     if (idn && window.DCIdent && window.DCIdent.build) {
       idn.innerHTML = window.DCIdent.build(state.theme);

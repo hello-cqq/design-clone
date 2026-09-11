@@ -45,7 +45,7 @@ gates.push(`interact dead=${ia.total_dead}`, `inspect fail=${ins.fail} pass=${in
 /* ---------- 2. 白名单复制 + 禁名单/PII/体积 ---------- */
 const ALLOW_DIR = new Set(["views", "assets", "variants", "design", "pages", "appicon"]);
 const ALLOW_FILE = /^(index\.html|inspector\.[a-z0-9.]+|runtime\.[a-z0-9.]+|zipstore\.[a-z0-9.]+|utilities\.css|paths\.json|journeys\.json|products\.json|annotations\.json|version\.json)$/;
-const FORBID = [/(^|\/)node_modules\//, /(^|\/)export\//, /(^|\/)qa\//, /(^|\/)capture\//, /(^|\/)\.cache\//, /\.(mp4|webm|mov)$/i, /\.map$/i, /\.(ttf|otf|woff2?)$/i];
+const FORBID = [/(^|\/)node_modules\//, /(^|\/)export\//, /(^|\/)qa\//, /(^|\/)capture\//, /(^|\/)\.cache\//, /\.(mp4|webm|mov)$/i, /\.map$/i, /\.(ttf|otf|woff2?)$/i, /(^|\/)assets\/_/, /_raw-/]; // M63: 生图中间件（带水印原图）禁入社区仓
 const PII = [/1[3-9]\d{9}/, /\b\d{6}(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\b/];
 const tmp = fs.mkdtempSync(path.join(process.env.TMPDIR || "/tmp", "dcp-pub-"));
 const fdir = path.join(tmp, values.app);

@@ -195,6 +195,20 @@ process.exit(fails.length ? 1 : 0);{
     return sd.top >= st.bottom - 4;
   }));
   ok("mobile dl reachable", await mp.locator("#dlbtn").isVisible());
+  await mp.goto(base + "/proto.html?app=aliyun-console", { waitUntil: "networkidle" });
+  await mp.waitForTimeout(2500);
+  ok("mobile proto chromeless", await mp.evaluate(() => document.getElementById("stageframe").src.includes("chrome=0")));
+  ok("mobile page chips", await mp.evaluate(() => document.querySelectorAll("#pagechips .pchip").length >= 3));
+  {
+    const second = mp.locator("#pagechips .pchip").nth(1);
+    await second.click();
+    await mp.waitForTimeout(1200);
+    ok("mobile chip switches page", await mp.evaluate(() => document.getElementById("stageframe").src.includes("#pages/")));
+  }
+  await mp.goto(base + "/index.html", { waitUntil: "networknetwork".replace("networknetwork", "networkidle") });
+  await mp.waitForTimeout(2000);
+  ok("mobile exp chromeless", await mp.evaluate(() => document.getElementById("expframe").src.includes("chrome=0")));
+  ok("mobile install wraps", await mp.evaluate(() => { const c = document.getElementById("installcmd"); return c.scrollWidth <= c.clientWidth + 2; }));
   await mp.close();
 }
 

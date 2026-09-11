@@ -39,7 +39,16 @@ const CATS = [
 ];
 const CAT_ZH = { social: "社交", "short-video": "短视频", office: "办公协作", commerce: "电商购物", travel: "旅行出行", game: "游戏", news: "新闻资讯", education: "学习教育", finance: "金融支付", tools: "效率工具", lifestyle: "生活" };
 const haystack = [app, (dc.pages || []).map((p) => p.name).join(" "), manifest.title || "", Object.values(products).map((p) => p.function || "").join(" ")].join(" ");
-let category = values.category || (CATS.find(([, re]) => re.test(haystack)) || [])[0] || "lifestyle";
+// M63：计分制——各类关键词命中次数取最大（避免"先到先得"误判，如 aliyun 因"文档"误入 office）
+let category = values.category;
+if (!category) {
+  let best = "lifestyle", bestN = 0;
+  for (const [cat, re] of CATS) {
+    const n = (haystack.match(new RegExp(re.source, "gi")) || []).length;
+    if (n > bestN) { bestN = n; best = cat; }
+  }
+  category = bestN ? best : "lifestyle";
+}
 
 /* ---------- 双语名称/描述基线 ---------- */
 const title = String(manifest.title || "").trim();
