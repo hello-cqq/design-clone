@@ -26,8 +26,9 @@ ctx.on("pageerror", (e) => errs.push("pageerror:" + String(e.message).slice(0, 1
 // ---- index
 await ctx.goto(base + "/index.html", { waitUntil: "networkidle" });
 await ctx.waitForTimeout(2500);
-ok("hero scene", await ctx.locator(".hero-scene svg").count() === 1);
-ok("hero scene poses", await ctx.locator("#hs-sit").count() === 1 && await ctx.locator("#hs-lie").count() === 1 && await ctx.locator(".hs-refl").count() === 1);
+ok("ident stage", await ctx.locator(".ident svg").count() === 1);
+ok("ident rig", await ctx.locator(".ident .id-torso").count() === 1 && await ctx.locator(".ident .id-refl").count() === 1 && await ctx.locator(".ident .id-cloud1").count() === 1);
+ok("ident lockup", await ctx.locator(".ident .id-lockup").count() === 1);
 ok("nav logo img", await ctx.locator(".logo img.logoimg").count() === 1);
 ok("install cmd", (await ctx.locator("#installcmd").textContent()).includes("install.sh"));
 ok("exp iframe", (await ctx.locator("#expframe").getAttribute("src") || "").includes("/prototype/"));
