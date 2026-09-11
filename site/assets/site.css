@@ -251,3 +251,11 @@ body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-in
 /* M65 smooth theme transition */
 body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters input, .filters select, .btn, .iconbtn, .tagbtn, .tagrow .chip {
   transition: background-color .6s ease, color .6s ease, border-color .6s ease, box-shadow .6s ease; }
+/* M67 blended logos — feathered, no square */
+.logoimg { width: 38px; height: 38px; object-fit: cover; background: transparent; border: none; box-shadow: none; border-radius: 0;
+  -webkit-mask-image: radial-gradient(ellipse 62% 60% at 50% 44%, #000 52%, rgba(0, 0, 0, .55) 68%, transparent 80%);
+  mask-image: radial-gradient(ellipse 62% 60% at 50% 44%, #000 52%, rgba(0, 0, 0, .55) 68%, transparent 80%); }
+.brandmark { display: flex; justify-content: center; margin: 0 0 6px; }
+.brandmark img { width: 96px; height: 96px; object-fit: cover;
+  -webkit-mask-image: radial-gradient(ellipse 58% 56% at 50% 46%, #000 50%, rgba(0, 0, 0, .5) 68%, transparent 80%);
+  mask-image: radial-gradient(ellipse 58% 56% at 50% 46%, #000 50%, rgba(0, 0, 0, .5) 68%, transparent 80%); }
