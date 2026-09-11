@@ -61,3 +61,4 @@
 | **M62 首页片头 ident（水镜设计师一镜到底）** | ✅ 2026-09-11 | 9s 单时间轴骨骼动画：坐水面（涟漪环）→躺下（躯干/腿/头连续插值）→铅笔描云（笔尖-云 stroke 同步）→水面倒映背影（multiply 混合）→lockup 定格；genimg anime 镜湖背景+圆框眼镜设计师静态头像（nav/favicon）；播放一次+点击重播+reduced-motion 终帧；e2e 全绿；LESSONS 154 |
 | **M64 视频 ident+灵宠浮景+新海诚双主题** | ✅ 2026-09-11 | 用户 AI 视频为 ident 终源（亮=女生坐躺描云/暗=男生朝右行走弯腰，hflip+delogo+H.264+poster）；羽毛 mask 浮景去矩形+halo 融合+bob 灵宠+接触阴影；播一次→融化→lockup 浮现；点击重播/reduced=poster+lockup；站点全局新海诚质感双主题（青蓝白暖金/深靛银河金+grain）；logo/ident 随主题联动；e2e 增 mask/无矩形/播放/主题三联动断言全绿；负载 1000req 0 错 p95 128ms；LESSONS 155-156 |
 | **M65 循环播放+主题交叉转场+去文字层+头像 logo** | ✅ 2026-09-11 | 片尾 tpad 冻结 1.4s+JS dip 缝合无缝循环；双 video/halo 叠层 .7s 交叉淡化主题转场+页面 token .6s 过渡；删 lockup 文字与 replay 提示（舞台只留视频+halo+接触阴影）；logo=人物头像特写（男右 hflip/女左）；e2e loop-aware 断言全绿；LESSONS 157 |
+| **M66 生成式干净头像 logo** | ✅ 2026-09-11 | genimg 肖像（女左/男右视线）→rembg 抠像+裁水印带→合成主题渐变底；导航/标签栏干净头像观感达标；e2e 10 轮全绿；LESSONS 158 |

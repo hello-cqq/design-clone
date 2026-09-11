@@ -11,7 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
-const { values } = parseArgs({ options: { run: { type: "string" }, force: { type: "boolean" }, category: { type: "string" } } });
+const { values } = parseArgs({ options: { run: { type: "string" }, force: { type: "boolean" }, category: { type: "string" }, "name-zh": { type: "string" }, "name-en": { type: "string" }, "desc-zh": { type: "string" }, "desc-en": { type: "string" }, tags: { type: "string" } } });
 if (!values.run) { console.log("用法: node gallery-meta.mjs --run <runDir> [--force] [--category <cat>]"); process.exit(1); }
 const run = path.resolve(values.run);
 const out = path.join(run, "meta.json");
@@ -44,13 +44,13 @@ let category = values.category || (CATS.find(([, re]) => re.test(haystack)) || [
 /* ---------- 双语名称/描述基线 ---------- */
 const title = String(manifest.title || "").trim();
 const hasCJK = (s) => /[\u4e00-\u9fa5]/.test(s);
-const nameZh = hasCJK(title) ? title.slice(0, 40) : hasCJK(app) ? app : `${CAT_ZH[category] || category} · 可交互原型`;
-const nameEn = !hasCJK(title) && title ? title.slice(0, 40) : `${app} · ${category} prototype`;
+const nameZh = values["name-zh"] || (hasCJK(title) ? title.slice(0, 40) : hasCJK(app) ? app : `${CAT_ZH[category] || category} · 可交互原型`);
+const nameEn = values["name-en"] || (!hasCJK(title) && title ? title.slice(0, 40) : `${app} · ${category} prototype`);
 const homeProd = products[(dc.pages || [])[0]?.id] || Object.values(products)[0] || {};
 const funcZh = homeProd.function || "完整可交互界面与路径演示";
 const SHELL_EN = { c_mobile: "mobile", c_tablet: "tablet", c_desktop: "desktop", c_browser: "web" };
-const descZh = `${CAT_ZH[category] || category}类${SHELL_EN[dc.shell] === "web" ? "网页" : "应用"}原型：${funcZh}。由 design-clone 自真实来源克隆，全控件可交互、含设计规格与路径。`;
-const descEn = `Interactive ${category} prototype (${SHELL_EN[dc.shell] || "mobile"}): full UI flows, live controls, design specs and user paths — cloned from a real source by design-clone.`;
+const descZh = values["desc-zh"] || `${CAT_ZH[category] || category}类${SHELL_EN[dc.shell] === "web" ? "网页" : "应用"}原型：${funcZh}。由 design-clone 自真实来源克隆，全控件可交互、含设计规格与路径。`;
+const descEn = values["desc-en"] || `Interactive ${category} prototype (${SHELL_EN[dc.shell] || "mobile"}): full UI flows, live controls, design specs and user paths — cloned from a real source by design-clone.`;
 
 /* ---------- tags：词表 seeded 洗牌（app 名做种，稳定可复跑） ---------- */
 const seed = [...app].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
@@ -60,7 +60,7 @@ const featWords = [];
 for (const [k, re] of [["map", /地图|map/], ["community", /社区|community|feed/], ["booking", /预约|booking/], ["chat", /聊天|chat|会话/], ["profile", /档案|profile|我的/], ["player", /播放|player|视频/], ["dashboard", /面板|dashboard|控制台/], ["shop", /购物|shop|商城/], ["pets", /宠物|pet/], ["search", /搜索|search/]]) if (re.test(haystack)) featWords.push(k);
 const pool = [...new Set([category, SHELL_EN[dc.shell] || "mobile", scope.source || "clone", ...featWords, "interactive", scope.source && scope.source !== "original" ? "study" : "original"])];
 for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
-const tags = pool.slice(0, Math.min(6, Math.max(3, pool.length)));
+const tags = values.tags ? values.tags.split(",").map((x) => x.trim()).slice(0, 6) : pool.slice(0, Math.min(6, Math.max(3, pool.length)));
 
 /* ---------- SPEC v2 同构 meta ---------- */
 const attest = scope.source === "original" ? "original" : "public-material";
