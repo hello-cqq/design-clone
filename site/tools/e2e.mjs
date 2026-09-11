@@ -60,6 +60,10 @@ ok("universal install cmd", ((await ctx.locator("#installcmd").textContent()) ||
 ok("subs removed", await ctx.evaluate(() => !document.body.innerText.includes("按下载量排序") && !document.body.innerText.includes("四种来源") && !document.body.innerText.includes("Ranked by downloads") && !document.body.innerText.includes("Four sources")));
 ok("nav logo blended", await ctx.evaluate(() => { const im = document.querySelector(".logoimg"); const cs = getComputedStyle(im); return ((cs.maskImage || cs.webkitMaskImage || "").includes("radial-gradient")) && cs.backgroundColor === "rgba(0, 0, 0, 0)"; }));
 ok("hero brandmark", await ctx.locator(".brandmark img").count() === 1);
+ok("wordmark svg", await ctx.locator(".logo svg.wordmark").count() === 1);
+ok("wordmark clone motif", await ctx.locator(".logo .wm-hyphen rect").count() === 2 && await ctx.locator(".logo .wm-echo").count() === 1);
+ok("wordmark no plain text", await ctx.evaluate(() => ![...document.querySelector(".logo").childNodes].some((n) => n.nodeType === 3 && n.textContent.trim() === "design-clone")));
+ok("footer wordmark", await ctx.locator("footer .wordmark--ft").count() === 1);
 ok("favicon diptych", await ctx.evaluate(() => (document.querySelector("link[rel=icon]") || {}).href.includes("favicon.png")));
 ok("install cmd", (await ctx.locator("#installcmd").textContent()).includes("install.sh"));
 ok("exp iframe", (await ctx.locator("#expframe").getAttribute("src") || "").includes("/prototype/"));

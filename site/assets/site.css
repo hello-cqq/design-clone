@@ -259,3 +259,14 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
 .brandmark img { width: 96px; height: 96px; object-fit: cover;
   -webkit-mask-image: radial-gradient(ellipse 58% 56% at 50% 46%, #000 50%, rgba(0, 0, 0, .5) 68%, transparent 80%);
   mask-image: radial-gradient(ellipse 58% 56% at 50% 46%, #000 50%, rgba(0, 0, 0, .5) 68%, transparent 80%); }
+/* M68 wordmark */
+.wordmark { height: 28px; width: auto; display: block; overflow: visible; }
+.wordmark--ft { height: 18px; opacity: .9; }
+.wm-t { font-family: var(--sans); font-size: 21px; font-weight: 650; letter-spacing: .5px; }
+.wordmark--ft .wm-t { font-size: 16px; }
+.wm-echo { transform: translate(1.6px, 1.6px); opacity: .28; transition: transform .3s ease; }
+.wm-echo text { opacity: 1; }
+.logo:hover .wm-echo { transform: translate(3.2px, 3.2px); }
+@media (prefers-reduced-motion: reduce) { .wm-echo { transition: none; } .logo:hover .wm-echo { transform: translate(1.6px, 1.6px); } }
+.logo .wordmark { width: auto; height: 28px; }
+.logo .wordmark--ft { height: 18px; }
