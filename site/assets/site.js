@@ -80,21 +80,26 @@
       </g>
     </g>
     <g>
-      <path d="M33 24 q10 -3 15 2" stroke="#ff8a5c" stroke-width="3" stroke-linecap="round" opacity=".9"/>
-      <path d="M34 27 q9 0 13 5" stroke="#ff8a5c" stroke-width="2.4" stroke-linecap="round" opacity=".7"/>
+      <path class="nj-scarf" d="M33 24 q10 -3 15 2" stroke="#ff8a5c" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+      <path class="nj-scarf" d="M34 27 q9 0 13 5" stroke="#ff8a5c" stroke-width="2.4" stroke-linecap="round" opacity=".7"/>
       <path d="M17 37 q-5 8.5 1.5 13.5 l7 .5 q-4 -7 -.5 -11.5 z" fill="#1b222d"/>
       <path d="M31 37 q5 8.5 -1.5 13.5 l-7 .5 q4 -7 .5 -11.5 z" fill="#1b222d"/>
       <path d="M15.5 49.5 l8.5 1 M24.5 50.5 l8.5 -1" stroke="#0e1319" stroke-width="2.6" stroke-linecap="round"/>
       <path d="M16 26 q8 -5 16 0 l4 10 q-12 6 -24 0 z" fill="url(#njSuit)"/>
       <path d="M18 27.5 q6 -3 12 0" stroke="rgba(255,255,255,.16)" stroke-width="2" stroke-linecap="round"/>
-      <path d="M20 31 L30 37.5 M32 31 L22 37.5" stroke="#39455a" stroke-width="4.4" stroke-linecap="round"/>
-      <circle cx="24.6" cy="36.4" r="2.7" fill="#f6d7b8"/>
-      <circle cx="27.6" cy="35.2" r="2.7" fill="#f6d7b8"/>
+      <g class="nj-hands">
+        <circle class="nj-sealglow" cx="27" cy="27" r="7" fill="url(#njGlow)"/>
+        <path d="M27 35 L27 26" stroke="#39455a" stroke-width="4.6" stroke-linecap="round"/>
+        <path d="M25.6 25.5 l-0.4 -6 M28.4 25.5 l0.4 -6" stroke="#f6d7b8" stroke-width="2.3" stroke-linecap="round"/>
+        <circle cx="27" cy="26.5" r="2.5" fill="#f6d7b8"/>
+        <path d="M18 33.5 L25 31.5" stroke="#39455a" stroke-width="4.4" stroke-linecap="round"/>
+        <path d="M25 31.5 l5.5 -2" stroke="#f6d7b8" stroke-width="2.4" stroke-linecap="round"/>
+      </g>
       <path d="M21 26.5 q3 2.5 6 0" stroke="#ff8a5c" stroke-width="2.2" stroke-linecap="round" opacity=".85"/>
       <circle cx="24" cy="16" r="9.5" fill="url(#njSuit)"/>
       <path d="M16.5 12 a9.5 9.5 0 0 1 12 -3.5" stroke="rgba(255,255,255,.22)" stroke-width="2.2" stroke-linecap="round"/>
       <ellipse cx="24" cy="18.4" rx="6.6" ry="4.2" fill="#f6d7b8"/>
-      <ellipse cx="21.4" cy="18.2" rx="1.5" ry="1.9" fill="#20242a"/><ellipse cx="26.8" cy="18.2" rx="1.5" ry="1.9" fill="#20242a"/>
+      <ellipse class="nj-eye" cx="21.4" cy="18.2" rx="1.5" ry="1.9" fill="#20242a"/><ellipse class="nj-eye" cx="26.8" cy="18.2" rx="1.5" ry="1.9" fill="#20242a"/>
       <circle cx="21.9" cy="17.5" r=".5" fill="#fff"/><circle cx="27.3" cy="17.5" r=".5" fill="#fff"/>
       <path d="M19.6 15.4 l3 -.8 M25.6 14.6 l3 .8" stroke="#20242a" stroke-width="1.1" stroke-linecap="round"/>
       <rect x="14.5" y="10.6" width="19" height="4.2" rx="2.1" fill="#2b3442"/>
@@ -139,7 +144,7 @@
   async function loadIndex() {
     if (state.index) return state.index;
     try {
-      const r = await fetch(INDEX_LIVE + "?t=" + Date.now(), { cache: "no-store" });
+      const r = await fetch(INDEX_LIVE, { cache: "default" });
       if (r.ok) { state.index = await r.json(); return state.index; }
     } catch {}
     try { state.index = await (await fetch(INDEX_FALLBACK)).json(); return state.index; } catch {}
@@ -161,7 +166,7 @@
     const name = L(a.name, a.app);
     return `<a class="pcard" href="proto.html?app=${encodeURIComponent(a.app)}">
       <div class="th">${cover ? `<img src="${cover}" alt="" loading="lazy">` : ""}
-        <span class="heat"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 10l7-7 7 7"/></svg>${fmtHeat(a.downloads)}</span></div>
+        <span class="heat"><svg width="11" height="11" viewBox="0 0 24 24" style="fill:#ff8a5c"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>${fmtHeat(a.downloads)}</span></div>
       <div class="bd"><div class="t"><span class="nm">${name}</span>
         <span class="avs">${(a.contributors || []).slice(0, 3).map((c) => av(c)).join("")}${(a.contributors || []).length > 3 ? `<span class="av">+${(a.contributors || []).length - 3}</span>` : ""}</span></div></div></a>`;
   }
@@ -258,9 +263,10 @@
     const el = document.getElementById("starbadge");
     if (!el) return;
     try {
-      const r = await fetch(`https://api.github.com/repos/${REPO}`);
-      const j = await r.json();
-      el.textContent = "★ " + ((j.stargazers_count ?? 0) >= 1000 ? ((j.stargazers_count / 1000).toFixed(1) + "k") : (j.stargazers_count ?? 0));
+      let j = null;
+      try { j = await (await fetch("data/stars.json", { cache: "default" })).json(); } catch {}
+      if (!j || j.stars == null) { const r = await fetch(`https://api.github.com/repos/${REPO}`); j = { stars: (await r.json()).stargazers_count }; }
+      el.textContent = "★ " + ((j.stars ?? 0) >= 1000 ? ((j.stars / 1000).toFixed(1) + "k") : (j.stars ?? 0));
     } catch { el.textContent = "★"; }
   }
 
@@ -296,6 +302,16 @@
     }
     if (document.getElementById("featured")) renderFeatured();
     if (document.getElementById("side")) renderProto();
+    const sf = document.getElementById("stagefail");
+    const sfr = document.getElementById("stageretry");
+    const frame = document.getElementById("stageframe");
+    if (sf && sfr && frame) {
+      let loaded = false, t = null;
+      const arm = () => { loaded = false; sf.classList.add("hidden"); clearTimeout(t); t = setTimeout(() => { if (!loaded) sf.classList.remove("hidden"); }, 9000); };
+      frame.addEventListener("load", () => { loaded = true; sf.classList.add("hidden"); });
+      sfr.onclick = () => { const src = frame.src; frame.src = ""; frame.src = src + (src.includes("?") ? "&" : "?") + "r=" + Date.now(); arm(); };
+      new MutationObserver(() => arm()).observe(frame, { attributes: true, attributeFilter: ["src"] });
+    }
     const fsb = document.getElementById("fsbtn");
     if (fsb) fsb.onclick = () => { const f = document.getElementById("stageframe"); if (f.requestFullscreen) f.requestFullscreen(); };
     const cp = document.getElementById("copycmd");

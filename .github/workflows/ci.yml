@@ -43,6 +43,19 @@ jobs:
           '
       - name: doctor (environment probe, advisory)
         run: node skills/design-clone/scripts/doctor.mjs || true
+  site-e2e:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - run: npm ci --no-audit --no-fund --prefix skills/design-clone/scripts
+      - name: serve site
+        run: python3 -m http.server 8090 --directory site &
+      - name: functional e2e (20 loops)
+        run: NODE_PATH=$PWD/skills/design-clone/scripts/node_modules node site/tools/e2e.mjs http://localhost:8090 20
+      - name: load smoke (500 req / 50 conc)
+        run: node site/tools/loadtest.mjs http://localhost:8090 50 10
   package:
     runs-on: ubuntu-24.04
     steps:
