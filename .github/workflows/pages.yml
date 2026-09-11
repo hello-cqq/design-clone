@@ -18,6 +18,10 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: embed live data (stars + index snapshot)
+        run: |
+          mkdir -p site/data
+          curl -fsSL --max-time 20 https://api.github.com/repos/hello-cqq/design-clone | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);process.stdout.write(JSON.stringify({stars:j.stargazers_count||0}))}catch{process.stdout.write('{}')}})" > site/data/stars.json || echo '{}' > site/data/stars.json
       - name: embed gallery fallback snapshot
         run: |
           curl -fsSL --max-time 20 https://hello-cqq.github.io/design-clone-prototype/index.json -o site/data/index.fallback.json \
