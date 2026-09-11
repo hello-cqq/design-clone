@@ -3,6 +3,55 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/); versioning is SemVer and mirrors `SKILL.md → metadata.version`.
 
+## [0.6.0-snapshot.20260911.1] - 2026-09-11
+
+Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
+
+### M69
+- : 双联图织入动画——seam 循环片尾定格卡(hold 1.4s 兼循环缝合)+bridge 主题转场桥(昼夜之门)；移除首页静态 mark；相位机+__ident.phase() 钩子；LESSONS 161/ROADMAP M69
+
+### M68
+- : 定制 SVG 字标——design+克隆对连字符+渐变clone+回声残影(hover微交互)，CSS变量主题自适应，导航+footer单源注入；LESSONS 160/ROADMAP M68
+
+### M67
+- : 定稿 logo 羽毛融合（女昼/男夜导航+双联主 logo/favicon）+安装单命令化+删三处副标题
+
+### M62
+- : 画廊就绪三件套+petpark 3D 萌宠重建+README 重设计+站点适配
+- : 首页片头 ident——设计师坐水面→躺下→铅笔描云→水镜倒映背影（9s 单时间轴连续骨骼动画、零切帧）；genimg anime 镜湖背景+圆框眼镜静态头像(nav/favicon)；播放一次定格+点击重播+reduced-motion 终帧；LESSONS 154/ROADMAP M62
+
+### M66
+- : 生成式干净头像 logo（女左/男右）——genimg 肖像+rembg 抠像+裁水印+主题渐变底合成，替换视频帧裁切；LESSONS 158/ROADMAP M66
+
+### M65
+- : ident 循环播放(片尾冻结1.4s+dip缝合)+双video/halo主题交叉淡化转场+页面token过渡+去lockup/replay文字+头像logo(男右女左)
+
+### M64
+- : 视频 ident（用户 AI 视频终源）+灵宠浮景去矩形+新海诚质感双主题+logo 主题联动
+
+### M61
+- : 圆框眼镜设计师+水镜微电影首页（抱膝坐→镜头缓移→躺下→水面镜像=克隆隐喻，14s 单时间轴 loop、reduced-motion 静态水镜帧）；favicon/导航=静态头像 logo-head.svg；M60 位图吉祥物下线
+
+### M60
+- : 吉祥物升级 genimg pixar-3d 生图版（与 3D 萌宠同管线）——seed22 选定、裁水印/头切 favicon、CSS 分身薄荷虚影+烟雾环+星点+接地投影装配、reduced-motion 静止；旧手写 SVG 吉祥物下线；prompt 存档 mascot-prompt.md
+
+### M59
+- : 原创 Q 版设计师吉祥物（影分身概念、零 IP 参照）——针织帽+橙卫衣+stylus 画笔+薄荷分身；favicon.svg 头部标 16px 可辨 + logo-static.svg 导航态 + 首页动态（弹跳/分身错时弹出/烟雾环/火花画线框/眨眼/帽球摆）；reduced-motion 静止
+
+### M58
+- docs: report/site-perf.md（并发/性能/功能测试报告：千并发零错误 p95<200ms、E2E 20 轮全绿、CI site job）
+- : logo 影分身结印重画+首行动画组/火焰热度/封面底直角/footer 链接移除/头像真实 login(index API)/star 内嵌快照/iframe 重试；测试三件套 e2e(20轮)+loadtest+CI site job
+
+### M57
+- : 官网三轮打磨——hero 三行居中+灵动 logo v3(蹲姿结印+分身)/功能演示全宽真实场景动画/精选 3:2 封面+名称行+头像/详情一屏+面包屑+看板五项+免责脚注/导航 GitHub 按钮同款 pill+star/对齐统一
+
+### M56
+- docs: LESSONS 153 + ROADMAP M56
+- : 官网 v2 —— 影分身忍者 logo+光感滑动 nav+star 徽章+Home(hero/安装/体验位/四tab步骤动画/Top4 按下载)+Gallery(tags 筛选/搜索)+详情左交互右看板(下载量按钮/跳转源码)；契约 v2 配套（publish 去 flavor、meta 双语）；proto 仓 SPEC v2+平铺迁移+cover 修复
+
+### M55(D-E)
+- : 官网挂入口+LESSONS 151-152+ROADMAP M55（平台全链路：建仓→publish→PR→Release→索引→官网 E2E 全绿）
+
 ## [0.6.0-snapshot.20260911] - 2026-09-11
 
 Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
