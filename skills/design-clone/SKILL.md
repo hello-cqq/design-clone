@@ -303,12 +303,12 @@ Tweaks 调参（**「存为变体」落 prototype/variants/<名>/{tokens.json,to
 （GitHub Pages 托管、点开即玩的社区原型平台），自动提 PR：
 
 ```bash
-node {SKILL_DIR}/scripts/publish.mjs --run <runDir> --app <app> --flavor <flavor> --title "<标题>" \
+node {SKILL_DIR}/scripts/publish.mjs --run <runDir> --app <app> --title "<name.en>" --title-zh "<name.zh>" \
   [--attest original|licensed|public-material] [--version 1.0.0] [--tags a,b] [--dry]
 ```
 
 - 前置强验：interact dead=0 / inspect 0 fail / ui-smoke 0 fail / privacy.json 在场；PII grep + 80MB + 禁名单本地先拦。
-- flavor 受控词表与目录契约见 proto 仓 SPEC.md（`app/flavor/prototype`，版本=meta.version+version.json，合并自动 Release）。
+- 契约 v2：proto 仓平铺 `app/prototype`（flavor 已废，变体=独立 app）；meta 双语 name/description+tags；版本=meta.version+version.json；合并自动打 tag `<app>-<version>` 发 Release（下载量=热度）。详见 proto 仓 SPEC.md。
 - `--dry` 只产 `publish-out/` 供自检；正式跑建分支提 PR，maintainer 人工审批合并后上线画廊。
 - 细则：references/publish-guide.md。
 
