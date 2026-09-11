@@ -12,3 +12,7 @@ Prompt（原创 Q 版设计师，零 IP 参照）：
 
 ## M61 更新
 位图吉祥物（M60）已下线：首页改为 **SVG 水镜微电影**（圆框眼镜设计师：抱膝坐→镜头缓移→躺下→水面镜像，水天一色=克隆隐喻），单 14s master timeline；favicon/导航=静态头像 `logo-head.svg`。位图仅存于此档案与 git 历史。
+
+
+## M64 终稿
+ident=用户自供 AI 视频（site/assets/ident-light.mp4 / ident-dark.mp4，豆包生成→delogo+H.264+hflip+poster）；矢量/AI 关键帧路线全部退役。logo=视频帧裁切（logo-light/dark.png）。生图管线仅存于原型资产与历史档案。
