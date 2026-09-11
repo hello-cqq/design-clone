@@ -62,52 +62,63 @@
     },
   };
 
-  const ninja = (size = 40) => `
-  <svg width="${size}" height="${size * 0.89}" viewBox="0 0 72 64" fill="none" aria-hidden="true">
+  const designer = (size = 40, anim = false) => {
+    const c = (n) => (anim ? n : "");
+    return `
+  <svg width="${size}" height="${size}" viewBox="0 0 96 96" fill="none" aria-hidden="true">
     <defs>
-      <linearGradient id="njSuit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4d5c74"/><stop offset="1" stop-color="#242c39"/></linearGradient>
-      <linearGradient id="njPlate" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eef2f6"/><stop offset="1" stop-color="#8fa0b2"/></linearGradient>
-      <radialGradient id="njGlow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ff8a5c" stop-opacity=".38"/><stop offset="1" stop-color="#ff8a5c" stop-opacity="0"/></radialGradient>
+      <linearGradient id="dzSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe3c4"/><stop offset="1" stop-color="#ffcf9d"/></linearGradient>
+      <linearGradient id="dzBean" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3d5170"/><stop offset="1" stop-color="#26364f"/></linearGradient>
+      <linearGradient id="dzHood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9d6b"/><stop offset="1" stop-color="#e0603a"/></linearGradient>
     </defs>
-    <ellipse cx="34" cy="36" rx="30" ry="22" fill="url(#njGlow)"/>
-    <g class="ninja-ghost" opacity=".3">
-      <g transform="translate(16,1)">
-        <circle cx="24" cy="16" r="9.5" fill="#7d8a9c"/>
-        <rect x="14.5" y="12.5" width="19" height="4.2" rx="2.1" fill="#5b6879"/>
-        <path d="M16 26 q8 -4.5 16 0 l3.5 9 q-11.5 5.5 -23 0 z" fill="#7d8a9c"/>
-        <path d="M17 36 q-4.5 8 1.5 12.5 l6.5 .5 q-3.5 -6.5 -.5 -11 z" fill="#6a7688"/>
-        <path d="M31 36 q4.5 8 -1.5 12.5 l-6.5 .5 q3.5 -6.5 .5 -11 z" fill="#6a7688"/>
-      </g>
+    <g class="${c("dz-clone")}" opacity=".35">
+      <circle cx="70" cy="30" r="12" fill="#6fd3b2"/>
+      <rect x="58" y="42" width="24" height="20" rx="9" fill="#6fd3b2"/>
+      <path d="M60 48 L52 44" stroke="#6fd3b2" stroke-width="6" stroke-linecap="round"/>
+      <rect x="46" y="38" width="10" height="14" rx="3" fill="#6fd3b2" opacity=".8"/>
     </g>
-    <g>
-      <path class="nj-scarf" d="M33 24 q10 -3 15 2" stroke="#ff8a5c" stroke-width="3" stroke-linecap="round" opacity=".9"/>
-      <path class="nj-scarf" d="M34 27 q9 0 13 5" stroke="#ff8a5c" stroke-width="2.4" stroke-linecap="round" opacity=".7"/>
-      <path d="M17 37 q-5 8.5 1.5 13.5 l7 .5 q-4 -7 -.5 -11.5 z" fill="#1b222d"/>
-      <path d="M31 37 q5 8.5 -1.5 13.5 l-7 .5 q4 -7 .5 -11.5 z" fill="#1b222d"/>
-      <path d="M15.5 49.5 l8.5 1 M24.5 50.5 l8.5 -1" stroke="#0e1319" stroke-width="2.6" stroke-linecap="round"/>
-      <path d="M16 26 q8 -5 16 0 l4 10 q-12 6 -24 0 z" fill="url(#njSuit)"/>
-      <path d="M18 27.5 q6 -3 12 0" stroke="rgba(255,255,255,.16)" stroke-width="2" stroke-linecap="round"/>
-      <g class="nj-hands">
-        <circle class="nj-sealglow" cx="27" cy="27" r="7" fill="url(#njGlow)"/>
-        <path d="M27 35 L27 26" stroke="#39455a" stroke-width="4.6" stroke-linecap="round"/>
-        <path d="M25.6 25.5 l-0.4 -6 M28.4 25.5 l0.4 -6" stroke="#f6d7b8" stroke-width="2.3" stroke-linecap="round"/>
-        <circle cx="27" cy="26.5" r="2.5" fill="#f6d7b8"/>
-        <path d="M18 33.5 L25 31.5" stroke="#39455a" stroke-width="4.4" stroke-linecap="round"/>
-        <path d="M25 31.5 l5.5 -2" stroke="#f6d7b8" stroke-width="2.4" stroke-linecap="round"/>
+    <circle class="${c("dz-poof")}" cx="62" cy="66" r="5" fill="none" stroke="#6fd3b2" stroke-width="2" opacity=".5"/>
+    <circle class="${c("dz-poof2")}" cx="72" cy="62" r="3" fill="none" stroke="#6fd3b2" stroke-width="1.6" opacity=".4"/>
+    <g class="${c("dz-bob")}">
+      <path d="M52 72 q10 6 16 -2" stroke="#26364f" stroke-width="7" stroke-linecap="round" fill="none"/>
+      <circle cx="70" cy="69" r="4.5" fill="#fff"/>
+      <path d="M42 74 q-2 8 4 10" stroke="#26364f" stroke-width="7" stroke-linecap="round" fill="none"/>
+      <circle cx="47" cy="86" r="4.5" fill="#fff"/>
+      <rect x="34" y="48" width="28" height="26" rx="11" fill="url(#dzHood)"/>
+      <path d="M40 66 q8 4 16 0" stroke="#c94f2c" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M44 50 q4 4 8 0" stroke="#c94f2c" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M46 52 v6 M50 52 v6" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>
+      <path d="M48 56 l0 8" stroke="#26364f" stroke-width="1.4"/>
+      <rect x="45" y="63" width="7" height="9" rx="1.5" fill="#fff" stroke="#26364f" stroke-width="1"/>
+      <path d="M36 56 L24 50" stroke="#e0603a" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="22" cy="49" r="4" fill="url(#dzSkin)"/>
+      <g transform="rotate(-24 20 48)">
+        <rect x="16" y="26" width="6" height="32" rx="3" fill="#26364f"/>
+        <rect x="16.8" y="22" width="4.4" height="6" rx="2" fill="#6fd3b2"/>
       </g>
-      <path d="M21 26.5 q3 2.5 6 0" stroke="#ff8a5c" stroke-width="2.2" stroke-linecap="round" opacity=".85"/>
-      <circle cx="24" cy="16" r="9.5" fill="url(#njSuit)"/>
-      <path d="M16.5 12 a9.5 9.5 0 0 1 12 -3.5" stroke="rgba(255,255,255,.22)" stroke-width="2.2" stroke-linecap="round"/>
-      <ellipse cx="24" cy="18.4" rx="6.6" ry="4.2" fill="#f6d7b8"/>
-      <ellipse class="nj-eye" cx="21.4" cy="18.2" rx="1.5" ry="1.9" fill="#20242a"/><ellipse class="nj-eye" cx="26.8" cy="18.2" rx="1.5" ry="1.9" fill="#20242a"/>
-      <circle cx="21.9" cy="17.5" r=".5" fill="#fff"/><circle cx="27.3" cy="17.5" r=".5" fill="#fff"/>
-      <path d="M19.6 15.4 l3 -.8 M25.6 14.6 l3 .8" stroke="#20242a" stroke-width="1.1" stroke-linecap="round"/>
-      <rect x="14.5" y="10.6" width="19" height="4.2" rx="2.1" fill="#2b3442"/>
-      <rect x="20.5" y="10" width="7.4" height="5.4" rx="1.4" fill="url(#njPlate)"/>
-      <path d="M24.2 11.4 a1.6 1.6 0 1 0 .1 2.6" stroke="#5b6879" stroke-width=".9" fill="none"/>
+      <path class="${c("dz-draw")}" d="M18 20 q-6 -6 -4 -12" stroke="#6fd3b2" stroke-width="1.8" fill="none" stroke-dasharray="4 3" stroke-linecap="round"/>
+      <g class="${c("dz-wire")}">
+        <rect x="2" y="2" width="14" height="10" rx="2" fill="#fff" stroke="#26364f" stroke-width="1.2"/>
+        <path d="M4.5 5 h9 M4.5 7.5 h6" stroke="#8b95a3" stroke-width="1.2" stroke-linecap="round"/>
+      </g>
+      <path d="M58 54 L70 46" stroke="#e0603a" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="72" cy="44" r="4.2" fill="url(#dzSkin)"/>
+      <circle class="${c("dz-cast")}" cx="76" cy="41" r="5" fill="#6fd3b2" opacity=".45"/>
+      <circle cx="48" cy="30" r="17" fill="url(#dzSkin)"/>
+      <path d="M31 28 a17 17 0 0 1 34 0 l-2 4 h-30 z" fill="url(#dzBean)"/>
+      <rect x="30" y="28" width="36" height="6" rx="3" fill="#1d2b40"/>
+      <circle class="${c("dz-sway")}" cx="48" cy="11" r="4.5" fill="#6fd3b2"/>
+      <path d="M35 34 q3 -3 6 0 M43 34 q3 -3 6 0 M51 34 q3 -3 6 0" stroke="#e8b28a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <ellipse class="${c("dz-blink")}" cx="42" cy="38" rx="2.6" ry="3.2" fill="#20242a"/>
+      <ellipse class="${c("dz-blink")}" cx="54" cy="38" rx="2.6" ry="3.2" fill="#20242a"/>
+      <circle cx="43" cy="36.8" r=".9" fill="#fff"/>
+      <circle cx="55" cy="36.8" r=".9" fill="#fff"/>
+      <circle cx="37.5" cy="43" r="2.6" fill="#ff9d86" opacity=".55"/>
+      <circle cx="58.5" cy="43" r="2.6" fill="#ff9d86" opacity=".55"/>
+      <path d="M44 44 q4 3.4 8 0" stroke="#a4552f" stroke-width="2" fill="none" stroke-linecap="round"/>
     </g>
   </svg>`;
-  const NINJA = ninja(40);
+  };
 
   const state = {
     lang: localStorage.getItem("dc-lang") || "en",
@@ -237,9 +248,9 @@
   }
 
   function wireNav() {
-    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", ninja(40)); });
+    document.querySelectorAll(".logo").forEach((el) => { el.insertAdjacentHTML("afterbegin", designer(38, false)); });
     const hl = document.getElementById("herologo");
-    if (hl) hl.innerHTML = ninja(104);
+    if (hl) hl.innerHTML = designer(120, true);
     const nw = document.querySelector(".navwrap");
     if (!nw) return;
     const pill = document.createElement("span");
