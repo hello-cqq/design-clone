@@ -11,7 +11,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { execSync } from "node:child_process";
+import { execSync, spawnSync } from "node:child_process";
 import { parseArgs } from "node:util";
 
 const { values } = parseArgs({
@@ -74,19 +74,36 @@ const scope = readJ(path.join(run, "knowledge/scope.json")) || {};
 const SHELL_GUESS = { mobile: "c_mobile", android: "c_mobile", ios: "c_mobile", tablet: "c_tablet", desktop: "c_desktop", mac: "c_desktop", win: "c_desktop", web: "c_browser" };
 const form = (scope.platform || "").split("-")[0];
 if (dcShell !== (SHELL_GUESS[form] || dcShell)) console.log(`⚠ run shell=${dcShell} 与 platform 推断不一致，meta.shell 以 run 实际 shell 为准`);
+// M62-A：gallery 三件套搬运+合并（run/meta.json 为基线，CLI 旗标覆盖；缺则现场补）
+const runMeta = readJ(path.join(run, "meta.json"));
+if (!fs.existsSync(path.join(run, "icon.png"))) {
+  const r = spawnSync("node", [path.join(path.dirname(new URL(import.meta.url).pathname), "gen/appicon.mjs"), "--run", run], { encoding: "utf8" });
+  if (r.status !== 0) die("缺 icon.png 且自动补失败：" + String(r.stderr || "").slice(0, 120));
+}
+if (!fs.existsSync(path.join(run, "cover.png"))) die("缺 cover.png：先跑 node gen/cover.mjs --run <run> --base <url>（或 clone 收口自动产）");
+// M62-B(G4)：design 产物强验（M51 链）
+{
+  const pages = (() => { try { return fs.readdirSync(path.join(protoSrc, "pages")).filter((x) => x.endsWith(".spec.json")); } catch { return []; } })();
+  const fig = fs.existsSync(path.join(protoSrc, "design/figma-source.json"));
+  if (!pages.length || !fig) die(`缺设计产物（pages/*.spec.json ×${pages.length}、design/figma-source.json=${fig}）：跑 node gen/collect-design.mjs --run <run> --base <url>`);
+}
 const attest = values.attest || (scope.source === "original" ? "original" : "public-material");
 if (!["original", "licensed", "public-material"].includes(attest)) die("--attest 非法");
 const skillVer = (() => { try { const m = fs.readFileSync(path.join(path.dirname(new URL(import.meta.url).pathname), "..", "SKILL.md"), "utf8").match(/version:\s*"([^"]+)"/); return m ? m[1] : "dev"; } catch { return "dev"; } })();
 const version = values.version || "1.0.0";
 if (!/^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/.test(version)) die("--version 非 SemVer");
 fs.writeFileSync(path.join(pdir, "version.json"), JSON.stringify({ app: values.app, version, published_at: new Date().toISOString(), skill_version: skillVer }, null, 1));
+fs.copyFileSync(path.join(run, "icon.png"), path.join(fdir, "icon.png"));
+fs.copyFileSync(path.join(run, "cover.png"), path.join(fdir, "cover.png"));
+const baseMeta = runMeta || {};
 fs.writeFileSync(path.join(fdir, "meta.json"), JSON.stringify({
-  name: { en: values.title, zh: values["title-zh"] || values.title },
-  description: { en: values.desc || values.title, zh: values["desc-zh"] || values.desc || values.title },
-  tags: values.tags ? values.tags.split(",").map((x) => x.trim()) : [],
+  ...baseMeta,
+  name: { en: values.title || (baseMeta.name || {}).en || values.app, zh: values["title-zh"] || (baseMeta.name || {}).zh || values.title || values.app },
+  description: { en: values.desc || (baseMeta.description || {}).en || values.title, zh: values["desc-zh"] || (baseMeta.description || {}).zh || values.desc || values.title },
+  tags: values.tags ? values.tags.split(",").map((x) => x.trim()) : baseMeta.tags || [],
   shell: dcShell, platform: scope.platform || form,
-  source: { kind: scope.source || "original", ref: scope.target || values.app },
-  license: values.license, ip_attestation: attest, attestation_note: values.note || "",
+  source: baseMeta.source || { kind: scope.source || "original", ref: scope.target || values.app },
+  license: values.license || baseMeta.license || "CC-BY-4.0", ip_attestation: attest, attestation_note: values.note || baseMeta.attestation_note || "",
   version, created_at: new Date().toISOString(),
 }, null, 1));
 const brand = attest === "original" ? "" : `\n> Unofficial study replica generated with design-clone. All trademarks and brand assets belong to their respective owners; no affiliation or endorsement implied.\n`;

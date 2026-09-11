@@ -382,6 +382,7 @@ function actionsCount() {
     target_type: "web",
     scope: args.scope,
     platform_info: { browser: `chromium (playwright ${playwrightVersion})` },
+    url: startUrl.href,
     viewport,
     started_at: state.started_at,
     ended_at: new Date().toISOString(),
