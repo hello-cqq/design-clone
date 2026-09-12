@@ -43,6 +43,10 @@ node {SKILL_DIR}/scripts/doctor.mjs
 
 ---
 
+## 稀薄输入先富化（M75-W2）
+生图需求条件稀薄时（"一只猫"级）：先 `scripts/gen/enrich.mjs` 产富提示词包（可 --hints 注入联网搜索成果），
+按 references/prompt-enrichment.md 三步+rubric 自检循环（≤3 轮）再生图；文本/品牌类需求分别走字标混合方案与 asset-sourcing 官方源链。
+
 ## §A Clone 模式（自动捕获 + 复刻）
 
 ### A-一键（推荐入口，M44）
