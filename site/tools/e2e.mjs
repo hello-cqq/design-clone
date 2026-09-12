@@ -42,23 +42,24 @@ ok("dual video layers", await ctx.locator(".ident .idf-video").count() === 2 && 
   const st = await ctx.evaluate(() => ({
     lightOn: document.querySelector('.idf-video[data-k="light"]').classList.contains("on"),
     darkOn: document.querySelector('.idf-video[data-k="dark"]').classList.contains("on"),
-    logo: document.querySelector(".logoimg").src,
+    logo: (document.querySelector(".wordmark") || {}).textContent || "",
+    wmPos: getComputedStyle(document.querySelector(".wordmark")).backgroundPosition,
   }));
-  ok("theme crossfade swap", st.lightOn && !st.darkOn && st.logo.includes("logo-girl"));
+  ok("theme crossfade swap", st.lightOn && !st.darkOn && (st.logo || "").includes("design-clone"));
   await ctx.click("#themebtn"); await ctx.waitForTimeout(1000);
   const st2 = await ctx.evaluate(() => ({
+    wmPos2: getComputedStyle(document.querySelector(".wordmark")).backgroundPosition,
     lightOn: document.querySelector('.idf-video[data-k="light"]').classList.contains("on"),
     darkOn: document.querySelector('.idf-video[data-k="dark"]').classList.contains("on"),
-    logo: document.querySelector(".logoimg").src,
   }));
-  ok("theme crossfade back", st2.darkOn && !st2.lightOn && st2.logo.includes("logo-boy"));
+  ok("theme crossfade back", st2.darkOn && !st2.lightOn && st2.wmPos2 !== st.wmPos);
 }
-ok("nav logo img", await ctx.locator(".logo img.logoimg").count() === 1);
+ok("nav logo wordmark (M75-W1)", await ctx.locator(".logo .wordmark").count() === 1);
 ok("no agent switcher", await ctx.locator(".agentbtn").count() === 0);
 ok("install label", ((await ctx.locator("[data-i18n=install_label]").textContent()) || "").trim().toLowerCase() === "install");
 ok("universal install cmd", ((await ctx.locator("#installcmd").textContent()) || "").includes("install.sh | bash") && !((await ctx.locator("#installcmd").textContent()) || "").includes("--agent"));
 ok("subs removed", await ctx.evaluate(() => !document.body.innerText.includes("按下载量排序") && !document.body.innerText.includes("四种来源") && !document.body.innerText.includes("Ranked by downloads") && !document.body.innerText.includes("Four sources")));
-ok("nav logo blended", await ctx.evaluate(() => { const im = document.querySelector(".logoimg"); const cs = getComputedStyle(im); return ((cs.maskImage || cs.webkitMaskImage || "").includes("radial-gradient")) && cs.backgroundColor === "rgba(0, 0, 0, 0)"; }));
+ok("nav logo art-clip (M75-W1)", await ctx.evaluate(() => { const wm = document.querySelector(".wordmark"); if (!wm) return false; const cs = getComputedStyle(wm); return (cs.webkitBackgroundClip || cs.backgroundClip) === "text" && cs.color === "rgba(0, 0, 0, 0)" && (cs.backgroundImage || "").includes("logomark-fill"); }));
 ok("no static brandmark", await ctx.locator(".brandmark").count() === 0);
 ok("duo layer present", await ctx.locator(".ident .idf-duo").count() === 1);
 try {
@@ -74,8 +75,8 @@ try {
   await ctx.click("#themebtn");
   await ctx.waitForTimeout(1600);
 }
-ok("wordmark svg", await ctx.locator(".logo svg.wordmark").count() === 1);
-ok("wordmark clone motif", await ctx.locator(".logo .wm-hyphen rect").count() === 2 && await ctx.locator(".logo .wm-clone-echo").count() === 1);
+ok("wordmark span art", await ctx.locator(".logo span.wordmark").count() === 1);
+ok("footer wordmark", await ctx.locator(".ftbrand .wordmark").count() === 1);
 ok("wordmark no plain text", await ctx.evaluate(() => ![...document.querySelector(".logo").childNodes].some((n) => n.nodeType === 3 && n.textContent.trim() === "design-clone")));
 ok("footer wordmark", await ctx.locator("footer .wordmark--ft").count() === 1);
 ok("favicon diptych", await ctx.evaluate(() => (document.querySelector("link[rel=icon]") || {}).href.includes("favicon.png")));
