@@ -251,17 +251,12 @@
   }
 
   function wireNav() {
-    const WORDMARK = `<svg class="wordmark" viewBox="0 0 128 30" role="img" aria-label="design-clone">
-      <defs><linearGradient id="wmG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--acc2)"/><stop offset="1" stop-color="var(--acc)"/></linearGradient></defs>
-      <text x="0" y="21" class="wm-t" fill="var(--ink)">design</text>
-      <g class="wm-hyphen" aria-hidden="true"><rect x="61" y="12.4" width="12" height="2.6" rx="1.3" fill="url(#wmG)"/><rect x="62.4" y="14.4" width="12" height="2.6" rx="1.3" fill="var(--acc)" opacity=".55"/></g>
-      <text x="77.4" y="22.4" class="wm-t wm-clone-echo" aria-hidden="true" fill="var(--acc2)">clone</text>
-      <text x="76" y="21" class="wm-t" fill="url(#wmG)">clone</text>
-    </svg>`;
+    // M75-W1 艺术字标：主题生图（双联昼/夜）作字形填充——亮=昼半海空、暗=夜半星月，与头像图标同源同主题
+    const WORDMARK = `<span class="wordmark" role="img" aria-label="design-clone">design-clone</span>`;
     document.querySelectorAll(".logo").forEach((el) => {
-      el.insertAdjacentHTML("afterbegin", '<img class="logoimg" src="assets/logo-girl.png" alt="" width="38" height="38">');
-      el.insertAdjacentHTML("beforeend", WORDMARK);
-      el.childNodes.forEach((n) => { if (n.nodeType === 3 && n.textContent.trim() === "design-clone") n.remove(); });
+      if (el.querySelector(".wordmark")) return;
+      const txt = [...el.childNodes].find((n) => n.nodeType === 3 && n.textContent.trim());
+      if (txt) txt.replaceWith(document.createRange().createContextualFragment(WORDMARK));
     });
     document.querySelectorAll(".ftbrand").forEach((el) => { el.innerHTML = WORDMARK.replace('class="wordmark"', 'class="wordmark wordmark--ft"'); });
     matchMedia("(max-width: 820px)").addEventListener("change", () => { if (document.getElementById("stageframe")) renderProto(); });
