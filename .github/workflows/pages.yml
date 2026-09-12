@@ -22,10 +22,6 @@ jobs:
         run: |
           mkdir -p site/data
           curl -fsSL --max-time 20 https://api.github.com/repos/hello-cqq/design-clone | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);process.stdout.write(JSON.stringify({stars:j.stargazers_count||0}))}catch{process.stdout.write('{}')}})" > site/data/stars.json || echo '{}' > site/data/stars.json
-      - name: embed latest release (incl. snapshots)
-        run: |
-          mkdir -p site/data
-          curl -fsSL --max-time 20 "https://api.github.com/repos/hello-cqq/design-clone/releases?per_page=1" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d)[0]||{};process.stdout.write(JSON.stringify({tag_name:j.tag_name||'',prerelease:!!j.prerelease}))}catch{process.stdout.write('{}')}})" > site/data/release.json || echo '{}' > site/data/release.json
       - name: embed gallery fallback snapshot
         run: |
           curl -fsSL --max-time 20 https://hello-cqq.github.io/design-clone-prototype/index.json -o site/data/index.fallback.json \
