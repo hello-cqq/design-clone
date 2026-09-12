@@ -186,6 +186,15 @@ process.exit(fails.length ? 1 : 0);{
   await mp.waitForTimeout(1800);
   ok("mobile gallery no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
   ok("mobile gallery cards", await mp.locator("#cards .pcard").count() >= 4);
+  // M75-W5: 360 宽 + proto 页横溢断言
+  await mp.setViewportSize({ width: 360, height: 800 });
+  await mp.goto(base + "/index.html", { waitUntil: "domcontentloaded" });
+  await mp.waitForTimeout(800);
+  ok("mobile360 index no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+  await mp.goto(base + "/proto.html?app=ai-assistant", { waitUntil: "domcontentloaded" });
+  await mp.waitForTimeout(1200);
+  ok("mobile360 proto no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+  ok("mobile step rail", await mp.locator(".steps b").count() === 4);
   await mp.goto(base + "/proto.html?app=petpark", { waitUntil: "networkidle" });
   await mp.waitForTimeout(2500);
   ok("mobile proto no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
