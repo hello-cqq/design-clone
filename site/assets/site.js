@@ -242,8 +242,12 @@
       const box = document.getElementById("specrow");
       if (!box) return;
       try {
-        const html = await (await fetch(a.url, { cache: "default" })).text();
-        const id = ((html.match(/window\.DC = (\{[\s\S]*?\});/) || [])[1] ? JSON.parse(html.match(/window\.DC = (\{[\s\S]*?\});/)[1]).pages[0].id : null);
+        // M74: index v5 pages 字段优先，旧索引/无字段时回退抓 prototype index.html
+        let id = (a.pages && a.pages[0] && a.pages[0].id) || null;
+        if (!id) {
+          const html = await (await fetch(a.url, { cache: "default" })).text();
+          id = ((html.match(/window\.DC = (\{[\s\S]*?\});/) || [])[1] ? JSON.parse(html.match(/window\.DC = (\{[\s\S]*?\});/)[1]).pages[0].id : null);
+        }
         if (!id) { box.style.display = "none"; return; }
         box.innerHTML = `<a class="chip" href="${a.url}pages/${id}.spec.json" target="_blank" rel="noopener">pages/${id}.spec.json</a>
           <a class="chip" href="${a.url}design/figma-source.json" target="_blank" rel="noopener">figma-source.json</a>`;
@@ -354,13 +358,6 @@
     const code0 = document.getElementById("installcmd");
     const STABLE_CMD = "curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/main/install.sh | bash";
     if (code0) code0.textContent = STABLE_CMD;
-    // M62-B(G2, 与 M67 单命令设计共存)：渠道 pill 切换 stable/snapshot + release 徽章
-    let relTag = "";
-    fetch("data/release.json", { cache: "default" }).then((r) => (r.ok ? r.json() : {})).catch(() => ({})).then((j) => {
-      relTag = j.tag_name || "";
-      const rb = document.getElementById("relbadge");
-      if (rb && relTag) { rb.textContent = (j.prerelease ? "◐ " : "● ") + relTag; rb.style.cursor = "pointer"; rb.onclick = () => { window.open("https://github.com/hello-cqq/design-clone/releases", "_blank"); }; }
-    }).catch(() => {});
     const cp = document.getElementById("copycmd");
     if (cp) cp.onclick = () => { navigator.clipboard.writeText(document.getElementById("installcmd").textContent); cp.textContent = "✓"; setTimeout(() => (cp.textContent = "copy"), 1200); };
 
