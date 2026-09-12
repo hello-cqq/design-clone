@@ -156,14 +156,15 @@
 
   async function renderFeatured() {
     const idx = await loadIndex();
-    const apps = (idx.apps || []).slice().sort((a, b) => (b.downloads || 0) - (a.downloads || 0)).slice(0, 4);
+    const boost = (a) => (a.app === "ai-assistant" ? 1e9 : 0) + (a.downloads || 0); // M75-W3: 智能助理置顶精选
+    const apps = (idx.apps || []).slice().sort((a, b) => boost(b) - boost(a)).slice(0, 4);
     const el = document.getElementById("featured");
     if (el) el.innerHTML = apps.map(card).join("");
     const sel = document.getElementById("expselect");
     if (sel && !sel.options.length) {
       const apps = idx.apps || [];
       sel.innerHTML = apps.map((a) => `<option value="${a.app}">${L(a.name, a.app)}</option>`).join("");
-      if (apps.some((a) => a.app === "petpark")) sel.value = "petpark";
+      if (apps.some((a) => a.app === "ai-assistant")) sel.value = "ai-assistant"; else if (apps.some((a) => a.app === "petpark")) sel.value = "petpark";
       switchExp(sel.value);
     }
   }
@@ -171,7 +172,7 @@
     const idx = state.index;
     const a = (idx && idx.apps || []).find((x) => x.app === app);
     const fl = document.getElementById("expframe");
-    if (fl) fl.src = a ? (isMobile() ? a.url + (a.url.includes("?") ? "&" : "?") + "chrome=0&embed=1&theme=" + state.theme : a.url) : `${PROTO_BASE}/petpark/prototype/`;
+    if (fl) fl.src = a ? (isMobile() ? a.url + (a.url.includes("?") ? "&" : "?") + "chrome=0&embed=1&theme=" + state.theme : a.url) : `${PROTO_BASE}/ai-assistant/prototype/`;
   }
 
   async function renderGallery() {

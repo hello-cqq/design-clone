@@ -11,9 +11,9 @@
 
 **[🌐 Official site & live gallery →](https://hello-cqq.github.io/design-clone/)** · [中文文档](README.zh.md) · [Gallery 画廊](https://hello-cqq.github.io/design-clone/gallery.html)
 
-<img src="https://raw.githubusercontent.com/hello-cqq/design-clone-prototype/main/petpark/cover.png" alt="PetPark — a 3D plush-cute pet park prototype built with design-clone" width="720" />
+<img src="https://raw.githubusercontent.com/hello-cqq/design-clone-prototype/main/ai-assistant/cover.png" alt="PetPark — a 3D plush-cute pet park prototype built with design-clone" width="720" />
 
-*↑ [PetPark](https://hello-cqq.github.io/design-clone/proto.html?app=petpark): generated end-to-end by the skill — tap, play, export it live.*
+*↑ [AI Assistant](https://hello-cqq.github.io/design-clone/proto.html?app=ai-assistant): generated end-to-end by the skill — switch persona/voice, chat, call, play it live.*
 
 </div>
 
