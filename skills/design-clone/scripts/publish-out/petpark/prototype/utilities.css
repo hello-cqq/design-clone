@@ -1,0 +1,19 @@
+/* utilities.css —— 由 scripts/gen/utility-css.mjs 生成（M45），替代 @tailwindcss/browser CDN。
+ * 只含本 run 视图真实用到的 utility 子集；run 自定义类（如 al-root / card / on）仍由视图内联样式提供。
+ * 含 scoped preflight（:where 归零特异性，组件库类仍可覆盖）。
+ * 重新生成：node scripts/gen/utility-css.mjs --run <runDir>
+ */
+:where(#dc-stage),:where(#dc-stage *),:where(#dc-stage *::before),:where(#dc-stage *::after){box-sizing:border-box;border-width:0;border-style:solid;border-color:currentColor}
+:where(#dc-stage){line-height:1.5;-webkit-text-size-adjust:100%}
+:where(#dc-stage) :where(h1,h2,h3,h4,h5,h6,p,figure,blockquote,dl,dd,pre){margin:0}
+:where(#dc-stage) :where(h1,h2,h3,h4,h5,h6){font-size:inherit;font-weight:inherit}
+:where(#dc-stage) :where(b,strong){font-weight:600} /* M48 排版预算：裸 b/strong 默认 700=黑粗 */
+:where(#dc-stage) :where(ul,ol,menu){list-style:none;margin:0;padding:0}
+:where(#dc-stage) :where(img,svg,video,canvas,audio,iframe,embed,object){display:block;vertical-align:middle}
+:where(#dc-stage) :where(img,video){max-width:100%;height:auto}
+:where(#dc-stage) :where(button,input,optgroup,select,textarea){font:inherit;font-size:100%;color:inherit;margin:0;padding:0}
+:where(#dc-stage) :where(button,[role="button"]){cursor:pointer}
+:where(#dc-stage) :where(a){color:inherit;text-decoration:inherit}
+:where(#dc-stage) :where(table){text-indent:0;border-color:inherit;border-collapse:collapse}
+:where(#dc-stage) :where(hr){height:0;color:inherit;border-top-width:1px}
+

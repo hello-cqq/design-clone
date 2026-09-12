@@ -1,0 +1,341 @@
+{
+  "generated_at": "2026-09-10T09:33:15.694Z",
+  "version": 3,
+  "flowsUsed": false,
+  "nodes": {
+    "01-home": {
+      "title": "乐园首页",
+      "index": "01"
+    },
+    "02-pets": {
+      "title": "萌宠档案",
+      "index": "02"
+    },
+    "03-map": {
+      "title": "乐园地图",
+      "index": "03"
+    },
+    "04-community": {
+      "title": "乐园社区",
+      "index": "04"
+    },
+    "05-me": {
+      "title": "我的",
+      "index": "05"
+    }
+  },
+  "edges": [
+    {
+      "i": 0,
+      "from": "01-home",
+      "to": "03-map",
+      "label": "tap · 03-map",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 1,
+      "from": "01-home",
+      "to": "04-community",
+      "label": "tap · 04-community",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 2,
+      "from": "01-home",
+      "to": "01-home",
+      "label": "tap · 01-home",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 3,
+      "from": "01-home",
+      "to": "02-pets",
+      "label": "tap · 02-pets",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 4,
+      "from": "01-home",
+      "to": "05-me",
+      "label": "tap · 05-me",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 5,
+      "from": "02-pets",
+      "to": "01-home",
+      "label": "tap · 01-home",
+      "kind": "navigate",
+      "role": "back"
+    },
+    {
+      "i": 6,
+      "from": "02-pets",
+      "to": "02-pets",
+      "label": "tap · 02-pets",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 7,
+      "from": "02-pets",
+      "to": "03-map",
+      "label": "tap · 03-map",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 8,
+      "from": "02-pets",
+      "to": "04-community",
+      "label": "tap · 04-community",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 9,
+      "from": "02-pets",
+      "to": "05-me",
+      "label": "tap · 05-me",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 10,
+      "from": "03-map",
+      "to": "01-home",
+      "label": "tap · 01-home",
+      "kind": "navigate",
+      "role": "back"
+    },
+    {
+      "i": 11,
+      "from": "03-map",
+      "to": "02-pets",
+      "label": "tap · 02-pets",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 12,
+      "from": "03-map",
+      "to": "03-map",
+      "label": "tap · 03-map",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 13,
+      "from": "03-map",
+      "to": "04-community",
+      "label": "tap · 04-community",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 14,
+      "from": "03-map",
+      "to": "05-me",
+      "label": "tap · 05-me",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 15,
+      "from": "04-community",
+      "to": "01-home",
+      "label": "tap · 01-home",
+      "kind": "navigate",
+      "role": "back"
+    },
+    {
+      "i": 16,
+      "from": "04-community",
+      "to": "02-pets",
+      "label": "tap · 02-pets",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 17,
+      "from": "04-community",
+      "to": "03-map",
+      "label": "tap · 03-map",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 18,
+      "from": "04-community",
+      "to": "04-community",
+      "label": "tap · 04-community",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 19,
+      "from": "04-community",
+      "to": "05-me",
+      "label": "tap · 05-me",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 20,
+      "from": "05-me",
+      "to": "01-home",
+      "label": "tap · 01-home",
+      "kind": "navigate",
+      "role": "back"
+    },
+    {
+      "i": 21,
+      "from": "05-me",
+      "to": "02-pets",
+      "label": "tap · 02-pets",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 22,
+      "from": "05-me",
+      "to": "03-map",
+      "label": "tap · 03-map",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 23,
+      "from": "05-me",
+      "to": "04-community",
+      "label": "tap · 04-community",
+      "kind": "navigate",
+      "role": "module"
+    },
+    {
+      "i": 24,
+      "from": "05-me",
+      "to": "05-me",
+      "label": "tap · 05-me",
+      "kind": "navigate",
+      "role": "module"
+    }
+  ],
+  "roots": [
+    "01-home"
+  ],
+  "depths": {
+    "01-home": 0,
+    "03-map": 1,
+    "04-community": 1,
+    "02-pets": 1,
+    "05-me": 1
+  },
+  "perNode": {
+    "01-home": {
+      "paths": [],
+      "pathInfo": [],
+      "tree": {
+        "node": "01-home",
+        "children": [
+          {
+            "edge": 0,
+            "child": {
+              "node": "03-map",
+              "children": []
+            }
+          },
+          {
+            "edge": 1,
+            "child": {
+              "node": "04-community",
+              "children": []
+            }
+          },
+          {
+            "edge": 3,
+            "child": {
+              "node": "02-pets",
+              "children": []
+            }
+          },
+          {
+            "edge": 4,
+            "child": {
+              "node": "05-me",
+              "children": []
+            }
+          }
+        ]
+      },
+      "nav": [
+        "03-map",
+        "04-community",
+        "01-home",
+        "02-pets",
+        "05-me"
+      ]
+    },
+    "02-pets": {
+      "paths": [],
+      "pathInfo": [],
+      "tree": {
+        "node": "02-pets",
+        "children": []
+      },
+      "nav": [
+        "02-pets",
+        "03-map",
+        "04-community",
+        "05-me"
+      ]
+    },
+    "03-map": {
+      "paths": [],
+      "pathInfo": [],
+      "tree": {
+        "node": "03-map",
+        "children": []
+      },
+      "nav": [
+        "02-pets",
+        "03-map",
+        "04-community",
+        "05-me"
+      ]
+    },
+    "04-community": {
+      "paths": [],
+      "pathInfo": [],
+      "tree": {
+        "node": "04-community",
+        "children": []
+      },
+      "nav": [
+        "02-pets",
+        "03-map",
+        "04-community",
+        "05-me"
+      ]
+    },
+    "05-me": {
+      "paths": [],
+      "pathInfo": [],
+      "tree": {
+        "node": "05-me",
+        "children": []
+      },
+      "nav": [
+        "02-pets",
+        "03-map",
+        "04-community",
+        "05-me"
+      ]
+    }
+  }
+}

@@ -53,8 +53,12 @@ if (!category) {
 /* ---------- 双语名称/描述基线 ---------- */
 const title = String(manifest.title || "").trim();
 const hasCJK = (s) => /[\u4e00-\u9fa5]/.test(s);
-const nameZh = values["name-zh"] || (hasCJK(title) ? title.slice(0, 40) : hasCJK(app) ? app : `${CAT_ZH[category] || category} · 可交互原型`);
-const nameEn = values["name-en"] || (!hasCJK(title) && title ? title.slice(0, 40) : `${app} · ${category} prototype`);
+// M75-W4：官方名优先（references/official-names.json 子串命中）；后缀（学习复刻/手机版）只进 description
+const OFFICIAL = (() => { try { return JSON.parse(fs.readFileSync(new URL("../../references/official-names.json", import.meta.url), "utf8")); } catch { return {}; } })();
+const offKey = Object.keys(OFFICIAL).filter((k) => k !== "_comment" && app.toLowerCase().includes(k)).sort((a, b) => b.length - a.length)[0];
+const off = offKey ? OFFICIAL[offKey] : null;
+const nameZh = values["name-zh"] || (off && off.zh) || (hasCJK(title) ? title.slice(0, 40) : hasCJK(app) ? app : `${CAT_ZH[category] || category} · 可交互原型`);
+const nameEn = values["name-en"] || (off && off.en) || (!hasCJK(title) && title ? title.slice(0, 40) : `${app} · ${category} prototype`);
 const homeProd = products[(dc.pages || [])[0]?.id] || Object.values(products)[0] || {};
 const funcZh = homeProd.function || "完整可交互界面与路径演示";
 const SHELL_EN = { c_mobile: "mobile", c_tablet: "tablet", c_desktop: "desktop", c_browser: "web" };

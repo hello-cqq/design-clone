@@ -1,0 +1,51 @@
+{
+  "_comment": "官方产品名映射（M75-W4）：gallery-meta 优先采用；键=匹配子串（run target/app 名包含即命中）；无命中且输入未明确→生成产品义名",
+  "wechat": {
+    "zh": "微信",
+    "en": "WeChat",
+    "official_home": "https://weixin.qq.com"
+  },
+  "aliyun": {
+    "zh": "阿里云",
+    "en": "Aliyun",
+    "official_home": "https://www.aliyun.com"
+  },
+  "lark": {
+    "zh": "飞书",
+    "en": "Lark",
+    "official_home": "https://www.feishu.cn"
+  },
+  "feishu": {
+    "zh": "飞书",
+    "en": "Lark",
+    "official_home": "https://www.feishu.cn"
+  },
+  "douyin": {
+    "zh": "抖音",
+    "en": "Douyin",
+    "official_home": "https://www.douyin.com"
+  },
+  "bilibili": {
+    "zh": "哔哩哔哩",
+    "en": "Bilibili",
+    "official_home": "https://www.bilibili.com"
+  },
+  "xiaohongshu": {
+    "zh": "小红书",
+    "en": "RED",
+    "official_home": "https://www.xiaohongshu.com"
+  },
+  "petpark": {
+    "zh": "宠物乐园",
+    "en": "PetPark"
+  },
+  "assistant": {
+    "zh": "智能助理",
+    "en": "AI Assistant"
+  },
+  "dy": {
+    "zh": "抖音",
+    "en": "Douyin",
+    "official_home": "https://www.douyin.com"
+  }
+}

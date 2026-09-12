@@ -128,7 +128,19 @@ if (values.dry) {
   process.exit(0);
 }
 const work = fs.mkdtempSync(path.join(process.env.TMPDIR || "/tmp", "dcp-work-"));
-execSync(`git clone --depth 50 git@github.com:${values.repo}.git ${work}`, { stdio: "inherit" });
+// M75: 缓存克隆复用——proto 仓体积大、全量 clone 慢且易超时；固定缓存目录 fetch --depth 1 增量更新
+const cache = path.join(process.env.HOME || "/tmp", ".cache", "design-clone-publish", values.repo);
+fs.mkdirSync(path.dirname(cache), { recursive: true });
+if (fs.existsSync(path.join(cache, ".git"))) {
+  execSync(`git -C "${cache}" fetch --depth 1 origin main`, { stdio: "inherit" });
+  execSync(`git -C "${cache}" checkout -B main origin/main --force`, { stdio: "inherit" });
+  execSync(`git -C "${cache}" clean -fdx -e .git`, { stdio: "inherit" });
+  fs.rmSync(work, { recursive: true, force: true });
+  fs.cpSync(cache, work, { recursive: true });
+} else {
+  execSync(`git clone --depth 1 git@github.com:${values.repo}.git ${cache}`, { stdio: "inherit" });
+  fs.cpSync(cache, work, { recursive: true });
+}
 const appDir = path.join(work, values.app);
 fs.mkdirSync(appDir, { recursive: true });
 if (!fs.existsSync(path.join(appDir, "meta.json"))) fs.copyFileSync(path.join(tmp, values.app, "meta.json"), path.join(appDir, "meta.json"));
