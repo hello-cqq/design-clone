@@ -259,6 +259,18 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
 .brandmark img { width: 96px; height: 96px; object-fit: cover;
   -webkit-mask-image: radial-gradient(ellipse 58% 56% at 50% 46%, #000 50%, rgba(0, 0, 0, .5) 68%, transparent 80%);
   mask-image: radial-gradient(ellipse 58% 56% at 50% 46%, #000 50%, rgba(0, 0, 0, .5) 68%, transparent 80%); }
+/* M75-W6 编号步骤引导轨 */
+.steps { display: inline-flex; gap: 6px; margin-left: 10px; }
+.steps b {
+  width: 20px; height: 20px; border-radius: 999px; display: grid; place-items: center;
+  font-size: 10.5px; font-weight: 600; cursor: pointer; color: var(--mut, #8b95a3);
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 18%, transparent);
+  transition: all .25s cubic-bezier(.34, 1.56, .64, 1);
+}
+.steps b.on { color: #08331f; background: var(--acc2, #6fd3b2); box-shadow: 0 4px 10px color-mix(in srgb, var(--acc2, #6fd3b2) 45%, transparent); transform: scale(1.12); }
+.steps b.done { color: var(--acc2, #6fd3b2); }
+
 /* M68 wordmark → M75-W1 艺术字标（生图填充） */
 .wordmark {
   display: inline-block; font-weight: 800; font-size: 21px; letter-spacing: .01em; line-height: 1.1;

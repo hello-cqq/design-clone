@@ -46,7 +46,9 @@
         <rect width="120" height="230" rx="20" fill="${P.dark}"/>
         <rect x="5" y="5" width="110" height="220" rx="16" fill="${P.white}"/>
         <rect x="44" y="10" width="32" height="6" rx="3" fill="${P.dark}"/>
-        <rect x="12" y="26" width="60" height="9" rx="4" fill="${P.ink}" opacity=".85"/>
+        <rect x="5" y="20" width="110" height="14" rx="7" fill="#07c160" opacity=".92"/>
+        <text x="60" y="29.5" text-anchor="middle" font-size="6.5" fill="#fff" font-weight="600">微信</text>
+        <rect x="12" y="40" width="60" height="9" rx="4" fill="${P.ink}" opacity=".85"/>
         <g class="scrollfeed">
           <g transform="translate(12,44)"><circle cx="10" cy="10" r="10" fill="${P.acc2}"/><rect x="26" y="3" width="60" height="6" rx="3" fill="${P.ink}" opacity=".7"/><rect x="26" y="13" width="70" height="5" rx="2.5" fill="${P.mut}" opacity=".5"/></g>
           <g transform="translate(12,72)"><circle cx="10" cy="10" r="10" fill="${P.acc3}"/><rect x="26" y="3" width="52" height="6" rx="3" fill="${P.ink}" opacity=".7"/><rect x="26" y="13" width="66" height="5" rx="2.5" fill="${P.mut}" opacity=".5"/></g>
@@ -54,7 +56,10 @@
           <g transform="translate(12,128)"><circle cx="10" cy="10" r="10" fill="${P.acc}"/><rect x="26" y="3" width="48" height="6" rx="3" fill="${P.ink}" opacity=".7"/><rect x="26" y="13" width="70" height="5" rx="2.5" fill="${P.mut}" opacity=".5"/></g>
           <g transform="translate(12,156)"><circle cx="10" cy="10" r="10" fill="#c9b6f2"/><rect x="26" y="3" width="56" height="6" rx="3" fill="${P.ink}" opacity=".7"/><rect x="26" y="13" width="64" height="5" rx="2.5" fill="${P.mut}" opacity=".5"/></g>
         </g>
-        <rect x="12" y="204" width="96" height="14" rx="7" fill="${P.light}"/>
+        <g transform="translate(5,209)"><rect width="110" height="16" rx="8" fill="#f6f7f9"/>
+          <g fill="${P.mut}" opacity=".8"><circle cx="16" cy="7" r="3.4"/><circle cx="40" cy="7" r="3.4"/><circle cx="64" cy="7" r="3.4"/><circle cx="88" cy="7" r="3.4"/></g>
+          <circle cx="16" cy="7" r="3.4" fill="#07c160"/>
+          <g font-size="4.6" fill="${P.mut}" text-anchor="middle"><text x="16" y="13.6">聊天</text><text x="40" y="13.6">通讯录</text><text x="64" y="13.6">发现</text><text x="88" y="13.6">我</text></g></g>
       </g>
       <g class="s2" transform="translate(190,40)">
         <rect width="150" height="150" rx="12" fill="${P.dark}" stroke="${P.line}"/>
@@ -94,13 +99,20 @@
           <rect x="5" y="10" width="108" height="210" rx="12" fill="url(#vid1)"/>
           <rect x="5" y="226" width="108" height="210" rx="12" fill="url(#vid2)"/>
         </g>
+        <text x="36" y="16" font-size="6.5" fill="rgba(255,255,255,.55)">关注</text>
+        <text x="60" y="16" font-size="6.5" fill="#fff" font-weight="600">推荐</text>
+        <rect x="58" y="18" width="14" height="1.6" rx=".8" fill="#fff"/>
         <g transform="translate(92,120)" fill="#fff">
           <g><path d="M6 0 C9 0 11 2.4 11 5 C11 8 6 12 6 12 C6 12 1 8 1 5 C1 2.4 3 0 6 0z" fill="${P.red}"/><text x="6" y="20" text-anchor="middle" font-size="6" fill="#fff">1.2w</text></g>
           <g transform="translate(0,30)"><path d="M1 1h10v7H4l-3 3z" fill="#fff"/><text x="6" y="18" text-anchor="middle" font-size="6" fill="#fff">863</text></g>
           <g transform="translate(0,60)"><path d="M6 1 L11 6 L6 11 L1 6z" fill="#fff"/><text x="6" y="18" text-anchor="middle" font-size="6" fill="#fff">share</text></g>
         </g>
-        <rect x="12" y="196" width="70" height="6" rx="3" fill="rgba(255,255,255,.85)"/>
-        <rect x="12" y="206" width="52" height="5" rx="2.5" fill="rgba(255,255,255,.5)"/>
+        <rect x="12" y="188" width="70" height="6" rx="3" fill="rgba(255,255,255,.85)"/>
+        <rect x="12" y="198" width="52" height="5" rx="2.5" fill="rgba(255,255,255,.5)"/>
+        <g transform="translate(5,214)"><rect width="108" height="17" rx="8" fill="rgba(0,0,0,.55)"/>
+          <g fill="rgba(255,255,255,.75)"><circle cx="14" cy="7" r="3.2"/><circle cx="38" cy="7" r="3.2"/><circle cx="62" cy="7" r="3.2"/><circle cx="86" cy="7" r="3.2"/></g>
+          <circle cx="38" cy="7" r="3.2" fill="#fff"/>
+          <g font-size="4.4" fill="rgba(255,255,255,.7)" text-anchor="middle"><text x="14" y="14">首页</text><text x="38" y="14">朋友</text><text x="62" y="14">拍摄</text><text x="86" y="14">消息</text></g></g>
       </g>
       <g class="s2" transform="translate(40,150)">
         <rect x="5" y="40" width="108" height="92" rx="14" fill="rgba(255,255,255,.97)"/>
@@ -137,6 +149,9 @@
       ],
       svg: `
       <g class="s1" transform="translate(36,36)">
+        <rect x="-6" y="-12" width="212" height="9" rx="4.5" fill="rgba(120,130,145,.35)"/>
+        <circle cx="2" cy="-7.5" r="2.6" fill="rgba(255,255,255,.85)"/>
+        <g font-size="5" fill="rgba(255,255,255,.85)"><text x="10" y="-5.6">Finder</text><text x="26" y="-5.6">文件</text><text x="38" y="-5.6">编辑</text><text x="50" y="-5.6">显示</text></g>
         <rect width="200" height="140" rx="12" fill="${P.white}" stroke="rgba(0,0,0,.12)"/>
         <rect width="200" height="20" rx="12" fill="#eceff3"/>
         <circle cx="12" cy="10" r="3" fill="${P.red}"/><circle cx="22" cy="10" r="3" fill="${P.yellow}"/><circle cx="32" cy="10" r="3" fill="${P.green}"/>
@@ -149,6 +164,8 @@
         <rect x="66" y="50" width="64" height="24" rx="6" fill="${P.light}"/>
         <rect x="66" y="80" width="64" height="24" rx="6" fill="${P.light}"/>
         <rect x="146" y="26" width="46" height="106" rx="8" fill="#f7f8fa"/>
+        <g transform="translate(52,146)"><rect width="96" height="13" rx="6.5" fill="rgba(120,130,145,.3)"/>
+          <g><circle cx="12" cy="6.5" r="4" fill="${P.acc3}"/><circle cx="28" cy="6.5" r="4" fill="${P.acc2}"/><circle cx="44" cy="6.5" r="4" fill="${P.acc}"/><circle cx="60" cy="6.5" r="4" fill="#c9b6f2"/><circle cx="76" cy="6.5" r="4" fill="${P.yellow}"/><rect x="86" y="2.5" width="1.4" height="8" rx=".7" fill="rgba(255,255,255,.5)"/></g></g>
         ${cursor(96, 62, "tapcursor")}
       </g>
       <g class="s2" transform="translate(250,30)">
@@ -193,7 +210,9 @@
         <rect width="190" height="120" rx="12" fill="${P.white}" stroke="rgba(0,0,0,.12)"/>
         <rect width="190" height="22" rx="12" fill="#eceff3"/>
         <circle cx="12" cy="11" r="3" fill="${P.red}"/><circle cx="22" cy="11" r="3" fill="${P.yellow}"/><circle cx="32" cy="11" r="3" fill="${P.green}"/>
-        <rect x="44" y="5" width="120" height="12" rx="6" fill="#fff"/>
+        <rect x="44" y="5" width="104" height="12" rx="6" fill="#fff"/>
+        <rect x="152" y="5" width="26" height="12" rx="6" fill="rgba(0,0,0,.07)"/>
+        <text x="165" y="13.5" text-anchor="middle" font-size="7" fill="${P.mut}">+</text>
         <rect class="urltype" x="48" y="8" width="20" height="6" rx="3" fill="${P.acc3}"/>
         <text x="50" y="13.5" font-size="6.5" fill="${P.ink}" opacity=".75">https://example.com</text>
         <rect x="10" y="30" width="170" height="34" rx="8" fill="url(#heroG)"/>
@@ -244,24 +263,25 @@
     const sc = SCENES[sceneKey];
     el.innerHTML = `
       <div class="cap"><span class="captxt"></span>
-        <span class="steps"><i></i><i></i><i></i><i></i></span>
+        <span class="steps">${[1, 2, 3, 4].map((n) => `<b data-s="${n}">${n}</b>`).join("")}</span>
         <button class="replay">replay</button></div>
       <div class="svgbox"><svg viewBox="0 0 520 290" data-step="1">${sc.svg}</svg></div>`;
     const svgEl = el.querySelector("svg");
     const cap = el.querySelector(".captxt");
-    const dots = [...el.querySelectorAll(".steps i")];
+    const dots = [...el.querySelectorAll(".steps b")];
     const lang = () => (document.documentElement.lang === "zh-CN" ? 1 : 0);
     let step = 1, timer = null;
     const paint = () => {
       svgEl.setAttribute("data-step", step);
       cap.textContent = `${step}/4 · ${sc.steps[step - 1][lang()]}`;
-      dots.forEach((d, i) => d.classList.toggle("on", i < step));
+      dots.forEach((d, i) => { d.classList.toggle("on", i + 1 === step); d.classList.toggle("done", i + 1 < step); });
     };
     const play = () => {
       clearInterval(timer);
       step = 1; paint();
       timer = setInterval(() => { if (step < 4) { step++; paint(); } else clearInterval(timer); }, 2400);
     };
+    dots.forEach((d) => (d.onclick = () => { clearInterval(timer); step = +d.dataset.s; paint(); timer = setInterval(() => { if (step < 4) { step++; paint(); } else clearInterval(timer); }, 2400); }));
     el.querySelector(".replay").onclick = play;
     el._replayLang = () => paint();
     play();
