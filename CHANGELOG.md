@@ -3,6 +3,61 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/); versioning is SemVer and mirrors `SKILL.md → metadata.version`.
 
+## [0.6.0-snapshot.20260912] - 2026-09-12
+
+Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
+
+### M75
+- docs: LESSONS 153-155 + ROADMAP M75
+
+### M75-W7b
+- : e2e 断言对齐 M75-W1 字标（wordmark span/art-clip/footer）+ demo-assistant products.json 三要素补齐并发布 v1.1.0
+
+### M75-W7a
+- : M74 遗留清理——删 relbadge 死块与 pages.yml release.json 步；specrow 改 index v5 pages 优先（旧索引回退）
+
+### M75-W5
+- : 移动端横溢清零（顶栏 wrap+ghbtn 紧凑+ident 内夹）360/390 全页 0 溢出；e2e 移动套件加 360+proto 横溢断言与步骤轨断言
+
+### M75-W6
+- : 四功能演示真景化——编号步骤引导轨(1-4 可点跳步/双语/主题感知)+微信绿头+底部 tabbar/抖音关注推荐顶 tabs+底 nav/mac 菜单栏+Dock/网页多标签；demo-anim z-order 修正
+
+### M75-W3
+- : 智能助理 demo（brief+5 视图全门绿：interact 0/inspect 43-0/ui-smoke 28-0/critique 5x5）发布 ai-assistant v1.0.0；官网 live proof/精选置顶/README banner 换助理；波形 inline 修复；appicon icon.png 复制时序修复
+
+### M75-W2
+- : enrich.mjs 稀薄输入富化（离线词表+hints 注入+rubric 自检循环建议）+ references/prompt-enrichment.md + SKILL 工作流硬步骤
+
+### M75-W4
+- : 官方名优先(official-names.json+gallery-meta 自动命中)+probe-icon.mjs 官方图标探测+asset-sourcing.md 取材工作流+封面名称自适应不截字；种子五 app v1.3.0/v2.1.0 重发布（微信/阿里云/飞书/抖音/PetPark 短名+官方形图标+新封面）；publish 缓存克隆复用修超时
+
+### M75-W1
+- : 艺术字标——主题生图双联(昼/夜)作字形填充(background-clip:text)，亮=海空带/暗=星月带，与头像图标同源；nav+footer 统一；SVG 字标下线
+
+### M75-W8
+- : 通用 patch-erase.mjs（patch-match lite+streak+track+srcreplace）+ 女形象耳后铅笔完美去除（logo-girl/logo-main/256/favicon/ident-light.mp4 179 帧三段键帧移植）+ references/asset-retouch.md 配方与边界；原片备份于 gitignore 目录
+
+### M63.1
+- : 修画廊封面双前缀 404（card 模板对已拼接 cover 再缀 PROTO_BASE）
+
+### M72+M73
+- : 安装框清净(删release徽章/渠道pill+断言防回潮)+卡片语义(封面截图+角标图标+贡献者留详情页)+移动端重做(chromeless嵌入+页面chips+体验条/安装/jump适配)；proto仓index v5 pages字段；LESSONS 164-165/ROADMAP M72+M73
+
+### M63
+- : 资源治理——cover 桌面窗口框/浏览器框分流+category 计分制；publish FORBID 生图中间件；四种子 v1.2.0 重发布（icon+3:2 cover 全就位）；proto 仓 pr-gate 资源硬验+SPEC 1b（中英）；petpark 图标糖果薄荷爪印化；清理 _raw 中间件
+
+### M71
+- : 字标v2(紧凑+clone自克隆残影+细镜像横)+精选按钮只留更多+移动端820/560断点全页适配+e2e移动套件；删M62-B渠道pill残留+release.json落盘；LESSONS 163/ROADMAP M71
+
+### M62.2
+- : specrow 取值移到 side 渲染之后（此前 IIFE 先于 innerHTML 执行导致恒空）
+
+### M62.1
+- : 站点渠道切换/release 徽章与 M67 单命令设计共存重接；proto contributors login override（头像渲染）
+
+### M70
+- : 下载可用(release直链+files.json客户端zip兜底)+贡献者圆头像(creator首位/排bot/链主页)+原型iframe主题联动(postMessage+?theme=)+画廊appicon瓷砖/去标题/搜索铺满；vendored zipstore；LESSONS 162/ROADMAP M70
+
 ## [0.6.0-snapshot.20260911.1] - 2026-09-11
 
 Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
