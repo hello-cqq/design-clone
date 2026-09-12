@@ -1,0 +1,81 @@
+<style>
+  .pp-root{font-family:ui-rounded,-apple-system,"PingFang SC","Segoe UI",sans-serif;color:#4a3b2e;background:
+    radial-gradient(120% 60% at 50% -10%, #fff6e9 0%, #ffeeda 55%, #ffe8d2 100%);min-height:100%;position:relative;padding:50px 16px 108px;box-sizing:border-box;overflow:hidden}
+  .pp-clay{background:#fffdf8;border-radius:24px;box-shadow:0 12px 24px rgba(74,59,46,.14), inset 0 2px 0 rgba(255,255,255,.85), inset 0 -4px 0 rgba(74,59,46,.10);border:1px solid rgba(74,59,46,.08);position:relative}
+  .pp-clay::before{content:"";position:absolute;inset:0;border-radius:inherit;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");pointer-events:none}
+  .pp-gloss::after{content:"";position:absolute;left:14%;top:10%;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%, #fff, rgba(255,255,255,0));opacity:.85;pointer-events:none}
+  .pp-head{display:flex;align-items:center;gap:10px;margin:0 2px 12px;position:relative;z-index:3}
+  .pp-head .logo{width:36px;height:36px;border-radius:13px;background:linear-gradient(140deg,#ffb38a,#ff9d6b);display:grid;place-items:center;box-shadow:0 6px 12px rgba(255,157,107,.4), inset 0 2px 0 rgba(255,255,255,.6)}
+  .pp-head .t{font-size:19px;font-weight:600;letter-spacing:.01em}
+  .pp-head .wx{margin-left:auto;font-size:11px;color:#8a7660;background:#fffdf8;border-radius:999px;padding:6px 12px;box-shadow:0 4px 10px rgba(74,59,46,.12), inset 0 2px 0 rgba(255,255,255,.8);cursor:pointer}
+  .pp-clouds{position:absolute;left:0;right:0;top:34px;height:120px;pointer-events:none;z-index:1}
+  .pp-clouds svg{position:absolute;animation:drift 60s linear infinite}
+  .pp-clouds svg:nth-child(2){animation-duration:80s;opacity:.7;filter:blur(.5px)}
+  .pp-clouds svg:nth-child(3){animation-duration:100s;opacity:.5;filter:blur(1px)}
+  @keyframes drift{from{transform:translateX(-140px)}to{transform:translateX(420px)}}
+  .pp-hero{position:relative;padding:8px 10px 0;margin-bottom:14px;overflow:hidden;z-index:2}
+  .pp-hero .isle{width:100%;height:auto;display:block}
+  .pp-hero .pet{position:absolute;left:50%;top:26%;transform:translateX(-50%);width:132px;filter:drop-shadow(0 14px 10px rgba(74,59,46,.22));cursor:pointer;animation:bob 2.4s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0) scale(1)}50%{transform:translateX(-50%) translateY(-3px) scale(1.02,0.98)}}
+  .pp-hero .chip{position:absolute;top:10px;left:10px;background:#fffdf8;border-radius:999px;padding:7px 12px;font-size:11px;font-weight:500;box-shadow:0 4px 10px rgba(74,59,46,.14), inset 0 2px 0 rgba(255,255,255,.85);cursor:pointer}
+  .pp-hero .chip2{position:absolute;top:10px;right:10px;background:linear-gradient(140deg,#8fe0cb,#7edcc3);color:#fff;border-radius:999px;padding:7px 12px;font-size:11px;font-weight:600;box-shadow:0 6px 12px rgba(127,219,196,.45), inset 0 2px 0 rgba(255,255,255,.5);cursor:pointer}
+  .pp-acts{display:flex;gap:10px;margin-bottom:14px;position:relative;z-index:2}
+  .pp-act{flex:1;padding:12px 8px;text-align:center;cursor:pointer;box-shadow:0 4px 0 rgba(74,59,46,.12), 0 12px 24px rgba(74,59,46,.12), inset 0 2px 0 rgba(255,255,255,.85);transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+  .pp-act:active{transform:scale(.96)}
+  .pp-act .ic{width:40px;height:40px;margin:0 auto 6px;border-radius:15px;display:grid;place-items:center;box-shadow:inset 0 2px 0 rgba(255,255,255,.7), 0 5px 10px rgba(74,59,46,.14)}
+  .pp-act .lb{font-size:12px;font-weight:600}
+  .pp-act .sb{font-size:10px;color:#8a7660;margin-top:2px;font-variant-numeric:tabular-nums}
+  .pp-pass{display:flex;gap:12px;align-items:center;padding:14px;margin-bottom:14px;cursor:pointer;position:relative;z-index:2}
+  .pp-pass .qr{width:56px;height:56px;border-radius:16px;background:#4a3b2e;display:grid;place-items:center;flex:none;box-shadow:inset 0 2px 0 rgba(255,255,255,.25), 0 6px 12px rgba(74,59,46,.3)}
+  .pp-pass .t{font-size:14px;font-weight:600}
+  .pp-pass .d{font-size:11px;color:#8a7660;margin:4px 0 6px}
+  .pp-pass .bar{height:8px;border-radius:999px;background:rgba(126,220,195,.3);box-shadow:inset 0 0 0 1px rgba(255,255,255,.6);overflow:hidden}
+  .pp-pass .bar i{display:block;height:100%;width:64%;border-radius:999px;background:linear-gradient(90deg,#8fe0cb,#5cc9ab)}
+  .pp-feed{padding:12px 14px;display:flex;gap:10px;align-items:center;cursor:pointer;position:relative;z-index:2}
+  .pp-feed img{width:42px;height:42px;border-radius:50%;object-fit:cover;flex:none;border:3px solid #fff6e9;box-shadow:0 4px 8px rgba(74,59,46,.2)}
+  .pp-feed .t{font-size:13px;font-weight:600}
+  .pp-feed .d{font-size:11px;color:#8a7660;margin-top:2px}
+  .pp-feed .go{margin-left:auto;color:#e07b39;font-size:12px;font-weight:600}
+  .pp-tabs{position:absolute;left:14px;right:14px;bottom:26px;background:#fffdf8;border-radius:999px;display:flex;justify-content:space-around;padding:10px 6px;box-shadow:0 4px 0 rgba(74,59,46,.10), 0 12px 24px rgba(74,59,46,.16), inset 0 2px 0 rgba(255,255,255,.9);z-index:8}
+  .pp-tabs span{font-size:12px;color:#a08d76;cursor:pointer;padding:6px 12px;border-radius:999px;transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+  .pp-tabs span.on{background:linear-gradient(140deg,#ffd9c2,#ffc9a8);color:#c05e2a;font-weight:600;box-shadow:inset 0 2px 0 rgba(255,255,255,.7)}
+  @media (prefers-reduced-motion: reduce){.pp-hero .pet,.pp-clouds svg{animation:none}}
+</style><div data-dc="pp/root" class="pp-root">
+  <div class="pp-clouds" aria-hidden="true">
+    <svg width="120" height="40" viewBox="0 0 120 40" style="left:-60px;top:8px"><g fill="#fff"><circle cx="30" cy="24" r="14"/><circle cx="52" cy="18" r="18"/><circle cx="76" cy="26" r="12"/></g></svg>
+    <svg width="90" height="32" viewBox="0 0 90 32" style="left:-40px;top:52px"><g fill="#fff"><circle cx="24" cy="18" r="11"/><circle cx="42" cy="14" r="14"/><circle cx="60" cy="20" r="9"/></g></svg>
+    <svg width="70" height="26" viewBox="0 0 70 26" style="left:-30px;top:88px"><g fill="#fff"><circle cx="20" cy="14" r="9"/><circle cx="36" cy="11" r="11"/><circle cx="50" cy="16" r="7"/></g></svg>
+  </div>
+  <div class="pp-head" data-dc="pp/head"><span class="logo pp-gloss"><svg width="18" height="18" viewBox="0 0 24 24" style="fill:#fff"><ellipse cx="7" cy="8" rx="2.4" ry="3.1"/><ellipse cx="12" cy="6.6" rx="2.4" ry="3.1"/><ellipse cx="17" cy="8" rx="2.4" ry="3.1"/><path d="M12 11c3.4 0 6 2.6 6 5.2 0 1.7-1.3 2.8-3 2.8-1.2 0-2-.5-3-.5s-1.8.5-3 .5c-1.7 0-3-1.1-3-2.8C9 13.6 11.6 11 12 11z"/></svg></span><span class="t">宠物乐园</span><span class="wx" data-act="toast" data-msg="今日晴朗 26° · 适宜出游（演示）">晴 26° · 优</span></div>
+  <div class="pp-hero pp-clay" data-dc="pp/hero">
+    <svg class="isle" viewBox="0 0 340 200" aria-hidden="true">
+      <ellipse cx="170" cy="168" rx="150" ry="26" fill="#a9e3c4"/>
+      <ellipse cx="170" cy="162" rx="128" ry="21" fill="#7edcc3"/>
+      <ellipse cx="170" cy="158" rx="128" ry="19" fill="url(#g1)"/>
+      <defs><radialGradient id="g1" cx=".4" cy=".3" r=".9"><stop offset="0" stop-color="#a9e3c4"/><stop offset="1" stop-color="#7edcc3"/></radialGradient>
+      <linearGradient id="w1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a5d8f2"/><stop offset="1" stop-color="#8ecdf0"/></linearGradient></defs>
+      <ellipse cx="82" cy="150" rx="46" ry="13" fill="url(#w1)"/>
+      <path d="M52 146 q30 -8 60 0" stroke="#fff" stroke-width="2.4" fill="none" opacity=".8" stroke-linecap="round"/>
+      <ellipse cx="256" cy="146" rx="40" ry="12" fill="#ffd9c2"/>
+      <path d="M240 140 q16 -24 34 -6" stroke="#ffb38a" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <path d="M240 140 q16 -24 34 -6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" opacity=".5"/>
+      <g><circle cx="126" cy="128" r="9" fill="#5cc9ab"/><circle cx="132" cy="120" r="7" fill="#7edcc3"/><rect x="127" y="132" width="3.4" height="8" rx="1.6" fill="#8a6b4a"/></g>
+      <g><circle cx="212" cy="124" r="10" fill="#5cc9ab"/><circle cx="219" cy="116" r="7.4" fill="#7edcc3"/><rect x="213" y="129" width="3.6" height="9" rx="1.7" fill="#8a6b4a"/></g>
+      <g fill="#ffd66b" opacity=".8"><circle cx="150" cy="150" r="2.4"/><circle cx="196" cy="146" r="2"/><circle cx="176" cy="156" r="1.8"/></g>
+    </svg>
+    <img class="pet" src="assets/pet-corgi.png" alt="" data-act="toast" data-msg="旺财：汪！今天去草坪区玩（演示）">
+    <span class="chip" data-act="toast" data-msg="园区营业中 09:00-21:00（演示）">营业中 · 09-21 点</span>
+    <span class="chip2 pp-gloss" data-goto="03-map">乐园地图</span>
+  </div>
+  <div class="pp-acts" data-dc="pp/acts">
+    <div class="pp-act pp-clay" data-act="sheet" data-title="预约入园" data-items="今天 14:00|今天 16:00|明天 10:00"><span class="ic pp-gloss" style="background:#d9f5ea"><svg width="18" height="18" viewBox="0 0 24 24" style="fill:none;stroke:#3fae83;stroke-width:2.2;stroke-linecap:round"><rect x="3" y="5" width="18" height="16" rx="4"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span><div class="lb">预约</div><div class="sb">今日余 12 位</div></div>
+    <div class="pp-act pp-clay" data-act="toast" data-msg="已为你匹配遛伴：豆豆（柯基 · 2 岁）（演示）"><span class="ic pp-gloss" style="background:#ffe9dc"><svg width="18" height="18" viewBox="0 0 24 24" style="fill:none;stroke:#e07b39;stroke-width:2.2;stroke-linecap:round"><path d="M4 12a8 8 0 0 1 16 0"/><circle cx="12" cy="16" r="3.2"/></svg></span><div class="lb">遛伴</div><div class="sb">附近 8 只</div></div>
+    <div class="pp-act pp-clay" data-act="toast" data-msg="打卡成功：草坪区 +5 积分（演示）"><span class="ic pp-gloss" style="background:#efe7fb"><svg width="18" height="18" viewBox="0 0 24 24" style="fill:none;stroke:#8a63d2;stroke-width:2.2;stroke-linecap:round" stroke-linejoin="round"><path d="M12 3l2.4 5 5.6.7-4 3.9 1 5.4-5-2.7-5 2.7 1-5.4-4-3.9 5.6-.7z"/></svg></span><div class="lb">打卡</div><div class="sb">连打 3 天</div></div>
+  </div>
+  <div class="pp-pass pp-clay" data-dc="pp/pass" data-act="toast" data-msg="入园码已刷新（演示）">
+    <span class="qr"><svg width="30" height="30" viewBox="0 0 24 24" style="fill:#fff"><path d="M3 3h8v8H3zM6 6h2v2H6zM13 3h8v8h-8zM16 6h2v2h-2zM3 13h8v8H3zM6 16h2v2H6zM14 14h3v3h-3zM19 16h2v2h-2zM15 19h2v2h-2z"/></svg></span>
+    <div style="flex:1"><div class="t">今日入园通行证</div><div class="d">旺财 · 柯基 | 草坪区 + 戏水区</div><div class="bar"><i></i></div></div>
+  </div>
+  <div class="pp-feed pp-clay" data-dc="pp/feed" data-goto="04-community"><img src="assets/pet-cat.png" alt=""><div><div class="t">团子的乐园日记</div><div class="d">今天在猫爬架区征服了最高层…</div></div><span class="go">去围观</span></div>
+  <div class="pp-tabs" data-dc="pp/tabs"><span class="on" data-goto="01-home">首页</span><span data-goto="02-pets">档案</span><span data-goto="03-map">地图</span><span data-goto="04-community">社区</span><span data-goto="05-me">我的</span></div>
+</div>

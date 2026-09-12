@@ -1,0 +1,64 @@
+<style>
+  .pp-root{font-family:ui-rounded,-apple-system,"PingFang SC","Segoe UI",sans-serif;color:#4a3b2e;background:
+    radial-gradient(120% 60% at 50% -10%, #fff6e9 0%, #ffeeda 55%, #ffe8d2 100%);min-height:100%;position:relative;padding:50px 16px 108px;box-sizing:border-box}
+  .pp-clay{background:#fffdf8;border-radius:24px;box-shadow:0 12px 24px rgba(74,59,46,.14), inset 0 2px 0 rgba(255,255,255,.85), inset 0 -4px 0 rgba(74,59,46,.10);border:1px solid rgba(74,59,46,.08);position:relative}
+  .pp-gloss::after{content:"";position:absolute;left:14%;top:10%;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%, #fff, rgba(255,255,255,0));opacity:.85;pointer-events:none}
+  .pp-head{display:flex;align-items:center;gap:10px;margin:0 2px 14px}
+  .pp-head .t{font-size:19px;font-weight:600}
+  .pp-head .add{margin-left:auto;width:34px;height:34px;border-radius:13px;background:linear-gradient(140deg,#8fe0cb,#5cc9ab);display:grid;place-items:center;box-shadow:0 6px 12px rgba(127,219,196,.45), inset 0 2px 0 rgba(255,255,255,.5);cursor:pointer;transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+  .pp-head .add:active{transform:scale(.94)}
+  .pp-petcard{position:relative;padding:18px 16px 14px;margin-bottom:14px;transform:rotate(-2deg)}
+  .pp-petcard .ph{position:relative;width:150px;margin:0 auto 4px}
+  .pp-petcard .ph img{width:150px;display:block;filter:drop-shadow(0 16px 10px rgba(74,59,46,.24));cursor:pointer;animation:bob 2.4s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.02,0.98)}}
+  .pp-petcard .ph::before{content:"";position:absolute;left:10%;right:10%;bottom:-10px;height:16px;border-radius:50%;background:radial-gradient(50% 50% at 50% 50%, rgba(74,59,46,.20), rgba(74,59,46,0))}
+  .pp-petcard .ph::after{content:"";position:absolute;left:50%;top:44%;width:120px;height:120px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle, rgba(255,214,107,.28), rgba(255,214,107,0) 70%);pointer-events:none}
+  .pp-petcard .nm{text-align:center;font-size:17px;font-weight:600}
+  .pp-petcard .bd{text-align:center;font-size:11px;color:#8a7660;margin:3px 0 12px}
+  .pp-rings{display:flex;justify-content:space-around;padding-bottom:4px}
+  .pp-rings .r{text-align:center;cursor:pointer;transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+  .pp-rings .r:active{transform:scale(.94)}
+  .pp-rings .r svg{display:block;margin:0 auto 4px}
+  .pp-rings .r .lb{font-size:10px;color:#8a7660}
+  .pp-rows{padding:6px 14px;margin-bottom:14px}
+  .pp-row{display:flex;align-items:center;gap:10px;padding:12px 2px;cursor:pointer;transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+  .pp-row:active{transform:scale(.98)}
+  .pp-row + .pp-row{border-top:1px dashed #eadbc4}
+  .pp-row .ic{width:32px;height:32px;border-radius:12px;display:grid;place-items:center;flex:none;box-shadow:inset 0 2px 0 rgba(255,255,255,.7), 0 4px 8px rgba(74,59,46,.12)}
+  .pp-row .lb{font-size:13px;font-weight:500}
+  .pp-row .mt{margin-left:auto;font-size:11px;color:#8a7660;font-variant-numeric:tabular-nums}
+  .pp-minis{display:flex;gap:10px}
+  .pp-mini{flex:1;padding:10px;display:flex;gap:9px;align-items:center;cursor:pointer;transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+  .pp-mini:first-child{transform:rotate(1.6deg)}
+  .pp-mini:last-child{transform:rotate(-1.6deg)}
+  .pp-mini:active{transform:scale(.95)}
+  .pp-mini img{width:44px;height:44px;object-fit:cover;border-radius:15px;border:3px solid #fff6e9;box-shadow:0 4px 8px rgba(74,59,46,.2), inset 0 2px 0 rgba(255,255,255,.6)}
+  .pp-mini .nm{font-size:12px;font-weight:600}
+  .pp-mini .bd{font-size:10px;color:#8a7660}
+  .pp-tabs{position:absolute;left:14px;right:14px;bottom:26px;background:#fffdf8;border-radius:999px;display:flex;justify-content:space-around;padding:10px 6px;box-shadow:0 4px 0 rgba(74,59,46,.10), 0 12px 24px rgba(74,59,46,.16), inset 0 2px 0 rgba(255,255,255,.9);z-index:8}
+  .pp-tabs span{font-size:12px;color:#a08d76;cursor:pointer;padding:6px 12px;border-radius:999px}
+  .pp-tabs span.on{background:linear-gradient(140deg,#ffd9c2,#ffc9a8);color:#c05e2a;font-weight:600;box-shadow:inset 0 2px 0 rgba(255,255,255,.7)}
+  @media (prefers-reduced-motion: reduce){.pp-petcard .ph img{animation:none}}
+</style><div data-dc="pp/root" class="pp-root">
+  <div class="pp-head" data-dc="pp/head"><span class="t">萌宠档案</span><span class="add pp-gloss" data-act="dialog" data-title="新增档案" data-body="为新的毛孩子建立乐园档案？（演示）"><svg width="16" height="16" viewBox="0 0 24 24" style="fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round"><path d="M12 5v14M5 12h14"/></svg></span></div>
+  <div class="pp-petcard pp-clay" data-dc="pp/petcard">
+    <div class="ph"><img src="assets/pet-corgi.png" alt="" data-act="toast" data-msg="旺财蹭了蹭你的手（演示）"></div>
+    <div class="nm">旺财</div>
+    <div class="bd">柯基 · 2 岁 4 个月 · 已绝育 · 芯片 3920</div>
+    <div class="pp-rings" data-dc="pp/rings">
+      <span class="r" data-act="toast" data-msg="体力 80：今天还能跑 5 圈（演示）"><svg width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="25" r="19" fill="none" stroke="rgba(126,220,195,.3)" stroke-width="7"/><circle cx="25" cy="25" r="19" fill="none" stroke="rgba(126,220,195,.3)" stroke-width="7" style="filter:none"/><circle cx="25" cy="25" r="19" fill="none" stroke="#5cc9ab" stroke-width="7" stroke-linecap="round" stroke-dasharray="95 120" transform="rotate(-90 25 25)"/><circle cx="25" cy="6" r="3.4" fill="#fff" opacity=".9"/><text x="25" y="29" text-anchor="middle" font-size="13" fill="#4a3b2e" font-weight="600" font-family="ui-rounded, sans-serif">80</text></svg><span class="lb">体力</span></span>
+      <span class="r" data-act="toast" data-msg="心情 92：刚吃了冻干（演示）"><svg width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="25" r="19" fill="none" stroke="rgba(255,179,138,.32)" stroke-width="7"/><circle cx="25" cy="25" r="19" fill="none" stroke="#ff9d6b" stroke-width="7" stroke-linecap="round" stroke-dasharray="110 120" transform="rotate(-90 25 25)"/><circle cx="25" cy="6" r="3.4" fill="#fff" opacity=".9"/><text x="25" y="29" text-anchor="middle" font-size="13" fill="#4a3b2e" font-weight="600" font-family="ui-rounded, sans-serif">92</text></svg><span class="lb">心情</span></span>
+      <span class="r" data-act="toast" data-msg="社交 65：认识了 3 个新朋友（演示）"><svg width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="25" r="19" fill="none" stroke="rgba(201,182,242,.35)" stroke-width="7"/><circle cx="25" cy="25" r="19" fill="none" stroke="#b79ded" stroke-width="7" stroke-linecap="round" stroke-dasharray="78 120" transform="rotate(-90 25 25)"/><circle cx="25" cy="6" r="3.4" fill="#fff" opacity=".9"/><text x="25" y="29" text-anchor="middle" font-size="13" fill="#4a3b2e" font-weight="600" font-family="ui-rounded, sans-serif">65</text></svg><span class="lb">社交</span></span>
+    </div>
+  </div>
+  <div class="pp-rows pp-clay" data-dc="pp/rows">
+    <div class="pp-row" data-act="toast" data-msg="疫苗：四联 2026-03 已接种，狂犬 2026-05 已接种（演示）"><span class="ic pp-gloss" style="background:#d9f5ea"><svg width="15" height="15" viewBox="0 0 24 24" style="fill:none;stroke:#3fae83;stroke-width:2.2;stroke-linecap:round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span class="lb">疫苗记录</span><span class="mt">全齐 · 2 剂</span></div>
+    <div class="pp-row" data-act="toast" data-msg="体重曲线：近 3 月 +0.6kg，处于理想区间（演示）"><span class="ic pp-gloss" style="background:#ffe9dc"><svg width="15" height="15" viewBox="0 0 24 24" style="fill:none;stroke:#e07b39;stroke-width:2.2;stroke-linecap:round"><path d="M4 19h16M7 16l4-6 3 4 3-7"/></svg></span><span class="lb">体重趋势</span><span class="mt">12.4 kg · 理想</span></div>
+    <div class="pp-row" data-act="toast" data-msg="健康提醒：下次体外驱虫 10-02（演示）"><span class="ic pp-gloss" style="background:#efe7fb"><svg width="15" height="15" viewBox="0 0 24 24" style="fill:none;stroke:#8a63d2;stroke-width:2.2;stroke-linecap:round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span><span class="lb">健康提醒</span><span class="mt">驱虫 10-02</span></div>
+  </div>
+  <div class="pp-minis" data-dc="pp/minis">
+    <div class="pp-mini pp-clay" data-act="toast" data-msg="团子：猫 · 1 岁（演示）"><img src="assets/pet-cat.png" alt=""><div><div class="nm">团子</div><div class="bd">猫 · 1 岁</div></div></div>
+    <div class="pp-mini pp-clay" data-act="toast" data-msg="雪饼：兔 · 8 个月（演示）"><img src="assets/pet-bunny.png" alt=""><div><div class="nm">雪饼</div><div class="bd">兔 · 8 个月</div></div></div>
+  </div>
+  <div class="pp-tabs" data-dc="pp/tabs"><span data-goto="01-home">首页</span><span class="on" data-goto="02-pets">档案</span><span data-goto="03-map">地图</span><span data-goto="04-community">社区</span><span data-goto="05-me">我的</span></div>
+</div>

@@ -1,0 +1,57 @@
+<style>
+  .pp-root{font-family:ui-rounded,-apple-system,"PingFang SC","Segoe UI",sans-serif;color:#4a3b2e;background:
+    radial-gradient(120% 60% at 50% -10%, #fff6e9 0%, #ffeeda 55%, #ffe8d2 100%);min-height:100%;position:relative;padding:50px 0 0;box-sizing:border-box;overflow:hidden}
+  .pp-clay{background:#fffdf8;border-radius:24px;box-shadow:0 12px 24px rgba(74,59,46,.14), inset 0 2px 0 rgba(255,255,255,.85), inset 0 -4px 0 rgba(74,59,46,.10);border:1px solid rgba(74,59,46,.08);position:relative}
+  .pp-gloss::after{content:"";position:absolute;left:14%;top:10%;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%, #fff, rgba(255,255,255,0));opacity:.85;pointer-events:none}
+  .pp-head{display:flex;align-items:center;gap:10px;margin:0 18px 8px}
+  .pp-head .t{font-size:19px;font-weight:600}
+  .pp-head .loc{margin-left:auto;font-size:11px;color:#8a7660;background:#fffdf8;border-radius:999px;padding:6px 12px;box-shadow:0 4px 10px rgba(74,59,46,.12), inset 0 2px 0 rgba(255,255,255,.8);cursor:pointer}
+  .pp-map{position:relative;height:50%}
+  .pp-map svg{width:100%;height:100%;display:block}
+  .pp-pin{position:absolute;transform:translate(-50%,-100%);text-align:center;cursor:pointer;animation:drop .5s cubic-bezier(.34,1.56,.64,1) backwards}
+  .pp-pin:nth-child(2){animation-delay:.08s}.pp-pin:nth-child(3){animation-delay:.16s}.pp-pin:nth-child(4){animation-delay:.24s}
+  @keyframes drop{from{transform:translate(-50%,-160%) scale(.8);opacity:0}to{transform:translate(-50%,-100%) scale(1);opacity:1}}
+  .pp-pin .b{width:42px;height:42px;margin:0 auto;border-radius:50%;background:#fffdf8;display:grid;place-items:center;box-shadow:0 4px 0 rgba(74,59,46,.10), 0 8px 14px rgba(74,59,46,.22), inset 0 2px 0 rgba(255,255,255,.9);transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+  .pp-pin:active .b{transform:scale(.92)}
+  .pp-pin .lb{font-size:10px;font-weight:600;margin-top:3px;color:#4a3b2e;text-shadow:0 1px 0 rgba(255,246,233,.9)}
+  .pp-sheet{position:absolute;left:0;right:0;bottom:0;height:46%;background:#fffdf8;border-radius:26px 26px 0 0;padding:10px 18px 96px;box-shadow:0 -8px 26px rgba(74,59,46,.16), inset 0 2px 0 rgba(255,255,255,.9);overflow:auto;z-index:6}
+  .pp-sheet .grab{width:38px;height:5px;border-radius:3px;background:#eadbc4;margin:2px auto 12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+  .pp-sheet .t{font-size:16px;font-weight:600;margin-bottom:10px}
+  .pp-zones{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .pp-zone{border-radius:999px;padding:9px 15px;font-size:12px;font-weight:500;cursor:pointer;background:rgba(126,220,195,.18);color:#8a7660;box-shadow:inset 0 0 0 1px rgba(255,255,255,.6);transition:all .2s cubic-bezier(.34,1.56,.64,1)}
+  .pp-zone.on{background:linear-gradient(140deg,#8fe0cb,#5cc9ab);color:#fff;font-weight:600;box-shadow:0 6px 12px rgba(127,219,196,.45), inset 0 2px 0 rgba(255,255,255,.5)}
+  .pp-slot{display:flex;gap:8px;margin-bottom:14px}
+  .pp-slot span{flex:1;text-align:center;border-radius:16px;padding:11px 0;font-size:12px;background:rgba(255,179,138,.16);color:#8a7660;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(255,255,255,.6);transition:all .2s cubic-bezier(.34,1.56,.64,1)}
+  .pp-slot span.on{background:#fffdf8;color:#c05e2a;font-weight:600;box-shadow:inset 0 0 0 1.6px #ffb38a, 0 4px 10px rgba(74,59,46,.14)}
+  .pp-book{width:100%;border:none;border-radius:999px;padding:14px 0;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(140deg,#ffc9a8,#ff9d6b);box-shadow:0 4px 0 rgba(74,59,46,.12), 0 10px 20px rgba(255,157,107,.4), inset 0 2px 0 rgba(255,255,255,.5);cursor:pointer;font-family:inherit;transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+  .pp-book:active{transform:scale(.96)}
+  .pp-tabs{position:absolute;left:14px;right:14px;bottom:26px;background:#fffdf8;border-radius:999px;display:flex;justify-content:space-around;padding:10px 6px;box-shadow:0 4px 0 rgba(74,59,46,.10), 0 12px 24px rgba(74,59,46,.16), inset 0 2px 0 rgba(255,255,255,.9);z-index:8}
+  .pp-tabs span{font-size:12px;color:#a08d76;cursor:pointer;padding:6px 12px;border-radius:999px}
+  .pp-tabs span.on{background:linear-gradient(140deg,#ffd9c2,#ffc9a8);color:#c05e2a;font-weight:600;box-shadow:inset 0 2px 0 rgba(255,255,255,.7)}
+  @media (prefers-reduced-motion: reduce){.pp-pin{animation:none}}
+</style><div data-dc="pp/root" class="pp-root">
+  <div class="pp-head" data-dc="pp/head"><span class="t">乐园地图</span><span class="loc" data-act="toast" data-msg="已定位：云朵宠物乐园 · 1 号门（演示）">定位 · 1 号门</span></div>
+  <div class="pp-map" data-dc="pp/map">
+    <svg viewBox="0 0 390 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="390" height="300" fill="#fff6e9"/>
+      <g stroke="#fffdf8" stroke-width="8" fill="none" opacity=".95"><path d="M0 92 H390"/><path d="M122 0 V300"/><path d="M262 0 V300"/><path d="M0 212 H390"/></g>
+      <g stroke="#fffdf8" stroke-width="2" fill="none" opacity=".8"><path d="M40 0 V300"/><path d="M200 0 V300"/><path d="M330 0 V300"/><path d="M0 40 H390"/><path d="M0 150 H390"/><path d="M0 260 H390"/></g>
+      <g><ellipse cx="72" cy="52" rx="58" ry="36" fill="rgba(126,220,195,.4)"/><ellipse cx="72" cy="52" rx="58" ry="36" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.4"/><circle cx="52" cy="44" r="7" fill="#5cc9ab" opacity=".7"/><circle cx="90" cy="60" r="5" fill="#5cc9ab" opacity=".6"/></g>
+      <g><ellipse cx="318" cy="58" rx="56" ry="38" fill="rgba(142,205,240,.42)"/><ellipse cx="318" cy="58" rx="56" ry="38" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.4"/><path d="M290 52 q28 -8 56 0" stroke="#fff" stroke-width="2.4" fill="none" opacity=".85" stroke-linecap="round"/></g>
+      <g><ellipse cx="76" cy="248" rx="60" ry="36" fill="rgba(201,182,242,.4)"/><ellipse cx="76" cy="248" rx="60" ry="36" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.4"/><rect x="58" y="234" width="8" height="26" rx="4" fill="#b79ded" opacity=".7"/><rect x="72" y="242" width="8" height="18" rx="4" fill="#b79ded" opacity=".6"/><rect x="86" y="248" width="8" height="12" rx="4" fill="#b79ded" opacity=".5"/></g>
+      <g><ellipse cx="312" cy="244" rx="58" ry="36" fill="rgba(255,179,138,.38)"/><ellipse cx="312" cy="244" rx="58" ry="36" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.4"/><path d="M296 240 h20 v10 a6 6 0 0 1 -6 6 h-8 a6 6 0 0 1 -6 -6 z" fill="#e07b39" opacity=".65"/></g>
+    </svg>
+    <span class="pp-pin" style="left:18%;top:24%" data-act="toast" data-msg="草坪区：开放中 · 当前 12 只（演示）"><span class="b pp-gloss"><svg width="18" height="18" viewBox="0 0 24 24" style="fill:#3fae83"><path d="M4 20c2-6 5-9 8-9s6 3 8 9z"/><circle cx="12" cy="7" r="3.4"/></svg></span><span class="lb">草坪区</span></span>
+    <span class="pp-pin" style="left:82%;top:28%" data-act="toast" data-msg="戏水区：水温 28° · 需穿救生衣（演示）"><span class="b pp-gloss"><svg width="18" height="18" viewBox="0 0 24 24" style="fill:#4aa3e8"><path d="M3 15c3-3 6-3 9 0s6 3 9 0v4H3z"/><path d="M3 9c3-3 6-3 9 0s6 3 9 0" fill="none" stroke="#4aa3e8" stroke-width="2.2" stroke-linecap="round"/></svg></span><span class="lb">戏水区</span></span>
+    <span class="pp-pin" style="left:20%;top:86%" data-act="toast" data-msg="猫爬架区：限猫咪 · 3 层攀爬（演示）"><span class="b pp-gloss"><svg width="18" height="18" viewBox="0 0 24 24" style="fill:#8a63d2"><rect x="5" y="4" width="4" height="16" rx="2"/><rect x="11" y="8" width="4" height="12" rx="2"/><rect x="17" y="12" width="4" height="8" rx="2"/></svg></span><span class="lb">猫爬架区</span></span>
+    <span class="pp-pin" style="left:80%;top:84%" data-act="toast" data-msg="宠物咖啡区：人宠共餐 · 有低敏菜单（演示）"><span class="b pp-gloss"><svg width="18" height="18" viewBox="0 0 24 24" style="fill:#e07b39"><path d="M5 8h11v7a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M16 9h2a3 3 0 0 1 0 6h-2" fill="none" stroke="#e07b39" stroke-width="2.2" stroke-linecap="round"/></svg></span><span class="lb">咖啡区</span></span>
+  </div>
+  <div class="pp-sheet" data-dc="pp/sheet">
+    <div class="grab"></div>
+    <div class="t">预约入园</div>
+    <div class="pp-zones" data-dc="pp/zones"><span class="pp-zone on" data-act="radio" data-group="zone">草坪区</span><span class="pp-zone" data-act="radio" data-group="zone">戏水区</span><span class="pp-zone" data-act="radio" data-group="zone">猫爬架区</span><span class="pp-zone" data-act="radio" data-group="zone">咖啡区</span></div>
+    <div class="pp-slot" data-dc="pp/slots"><span class="on" data-act="radio" data-group="slot">今天 14:00</span><span data-act="radio" data-group="slot">今天 16:00</span><span data-act="radio" data-group="slot">明天 10:00</span></div>
+    <button class="pp-book" data-act="toast" data-msg="预约成功：草坪区 今天 14:00（演示）">确认预约</button>
+  </div>
+  <div class="pp-tabs" data-dc="pp/tabs"><span data-goto="01-home">首页</span><span data-goto="02-pets">档案</span><span class="on" data-goto="03-map">地图</span><span data-goto="04-community">社区</span><span data-goto="05-me">我的</span></div>
+</div>

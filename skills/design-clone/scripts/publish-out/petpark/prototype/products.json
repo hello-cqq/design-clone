@@ -1,0 +1,47 @@
+{
+  "01-home": {
+    "function": "展示乐园今日状态与快捷入口（预约/遛伴/打卡）与入园通行证",
+    "goals": ["提升次日回访：通行证进度与连打天数制造连续动机", "转化预约：余位信息+饼干边一键预约钮", "情感连接：3D 萌宠 hero 立基座呼吸浮沉"],
+    "page_prompt": "设计一个 3D 萌宠乐园首页（盲盒diorma感）：奶油底 #FFF6E9 + 糖果色板（mint #7EDCC3 / peach #FFB38A / lilac #C9B6F2 / sky #8ECDF0）；场景四层=天空渐变+三层云团 parallax→中景岛（草台 squircle+树团+蜜桃滑梯+水洼反光）→前景 pixar-3d 蓬松柯基立椭圆基座（接触影 rgba(74,59,46,.18) blur8）→浮动磁贴 chips；三饼干边快捷钮（预约 mint/遛伴 peach/打卡 lilac，图标磁贴 stroke2.2 round cap）；通行证卡=可可磁贴二维码块+薄荷果冻进度条；粘土卡材质=顶高光 inset 0 2px 0 rgba(255,255,255,.85)+底托 inset 0 -4px 0 rgba(74,59,46,.10)+落影 0 12px 24px rgba(74,59,46,.14)+颗粒 .04；微动效=idle 呼吸 ±3px squash1.02、press squish .96 弹簧、reduced-motion 静止；字 ui-rounded、可可墨 #4A3B2E 禁纯黑、字重≤600",
+    "element_prompts": {
+      "pp/hero": "四层场景：云团 parallax→草台岛（mint 双层 radial+噪点+蜜桃滑梯木纹条纹+sky 水洼白高光弧）→柯基 pixar-3d 立基座（平台+接触影+honey 光晕）→浮动 chips 饼干边+光泽点",
+      "pp/acts": "三饼干边快捷钮：图标磁贴（mint/peach/lilac 底+stroke2.2 round cap 胖图标）+底托 4px 厚度+press squish .96",
+      "pp/pass": "入园通行证粘土卡：可可磁贴二维码块（白码点）+薄荷果冻进度轨+tabular 数字",
+      "pp/feed": "社区预览磁贴：avatar 圆环 3px cream+光泽点+微旋转 ±2°"
+    }
+  },
+  "02-pets": {
+    "function": "管理毛孩档案：三维状态环、健康行、次要宠物磁贴",
+    "goals": ["信任：疫苗/体重/提醒数据磁贴化", "留存：健康提醒制造回访理由", "收集欲：多宠物磁贴墙"],
+    "page_prompt": "萌宠档案页：宠物大粘土卡微倾斜 -2°，内嵌 pixar-3d 全身 render 立基座（接触影+光晕）；三环仪表=果冻轨 rgba(色,.35)+1px 内 rim+糖果针 round cap+tabular 数字（体力 mint/心情 peach/社交 lilac）；健康行磁贴三枚（mint 疫苗勾/peach 体重曲线/lilac 提醒钟，stroke2.2）；次要宠物 mini squircle 磁贴 ×2 微旋转+饼干边；奶油底+可可墨+字重≤600",
+    "element_prompts": {
+      "pp/petcard": "微倾斜 -2° 粘土卡：hero 态 render+椭圆基座+接触影；卡面颗粒 .04+顶高光",
+      "pp/rings": "三环仪表：果冻轨+糖果针+tabular 数字+点按 toast 弹簧",
+      "pp/minis": "mini 磁贴：squircle+微旋转 ±2°+饼干边+光泽点"
+    }
+  },
+  "03-map": {
+    "function": "查看园区四分区地图并预约入园时段",
+    "goals": ["转化：分区余位+时段单选直达预约 CTA", "降低决策成本：pin 磁贴点按即说明"],
+    "page_prompt": "乐园地图页：奶油底 SVG 园区=四色果冻分区（草坪 mint/戏水 sky/猫爬架 lilac/咖啡 peach，各带 1px 内 rim）+白路网 stroke7/1.1 两层+路名浅灰；pin=白圆磁贴+彩色胖图标+标签，弹跳落位 stagger .08s；底部预约 sheet=grab 条+分区胶囊 radio（选中=mint 渐变+投影）+时段胶囊弹簧选中（cream 底+peach 内 rim）+peach 渐变 CTA 饼干边；右上定位胶囊；字重≤600",
+    "element_prompts": {
+      "pp/map": "SVG 园区：果冻四分区+白路网+pin 磁贴弹跳落位+水洼反光弧",
+      "pp/sheet": "预约 sheet：grab+分区胶囊 radio+时段胶囊弹簧+peach 渐变 CTA 饼干边"
+    }
+  },
+  "04-community": {
+    "function": "浏览与互动乐园社区动态（赞/评/藏/发布）",
+    "goals": ["留存：UGC feed 每日内容", "互动：果冻三件套+berry 点赞跳一下"],
+    "page_prompt": "社区 feed：粘土卡=avatar 圆环 3px cream+光泽点+昵称/时间+分区 tag 胶囊+正文 lh1.7+照片磁贴微旋转 ±2°+饼干边；赞/评/藏=果冻钮（赞激活=berry 填充+跳一下 scale1.2→1）；发布=mint 渐变胶囊+光泽点；奶油底+可可墨+字重≤600",
+    "element_prompts": { "pp/post1": "feed 粘土卡：avatar 圆环+tag 胶囊+照片磁贴微旋转+果冻互动行" }
+  },
+  "05-me": {
+    "function": "个人中心：会员卡、资产三数、设置行与果冻开关",
+    "goals": ["变现：会员卡展示省额与到期", "留存：积分/券/档案资产感", "设置即玩：果冻开关真切换"],
+    "page_prompt": "我的页：头像 avatar 态（圆环+光泽点）+昵称行+编辑磁贴；丁香渐变会员饼干卡（linear 140deg #D9C8F7→#C9B6F2→#B79ED）+大白爪印水印 opacity .22+积分/券/档案 tabular 三数+微倾斜 -1.2°；设置行磁贴四枚（mint 预约历/peach 券/lilac 提醒果冻开关/sky 帮助）；果冻开关=半透明轨+cream 圆钮滑动弹簧；奶油底+字重≤600",
+    "element_prompts": {
+      "pp/vip": "丁香渐变会员饼干卡：爪印水印+tabular 三数+微倾斜+内高光",
+      "pp/rows": "设置行磁贴：果冻开关真切换+图标磁贴 stroke2.2"
+    }
+  }
+}

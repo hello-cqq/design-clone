@@ -1,0 +1,46 @@
+<style>
+  .pp-root{font-family:ui-rounded,-apple-system,"PingFang SC","Segoe UI",sans-serif;color:#4a3b2e;background:
+    radial-gradient(120% 60% at 50% -10%, #fff6e9 0%, #ffeeda 55%, #ffe8d2 100%);min-height:100%;position:relative;padding:50px 16px 108px;box-sizing:border-box}
+  .pp-clay{background:#fffdf8;border-radius:24px;box-shadow:0 12px 24px rgba(74,59,46,.14), inset 0 2px 0 rgba(255,255,255,.85), inset 0 -4px 0 rgba(74,59,46,.10);border:1px solid rgba(74,59,46,.08);position:relative}
+  .pp-gloss::after{content:"";position:absolute;left:14%;top:10%;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%, #fff, rgba(255,255,255,0));opacity:.85;pointer-events:none}
+  .pp-head{display:flex;align-items:center;gap:10px;margin:0 2px 14px}
+  .pp-head .t{font-size:19px;font-weight:600}
+  .pp-head .pub{margin-left:auto;border-radius:999px;padding:9px 16px;font-size:12px;font-weight:600;color:#fff;background:linear-gradient(140deg,#8fe0cb,#5cc9ab);box-shadow:0 6px 12px rgba(127,219,196,.45), inset 0 2px 0 rgba(255,255,255,.5);cursor:pointer;transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+  .pp-head .pub:active{transform:scale(.94)}
+  .pp-post{padding:14px;margin-bottom:12px}
+  .pp-post .hd{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+  .pp-post .hd img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:3px solid #fff6e9;box-shadow:0 4px 8px rgba(74,59,46,.2)}
+  .pp-post .hd .nm{font-size:13px;font-weight:600}
+  .pp-post .hd .tm{font-size:10px;color:#8a7660}
+  .pp-post .hd .tag{margin-left:auto;font-size:10px;border-radius:999px;padding:5px 10px;background:rgba(126,220,195,.22);color:#3fae83;font-weight:600;box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}
+  .pp-post .tx{font-size:13px;line-height:1.7;margin-bottom:10px}
+  .pp-post .ph{position:relative;border-radius:20px;overflow:hidden;margin-bottom:10px;box-shadow:0 4px 0 rgba(74,59,46,.10), inset 0 0 0 1px rgba(255,255,255,.6);transform:rotate(-1.2deg)}
+  .pp-post .ph img{width:100%;display:block;object-fit:cover;height:150px}
+  .pp-post .ft{display:flex;gap:18px;align-items:center;font-size:11px;color:#8a7660}
+  .pp-post .ft span{display:flex;gap:5px;align-items:center;cursor:pointer;transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+  .pp-post .ft span:active{transform:scale(.9)}
+  .pp-post .ft span.on{color:#ff8fa3;font-weight:600}
+  .pp-post .ft span.on svg{fill:#ff8fa3;stroke:#ff8fa3}
+  .pp-tabs{position:absolute;left:14px;right:14px;bottom:26px;background:#fffdf8;border-radius:999px;display:flex;justify-content:space-around;padding:10px 6px;box-shadow:0 4px 0 rgba(74,59,46,.10), 0 12px 24px rgba(74,59,46,.16), inset 0 2px 0 rgba(255,255,255,.9);z-index:8}
+  .pp-tabs span{font-size:12px;color:#a08d76;cursor:pointer;padding:6px 12px;border-radius:999px}
+  .pp-tabs span.on{background:linear-gradient(140deg,#ffd9c2,#ffc9a8);color:#c05e2a;font-weight:600;box-shadow:inset 0 2px 0 rgba(255,255,255,.7)}
+</style><div data-dc="pp/root" class="pp-root">
+  <div class="pp-head" data-dc="pp/head"><span class="t">乐园社区</span><span class="pub pp-gloss" data-act="sheet" data-title="发布动态" data-items="拍照|选图|文字">发布</span></div>
+  <div class="pp-post pp-clay" data-dc="pp/post1">
+    <div class="hd"><img src="assets/pet-cat.png" alt=""><div><div class="nm">团子妈</div><div class="tm">12 分钟前 · 猫爬架区</div></div><span class="tag">征服时刻</span></div>
+    <div class="tx">团子第一次爬到猫爬架区最高层，下来的时候腿都在抖，但尾巴翘得比谁都高。</div>
+    <div class="ph"><img src="assets/pet-cat.png" alt=""></div>
+    <div class="ft"><span data-act="toggle"><svg width="14" height="14" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round" stroke-linejoin="round"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg>128</span><span data-act="toast" data-msg="评论 32 条（演示）"><svg width="14" height="14" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round"><path d="M21 12a8 8 0 0 1-8 8H5l-2 2V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg>32</span><span data-act="toast" data-msg="已收藏（演示）"><svg width="14" height="14" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round" stroke-linejoin="round"><path d="M12 3l2.4 5 5.6.7-4 3.9 1 5.4-5-2.7-5 2.7 1-5.4-4-3.9 5.6-.7z"/></svg>收藏</span></div>
+  </div>
+  <div class="pp-post pp-clay" data-dc="pp/post2">
+    <div class="hd"><img src="assets/pet-corgi.png" alt=""><div><div class="nm">旺财爸</div><div class="tm">1 小时前 · 草坪区</div></div><span class="tag">遛伴召集</span></div>
+    <div class="tx">今天 16:00 草坪区飞盘局，还差 3 只中型犬，柯基优先（旺财说它要当裁判）。</div>
+    <div class="ft"><span data-act="toggle"><svg width="14" height="14" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round" stroke-linejoin="round"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg>86</span><span data-act="toast" data-msg="评论 19 条（演示）"><svg width="14" height="14" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round"><path d="M21 12a8 8 0 0 1-8 8H5l-2 2V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg>19</span><span data-act="toast" data-msg="已报名飞盘局（演示）"><svg width="14" height="14" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round"><path d="M20 6 9 17l-5-5"/></svg>报名</span></div>
+  </div>
+  <div class="pp-post pp-clay" data-dc="pp/post3">
+    <div class="hd"><img src="assets/pet-bunny.png" alt=""><div><div class="nm">雪饼家</div><div class="tm">3 小时前 · 咖啡区</div></div><span class="tag">低敏菜单</span></div>
+    <div class="tx">咖啡区新出的兔草拿铁（人喝）+ 提摩西草饼（兔吃），雪饼吃完一直舔爪子，好评。</div>
+    <div class="ft"><span data-act="toggle"><svg width="14" height="14" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round" stroke-linejoin="round"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg>54</span><span data-act="toast" data-msg="评论 8 条（演示）"><svg width="14" height="14" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round"><path d="M21 12a8 8 0 0 1-8 8H5l-2 2V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg>8</span><span data-act="toast" data-msg="已收藏（演示）"><svg width="14" height="14" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round" stroke-linejoin="round"><path d="M12 3l2.4 5 5.6.7-4 3.9 1 5.4-5-2.7-5 2.7 1-5.4-4-3.9 5.6-.7z"/></svg>收藏</span></div>
+  </div>
+  <div class="pp-tabs" data-dc="pp/tabs"><span data-goto="01-home">首页</span><span data-goto="02-pets">档案</span><span data-goto="03-map">地图</span><span class="on" data-goto="04-community">社区</span><span data-goto="05-me">我的</span></div>
+</div>
