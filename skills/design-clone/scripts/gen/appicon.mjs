@@ -146,10 +146,10 @@ else {
   if (!base && mode !== "cloned") { const g = await genBase(); if (g) { base = g.base; how = "generated"; spec.style = g.style; spec.prompt = g.prompt; } }
 }
 if (!base) { console.log(JSON.stringify({ ok: false, reason: "no icon source" })); process.exit(3); }
-// M62-A：画廊三件套之 icon.png（run 根，512）
-try { fs.copyFileSync(path.join(outDir, "icon-512.png"), path.join(run, "icon.png")); } catch {}
 spec = { ...spec, source: how.startsWith("cloned") ? "cloned" : how.startsWith("system") ? "system" : "generated", icon_how: how, mode, base, radius: spec.radius != null ? spec.radius : 0.22, generated_at: new Date().toISOString() };
 await compose(base, spec);
+// M62-A：画廊三件套之 icon.png（run 根，512）——compose 之后复制
+try { fs.copyFileSync(path.join(outDir, "icon-512.png"), path.join(run, "icon.png")); } catch {}
 fs.writeFileSync(specP, JSON.stringify(spec, null, 1));
 
 // showcase.json

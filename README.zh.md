@@ -11,9 +11,9 @@
 
 **[🌐 官网与在线画廊 →](https://hello-cqq.github.io/design-clone/)** · [English](README.md) · [Gallery 画廊](https://hello-cqq.github.io/design-clone/gallery.html)
 
-<img src="https://raw.githubusercontent.com/hello-cqq/design-clone-prototype/main/petpark/cover.png" alt="PetPark —— 由 design-clone 端到端生成的 3D 萌宠乐园原型" width="720" />
+<img src="https://raw.githubusercontent.com/hello-cqq/design-clone-prototype/main/ai-assistant/cover.png" alt="PetPark —— 由 design-clone 端到端生成的 3D 萌宠乐园原型" width="720" />
 
-*↑ [PetPark](https://hello-cqq.github.io/design-clone/proto.html?app=petpark)：skill 端到端生成——可点、可播、可导出。*
+*↑ [智能助理](https://hello-cqq.github.io/design-clone/proto.html?app=ai-assistant)：skill 端到端生成——切换形象/音色、聊天、通话、可播可导出。*
 
 </div>
 
