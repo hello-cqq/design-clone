@@ -177,18 +177,27 @@
     if (fl) {
       const setSrc = () => { fl.src = a ? (isMobile() ? a.url + (a.url.includes("?") ? "&" : "?") + "chrome=0&embed=1&theme=" + state.theme : a.url) : `${PROTO_BASE}/ai-assistant/prototype/`; };
       const idle = window.requestIdleCallback || ((f) => setTimeout(f, 300));
-      if (document.readyState === "complete") idle(setSrc);
-      else window.addEventListener("load", () => idle(setSrc), { once: true });
+      afterLoadOr(() => idle(setSrc), 4000);
     }
   }
 
+  // M76-W7f: 边缘可能拖死 load 事件——所有 load 后任务都给 DCL+3.5s 兜底
+  function afterLoadOr(fn, ms) {
+    let done = false;
+    const run = () => { if (done) return; done = true; fn(); };
+    if (document.readyState === "complete") run();
+    else {
+      window.addEventListener("load", run, { once: true });
+      setTimeout(run, ms);
+    }
+  }
   // M76-W7c: 画廊缩略图 IO 延载——load 前不发 proto 边缘请求，load 事件不被慢边缘拖住
   function armThumbIO() {
     const io = new IntersectionObserver((es) => {
       for (const e of es) if (e.isIntersecting) { const im = e.target; if (im.dataset.src) { im.src = im.dataset.src; delete im.dataset.src; } io.unobserve(im); }
     }, { rootMargin: "300px" });
     document.querySelectorAll("#cards img[data-src]").forEach((im) => io.observe(im));
-    window.addEventListener("load", () => setTimeout(() => document.querySelectorAll("#cards img[data-src]").forEach((im) => { im.src = im.dataset.src; delete im.dataset.src; io.unobserve(im); }), 400), { once: true });
+    afterLoadOr(() => setTimeout(() => document.querySelectorAll("#cards img[data-src]").forEach((im) => { im.src = im.dataset.src; delete im.dataset.src; io.unobserve(im); }), 400), 3500);
   }
   async function renderGallery() {
     const idx = await loadIndex();
