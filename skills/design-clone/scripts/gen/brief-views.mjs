@@ -96,10 +96,13 @@ for (const p of brief.pages) {
 // index.html
 const idx = `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${brief.identity.name_zh}</title><link rel="stylesheet" href="../knowledge/tokens.css"><link rel="stylesheet" href="inspector.css"><link rel="stylesheet" href="utilities.css"></head><body><script>window.DC = ${JSON.stringify({ pages: brief.pages.map((p) => ({ id: p.id, name: p.name, fidelity: "live-high" })) }, null, 0)};</script><div id="dc-shell"></div><script src="runtime.js"></script><script src="inspector.js"></script></body></html>
 `;
-if (!fs.existsSync(path.join(run, "prototype/index.html"))) fs.writeFileSync(path.join(run, "prototype/index.html"), idx);
-else {
-  let s = fs.readFileSync(path.join(run, "prototype/index.html"), "utf8");
-  s = s.replace(/window\.DC = \{.*?\};/s, "window.DC = " + JSON.stringify({ pages: brief.pages.map((p) => ({ id: p.id, name: p.name, fidelity: "live-high" })) }) + ";");
-  fs.writeFileSync(path.join(run, "prototype/index.html"), s);
-}
+const dcJson = JSON.stringify({ pages: brief.pages.map((p) => ({ id: p.id, name: p.name, fidelity: "live-high" })) }, null, 0);
+const idxPath = path.join(run, "prototype/index.html");
+if (!fs.existsSync(idxPath)) fs.writeFileSync(idxPath, idx);
+let s0 = fs.readFileSync(idxPath, "utf8");
+// 新壳模板占位符注入（__DC_JSON__/__TITLE__），存量壳则替换 window.DC 对象
+if (s0.includes("__DC_JSON__")) s0 = s0.replace("__DC_JSON__", dcJson).replaceAll("__TITLE__", brief.identity.name_zh);
+else s0 = s0.replace(/window\.DC = \{.*?\};/s, "window.DC = " + dcJson + ";");
+fs.writeFileSync(idxPath, s0);
+console.log("提示：随后跑 sync-shell.mjs <run>/prototype 落哈希与 utilities.css");
 console.log("brief-views:", brief.pages.length, "views");
