@@ -10,10 +10,10 @@ const POSTER_DARK = "data:image/jpeg;base64,/9j//gAPTGF2YzYzLjEuMTAxAP/bAEMACAYG
 window.DCIdent = {
   build() {
     return `
-  <div class="idf-halo" data-k="light" style="background-image:url(' + POSTER_LIGHT + ')"></div>
-  <div class="idf-halo" data-k="dark" style="background-image:url(' + POSTER_DARK + ')"></div>
-  <video class="idf-video" data-k="light" src="assets/ident-light.25ebd07a.mp4" poster="' + POSTER_LIGHT + '" muted playsinline preload="none" tabindex="-1"></video>
-  <video class="idf-video" data-k="dark" src="assets/ident-dark.2e1d52dc.mp4" poster="' + POSTER_DARK + '" muted playsinline preload="none" tabindex="-1"></video>
+  <div class="idf-halo" data-k="light" style="background-image:url(${POSTER_LIGHT})"></div>
+  <div class="idf-halo" data-k="dark" style="background-image:url(${POSTER_DARK})"></div>
+  <video class="idf-video" data-k="light" src="assets/ident-light.25ebd07a.mp4" poster="${POSTER_LIGHT}" muted playsinline preload="none" tabindex="-1"></video>
+  <video class="idf-video" data-k="dark" src="assets/ident-dark.2e1d52dc.mp4" poster="${POSTER_DARK}" muted playsinline preload="none" tabindex="-1"></video>
   <div class="idf-duo" style="background-image:url(assets/logo-main.png)"></div>`;
   },
   wire(el) {
