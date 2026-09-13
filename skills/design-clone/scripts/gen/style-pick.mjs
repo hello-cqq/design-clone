@@ -19,6 +19,9 @@ const SCEN = {
   "work-collab": { avatar: "flat-corporate", cover: "flat-corporate", scene: "flat-corporate", icon: "flat" },
   "ecommerce-marketing": { avatar: "photographic", cover: "photographic", scene: "photographic", icon: "clay-icon" },
   "game-tech": { avatar: "cyberpunk", cover: "cyberpunk", scene: "cyberpunk", icon: "sticker" },
+  // M76-W3a: 虚拟人/AI 助理/宠物伙伴等"角色向"场景 → 原神级 cel 渲染
+  "virtual-human": { avatar: "anime-cel", cover: "anime-cel", scene: "anime-cel", icon: "sticker" },
+  "pet-companion": { avatar: "anime-cel", cover: "anime-cel", scene: "anime-cel", icon: "clay-icon" },
   "culture-reading": { avatar: "guofeng", cover: "guofeng", scene: "guofeng", icon: "sticker" },
   "developer-tools": { avatar: "flat-corporate", cover: "flat", scene: "flat", icon: "flat" },
   default: { avatar: "illustration", cover: "illustration", scene: "illustration", icon: "clay-icon" },
