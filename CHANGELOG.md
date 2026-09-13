@@ -3,6 +3,41 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/); versioning is SemVer and mirrors `SKILL.md → metadata.version`.
 
+## [0.6.0-snapshot.20260913.3] - 2026-09-13
+
+Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
+
+### M77-W4
+- : 四稀薄场景全流程实测发布（拾光书房/霓虹磁带/山海茶事/闪购集市）+brief-views 基线视图合成入 skill+privacy 账本模板+docs M77 记账
+
+### M76-W7h
+- fix: poster 内联改用模板插值 ${POSTER_*}（修复字面量 URL）
+- : ident 双 poster 内联 base64——hero 视觉零远程依赖，边缘再慢也先出海报帧，视频作渐进增强
+
+### M76-W7g
+- : ident-light 降码率重编（704x528 crf23 faststart，2.6MB→~1MB）——冷边缘首载提速；哈希更新
+
+### M76-W7f
+- : afterLoadOr 兜底——边缘拖死 load 时缩略图/live-proof 于 DCL+3.5/4s 照挂（ident 已有 2.5s 兜底），页面功能不依赖 load 事件
+
+### M76-W7e
+- : breadcrumb 断言含英文名（Animal Paradise）
+
+### M76-W7d
+- : e2e 改 load 语义（懒加载远程嵌入不再适用 networkidle）+breadcrumb 断言对齐精选=智能助理
+
+### M77-W1..W3
+- : 概念导演管线（director/ref-images/brief-tokens/products/flows/views+九aspect集成+brief-director门）；星海对话 v3.0.0（新海诚2.5D双角色5视图）；动物乐园 v3.0.0（疯狂动物城3D 8视图7角色）；genimg 缓存键含风格+双路径擦水印+shinkai/zootopia 锚点
+
+### M76-W7c
+- : 画廊缩略图 IO 延载+ident preload=none 且 load 后开播——主文档 load 不再等待任何 proto 边缘/媒体请求（首页卡加载根除）
+
+### M76-W7b
+- : hash-assets.mjs 入 CI——部署前站点子资产内容哈希+html 重写（破 Pages 边缘 max-age=600 旧 js 混搭）；未哈希原件保留兼容旧边缘 index
+
+### M76-W7
+- hotfix: live-proof iframe 延迟到 load+idle 挂 src（proto 边缘慢不再拖主文档 load）；ident 1.5s 空载强制 load()+play() 重试+活跃视频 preload=auto
+
 ## [0.6.0-snapshot.20260913.2] - 2026-09-13
 
 Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
