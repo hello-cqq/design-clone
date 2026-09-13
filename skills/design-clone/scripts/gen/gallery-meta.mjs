@@ -59,8 +59,10 @@ const offKey = Object.keys(OFFICIAL).filter((k) => k !== "_comment" && app.toLow
 // M76-W2a: link/video 来源=分享内容克隆 → 名跟内容（flags/标题），平台官方名只作 tags/描述线索
 const IS_LINK = ["link", "video"].includes(scope.source || "");
 const off = !IS_LINK && offKey ? OFFICIAL[offKey] : null;
-const nameZh = values["name-zh"] || (off && off.zh) || (hasCJK(title) ? title.slice(0, 40) : hasCJK(app) ? app : `${CAT_ZH[category] || category} · 可交互原型`);
-const nameEn = values["name-en"] || (off && off.en) || (!hasCJK(title) && title ? title.slice(0, 40) : `${app} · ${category} prototype`);
+// M77-W1: concept run 名称/标签/分类以 brief 为源（clone/link 链不变）
+const BRIEF = (() => { try { return JSON.parse(fs.readFileSync(path.join(run, "knowledge/brief.json"), "utf8")); } catch { return null; } })();
+const nameZh = values["name-zh"] || (BRIEF && !IS_LINK && BRIEF.identity && BRIEF.identity.name_zh) || (off && off.zh) || (hasCJK(title) ? title.slice(0, 40) : hasCJK(app) ? app : `${CAT_ZH[category] || category} · 可交互原型`);
+const nameEn = values["name-en"] || (BRIEF && !IS_LINK && BRIEF.identity && BRIEF.identity.name_en) || (off && off.en) || (!hasCJK(title) && title ? title.slice(0, 40) : `${app} · ${category} prototype`);
 const homeProd = products[(dc.pages || [])[0]?.id] || Object.values(products)[0] || {};
 const funcZh = homeProd.function || "完整可交互界面与路径演示";
 const SHELL_EN = { c_mobile: "mobile", c_tablet: "tablet", c_desktop: "desktop", c_browser: "web" };
