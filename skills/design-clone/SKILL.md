@@ -44,7 +44,7 @@ node {SKILL_DIR}/scripts/doctor.mjs
 ---
 
 ## 稀薄输入先富化（M75-W2）
-**概念/原创原型（稀薄描述）硬流程（M77）**：先 `scripts/gen/director.mjs` 产全套 brief（九 aspect：名/风格/角色/页+控件/资产/图标/封面/标签/场景/视频词），再 `gen/ref-images.mjs` 逐页参考图供确认，随后 brief-tokens/brief-products/brief-flows 三件衍生，视图按 brief 构建（控件全接线），见 references/concept-director.md。
+**概念/原创原型（稀薄描述）硬流程（M77）**：先 `scripts/gen/director.mjs` 产全套 brief（九 aspect：名/风格/角色/页+控件/资产/图标/封面/标签/场景/视频词），再 `gen/ref-images.mjs` 逐页参考图供确认，随后 brief-tokens/brief-products/brief-flows/brief-views 四件衍生（brief-views 产全控件接线的 2.5D 基线视图套，精品 run 在其上深化美术），视图按 brief 构建（控件全接线），见 references/concept-director.md。
 生图需求条件稀薄时（"一只猫"级单资产）：先 `scripts/gen/enrich.mjs` 产富提示词包（可 --hints 注入联网搜索成果），
 按 references/prompt-enrichment.md 三步+rubric 自检循环（≤3 轮）再生图；文本/品牌类需求分别走字标混合方案与 asset-sourcing 官方源链。
 

@@ -67,3 +67,5 @@
 
 | inspect | art-depth | original 概念 run：全视图 data-fx-parallax≥2 且 data-fx="particles"≥1（M76-W3b，见 references/art-direction.md） | hard |
 | brand-qa | pencil-zone | 品牌资产耳上发区铅笔签名像素=0；ident 抽帧全帧=0（M76-W1） | hard（CI 前置） |
+
+| inspect | brief-director | original/concept run：knowledge/brief.json 齐（pages≥4/角色+资产≥3/风格基准/图标/封面词）且 references/manifest 参考图≥页数（M77 前存量=warn） | hard |
