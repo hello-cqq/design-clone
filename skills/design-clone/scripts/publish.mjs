@@ -151,7 +151,9 @@ const appDir = path.join(work, values.app);
 fs.mkdirSync(appDir, { recursive: true });
 if (!fs.existsSync(path.join(appDir, "meta.json"))) fs.copyFileSync(path.join(tmp, values.app, "meta.json"), path.join(appDir, "meta.json"));
 fs.cpSync(fdir, appDir, { recursive: true });
-execSync(`git -C ${work} checkout -b ${branch} && git -C ${work} add -A && git -C ${work} commit -m "publish(${values.app}): ${values.title} v${version}"`, { stdio: "inherit" });
+// M76-W2c: 提交作者固定映射到仓库 owner 的 noreply 身份（GitHub 归属=hello-cqq，头像正确）
+const DC_AUTHOR = process.env.DC_AUTHOR || "cqq <37357551+hello-cqq@users.noreply.github.com>";
+execSync(`git -C ${work} checkout -b ${branch} && git -C ${work} add -A && git -C ${work} commit --author="${DC_AUTHOR}" -m "publish(${values.app}): ${values.title} v${version}"`, { stdio: "inherit" });
 execSync(`git -C ${work} push -u origin ${branch}`, { stdio: "inherit" });
 const body = `## What\n- app: ${values.app}\n- source: ${scope.source || "original"} / ${scope.target || values.app}\n- gates: ${gates.join(" | ")}\n- preview (after merge): https://hello-cqq.github.io/design-clone-prototype/${values.app}/prototype/\n\n## IP attestation\n- [x] ${attest}${values.note ? " — " + values.note : ""}\n\n## Privacy\n- [x] no real personal data; sample text fictionalized\n\n## Spec\n- [x] SPEC v2 followed (flat app dir, bilingual meta, whitelist, ≤80MB, version=${version})\n`;
 execSync(`gh pr create --repo ${values.repo} --base main --head ${branch} --title "publish(${values.app}): ${values.title}" --body "${body.replace(/"/g, '\\"')}"`, { stdio: "inherit" });
