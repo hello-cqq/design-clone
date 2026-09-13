@@ -24,3 +24,9 @@ publish.mjs 自动插免责声明；禁整包官方素材入库；画廊卡片�
 
 ## 记录格式
 `knowledge/asset-sources.json`: [{asset:"icon", source:"system:web-official", ref:"https://www.feishu.cn/favicon.ico", at, note}]
+
+## M76-W2b 策展图标优先序（硬纪律）
+1. `references/official-icons/<key>.png` 仓内策展件（wechat/lark 等，品牌形手绘 SVG 渲染，版本可控）；
+2. `probe-icon.mjs` 官方站候选 + 主色校验（wechat 需 #07C160 主导、lark 需青蓝主导），不达标弃；
+3. `appicon.mjs` 内容生成（原创/链接内容克隆默认）。
+禁止：未校验的抓取结果直接入库（M75 曾入花朵/灰相机错图）。

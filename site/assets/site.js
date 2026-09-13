@@ -27,7 +27,7 @@
       more: "More",
       gal_h: "Gallery", gal_sub: "Community prototypes on GitHub Pages. Search, filter by tag, play, download, remix.",
       gal_search: "search name or tag…", gal_sort_dl: "most downloads", gal_sort_upd: "recently updated",
-      proto_dl: "Download offline zip", proto_jump: "source on GitHub", proto_meta: "Details", proto_contrib: "Creator & contributors", proto_spec: "Design specs",
+      proto_dl: "Download offline zip", proto_jump: "source on GitHub", proto_meta: "Details", proto_contrib: "Contributors", proto_spec: "Design specs",
       proto_tags: "Tags", proto_ver: "Version", proto_license: "License", proto_src: "Source", proto_clone: "Clone & remix",
       stat_apps: "prototypes", stat_dl: "total downloads", stat_contrib: "contributors",
       ft_note: "MIT · prototypes carry their own license · brand replicas are unofficial study works",
@@ -54,7 +54,7 @@
       more: "更多",
       gal_h: "画廊", gal_sub: "GitHub Pages 上的社区原型。搜索、按标签筛选、玩、下载、再混。",
       gal_search: "搜索名称或标签…", gal_sort_dl: "最多下载", gal_sort_upd: "最近更新",
-      proto_dl: "下载离线 zip", proto_jump: "GitHub 源码", proto_meta: "详情", proto_contrib: "创建者与贡献者", proto_spec: "设计规格",
+      proto_dl: "下载离线 zip", proto_jump: "GitHub 源码", proto_meta: "详情", proto_contrib: "贡献者", proto_spec: "设计规格",
       proto_tags: "标签", proto_ver: "版本", proto_license: "许可", proto_src: "来源", proto_clone: "克隆并再混",
       stat_apps: "原型", stat_dl: "总下载", stat_contrib: "贡献者",
       ft_note: "MIT · 原型各自携带许可 · 品牌复刻为非官方学习作品",
@@ -127,7 +127,8 @@
     setTimeout(() => URL.revokeObjectURL(a2.href), 4000);
   }
   function cavHtml(a) {
-    const list = (a.contributors || []).slice().sort((x, y) => (x.login === a.creator ? -1 : y.login === a.creator ? 1 : y.commits - x.commits));
+    // M76-W2c: 不区分创建者——纯 commits 序展示全部贡献者
+    const list = (a.contributors || []).slice().sort((x, y) => y.commits - x.commits);
     return list.map((c) => {
       const cr = c.login === a.creator ? " creator" : "";
       const ti = c.login + (c.login === a.creator ? " · creator" : "");
