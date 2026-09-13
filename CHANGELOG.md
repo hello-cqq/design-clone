@@ -3,6 +3,34 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/); versioning is SemVer and mirrors `SKILL.md → metadata.version`.
 
+## [0.6.0-snapshot.20260913] - 2026-09-13
+
+Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
+
+### M76-W5b
+- : e2e 主题断言改渐变材质差值（字标不再用 background-position 换主题）
+
+### M76-W5a
+- : e2e 画廊全 app 巡检（proto 页舞台+console 干净）+__DC_STATE 测试钩子+docs M76 记账
+
+### M76-W4
+- : 功能演示真景化——demo-shots.mjs 四场景真截屏入仓，demo-anim 设备框内嵌真图+扫描线/spec chip/playable 叠层，替换灰色骨架
+
+### M76-W3
+- : 原神级 2.5D 质感——art-direction.md+anime-cel 锚点+enrich art_direction；模板 particles/parallax FX；inspect art-depth 门；genimg 落盘自动擦水印；assistant/petpark 十视图重做全门绿并发布 v2.0.0
+
+### M76-W2c
+- : 贡献者展示=owner∪作者、 commits 序、去 creator 标签；publish 提交作者固定 hello-cqq noreply（头像归属正确）
+
+### M76-W2a
+- : dy-note→pet-health-note（萌宠健康笔记）——link 来源名称跟内容走（gallery-meta IS_LINK）+内容图标/封面+publish --retire 同 PR 下架旧 slug
+
+### M76-W1b
+- : 字标逐字错落艺术字——12 字独立 baseline/旋转/字号差+主题高饱和渐变材质 clip（亮=海蓝金橙/暗=星蓝紫青），nav 27px；e2e 断言错落与材质
+
+### M76-W1a
+- : 铅笔根除——logo-main 双笔尖+logo-girl 坏补丁清理（patch-erase 多 pass+缝模糊）；衍生 256/favicon/fill 重生成；ident mp4+poster 文件名哈希防缓存；brand-qa.mjs 分区像素门入 CI 前置
+
 ## [0.6.0-snapshot.20260912] - 2026-09-12
 
 Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
