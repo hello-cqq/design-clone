@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/); versioning is SemVer and mirrors `SKILL.md → metadata.version`.
 
+## [0.6.0-snapshot.20260913.1] - 2026-09-13
+
+Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
+
+### M77-W1(并发会话产物收口)
+- : brief-flows.mjs（brief.flows→paths.json）+ appicon/cover/gallery-meta/inspect 的 brief.json 联动；根目录用户源文件移除（已归档 _clean-src）
+
+### M76-W6
+- : 用户干净源替换——ident-light 重编码(无铅笔)+poster+logo-light 帧裁；logo-girl/duo/256/favicon/fill 由无铅笔 jpg 重建(水印渐变域填充)；brand-qa 升级(暗发邻域残铅+连通域+角标文字行+椭圆掩膜感知)
+
 ## [0.6.0-snapshot.20260913] - 2026-09-13
 
 Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
