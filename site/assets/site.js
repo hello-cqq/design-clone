@@ -196,8 +196,8 @@
     const io = new IntersectionObserver((es) => {
       for (const e of es) if (e.isIntersecting) { const im = e.target; if (im.dataset.src) { im.src = im.dataset.src; delete im.dataset.src; } io.unobserve(im); }
     }, { rootMargin: "300px" });
-    document.querySelectorAll("#cards img[data-src]").forEach((im) => io.observe(im));
-    afterLoadOr(() => setTimeout(() => document.querySelectorAll("#cards img[data-src]").forEach((im) => { im.src = im.dataset.src; delete im.dataset.src; io.unobserve(im); }), 400), 3500);
+    document.querySelectorAll("img[data-src]").forEach((im) => io.observe(im));
+    afterLoadOr(() => setTimeout(() => document.querySelectorAll("img[data-src]").forEach((im) => { im.src = im.dataset.src; delete im.dataset.src; io.unobserve(im); }), 400), 3500);
   }
   async function renderGallery() {
     const idx = await loadIndex();
