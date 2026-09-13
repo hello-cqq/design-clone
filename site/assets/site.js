@@ -104,9 +104,9 @@
     if (state.index) return state.index;
     try {
       const r = await fetch(INDEX_LIVE, { cache: "default" });
-      if (r.ok) { state.index = await r.json(); return state.index; }
+      if (r.ok) { state.index = await r.json(); window.__DC_STATE = state; return state.index; }
     } catch {}
-    try { state.index = await (await fetch(INDEX_FALLBACK)).json(); return state.index; } catch {}
+    try { state.index = await (await fetch(INDEX_FALLBACK)).json(); window.__DC_STATE = state; return state.index; } catch {}
     return { version: 3, apps: [] };
   }
 
