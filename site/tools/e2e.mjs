@@ -43,16 +43,16 @@ ok("dual video layers", await ctx.locator(".ident .idf-video").count() === 2 && 
     lightOn: document.querySelector('.idf-video[data-k="light"]').classList.contains("on"),
     darkOn: document.querySelector('.idf-video[data-k="dark"]').classList.contains("on"),
     logo: (document.querySelector(".wordmark") || {}).textContent || "",
-    wmPos: getComputedStyle(document.querySelector(".wordmark")).backgroundPosition,
+    wmGrad: getComputedStyle(document.querySelector(".wm-c")).backgroundImage,
   }));
   ok("theme crossfade swap", st.lightOn && !st.darkOn && (st.logo || "").includes("design-clone"));
   await ctx.click("#themebtn"); await ctx.waitForTimeout(1000);
   const st2 = await ctx.evaluate(() => ({
-    wmPos2: getComputedStyle(document.querySelector(".wordmark")).backgroundPosition,
+    wmGrad2: getComputedStyle(document.querySelector(".wm-c")).backgroundImage,
     lightOn: document.querySelector('.idf-video[data-k="light"]').classList.contains("on"),
     darkOn: document.querySelector('.idf-video[data-k="dark"]').classList.contains("on"),
   }));
-  ok("theme crossfade back", st2.darkOn && !st2.lightOn && st2.wmPos2 !== st.wmPos);
+  ok("theme crossfade back", st2.darkOn && !st2.lightOn && st2.wmGrad2 !== st.wmGrad);
 }
 ok("nav logo wordmark (M75-W1)", await ctx.locator(".logo .wordmark").count() === 1);
 ok("no agent switcher", await ctx.locator(".agentbtn").count() === 0);
