@@ -66,6 +66,7 @@ window.DCIdent = {
           setTimeout(() => { el.classList.remove("duo"); setPhase("play"); }, 420);
         }, 430);
       } else if (restart) {
+        vids[theme].preload = "auto";
         playVid(theme);
       }
       for (const k of ["light", "dark"]) {
@@ -83,6 +84,11 @@ window.DCIdent = {
     };
 
     setActive(cur, true);
+    // M76-W7: 主文档 load 被慢子资源拖住时媒体加载可能排队——1.5s 仍空载则强制 load()+play() 重试
+    setTimeout(() => {
+      const v = vids[cur];
+      if (v && v.readyState === 0) { v.preload = "auto"; v.load(); playVid(cur); }
+    }, 1500);
     return { swap: (theme) => setActive(theme, false), phase: () => phase };
   },
 };

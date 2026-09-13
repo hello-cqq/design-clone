@@ -27,6 +27,8 @@ const STYLES = {
   guofeng: "Chinese guofeng ink-wash illustration, xuan paper texture, flowing brush lines, subtle mineral pigments, classical poetic composition,留白 negative space",
   photographic: "candid documentary photograph, natural available light, shallow depth of field, real skin texture and fabric detail, slight film grain, unposed moment",
   "flat-corporate": "clean flat corporate illustration, geometric simplified shapes, consistent 2-tone brand palette, crisp edges, professional saas marketing style",
+  "shinkai-2.5d": "Makoto Shinkai film style 2.5D anime key visual, clean transparent cinematic lighting, tyndall god rays, luminous sky and sea mirror reflections, delicate hair strand highlights, emotional saturated-yet-soft color script, crisp cel shading with painterly backgrounds, 8k studio key art, obviously hand-drawn anime NOT photoreal NOT plastic",
+  "zootopia-3d": "Disney Zootopia-grade cinematic 3D cartoon render, anthropomorphic animal characters with realistic fine fur and fabric materials, soft natural light and volumetrics, juicy translucent macaron palette, rounded modern mobile game UI shapes, OC render 8k, clean uncluttered background, bright playful child-friendly NOT photoreal",
   // M76-W3a: 原神级虚拟人锚点——cel-shading+轮廓光+体积光+景深分层，禁塑料灰底
   "anime-cel": "premium anime key visual (genshin-impact-grade virtual character), crisp cel shading with 2-3 tone steps, strong rim light and subsurface glow on skin, volumetric god rays, atmospheric depth of field with layered background (far sky / mid clouds-light / near subject), saturated yet soft painterly palette, delicate hair strand highlights, cinematic composition, studio key art quality, NOT photoreal NOT plastic symmetric",
 };
@@ -48,7 +50,7 @@ const { values } = parseArgs({
   },
 });
 if (!values.prompt || !values.out) {
-  console.log("用法: node genimg.mjs --prompt \"...\" --out <file> [--style pixar-3d|clay-icon|sticker|flat|anime|anime-cel|disney|illustration|cyberpunk|guofeng|photographic|flat-corporate] [--seeds 1,2,3] [--no-anti]");
+  console.log("用法: node genimg.mjs --prompt \"...\" --out <file> [--style pixar-3d|clay-icon|sticker|flat|anime|anime-cel|shinkai-2.5d|zootopia-3d|disney|illustration|cyberpunk|guofeng|photographic|flat-corporate] [--seeds 1,2,3] [--no-anti]");
   process.exit(1);
 }
 const full = [values.prompt, values.style ? (STYLES[values.style] || "") : "", SAFETY, values["no-anti"] ? "" : ANTI_TELL].filter(Boolean).join(", ");
@@ -78,11 +80,19 @@ const manifest = path.join(outDir, "images.json");
 const list = fs.existsSync(manifest) ? JSON.parse(fs.readFileSync(manifest, "utf8")) : [];
 
 for (const seed of seeds) {
-  const key = crypto.createHash("sha1").update(JSON.stringify([full, values.w, values.h, seed, values["ref-url"] || ""])).digest("hex");
+  const key = crypto.createHash("sha1").update(JSON.stringify([full, values.style || "", values.w, values.h, seed, values["ref-url"] || ""])).digest("hex");
   const cached = path.join(cacheDir, key + ".png");
   const target = seeds.length > 1 ? outAbs.replace(/(\.\w+)$/, `-${seed}$1`) : outAbs;
+  const wmErase = async (f) => {
+    try {
+      const meta = await sharp(f).metadata();
+      const r = spawnSync("node", [path.join(HERE, "gen", "patch-erase.mjs"), "--in", f, "--out", f + ".wm", "--mask", `rect:${meta.width - 165},${meta.height - 36},165,36`, "--feather", "8"], { encoding: "utf8" });
+      if (r.status === 0 && fs.existsSync(f + ".wm")) fs.renameSync(f + ".wm", f);
+    } catch {}
+  };
   if (fs.existsSync(cached)) {
     fs.copyFileSync(cached, target);
+    await wmErase(target); // M77: 缓存命中也擦水印
     console.log("cache hit:", path.basename(target));
   } else {
     const model = values["ref-url"] && process.env.POLLINATIONS_TOKEN ? "kontext" : "flux";
@@ -96,12 +106,7 @@ for (const seed of seeds) {
     const buf = await fetchImg(u.href);
     fs.writeFileSync(cached, buf);
     fs.copyFileSync(cached, target);
-    // M76-W3c: 匿名档 flux 仍盖 pollinations 水印（nologo 无效）→ 落盘即擦右下角
-    try {
-      const meta = await sharp(target).metadata();
-      const r = spawnSync("node", [path.join(HERE, "gen", "patch-erase.mjs"), "--in", target, "--out", target + ".wm", "--mask", `rect:${meta.width - 165},${meta.height - 36},165,36`, "--feather", "8"], { encoding: "utf8" });
-      if (r.status === 0 && fs.existsSync(target + ".wm")) fs.renameSync(target + ".wm", target);
-    } catch {}
+    await wmErase(target); // M76-W3c: 匿名档 flux 仍盖 pollinations 水印（nologo 无效）→ 落盘即擦
     console.log("generated:", path.basename(target), `(${model}, seed ${seed})`);
   }
   list.push({ at: new Date().toISOString(), prompt: values.prompt, style: values.style || null, seed, engine: "pollinations", out: path.basename(target) });
