@@ -85,6 +85,7 @@ ok("exp iframe", (await ctx.locator("#expframe").getAttribute("src") || "").incl
 ok("featured cards", await ctx.locator("#featured .pcard").count() >= 4);
 ok("flame heat", await ctx.locator("#featured .heat svg path").count() >= 4);
 ok("no footer links", await ctx.locator("footer a").count() === 0);
+await ctx.locator(".animstage").scrollIntoViewIfNeeded(); await ctx.waitForTimeout(1200);
 ok("anim stage", await ctx.locator("#animstage svg").count() === 1);
 // lang + theme
 const h1en = await ctx.locator("h1").textContent();

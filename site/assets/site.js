@@ -333,7 +333,13 @@
     const scenes = { a: "mobile", b: "link", c: "desktop", d: "web" };
     wrap.innerHTML = Object.entries(scenes).map(([k], i) => `<button class="ftab${i === 0 ? " on" : ""}" data-s="${k}">${t("f_" + k + "_t")}</button>`).join("");
     const stage = document.getElementById("animstage");
-    window.DCAnim.mount(stage, scenes.a);
+    // M76-W8: 演示真景图懒挂载——进入视口才 mount，不与本站首屏/视频抢连接
+    let mounted = false;
+    const doMount = () => { if (mounted) return; mounted = true; window.DCAnim.mount(stage, scenes.a); };
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver((es) => { if (es.some((x) => x.isIntersecting)) { io.disconnect(); doMount(); } }, { rootMargin: "200px" });
+      io.observe(stage);
+    } else doMount();
     wrap.addEventListener("click", (e) => {
       const b = e.target.closest(".ftab");
       if (!b) return;
