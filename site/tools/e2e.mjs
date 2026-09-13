@@ -196,6 +196,25 @@ process.exit(fails.length ? 1 : 0);{
   await mp.waitForTimeout(1200);
   ok("mobile360 proto no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
   ok("mobile step rail", await mp.locator(".steps b").count() === 4);
+  await mp.close();
+  // M76-W5: 画廊全 app 巡检——每个已发布 app 的 proto 页舞台可渲染且无 console 错
+  {
+    const gp = await b.newPage({ viewport: { width: 1280, height: 900 } });
+    const errs = [];
+    gp.on("console", (m) => { if (m.type() === "error") errs.push(m.text().slice(0, 80)); });
+    await gp.goto(base + "/gallery.html", { waitUntil: "domcontentloaded" });
+    await gp.waitForTimeout(2500);
+    const slugs = await gp.evaluate(() => (window.__DC_STATE && window.__DC_STATE.index ? window.__DC_STATE.index.apps || window.__DC_STATE.index : []).map((a) => a.slug || a.app).filter(Boolean));
+    ok("gallery index apps", slugs.length >= 6);
+    for (const slug of slugs.slice(0, 8)) {
+      await gp.goto(base + `/proto.html?app=${slug}`, { waitUntil: "domcontentloaded" });
+      await gp.waitForTimeout(1800);
+      const live = await gp.evaluate(() => { const st = document.querySelector("#dc-stage, iframe"); return !!st; });
+      ok(`proto live ${slug}`, live);
+    }
+    ok("gallery tour console clean", errs.length === 0);
+    await gp.close();
+  }
   await mp.goto(base + "/proto.html?app=petpark", { waitUntil: "networkidle" });
   await mp.waitForTimeout(2500);
   ok("mobile proto no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));

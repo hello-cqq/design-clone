@@ -199,3 +199,6 @@
 153. M75 字标：flux 不写文字（"design-clone" 全词生成=乱码团）——艺术字的正确混合=**生图材质+矢量字形 clip**：genimg 产主题材质横幅（或直接用主题生图双联昼/夜），CSS background-clip:text 填入字形，亮=昼海带/暗=夜海带，与头像图标同源同主题；e2e 断言 background-clip:text+transparent color+材质 url。教训：**生成模型的能力边界要事先验证，文字交给矢量、材质交给生图**。
 154. M75 视频去铅笔：颜色键/全图自动循环会被落日暖光与肤色误导（拉出横条/抹掉耳朵）——正解=小 poly 顺序多 pass + **键帧模板跟踪+清洗参考帧移植**（同镜头静漂移下完美源）；逐帧"同帧相对补丁"天然抗运动。暗色 ident 无女生特写（皮肤像素检测=0）不处理。工具通用化 patch-erase.mjs（patch-match lite/streak/track/srcreplace/dilate/空 mask 跳过）。
 155. M75 发布链路：proto 仓体积增长后 publish 全量 clone 超 900s 挂死——改**缓存克隆复用**（~/.cache/design-clone-publish + fetch --depth 1 + clean + cp）；appicon 的 run 根 icon.png 复制必须在 compose 之后（此前静默 catch 导致_gallery-ready 假缺_）。教训：**长链路工具的每个外部 IO 都要有缓存/超时/时序审计**。
+156. M76 铅笔复发根因=**缓存**：ident mp4 无哈希名，浏览器吃旧文件；logo-main 双笔尖从未被 M52 处理（只擦了 girl）。教训：品牌资产一律哈希名+brand-qa 分区像素门（皮肤/暖发丝会误报全图扫，须按"耳上发区"先验分区）。
+157. M76 生图水印：pollinations 匿名档 nologo 参数无效，flux 仍盖右下角水印。修：genimg 落盘即 patch-erase 右下 165x36；存量资产批量回擦。教训：免费档的"去水印开关"不可信，落盘后自检+擦除才是闭环。
+158. M76 质感公式（原神级）= 分层深度（far 背景带/mid 光球/near 角色渲染/ui 玻璃卡）+ 粒子场 + idle 动效 + 高饱和柔调；2.5D 视差假 3D 足够，不需要 three.js。interact 门新坑：cursor:pointer 会继承→无接线子元素（.ic/.sp）被判死控件，行级容器必须自身接线。

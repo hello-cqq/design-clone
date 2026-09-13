@@ -64,3 +64,6 @@
 - `qa/paths-qa.mjs`——路径方向硬门：回边入路径/回退 nav 叶/互反双向/巨链导航化。
 - `eval.mjs`——聚合分（fidelity/interactivity/perf/ux/stability/privacy）。
 - 存量债口径：新门对 M- cutoff 前的存量 run 记 warn 并公示（`report/parity-debt.md` 等），新 run 硬拦。
+
+| inspect | art-depth | original 概念 run：全视图 data-fx-parallax≥2 且 data-fx="particles"≥1（M76-W3b，见 references/art-direction.md） | hard |
+| brand-qa | pencil-zone | 品牌资产耳上发区铅笔签名像素=0；ident 抽帧全帧=0（M76-W1） | hard（CI 前置） |
