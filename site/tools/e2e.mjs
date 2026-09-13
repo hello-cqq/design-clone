@@ -116,7 +116,7 @@ if (await tag.count()) { await tag.click(); await ctx.waitForTimeout(600); ok("g
 // ---- proto detail
 await ctx.goto(base + "/proto.html?app=petpark", { waitUntil: "load" });
 await ctx.waitForTimeout(2500);
-ok("breadcrumb", /PetPark|宠物|智能助理|AI Assistant/.test(await ctx.locator("#crumb").textContent()));
+ok("breadcrumb", /PetPark|宠物|Animal Paradise|智能助理|AI Assistant/.test(await ctx.locator("#crumb").textContent()));
 ok("board name", (await ctx.locator("#side h1").textContent()).length > 2);
 ok("board dl btn", (await ctx.locator("#side .dlbtn").textContent()).length > 2);
 {
