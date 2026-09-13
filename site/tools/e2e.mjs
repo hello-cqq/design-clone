@@ -197,6 +197,22 @@ process.exit(fails.length ? 1 : 0);{
   ok("mobile360 proto no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
   ok("mobile step rail", await mp.locator(".steps b").count() === 4);
   await mp.close();
+  // M76-W8: 无 Range 的 HTTP 服务下 ident 必须推进（防 load 门控/非 faststart 复发）
+  {
+    const { spawn } = await import("node:child_process");
+    const srv = spawn("python3", ["-m", "http.server", "4399", "-d", path.resolve(ROOT)], { stdio: "ignore" });
+    await new Promise((r) => setTimeout(r, 1200));
+    const hp = await b.newPage({ viewport: { width: 1280, height: 900 } });
+    await hp.goto("http://localhost:4399/index.html", { waitUntil: "domcontentloaded" });
+    await hp.waitForTimeout(3500);
+    const c1 = await hp.evaluate(() => { const v = document.querySelector('.idf-video[data-k="light"]'); return v ? v.currentTime : -1; });
+    await hp.waitForTimeout(2500);
+    const c2 = await hp.evaluate(() => { const v = document.querySelector('.idf-video[data-k="light"]'); return v ? v.currentTime : -1; });
+    ok("http ident plays (no-range server)", c2 > c1 + 0.2 || (c2 >= 0 && c2 < c1));
+    await hp.close();
+    srv.kill();
+  }
+  await mp.close();
   // M76-W5: 画廊全 app 巡检——每个已发布 app 的 proto 页舞台可渲染且无 console 错
   {
     const gp = await b.newPage({ viewport: { width: 1280, height: 900 } });

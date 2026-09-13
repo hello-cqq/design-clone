@@ -111,6 +111,21 @@ if (!framesDir) {
   }
 }
 let fail = 0;
+// M76-W8: ident mp4 必须 faststart（moov 先于 mdat）——无 Range 服务下否则卡住不播
+for (const v of fs.readdirSync(A).filter((f) => /^ident-.*\.mp4$/.test(f))) {
+  const buf = fs.readFileSync(path.join(A, v));
+  const order = [];
+  let i = 0;
+  while (i + 8 <= buf.length && order.length < 4) {
+    const size = buf.readUInt32BE(i);
+    const typ = buf.toString("latin1", i + 4, i + 8);
+    order.push(typ);
+    if (size < 8) break;
+    i += size;
+  }
+  const moov = order.indexOf("moov"), mdat = order.indexOf("mdat");
+  if (moov === -1 || mdat === -1 || moov > mdat) { fail = 1; console.log(`FAIL ${v}: 非 faststart（${order.join(",")}）`); } else console.log(`ok ${v} faststart`);
+}
 for (const im of IMGS) {
   const f = path.join(A, im);
   if (!fs.existsSync(f)) { console.log("skip", im); continue; }

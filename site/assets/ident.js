@@ -13,7 +13,7 @@ window.DCIdent = {
   <div class="idf-halo" data-k="light" style="background-image:url(${POSTER_LIGHT})"></div>
   <div class="idf-halo" data-k="dark" style="background-image:url(${POSTER_DARK})"></div>
   <video class="idf-video" data-k="light" src="assets/ident-light.25ebd07a.mp4" poster="${POSTER_LIGHT}" muted playsinline preload="none" tabindex="-1"></video>
-  <video class="idf-video" data-k="dark" src="assets/ident-dark.2e1d52dc.mp4" poster="${POSTER_DARK}" muted playsinline preload="none" tabindex="-1"></video>
+  <video class="idf-video" data-k="dark" src="assets/ident-dark.bc4c173a.mp4" poster="${POSTER_DARK}" muted playsinline preload="none" tabindex="-1"></video>
   <div class="idf-duo" style="background-image:url(assets/logo-main.png)"></div>`;
   },
   wire(el) {
@@ -85,13 +85,23 @@ window.DCIdent = {
       setTimeout(() => { el.classList.remove("duo"); playVid(cur); setPhase("play"); }, 500);
     };
 
-    // M76-W7c: preload=none + load 后才播——媒体请求不参与主文档 load；poster halo 兜底视觉
-    const start = () => setActive(cur, true);
-    if (document.readyState === "complete") start();
-    else {
-      window.addEventListener("load", start, { once: true });
-      setTimeout(() => { if (vids[cur].readyState === 0 && !vids[cur].classList.contains("on")) start(); }, 2500);
-    }
+    // M76-W8: 播放不依赖 window.load（Pages 边缘偶发 stall 会拖住 load → 视频永不启动）；
+    // DOMContentLoaded+300ms 即启动，看门狗 ≤4 次重试 play()；poster halo 兜底视觉
+    let started = false;
+    const start = () => { if (started) return; started = true; setActive(cur, true); watchdog(0); };
+    const watchdog = (n) => {
+      if (n > 3) return;
+      setTimeout(() => {
+        const v = vids[cur];
+        if (v && (v.readyState < 3 || v.paused) && phase === "play" && !reduced) {
+          v.preload = "auto";
+          const pr = v.play(); if (pr && pr.catch) pr.catch(() => {});
+          watchdog(n + 1);
+        }
+      }, 900);
+    };
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => setTimeout(start, 300), { once: true });
+    else setTimeout(start, 300);
     return { swap: (theme) => setActive(theme, false), phase: () => phase };
   },
 };

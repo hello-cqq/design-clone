@@ -100,6 +100,9 @@ if (!/^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/.test(version)) die("--version 非 SemVe
 const skillChannel = skillVer.includes("snapshot") ? "snapshot" : "stable";
 fs.writeFileSync(path.join(pdir, "version.json"), JSON.stringify({ app: values.app, version, published_at: new Date().toISOString(), skill_version: skillVer, skill_channel: skillChannel }, null, 1));
 fs.copyFileSync(path.join(run, "icon.png"), path.join(fdir, "icon.png"));
+// M76-W8c: 外壳 link ../knowledge/tokens.css → 社区仓也要带 knowledge/tokens.css（否则 Pages 404）
+const tkSrc = path.join(run, "knowledge", "tokens.css");
+if (fs.existsSync(tkSrc)) { fs.mkdirSync(path.join(fdir, "knowledge"), { recursive: true }); fs.copyFileSync(tkSrc, path.join(fdir, "knowledge", "tokens.css")); }
 fs.copyFileSync(path.join(run, "cover.png"), path.join(fdir, "cover.png"));
 const baseMeta = runMeta || {};
 fs.writeFileSync(path.join(fdir, "meta.json"), JSON.stringify({
