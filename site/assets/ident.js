@@ -14,13 +14,14 @@ window.DCIdent = {
   <div class="idf-halo" data-k="dark" style="background-image:url(${POSTER_DARK})"></div>
   <video class="idf-video" data-k="light" src="assets/ident-light.25ebd07a.mp4" poster="${POSTER_LIGHT}" muted playsinline preload="none" tabindex="-1"></video>
   <video class="idf-video" data-k="dark" src="assets/ident-dark.bc4c173a.mp4" poster="${POSTER_DARK}" muted playsinline preload="none" tabindex="-1"></video>
-  <div class="idf-duo" style="background-image:url(assets/logo-main.png)"></div>`;
+  <div class="idf-duo" data-duo-bg="assets/logo-main.png"></div>`; // M76-W8: duo 背景懒挂（2MB 图不抢视频连接）
   },
   wire(el) {
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const vids = { light: el.querySelector('.idf-video[data-k="light"]'), dark: el.querySelector('.idf-video[data-k="dark"]') };
     const halos = { light: el.querySelector('.idf-halo[data-k="light"]'), dark: el.querySelector('.idf-halo[data-k="dark"]') };
     let cur = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+    vids[cur].preload = "auto"; // M76-W8: boot 即排队当前主题视频，抢在 stalled 大图前
     let phase = "play";
     let busy = false;
     const setPhase = (p) => { phase = p; };
@@ -87,6 +88,10 @@ window.DCIdent = {
 
     // M76-W8: 播放不依赖 window.load（Pages 边缘偶发 stall 会拖住 load → 视频永不启动）；
     // DOMContentLoaded+300ms 即启动，看门狗 ≤4 次重试 play()；poster halo 兜底视觉
+    const duoEl = el.querySelector(".idf-duo");
+    const attachDuo = () => { if (duoEl && !duoEl.style.backgroundImage) duoEl.style.backgroundImage = `url(${duoEl.getAttribute("data-duo-bg")})`; };
+    vids.light.addEventListener("timeupdate", function t() { if (vids.light.currentTime > 10) { attachDuo(); vids.light.removeEventListener("timeupdate", t); } });
+    vids.light.addEventListener("ended", attachDuo, { once: true });
     let started = false;
     const start = () => { if (started) return; started = true; setActive(cur, true); watchdog(0); };
     const watchdog = (n) => {
