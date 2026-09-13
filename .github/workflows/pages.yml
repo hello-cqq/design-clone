@@ -26,6 +26,8 @@ jobs:
         run: |
           curl -fsSL --max-time 20 https://hello-cqq.github.io/design-clone-prototype/index.json -o site/data/index.fallback.json \
             || echo "keep committed fallback"
+      - name: hash site child assets (edge-cache bust)
+        run: node site/tools/hash-assets.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with: { path: site }
