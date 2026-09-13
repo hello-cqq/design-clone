@@ -18,7 +18,7 @@ const { values } = parseArgs({
   options: {
     run: { type: "string" }, app: { type: "string" }, title: { type: "string" }, "title-zh": { type: "string", default: "" },
     desc: { type: "string", default: "" }, "desc-zh": { type: "string", default: "" }, tags: { type: "string", default: "" }, license: { type: "string", default: "CC-BY-4.0" },
-    version: { type: "string" }, attest: { type: "string" }, note: { type: "string", default: "" },
+    version: { type: "string" }, attest: { type: "string" }, note: { type: "string", default: "" }, retire: { type: "string", default: "" },
     repo: { type: "string", default: "hello-cqq/design-clone-prototype" }, dry: { type: "boolean", default: false },
   },
 });
@@ -113,7 +113,7 @@ fs.writeFileSync(path.join(fdir, "meta.json"), JSON.stringify({
   version, created_at: new Date().toISOString(),
 }, null, 1));
 const brand = attest === "original" ? "" : `\n> Unofficial study replica generated with design-clone. All trademarks and brand assets belong to their respective owners; no affiliation or endorsement implied.\n`;
-fs.writeFileSync(path.join(fdir, "PROVENANCE.md"), `# ${values.title} (${values.app}/${values.flavor})\n${brand}\n- source: ${scope.source || "original"} / ${scope.target || values.app}\n- skill version: ${skillVer}\n- gates: ${gates.join(" | ")}\n\n## Changes\n- v${version}: initial publish\n`);
+fs.writeFileSync(path.join(fdir, "PROVENANCE.md"), `# ${values.title} (${values.app}/${values.flavor})\n${brand}\n- source: ${scope.source || "original"} / ${scope.target || values.app}\n- retire: ${values.retire || "—"}\n- skill version: ${skillVer}\n- gates: ${gates.join(" | ")}\n\n## Changes\n- v${version}: initial publish\n`);
 // v2：app 级 meta 即 flavor meta（平铺），不再写第二份 app meta
 
 /* ---------- 4. 提交 PR ---------- */
@@ -140,6 +140,12 @@ if (fs.existsSync(path.join(cache, ".git"))) {
 } else {
   execSync(`git clone --depth 1 git@github.com:${values.repo}.git ${cache}`, { stdio: "inherit" });
   fs.cpSync(cache, work, { recursive: true });
+}
+// M76-W2a: --retire a,b → 同 PR 下架旧 slug（目录删除，index 由 proto 仓 workflow 重扫）
+for (const r of (values.retire || "").split(",").map((x) => x.trim()).filter(Boolean)) {
+  if (r === values.app) die("retire 不能等于新 app");
+  const rd = path.join(work, r);
+  if (fs.existsSync(rd)) { fs.rmSync(rd, { recursive: true, force: true }); console.log("✓ retire:", r); } else console.log("· retire 跳过（不存在）:", r);
 }
 const appDir = path.join(work, values.app);
 fs.mkdirSync(appDir, { recursive: true });
