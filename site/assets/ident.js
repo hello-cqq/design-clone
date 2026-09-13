@@ -10,7 +10,7 @@ window.DCIdent = {
     return `
   <div class="idf-halo" data-k="light" style="background-image:url(assets/ident-light-poster.3345e518.jpg)"></div>
   <div class="idf-halo" data-k="dark" style="background-image:url(assets/ident-dark-poster.0ca98225.jpg)"></div>
-  <video class="idf-video" data-k="light" src="assets/ident-light.3345e518.mp4" poster="assets/ident-light-poster.3345e518.jpg" muted playsinline preload="none" tabindex="-1"></video>
+  <video class="idf-video" data-k="light" src="assets/ident-light.25ebd07a.mp4" poster="assets/ident-light-poster.3345e518.jpg" muted playsinline preload="none" tabindex="-1"></video>
   <video class="idf-video" data-k="dark" src="assets/ident-dark.2e1d52dc.mp4" poster="assets/ident-dark-poster.0ca98225.jpg" muted playsinline preload="none" tabindex="-1"></video>
   <div class="idf-duo" style="background-image:url(assets/logo-main.png)"></div>`;
   },
