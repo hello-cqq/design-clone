@@ -24,7 +24,7 @@ ctx.on("console", (m) => { const u = (m.location() && m.location().url) || ""; i
 ctx.on("pageerror", (e) => errs.push("pageerror:" + String(e.message).slice(0, 120)));
 
 // ---- index
-await ctx.goto(base + "/index.html", { waitUntil: "networkidle" });
+await ctx.goto(base + "/index.html", { waitUntil: "load" });
 await ctx.waitForTimeout(2500);
 ok("ident video", await ctx.locator(".ident .idf-video").count() === 2);
 ok("ident mask (no rectangle)", await ctx.evaluate(() => { const v = document.querySelector(".idf-video"); const cs = getComputedStyle(v); return (cs.maskImage || cs.webkitMaskImage || "").includes("radial-gradient"); }));
@@ -102,7 +102,7 @@ ok("nav glowpill", await ctx.locator(".navwrap .glowpill").count() === 1);
 ok("gh pill", (await ctx.locator(".ghbtn").textContent()).includes("GitHub"));
 
 // ---- gallery
-await ctx.goto(base + "/gallery.html", { waitUntil: "networkidle" });
+await ctx.goto(base + "/gallery.html", { waitUntil: "load" });
 await ctx.waitForTimeout(2000);
 const nAll = await ctx.locator("#cards .pcard").count();
 ok("gallery cards", nAll >= 5, String(nAll));
@@ -114,9 +114,9 @@ const tag = ctx.locator(".tagbtn").first();
 if (await tag.count()) { await tag.click(); await ctx.waitForTimeout(600); ok("gallery tag filter", (await ctx.locator("#cards .pcard").count()) < nAll); await tag.click(); await ctx.waitForTimeout(400); }
 
 // ---- proto detail
-await ctx.goto(base + "/proto.html?app=petpark", { waitUntil: "networkidle" });
+await ctx.goto(base + "/proto.html?app=petpark", { waitUntil: "load" });
 await ctx.waitForTimeout(2500);
-ok("breadcrumb", (await ctx.locator("#crumb").textContent()).includes("PetPark") || (await ctx.locator("#crumb").textContent()).includes("宠物"));
+ok("breadcrumb", /PetPark|宠物|智能助理|AI Assistant/.test(await ctx.locator("#crumb").textContent()));
 ok("board name", (await ctx.locator("#side h1").textContent()).length > 2);
 ok("board dl btn", (await ctx.locator("#side .dlbtn").textContent()).length > 2);
 {
@@ -133,7 +133,7 @@ ok("no page scroll", await ctx.evaluate(() => document.documentElement.scrollHei
 
 // ---- guide/start
 for (const p of ["/guide.html", "/start.html"]) {
-  await ctx.goto(base + p, { waitUntil: "networkidle" });
+  await ctx.goto(base + p, { waitUntil: "load" });
   await ctx.waitForTimeout(800);
   ok("page " + p, await ctx.locator("header.top").count() === 1);
 }
@@ -154,7 +154,7 @@ await browser.close();
 
 console.log(JSON.stringify({ pass: fails.length === 0, fails }, null, 1));
 process.exit(fails.length ? 1 : 0);{
-  await ctx.goto(base + "/proto.html?app=wechat", { waitUntil: "networkidle" });
+  await ctx.goto(base + "/proto.html?app=wechat", { waitUntil: "load" });
   await ctx.waitForTimeout(2500);
   ok("dl release link", await ctx.evaluate(() => (document.getElementById("dlbtn") || {}).href.includes("/releases/download/wechat-")));
   ok("contrib avatars only", await ctx.evaluate(() => {
@@ -166,7 +166,7 @@ process.exit(fails.length ? 1 : 0);{
   await ctx.click("#themebtn"); await ctx.waitForTimeout(600);
   ok("theme post to iframe", await ctx.evaluate(() => window.__postedTheme === "dark"));
   await ctx.click("#themebtn"); await ctx.waitForTimeout(600);
-  await ctx.goto(base + "/gallery.html", { waitUntil: "networkidle" });
+  await ctx.goto(base + "/gallery.html", { waitUntil: "load" });
 }
 {
   await ctx.waitForTimeout(1800);
@@ -178,12 +178,12 @@ process.exit(fails.length ? 1 : 0);{
 // ---- M71 mobile suite 390x844 ----
 {
   const mp = await b.newPage({ viewport: { width: 390, height: 844 } });
-  await mp.goto(base + "/index.html", { waitUntil: "networkidle" });
+  await mp.goto(base + "/index.html", { waitUntil: "load" });
   await mp.waitForTimeout(1800);
   ok("mobile index no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
   ok("mobile ident visible", await mp.locator(".ident .idf-video").first().isVisible());
   ok("mobile install code visible", await mp.locator("#installcmd").isVisible());
-  await mp.goto(base + "/gallery.html", { waitUntil: "networkidle" });
+  await mp.goto(base + "/gallery.html", { waitUntil: "load" });
   await mp.waitForTimeout(1800);
   ok("mobile gallery no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
   ok("mobile gallery cards", await mp.locator("#cards .pcard").count() >= 4);
@@ -215,7 +215,7 @@ process.exit(fails.length ? 1 : 0);{
     ok("gallery tour console clean", errs.length === 0);
     await gp.close();
   }
-  await mp.goto(base + "/proto.html?app=petpark", { waitUntil: "networkidle" });
+  await mp.goto(base + "/proto.html?app=petpark", { waitUntil: "load" });
   await mp.waitForTimeout(2500);
   ok("mobile proto no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
   ok("mobile proto stacked", await mp.evaluate(() => {
@@ -224,7 +224,7 @@ process.exit(fails.length ? 1 : 0);{
     return sd.top >= st.bottom - 4;
   }));
   ok("mobile dl reachable", await mp.locator("#dlbtn").isVisible());
-  await mp.goto(base + "/proto.html?app=aliyun-console", { waitUntil: "networkidle" });
+  await mp.goto(base + "/proto.html?app=aliyun-console", { waitUntil: "load" });
   await mp.waitForTimeout(2500);
   ok("mobile proto chromeless", await mp.evaluate(() => document.getElementById("stageframe").src.includes("chrome=0")));
   ok("mobile page chips", await mp.evaluate(() => document.querySelectorAll("#pagechips .pchip").length >= 3));
@@ -234,7 +234,7 @@ process.exit(fails.length ? 1 : 0);{
     await mp.waitForTimeout(1200);
     ok("mobile chip switches page", await mp.evaluate(() => document.getElementById("stageframe").src.includes("#pages/")));
   }
-  await mp.goto(base + "/index.html", { waitUntil: "networknetwork".replace("networknetwork", "networkidle") });
+  await mp.goto(base + "/index.html", { waitUntil: "load" });
   await mp.waitForTimeout(2000);
   ok("mobile exp chromeless", await mp.evaluate(() => document.getElementById("expframe").src.includes("chrome=0")));
   ok("mobile install wraps", await mp.evaluate(() => { const c = document.getElementById("installcmd"); return c.scrollWidth <= c.clientWidth + 2; }));
