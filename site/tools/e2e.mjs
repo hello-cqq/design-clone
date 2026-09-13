@@ -59,7 +59,7 @@ ok("no agent switcher", await ctx.locator(".agentbtn").count() === 0);
 ok("install label", ((await ctx.locator("[data-i18n=install_label]").textContent()) || "").trim().toLowerCase() === "install");
 ok("universal install cmd", ((await ctx.locator("#installcmd").textContent()) || "").includes("install.sh | bash") && !((await ctx.locator("#installcmd").textContent()) || "").includes("--agent"));
 ok("subs removed", await ctx.evaluate(() => !document.body.innerText.includes("按下载量排序") && !document.body.innerText.includes("四种来源") && !document.body.innerText.includes("Ranked by downloads") && !document.body.innerText.includes("Four sources")));
-ok("nav logo art-clip (M75-W1)", await ctx.evaluate(() => { const wm = document.querySelector(".wordmark"); if (!wm) return false; const cs = getComputedStyle(wm); return (cs.webkitBackgroundClip || cs.backgroundClip) === "text" && cs.color === "rgba(0, 0, 0, 0)" && (cs.backgroundImage || "").includes("logomark-fill"); }));
+ok("nav logo art-clip stagger (M76-W1b)", await ctx.evaluate(() => { const cs0 = [...document.querySelectorAll(".logo .wm-c")]; if (cs0.length !== 12) return false; const c = getComputedStyle(cs0[0]); const trs = new Set(cs0.map((x) => getComputedStyle(x).transform)); const fs = parseFloat(getComputedStyle(document.querySelector(".logo .wordmark")).fontSize); return (c.webkitBackgroundClip || c.backgroundClip) === "text" && c.color === "rgba(0, 0, 0, 0)" && (c.backgroundImage || "").includes("gradient") && trs.size >= 8 && fs >= 26; }));
 ok("no static brandmark", await ctx.locator(".brandmark").count() === 0);
 ok("duo layer present", await ctx.locator(".ident .idf-duo").count() === 1);
 try {
