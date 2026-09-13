@@ -25,6 +25,8 @@ import { parseArgs } from "node:util";
 import { createRequire } from "node:module";
 const sharp = createRequire(import.meta.url)("sharp");
 
+function s_usage() { return "patch-erase.mjs —— 通用小物件擦除\n用法: node patch-erase.mjs --in <file|framesDir> --out <file|framesDir> --mask <spec> [opts]\nmask spec: poly:x1,y1;x2,y2;... | rect:x,y,w,h | color:RRGGBB,tol[@x,y,w,h]\nopts: --feather --ring --dilate --streak --preview --track --trackmask --window --tracktol --srcreplace\n详见文件头注释与 references/asset-retouch.md"; }
+if (process.argv.includes("--help") || process.argv.includes("-h")) { console.log(s_usage()); process.exit(0); }
 const { values: V } = parseArgs({
   options: {
     in: { type: "string" }, out: { type: "string" }, mask: { type: "string" },
@@ -33,7 +35,7 @@ const { values: V } = parseArgs({
     track: { type: "string" }, trackmask: { type: "string" }, window: { type: "string", default: "24" }, tracktol: { type: "string", default: "900" }, srcreplace: { type: "string" },
   },
 });
-if (!V.in || !V.out || (!V.mask && !V.track)) { console.log("用法见文件头注释"); process.exit(1); }
+if (!V.in || !V.out || (!V.mask && !V.track)) { console.log(s_usage()); process.exit(1); }
 const FE = +V.feather, RING = +V.ring;
 
 /* ---------- mask 构建 ---------- */
