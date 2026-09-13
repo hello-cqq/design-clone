@@ -149,10 +149,10 @@
     const cover = a.cover ? `${PROTO_BASE}/${a.cover}` : "";
     const name = L(a.name, a.app);
     return `<a class="pcard" href="proto.html?app=${encodeURIComponent(a.app)}">
-      <div class="th${cover ? "" : " tile"}">${cover ? `<img src="${cover}" alt="" loading="lazy">` : (a.icon ? `<img class="appicon" src="${PROTO_BASE}/${a.icon}" alt="" loading="lazy">` : "")}
+      <div class="th${cover ? "" : " tile"}">${cover ? `<img data-src="${cover}" alt="" loading="lazy">` : (a.icon ? `<img class="appicon" data-src="${PROTO_BASE}/${a.icon}" alt="" loading="lazy">` : "")}
         <span class="heat"><svg width="11" height="11" viewBox="0 0 24 24" style="fill:#ff8a5c"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>${fmtHeat(a.downloads)}</span></div>
       <div class="bd"><div class="t"><span class="nm">${name}</span>
-        ${a.icon ? `<img class="tic" src="${PROTO_BASE}/${a.icon}" alt="" loading="lazy">` : ""}</div></div></a>`;
+        ${a.icon ? `<img class="tic" data-src="${PROTO_BASE}/${a.icon}" alt="" loading="lazy">` : ""}</div></div></a>`;
   }
 
   async function renderFeatured() {
@@ -182,6 +182,14 @@
     }
   }
 
+  // M76-W7c: 画廊缩略图 IO 延载——load 前不发 proto 边缘请求，load 事件不被慢边缘拖住
+  function armThumbIO() {
+    const io = new IntersectionObserver((es) => {
+      for (const e of es) if (e.isIntersecting) { const im = e.target; if (im.dataset.src) { im.src = im.dataset.src; delete im.dataset.src; } io.unobserve(im); }
+    }, { rootMargin: "300px" });
+    document.querySelectorAll("#cards img[data-src]").forEach((im) => io.observe(im));
+    window.addEventListener("load", () => setTimeout(() => document.querySelectorAll("#cards img[data-src]").forEach((im) => { im.src = im.dataset.src; delete im.dataset.src; io.unobserve(im); }), 400), { once: true });
+  }
   async function renderGallery() {
     const idx = await loadIndex();
     const grid = document.getElementById("cards");
@@ -199,6 +207,7 @@
     const tr = document.getElementById("tagrow");
     if (tr) tr.innerHTML = tags.map((x) => `<button class="tagbtn${x === tagOn ? " on" : ""}" data-tag="${x}">${x}</button>`).join("");
     grid.innerHTML = apps.map(card).join("") || `<p style="color:var(--mut)">${t("empty")} <a href="guide.html#publish">publish</a></p>`;
+    armThumbIO();
   }
 
   const isMobile = () => matchMedia("(max-width: 820px)").matches;

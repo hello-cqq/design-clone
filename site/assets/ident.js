@@ -10,8 +10,8 @@ window.DCIdent = {
     return `
   <div class="idf-halo" data-k="light" style="background-image:url(assets/ident-light-poster.3345e518.jpg)"></div>
   <div class="idf-halo" data-k="dark" style="background-image:url(assets/ident-dark-poster.0ca98225.jpg)"></div>
-  <video class="idf-video" data-k="light" src="assets/ident-light.3345e518.mp4" poster="assets/ident-light-poster.3345e518.jpg" muted playsinline preload="metadata" tabindex="-1"></video>
-  <video class="idf-video" data-k="dark" src="assets/ident-dark.2e1d52dc.mp4" poster="assets/ident-dark-poster.0ca98225.jpg" muted playsinline preload="metadata" tabindex="-1"></video>
+  <video class="idf-video" data-k="light" src="assets/ident-light.3345e518.mp4" poster="assets/ident-light-poster.3345e518.jpg" muted playsinline preload="none" tabindex="-1"></video>
+  <video class="idf-video" data-k="dark" src="assets/ident-dark.2e1d52dc.mp4" poster="assets/ident-dark-poster.0ca98225.jpg" muted playsinline preload="none" tabindex="-1"></video>
   <div class="idf-duo" style="background-image:url(assets/logo-main.png)"></div>`;
   },
   wire(el) {
@@ -83,12 +83,13 @@ window.DCIdent = {
       setTimeout(() => { el.classList.remove("duo"); playVid(cur); setPhase("play"); }, 500);
     };
 
-    setActive(cur, true);
-    // M76-W7: 主文档 load 被慢子资源拖住时媒体加载可能排队——1.5s 仍空载则强制 load()+play() 重试
-    setTimeout(() => {
-      const v = vids[cur];
-      if (v && v.readyState === 0) { v.preload = "auto"; v.load(); playVid(cur); }
-    }, 1500);
+    // M76-W7c: preload=none + load 后才播——媒体请求不参与主文档 load；poster halo 兜底视觉
+    const start = () => setActive(cur, true);
+    if (document.readyState === "complete") start();
+    else {
+      window.addEventListener("load", start, { once: true });
+      setTimeout(() => { if (vids[cur].readyState === 0 && !vids[cur].classList.contains("on")) start(); }, 2500);
+    }
     return { swap: (theme) => setActive(theme, false), phase: () => phase };
   },
 };
