@@ -202,3 +202,5 @@
 156. M76 铅笔复发根因=**缓存**：ident mp4 无哈希名，浏览器吃旧文件；logo-main 双笔尖从未被 M52 处理（只擦了 girl）。教训：品牌资产一律哈希名+brand-qa 分区像素门（皮肤/暖发丝会误报全图扫，须按"耳上发区"先验分区）。
 157. M76 生图水印：pollinations 匿名档 nologo 参数无效，flux 仍盖右下角水印。修：genimg 落盘即 patch-erase 右下 165x36；存量资产批量回擦。教训：免费档的"去水印开关"不可信，落盘后自检+擦除才是闭环。
 158. M76 质感公式（原神级）= 分层深度（far 背景带/mid 光球/near 角色渲染/ui 玻璃卡）+ 粒子场 + idle 动效 + 高饱和柔调；2.5D 视差假 3D 足够，不需要 three.js。interact 门新坑：cursor:pointer 会继承→无接线子元素（.ic/.sp）被判死控件，行级容器必须自身接线。
+159. M77 豆包对标：差距不在生图而在"整套设计brief"——豆包先产风格基准/角色立绘词/分页 UI 长提示词/参考图再谈原型。修：director.mjs 一次产九 aspect brief（名/风格/角色/页+控件/资产/图标/封面/标签/场景/视频词），ref-images 逐页参考图，brief-tokens/products/flows/views 四件衍生落地；门 brief-director 仅 original 生效，clone 链零改动=增强不破坏。
+160. M77 生图现实：pollinations 匿名 flux 对风格锚点遵从弱（shinkai/zootopia 词仍出半写实）且缓存键漏 style 导致换风格命中旧图；水印擦除也曾只走新鲜路径。修：缓存键含 style、双路径擦水印；**角色资产改用用户确认过的参考图裁切**（豆包参考=已验收设计），生图退居背景/封面/图标。教训：生成链要有"人确认源"兜底，别和免费档模型硬磕风格。
