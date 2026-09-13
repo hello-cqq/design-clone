@@ -61,6 +61,10 @@ const IS_LINK = ["link", "video"].includes(scope.source || "");
 const off = !IS_LINK && offKey ? OFFICIAL[offKey] : null;
 // M77-W1: concept run 名称/标签/分类以 brief 为源（clone/link 链不变）
 const BRIEF = (() => { try { return JSON.parse(fs.readFileSync(path.join(run, "knowledge/brief.json"), "utf8")); } catch { return null; } })();
+// M77-W1: brief 场景→category/标签优先（clone 链不变）
+const BCAT = { "virtual-assistant": "social", "animal-park": "game", education: "education", music: "game", "culture-tea": "lifestyle", commerce: "commerce", "game-tech": "game", travel: "travel" };
+if (BRIEF && !values.category && BCAT[BRIEF.scenario]) category = BCAT[BRIEF.scenario];
+const briefTags = (BRIEF && Array.isArray(BRIEF.tags) ? BRIEF.tags : []);
 const nameZh = values["name-zh"] || (BRIEF && !IS_LINK && BRIEF.identity && BRIEF.identity.name_zh) || (off && off.zh) || (hasCJK(title) ? title.slice(0, 40) : hasCJK(app) ? app : `${CAT_ZH[category] || category} · 可交互原型`);
 const nameEn = values["name-en"] || (BRIEF && !IS_LINK && BRIEF.identity && BRIEF.identity.name_en) || (off && off.en) || (!hasCJK(title) && title ? title.slice(0, 40) : `${app} · ${category} prototype`);
 const homeProd = products[(dc.pages || [])[0]?.id] || Object.values(products)[0] || {};
@@ -75,7 +79,7 @@ const mulberry = (s) => () => { s |= 0; s = (s + 0x6d2b79f5) | 0; let t = Math.i
 const rnd = mulberry(seed);
 const featWords = [];
 for (const [k, re] of [["map", /地图|map/], ["community", /社区|community|feed/], ["booking", /预约|booking/], ["chat", /聊天|chat|会话/], ["profile", /档案|profile|我的/], ["player", /播放|player|视频/], ["dashboard", /面板|dashboard|控制台/], ["shop", /购物|shop|商城/], ["pets", /宠物|pet/], ["search", /搜索|search/]]) if (re.test(haystack)) featWords.push(k);
-const pool = [...new Set([category, SHELL_EN[dc.shell] || "mobile", scope.source || "clone", ...featWords, "interactive", scope.source && scope.source !== "original" ? "study" : "original"])];
+const pool = [...new Set([category, SHELL_EN[dc.shell] || "mobile", scope.source || "clone", ...briefTags, ...featWords, "interactive", scope.source && scope.source !== "original" ? "study" : "original"])];
 for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
 const tags = values.tags ? values.tags.split(",").map((x) => x.trim()).slice(0, 6) : pool.slice(0, Math.min(6, Math.max(3, pool.length)));
 

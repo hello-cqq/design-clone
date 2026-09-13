@@ -173,7 +173,13 @@
     const idx = state.index;
     const a = (idx && idx.apps || []).find((x) => x.app === app);
     const fl = document.getElementById("expframe");
-    if (fl) fl.src = a ? (isMobile() ? a.url + (a.url.includes("?") ? "&" : "?") + "chrome=0&embed=1&theme=" + state.theme : a.url) : `${PROTO_BASE}/ai-assistant/prototype/`;
+    // M76-W7: live-proof iframe 延到 window.load+idle 再挂 src——proto 边缘慢时不拖主文档 load（首页卡加载/视频不出的根因）
+    if (fl) {
+      const setSrc = () => { fl.src = a ? (isMobile() ? a.url + (a.url.includes("?") ? "&" : "?") + "chrome=0&embed=1&theme=" + state.theme : a.url) : `${PROTO_BASE}/ai-assistant/prototype/`; };
+      const idle = window.requestIdleCallback || ((f) => setTimeout(f, 300));
+      if (document.readyState === "complete") idle(setSrc);
+      else window.addEventListener("load", () => idle(setSrc), { once: true });
+    }
   }
 
   async function renderGallery() {
