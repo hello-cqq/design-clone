@@ -273,22 +273,46 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
 
 /* M68 wordmark → M75-W1 艺术字标（生图填充） */
 .wordmark {
-  display: inline-block; font-weight: 800; font-size: 21px; letter-spacing: .01em; line-height: 1.1;
-  background: url(logomark-fill.png) center/200% 100% no-repeat;
-  background-position: 0% 72%;
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 2px 5px var(--wm-shadow, rgba(20, 60, 70, .45)));
+  display: inline-flex; align-items: baseline; font-weight: 800; font-size: 27px; letter-spacing: .012em; line-height: 1.15;
+  --wm-x0: 0%; --wm-y: 86%; --wm-shadow: rgba(20, 60, 70, .5);
+  --wm-grad: linear-gradient(100deg, #0b7fb8 0%, #12a8c4 20%, #e8a53c 42%, #d96f32 58%, #0b7fb8 80%, #12a8c4 100%);
+  filter: drop-shadow(0 2px 6px var(--wm-shadow));
 }
-[data-theme="dark"] .wordmark { background-position: 100% 32%; --wm-shadow: rgba(0, 0, 0, .55); }
-.wordmark--ft { font-size: 15px; opacity: .92; }
+[data-theme="dark"] .wordmark { --wm-x0: 0%; --wm-y: 34%; --wm-shadow: rgba(0, 0, 0, .65); --wm-grad: linear-gradient(100deg, #8fd0ff 0%, #5f8cff 24%, #c792ff 48%, #6ee7ff 72%, #8fd0ff 100%); }
+/* M76-W1b 逐字错落：baseline 起伏 + 微旋转 + 字号差 + 每字独立材质采样 */
+.wm-c {
+  font-style: normal; display: inline-block;
+  background: var(--wm-grad) no-repeat;
+  background-size: 1200% 100%;
+  background-position: calc(var(--i) * 8.4%) 50%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: saturate(1.35) contrast(1.22) brightness(1.03);
+  transform: translateY(var(--wm-dy, 0px)) rotate(var(--wm-rot, 0deg)) scale(var(--wm-sc, 1));
+  transition: transform .25s cubic-bezier(.34, 1.56, .64, 1);
+}
+.wm-c:nth-child(1) { --wm-dy: 0px; --wm-rot: -2.4deg; --wm-sc: 1.06; }
+.wm-c:nth-child(2) { --wm-dy: -2.5px; --wm-rot: 1.6deg; }
+.wm-c:nth-child(3) { --wm-dy: 1.5px; --wm-rot: -1.2deg; --wm-sc: .97; }
+.wm-c:nth-child(4) { --wm-dy: -3px; --wm-rot: 2.2deg; }
+.wm-c:nth-child(5) { --wm-dy: 1px; --wm-rot: -1.8deg; --wm-sc: 1.05; }
+.wm-c:nth-child(6) { --wm-dy: -1.5px; --wm-rot: 1.2deg; }
+.wm-c:nth-child(7) { --wm-dy: 2.5px; --wm-rot: 0deg; --wm-sc: .92; }
+.wm-c:nth-child(8) { --wm-dy: -2px; --wm-rot: -2deg; --wm-sc: 1.07; }
+.wm-c:nth-child(9) { --wm-dy: 1px; --wm-rot: 1.8deg; }
+.wm-c:nth-child(10) { --wm-dy: -3px; --wm-rot: -1.4deg; --wm-sc: 1.03; }
+.wm-c:nth-child(11) { --wm-dy: 1.5px; --wm-rot: 2.4deg; }
+.wm-c:nth-child(12) { --wm-dy: -1px; --wm-rot: -2.2deg; --wm-sc: 1.06; }
+.logo:hover .wm-c { --wm-dy: 0px; --wm-rot: 0deg; --wm-sc: 1; }
+@media (prefers-reduced-motion: reduce) { .wm-c { transition: none; } }
+.wordmark--ft { font-size: 17px; opacity: .95; }
 .wm-t { font-family: var(--sans); font-size: 21px; font-weight: 650; letter-spacing: .5px; }
 .wordmark--ft .wm-t { font-size: 16px; }
 .wm-echo { transform: translate(1.6px, 1.6px); opacity: .28; transition: transform .3s ease; }
 .wm-echo text { opacity: 1; }
 .logo:hover .wm-echo { transform: translate(3.2px, 3.2px); }
 @media (prefers-reduced-motion: reduce) { .wm-echo { transition: none; } .logo:hover .wm-echo { transform: translate(1.6px, 1.6px); } }
-.logo .wordmark { width: auto; height: 28px; }
-.logo .wordmark--ft { height: 18px; }
+.logo .wordmark { width: auto; height: 34px; }
+.logo .wordmark--ft { height: 22px; }
 /* M69 duo narrative layer — loop end-card + theme bridge */
 .idf-duo { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity .5s ease; pointer-events: none;
   -webkit-mask-image: radial-gradient(ellipse 58% 52% at 50% 47%, #000 50%, rgba(0, 0, 0, .6) 66%, transparent 80%);

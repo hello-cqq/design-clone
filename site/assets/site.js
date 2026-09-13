@@ -257,7 +257,8 @@
 
   function wireNav() {
     // M75-W1 艺术字标：主题生图（双联昼/夜）作字形填充——亮=昼半海空、暗=夜半星月，与头像图标同源同主题
-    const WORDMARK = `<span class="wordmark" role="img" aria-label="design-clone">design-clone</span>`;
+    const WM_TXT = "design-clone";
+    const WORDMARK = `<span class="wordmark" role="img" aria-label="design-clone">` + [...WM_TXT].map((c, i) => `<i class="wm-c" style="--i:${i}" aria-hidden="true">${c}</i>`).join("") + `</span>`;
     document.querySelectorAll(".logo").forEach((el) => {
       if (el.querySelector(".wordmark")) return;
       const txt = [...el.childNodes].find((n) => n.nodeType === 3 && n.textContent.trim());
