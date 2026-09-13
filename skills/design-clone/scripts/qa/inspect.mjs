@@ -582,6 +582,18 @@ await step("unstyled-view-classes", async () => {
   if (st.withCls >= 8 && st.unstyled / st.withCls > 0.5) throw new Error(`视图 ${st.unstyled}/${st.withCls} 带类元素无 CSS 规则（缺样式表）`);
 });
 
+await step("brief-director", async () => {
+  // M77-W1: original/concept run 必有导演 brief 且参考图齐（存量 m76 前=warn）
+  if (!values.run) return;
+  let src = ""; try { src = (JSON.parse(fs.readFileSync(path.join(values.run, "knowledge/scope.json"), "utf8")).source) || ""; } catch {}
+  if (src !== "original") { ok("brief-director", true, "非 original skip"); return; }
+  const bp = path.join(values.run, "knowledge/brief.json");
+  if (!fs.existsSync(bp)) { ok("brief-director", true, "存量无 brief（warn）", true); R.checks["brief-director"].warn = true; return; }
+  const b = JSON.parse(fs.readFileSync(bp, "utf8"));
+  let refs = 0; try { refs = (JSON.parse(fs.readFileSync(path.join(values.run, "references/manifest.json"), "utf8")).items || []).length; } catch {}
+  const okAll = (b.pages || []).length >= 4 && ((b.characters || []).length + (b.assets || []).length) >= 3 && refs >= (b.pages || []).length && !!(b.style_baseline || {}).words && !!(b.icon || {}).prompt && !!(b.cover || {}).prompt;
+  ok("brief-director", okAll, `pages ${(b.pages || []).length}, refs ${refs}, chars ${(b.characters || []).length}, assets ${(b.assets || []).length}`);
+});
 await step("art-depth", async () => {
   // M76-W3b: original 概念 run 必须 2.5D 分层（references/art-direction.md）：全视图 data-fx-parallax>=2 且 particles>=1
   if (!values.run) return;

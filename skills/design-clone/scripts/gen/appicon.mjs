@@ -112,7 +112,11 @@ async function genBase() {
   const st = spawnSync("node", [path.join(HERE, "style-pick.mjs"), "--run", run, "--kind", "icon", "--subject", (get("--title", "") || path.basename(run)) + " app icon glyph"], { encoding: "utf8" });
   let P = { style: "flat", prompt: "app icon" }; try { P = JSON.parse(st.stdout.trim()); } catch {}
   const base = path.join(outDir, "_base.png");
-  const userPrompt = get("--prompt", null);
+  // M77-W1: brief.icon 优先（concept run 九 aspect 之图标）
+  const briefP = path.join(run, "knowledge/brief.json");
+  let briefIcon = null;
+  if (fs.existsSync(briefP)) { try { briefIcon = JSON.parse(fs.readFileSync(briefP, "utf8")).icon || null; } catch {} }
+  const userPrompt = get("--prompt", null) || (briefIcon && briefIcon.prompt) || null;
   const g = spawnSync("node", [path.join(HERE, "..", "genimg.mjs"), "--style", P.style, "--w", "512", "--h", "512", "--out", base, "--prompt", (userPrompt || P.prompt) + ", single centered emblem on solid brand-color rounded-square background, minimal geometric glyph, no text, no letters"], { encoding: "utf8" });
   if (g.status !== 0 || !fs.existsSync(base)) return null;
   return { base, how: "generated", style: P.style, prompt: P.prompt };

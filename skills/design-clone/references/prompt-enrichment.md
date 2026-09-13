@@ -17,3 +17,8 @@
 ## 边界
 - 文本类需求（logo 字样/艺术字）不走本流程：flux 不写字 → 用"生图材质+矢量字形 clip"混合方案（见 M75-W1 字标）。
 - 官方品牌素材不走生成：走 references/asset-sourcing.md 官方源链。
+
+## M77-W1 升级：整 App 级富化走 director
+单图富化（本文件三步）仍用于资产级需求；**整 App/整原型**需求一律先 `gen/director.mjs` 产 brief.json（九 aspect），
+再 `gen/ref-images.mjs` 逐页参考图；enrich.mjs 作为 director 的词表后端被复用（subjects/styles/palette/art_direction）。
+详见 references/concept-director.md。

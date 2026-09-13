@@ -41,6 +41,19 @@ const tags = (meta.tags || []).slice(0, 3);
 /* ---------- hero 截图 ---------- */
 const first = (dc.pages[0] || {}).id;
 let heroBuf = null;
+// M77-W1: concept run 封面底=brief.cover 生图（clone 仍 capture/base 链不变）
+const briefPath = path.join(run, "knowledge/brief.json");
+if (fs.existsSync(briefPath)) {
+  try {
+    const brief = JSON.parse(fs.readFileSync(briefPath, "utf8"));
+    const bg = path.join(run, "references/cover-bg.png");
+    if (!fs.existsSync(bg) && brief.cover && brief.cover.prompt) {
+      const { spawnSync } = await import("node:child_process");
+      spawnSync("node", [path.join(path.dirname(new URL(import.meta.url).pathname), "genimg.mjs"), "--prompt", brief.cover.prompt, "--out", bg, "--style", brief.style_anchor || "anime-cel", "--w", "1200", "--h", "800"], { stdio: "inherit" });
+    }
+    if (fs.existsSync(bg)) heroBuf = fs.readFileSync(bg);
+  } catch {}
+}
 const cap = path.join(run, "capture/screens", `${first}.png`);
 if (fs.existsSync(cap)) heroBuf = fs.readFileSync(cap);
 else if (values.base) {
