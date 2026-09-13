@@ -48,6 +48,14 @@ const bundle = {
   styles: [...(hints.styles || []), ...g.styles],
   palette: [...(hints.palette || []), ...(spec.palette || [])],
   composition: g.composition, lighting: g.lighting, mood: g.mood,
+  // M76-W3a: 原神级质感=分层深度+粒子+idle 动效，随 bundle 下发给视图生成
+  art_direction: {
+    depth: "2.5d-layered",
+    layers: ["far: 天空/远景大气层（genimg anime-cel 背景带）", "mid: 光云/体积光/漂浮物层", "near: 角色/主体渲染层（rim light）", "ui: 玻璃 HUD 卡层（backdrop-blur+内发光）"],
+    particles: { kind: "motes|petals|sparkles 按 mood 选", density: "18-28/屏", motion: "slow drift + pointer parallax" },
+    motion: ["idle breathing (scale 1.00-1.015, 4s)", "float bob (translateY ±3px, 5-7s 错位)", "pointer/scroll parallax (层间 ±8px)", "page transition fade+slide 240ms"],
+    palette_rule: "高饱和但柔调：主色 1 + 辅 2 + 光色 1；禁灰底/禁纯白底/禁塑料对称",
+  },
   negatives: g.negatives,
   scenes: (spec.extra && spec.extra.scene) || hints.scenes || [],
   props: (spec.extra && spec.extra.props) || hints.props || [],

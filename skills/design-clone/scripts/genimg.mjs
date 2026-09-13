@@ -8,8 +8,11 @@
  * 兜底链由 agent 编排: crop → iconify → genimg → VLM-SVG → css-clay → emoji
  */
 import fs from "node:fs";
+import { spawnSync } from "node:child_process";
 import path from "node:path";
 import crypto from "node:crypto";
+import { createRequire } from "node:module";
+const sharp = createRequire(import.meta.url)("sharp");
 import { parseArgs } from "node:util";
 
 const STYLES = {
@@ -24,6 +27,8 @@ const STYLES = {
   guofeng: "Chinese guofeng ink-wash illustration, xuan paper texture, flowing brush lines, subtle mineral pigments, classical poetic composition,留白 negative space",
   photographic: "candid documentary photograph, natural available light, shallow depth of field, real skin texture and fabric detail, slight film grain, unposed moment",
   "flat-corporate": "clean flat corporate illustration, geometric simplified shapes, consistent 2-tone brand palette, crisp edges, professional saas marketing style",
+  // M76-W3a: 原神级虚拟人锚点——cel-shading+轮廓光+体积光+景深分层，禁塑料灰底
+  "anime-cel": "premium anime key visual (genshin-impact-grade virtual character), crisp cel shading with 2-3 tone steps, strong rim light and subsurface glow on skin, volumetric god rays, atmospheric depth of field with layered background (far sky / mid clouds-light / near subject), saturated yet soft painterly palette, delicate hair strand highlights, cinematic composition, studio key art quality, NOT photoreal NOT plastic symmetric",
 };
 // M44g 内容安全后缀（不可关闭）：禁低俗/裸露/暗示姿态
 const SAFETY = "family-safe content, fully clothed subjects, no nudity or partial nudity, no suggestive pose or framing";
@@ -43,7 +48,7 @@ const { values } = parseArgs({
   },
 });
 if (!values.prompt || !values.out) {
-  console.log("用法: node genimg.mjs --prompt \"...\" --out <file> [--style pixar-3d|clay-icon|sticker|flat|anime|disney|illustration|cyberpunk|guofeng|photographic|flat-corporate] [--seeds 1,2,3] [--no-anti]");
+  console.log("用法: node genimg.mjs --prompt \"...\" --out <file> [--style pixar-3d|clay-icon|sticker|flat|anime|anime-cel|disney|illustration|cyberpunk|guofeng|photographic|flat-corporate] [--seeds 1,2,3] [--no-anti]");
   process.exit(1);
 }
 const full = [values.prompt, values.style ? (STYLES[values.style] || "") : "", SAFETY, values["no-anti"] ? "" : ANTI_TELL].filter(Boolean).join(", ");
@@ -91,6 +96,12 @@ for (const seed of seeds) {
     const buf = await fetchImg(u.href);
     fs.writeFileSync(cached, buf);
     fs.copyFileSync(cached, target);
+    // M76-W3c: 匿名档 flux 仍盖 pollinations 水印（nologo 无效）→ 落盘即擦右下角
+    try {
+      const meta = await sharp(target).metadata();
+      const r = spawnSync("node", [path.join(HERE, "gen", "patch-erase.mjs"), "--in", target, "--out", target + ".wm", "--mask", `rect:${meta.width - 165},${meta.height - 36},165,36`, "--feather", "8"], { encoding: "utf8" });
+      if (r.status === 0 && fs.existsSync(target + ".wm")) fs.renameSync(target + ".wm", target);
+    } catch {}
     console.log("generated:", path.basename(target), `(${model}, seed ${seed})`);
   }
   list.push({ at: new Date().toISOString(), prompt: values.prompt, style: values.style || null, seed, engine: "pollinations", out: path.basename(target) });

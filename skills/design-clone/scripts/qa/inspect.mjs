@@ -492,7 +492,7 @@ await step("layout-sanity", async () => {
       // M47：源忠实空态（未选会话的空主区等）用 data-placeholder-ok 显式声明后豁免
       const intentional = el.hasAttribute("data-placeholder-ok") || !!el.closest("[data-placeholder-ok],[data-state=loading]");
       if (!tapCatcher && !scrim && !decorative && !intentional && el.children.length === 0 && !(el.textContent || "").trim() &&
-        !cs.backgroundImage.includes("url") && el.tagName !== "IMG" &&
+        !cs.backgroundImage.includes("url") && el.tagName !== "IMG" && !(el.tagName === "CANVAS" && el.hasAttribute("data-fx")) &&
         rect.width >= 120 && rect.height >= 120) {
         if (out.empty.length < 5) out.empty.push((el.getAttribute("data-dc") || el.className || el.tagName) + ":" + Math.round(rect.width) + "x" + Math.round(rect.height));
       }
@@ -582,6 +582,20 @@ await step("unstyled-view-classes", async () => {
   if (st.withCls >= 8 && st.unstyled / st.withCls > 0.5) throw new Error(`视图 ${st.unstyled}/${st.withCls} 带类元素无 CSS 规则（缺样式表）`);
 });
 
+await step("art-depth", async () => {
+  // M76-W3b: original 概念 run 必须 2.5D 分层（references/art-direction.md）：全视图 data-fx-parallax>=2 且 particles>=1
+  if (!values.run) return;
+  let src = ""; try { src = (JSON.parse(fs.readFileSync(path.join(values.run, "knowledge/scope.json"), "utf8")).source) || ""; } catch {}
+  if (src !== "original") { ok("art-depth", true, "非 original 概念 skip"); return; }
+  const vdir = path.join(values.run, "prototype", "views");
+  let par = 0, part = 0, n = 0;
+  for (const f of fs.readdirSync(vdir).filter((x) => x.endsWith(".html"))) {
+    const t = fs.readFileSync(path.join(vdir, f), "utf8"); n++;
+    par += (t.match(/data-fx-parallax/g) || []).length;
+    part += (t.match(/data-fx="particles"/g) || []).length;
+  }
+  ok("art-depth", par >= 2 && part >= 1, `views ${n}, parallax ${par}, particles ${part}`);
+});
 await step("design-artifacts", async () => {
   // M51：生成期设计产物必须在场：每页 pages/<id>.spec.json（schema 必填）+ design/figma-source.json；
   // 存量 run（M51 门前创建）=warn 公示，新 run=hard（与 parity 同口径）
@@ -644,6 +658,7 @@ await step("pasted-screenshot", async () => {
       const r = img.getBoundingClientRect();
       const cov = (r.width * r.height) / (sr.width * sr.height);
       if (cov < 0.45) continue;
+      if (img.closest("[data-fx-parallax]")) continue; // M76: 声明的艺术分层背景不计整屏贴图
       const root = img.parentElement;
       const overlays = root ? [...root.children].filter((n) => n !== img && /absolute|fixed/.test(getComputedStyle(n).position)).length : 0;
       if (!overlays) out.push((img.getAttribute("src") || "img").split("/").pop() + "@" + Math.round(cov * 100) + "%");

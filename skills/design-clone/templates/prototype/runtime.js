@@ -55,6 +55,11 @@
   .dc-slider .th{position:absolute;left:var(--p,40%);width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.3);transform:translateX(-9px)}
   `;
   function injectCSS() {
+    if (!document.getElementById("dc-fx-css")) {
+      const st = document.createElement("style"); st.id = "dc-fx-css";
+      st.textContent = 'canvas[data-fx="particles"]{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}[data-fx-parallax]{will-change:transform;transition:transform .22s ease-out}';
+      (document.head || document.documentElement).appendChild(st);
+    }
     if (document.getElementById("dc-runtime-css")) return;
     const s = document.createElement("style");
     s.id = "dc-runtime-css";
@@ -243,6 +248,7 @@
   const ROLE = { toggle: "switch", checkbox: "checkbox", radio: "radio", tab: "tab", select: "button", accordion: "button", sheet: "button", dialog: "button", step: "button", slider: "slider", back: "button", input: "button", goto: "button", toast: "button", noop: "button" };
   DCR.enhance = function (root) {
     injectCSS();
+    DCR.fx(root);
     (root || document).querySelectorAll("[data-act]").forEach((el) => {
       const act = el.getAttribute("data-act");
       const nativeForm = /^(input|textarea|select)$/i.test(el.tagName);
@@ -252,6 +258,54 @@
       if (act === "tab") { if (!el.hasAttribute("aria-selected")) el.setAttribute("aria-selected", el.classList.contains("on") ? "true" : "false"); }
       if (!nativeForm && !/^(button|a)$/i.test(el.tagName) && !el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
     });
+  };
+
+  /* ---------- M76-W3b FX：粒子场 + 指针视差（2.5D 分层假 3D，无外部依赖） ---------- */
+  const FX_RM = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : { matches: false };
+  function fxParticles(cv) {
+    if (cv.__dcFx || FX_RM.matches) return; cv.__dcFx = 1;
+    const kind = cv.getAttribute("data-fx-kind") || "motes";
+    const n = Math.max(6, Math.min(32, +(cv.getAttribute("data-fx-n") || 22)));
+    const cols = (cv.getAttribute("data-fx-colors") || "").split(",").map((x) => x.trim()).filter(Boolean);
+    const ctx = cv.getContext("2d");
+    let W = 0, H = 0, ps = [];
+    const fit = () => { const d = window.devicePixelRatio || 1; W = cv.width = Math.max(1, cv.clientWidth * d); H = cv.height = Math.max(1, cv.clientHeight * d); };
+    const mk = (init) => ({ x: Math.random() * W, y: init ? Math.random() * H : (kind === "petals" ? -10 : H + 10), r: (kind === "petals" ? 3 + Math.random() * 4 : 1 + Math.random() * 2.4) * (window.devicePixelRatio || 1), v: (.1 + Math.random() * .28) * (window.devicePixelRatio || 1), ph: Math.random() * 6.283, sw: .4 + Math.random() * .9, c: cols.length ? cols[(Math.random() * cols.length) | 0] : kind === "sparkles" ? "#ffffff" : "#ffffff" });
+    fit(); ps = Array.from({ length: n }, () => mk(true));
+    let t = 0;
+    const tick = () => {
+      t += .016; ctx.clearRect(0, 0, W, H);
+      for (const p of ps) {
+        if (kind === "petals") { p.y += p.v * 1.6; p.x += Math.sin(t * p.sw + p.ph) * .5; if (p.y > H + 12) Object.assign(p, mk(false)); }
+        else if (kind === "motes") { p.y -= p.v * .8; p.x += Math.sin(t * p.sw + p.ph) * .3; if (p.y < -12) Object.assign(p, mk(false), { y: H + 10 }); }
+        const tw = kind === "sparkles" ? .35 + .65 * Math.abs(Math.sin(t * 1.7 + p.ph)) : .5 + .3 * Math.sin(t * p.sw + p.ph);
+        ctx.globalAlpha = Math.max(.08, tw * .8);
+        ctx.fillStyle = p.c;
+        ctx.beginPath();
+        if (kind === "petals") { ctx.ellipse(p.x, p.y, p.r * 1.5, p.r * .8, Math.sin(t + p.ph) * .8, 0, 6.283); }
+        else { ctx.arc(p.x, p.y, p.r, 0, 6.283); }
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    window.addEventListener("resize", fit, { passive: true });
+  }
+  function fxParallax(root) {
+    if (root.__dcFxP || FX_RM.matches) return; root.__dcFxP = 1;
+    root.addEventListener("pointermove", (e) => {
+      const r = root.getBoundingClientRect();
+      const dx = (e.clientX - r.left) / r.width - .5, dy = (e.clientY - r.top) / r.height - .5;
+      root.querySelectorAll("[data-fx-parallax]").forEach((el) => {
+        const d = +el.getAttribute("data-fx-parallax") || 1;
+        el.style.transform = `translate3d(${(-dx * 8 * d).toFixed(1)}px, ${(-dy * 6 * d).toFixed(1)}px, 0) scale(${1 + .015 * d})`;
+      });
+    }, { passive: true });
+  }
+  DCR.fx = function (root) {
+    (root || document).querySelectorAll('canvas[data-fx="particles"]').forEach(fxParticles);
+    fxParallax(root || document);
   };
 
   /* ---------- 委托绑定 ---------- */
