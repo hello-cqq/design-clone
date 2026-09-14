@@ -46,7 +46,7 @@
       <rect x="60" y="38" width="116" height="20" rx="10" fill="#07c160"/>
       ${T(118, 51, "微信(38)", 8, "#ffffff", "middle", 600)}
       <circle cx="166" cy="48" r="4" fill="none" stroke="#fff" stroke-width="1.2"/>
-      ${[[68, "#8ea6c9", "段雅洁", "你还小号了", "昨天", 1], [68, "#07c160", "文件传输助手", "1. 微信核心的单聊和群聊界面", "昨天", 0], [68, "#b78ae8", "家", "姐: 先不急，等妈妈回来", "周三", 0], [68, "#4a9be0", "公众号", "阿蛋巴巴: 上线首月破三千万", "10:53", 1]].map((r, i) => `
+      ${[[68, "#8ea6c9", "小兰", "票拿到了吗？", "10:26", 0], [68, "#07c160", "文件传输助手", "图片已收到", "10:12", 0], [68, "#b78ae8", "项目组", "周会改到三点", "09:48", 1], [68, "#4a9be0", "公众号", "新一期推送上线", "08:30", 0]].map((r, i) => `
         <rect x="60" y="${62 + i * 34}" width="116" height="34" fill="#f6f6f6"/>
         <circle cx="72" cy="${79 + i * 34}" r="8" fill="${r[1]}"/>
         ${T(84, 76 + i * 34, r[2], 7, "#2b3440", "", 600)}
@@ -79,18 +79,18 @@
       <rect x="40" y="46" width="200" height="150" rx="12" fill="var(--card)" stroke="var(--line)"/>
       <rect x="40" y="46" width="200" height="20" rx="12" fill="var(--bg2)"/>
       <circle cx="54" cy="56" r="3.2" fill="#ff5f57"/><circle cx="65" cy="56" r="3.2" fill="#febc2e"/><circle cx="76" cy="56" r="3.2" fill="#28c840"/>
-      ${T(140, 59, "飞书文档 · 本周原型评审", 6.6, "var(--mut)", "middle")}
+      ${T(140, 59, "飞书文档 · 产品周报", 6.6, "var(--mut)", "middle")}
       <rect x="48" y="72" width="46" height="116" rx="8" fill="#eef4ff"/>
       <rect x="54" y="80" width="34" height="6" rx="3" fill="#3370ff"/>
       <rect x="54" y="92" width="28" height="5" rx="2.5" fill="#9db9f5"/>
       <rect x="54" y="102" width="32" height="5" rx="2.5" fill="#9db9f5"/>
       <rect x="54" y="112" width="24" height="5" rx="2.5" fill="#9db9f5"/>
-      ${T(104, 86, "本周原型评审", 8.4, "var(--ink)", "", 700)}
+      ${T(104, 86, "产品周报 · 第 32 期", 8.4, "var(--ink)", "", 700)}
       <rect x="104" y="94" width="120" height="5" rx="2.5" fill="var(--mut)" opacity=".4"/>
       <rect x="104" y="104" width="104" height="5" rx="2.5" fill="var(--mut)" opacity=".4"/>
       <rect x="104" y="114" width="112" height="5" rx="2.5" fill="var(--mut)" opacity=".4"/>
       <rect x="104" y="128" width="86" height="18" rx="6" fill="#e8f2ff" stroke="#3370ff" stroke-opacity=".5"/>
-      ${T(110, 139, "@小昼 门禁全绿，可发布", 5.8, "#2456c4")}
+      ${T(110, 139, "@设计组 补交互说明", 5.8, "#2456c4")}
       <rect x="104" y="152" width="120" height="28" rx="6" fill="var(--bg2)"/>
       <rect x="110" y="158" width="40" height="5" rx="2.5" fill="var(--mut)" opacity=".5"/>
       <rect x="110" y="168" width="70" height="5" rx="2.5" fill="var(--mut)" opacity=".35"/>`,
@@ -121,77 +121,85 @@
       <g class="fly"><rect x="${x + 128}" y="${y + 8}" width="26" height="34" rx="6" fill="var(--card)" stroke="var(--acc)"/><rect x="${x + 132}" y="${y + 14}" width="18" height="3" rx="1.5" fill="var(--mut)" opacity=".5"/><rect x="${x + 132}" y="${y + 20}" width="14" height="3" rx="1.5" fill="var(--mut)" opacity=".35"/></g>
       <g class="fly" style="animation-delay:.5s"><rect x="${x + 150}" y="${y + 44}" width="26" height="34" rx="6" fill="var(--card)" stroke="var(--acc)"/><circle cx="${x + 163}" cy="${y + 56}" r="5" fill="var(--acc2)" opacity=".5"/><rect x="${x + 154}" y="${y + 66}" width="18" height="3" rx="1.5" fill="var(--mut)" opacity=".4"/></g>
     </g>`;
-  const agent = `
-    <g class="s3">
-      <path class="draw" d="M196 150 C 240 150 250 120 296 118" fill="none" stroke="var(--acc)" stroke-width="2" stroke-dasharray="6 5"/>
-      <rect x="296" y="70" width="176" height="126" rx="16" fill="var(--card)" stroke="var(--line)"/>
-      <rect x="296" y="70" width="176" height="24" rx="16" fill="var(--bg2)"/>
-      <circle cx="310" cy="82" r="3.2" fill="#ff5f57"/><circle cx="321" cy="82" r="3.2" fill="#febc2e"/><circle cx="332" cy="82" r="3.2" fill="#28c840"/>
-      ${T(384, 86, "agent · design-clone", 6.4, "var(--mut)", "middle")}
-      <rect x="308" y="104" width="132" height="16" rx="8" fill="var(--bg2)" stroke="var(--acc2)" stroke-opacity=".5"/>
-      ${T(316, 115, "views:5 · tokens:38 · journeys:3", 6.2, "var(--acc2)")}
-      <g class="typing"><circle cx="314" cy="132" r="2.6" fill="var(--mut)"/><circle cx="323" cy="132" r="2.6" fill="var(--mut)"/><circle cx="332" cy="132" r="2.6" fill="var(--mut)"/></g>
-      <rect x="308" y="146" width="152" height="8" rx="4" fill="var(--bg2)"/>
-      <rect class="prog" x="308" y="146" width="152" height="8" rx="4" fill="var(--acc2)"/>
-      ${T(308, 172, "capture → spec → views → gates", 6, "var(--mut)")}
+  const SPEC = {
+    mobile: { pal: ["#07c160", "#ededed", "#fa5151", "#2b3440"], pages: ["会话", "聊天", "发现", "我的"] },
+    link: { pal: ["#161823", "#fe2c55", "#ffffff", "#e8b04b"], pages: ["笔记", "评论", "作者"] },
+    desktop: { pal: ["#3370ff", "#eef4ff", "#28c840", "#2b3440"], pages: ["文档", "评论", "知识库"] },
+    web: { pal: ["#ff6a00", "#f5f5f6", "#2f9e63", "#2b3440"], pages: ["概览", "实例", "监控"] },
+  };
+  const agent = (kind) => `
+    <g class="s3 spec">
+      <path class="draw" d="M196 150 C 240 150 250 120 292 116" fill="none" stroke="var(--acc)" stroke-width="2" stroke-dasharray="6 5"/>
+      ${T(248, 140, "解析", 6.4, "var(--acc)", "middle", 600)}
+      <rect x="292" y="58" width="184" height="118" rx="16" fill="var(--card)" stroke="var(--line)"/>
+      ${T(306, 78, "设计规范", 8, "var(--ink)", "", 700)}
+      ${SPEC[kind].pal.map((c, i) => `<circle cx="${312 + i * 20}" cy="94" r="7" fill="${c}" stroke="var(--line)"/>`).join("")}
+      ${T(398, 97, "Aa 14/12", 7, "var(--mut)")}
+      <rect x="306" y="108" width="156" height="1" fill="var(--line)"/>
+      ${SPEC[kind].pages.map((pg, i) => `<rect x="${306 + i * 40}" y="118" width="36" height="14" rx="7" fill="var(--bg2)" stroke="var(--line)"/>${T(324 + i * 40, 127.5, pg, 6, "var(--mut)", "middle")}`).join("")}
+      <rect x="306" y="142" width="86" height="16" rx="8" fill="var(--bg2)" stroke="var(--acc2)" stroke-opacity=".5"/>
+      ${T(349, 153, "页面 5 · 交互 12", 6.2, "var(--acc2)", "middle")}
+      <rect x="400" y="142" width="62" height="16" rx="8" fill="var(--bg2)" stroke="var(--line)"/>
+      ${T(431, 153, "tokens 38", 6.2, "var(--mut)", "middle")}
     </g>`;
-  const finale = `
+  const finale = (kind) => `
     <g class="s4">
-      <rect x="330" y="96" width="104" height="150" rx="14" fill="var(--card)" stroke="var(--acc2)" stroke-width="1.6"/>
-      <rect x="338" y="104" width="88" height="16" rx="6" fill="var(--acc)" opacity=".85"/>
-      ${T(382, 115, "可玩原型", 6.4, "#ffffff", "middle", 600)}
-      <rect x="338" y="128" width="88" height="26" rx="7" fill="var(--bg2)"/>
-      <circle cx="348" cy="141" r="6" fill="var(--acc2)" opacity=".55"/>
-      <rect x="358" y="136" width="52" height="4" rx="2" fill="var(--mut)" opacity=".5"/>
-      <rect x="358" y="144" width="40" height="4" rx="2" fill="var(--mut)" opacity=".35"/>
-      <rect x="338" y="160" width="88" height="26" rx="7" fill="var(--bg2)"/>
-      <circle cx="348" cy="173" r="6" fill="var(--acc)" opacity=".5"/>
-      <rect x="358" y="168" width="48" height="4" rx="2" fill="var(--mut)" opacity=".5"/>
-      <rect x="358" y="176" width="36" height="4" rx="2" fill="var(--mut)" opacity=".35"/>
-      <rect x="338" y="192" width="88" height="18" rx="6" fill="var(--bg2)"/>
-      <g transform="translate(382,262)">
-        <rect x="-52" y="-14" width="104" height="27" rx="13.5" fill="var(--acc2)"/>
-        ${T(0, 4, "playable ✓", 8, "#08331f", "middle", 700)}
+      <path class="draw" d="M240 210 C 280 214 292 200 318 196" fill="none" stroke="var(--acc2)" stroke-width="2" stroke-dasharray="6 5"/>
+      ${T(280, 226, "生成", 6.4, "var(--acc2)", "middle", 600)}
+      <rect x="318" y="96" width="112" height="152" rx="16" fill="var(--card)" stroke="var(--acc2)" stroke-width="1.6"/>
+      <rect x="326" y="104" width="96" height="18" rx="7" fill="var(--acc)" opacity=".9"/>
+      ${T(374, 116, SPEC[kind].pages[0], 6.6, "#ffffff", "middle", 600)}
+      <rect x="326" y="130" width="96" height="34" rx="8" fill="var(--bg2)"/>
+      <circle cx="338" cy="147" r="7" fill="${SPEC[kind].pal[0]}" opacity=".8"/>
+      <rect x="350" y="140" width="60" height="4.5" rx="2.2" fill="var(--mut)" opacity=".55"/>
+      <rect x="350" y="149" width="44" height="4.5" rx="2.2" fill="var(--mut)" opacity=".38"/>
+      <rect x="326" y="170" width="96" height="34" rx="8" fill="var(--bg2)"/>
+      <circle cx="338" cy="187" r="7" fill="${SPEC[kind].pal[2]}" opacity=".8"/>
+      <rect x="350" y="180" width="56" height="4.5" rx="2.2" fill="var(--mut)" opacity=".55"/>
+      <rect x="350" y="189" width="40" height="4.5" rx="2.2" fill="var(--mut)" opacity=".38"/>
+      <rect x="326" y="210" width="96" height="16" rx="8" fill="var(--bg2)"/>
+      <circle cx="340" cy="218" r="3.4" fill="${SPEC[kind].pal[0]}"/><circle cx="362" cy="218" r="3.4" fill="var(--mut)" opacity=".4"/><circle cx="384" cy="218" r="3.4" fill="var(--mut)" opacity=".4"/><circle cx="406" cy="218" r="3.4" fill="var(--mut)" opacity=".4"/>
+      <g transform="translate(374,266)">
+        <rect x="-56" y="-14" width="112" height="27" rx="13.5" fill="var(--acc2)"/>
+        ${T(0, 4, "可玩原型 ✓", 8, "#08331f", "middle", 700)}
       </g>
-      <g class="spark"><path d="M300 84 l3 6 6 3 -6 3 -3 6 -3 -6 -6 -3 6 -3 z" fill="#ffd166"/></g>
-      <g class="spark2"><path d="M452 92 l2.5 5 5 2.5 -5 2.5 -2.5 5 -2.5 -5 -5 -2.5 5 -2.5 z" fill="#ffd166"/></g>
-      <g class="ripple" transform="translate(120,150)"><circle r="10" fill="none" stroke="var(--acc)" stroke-width="2"/></g>
+      <g class="ripple" transform="translate(374,160)"><circle r="10" fill="none" stroke="var(--acc2)" stroke-width="2"/></g>
     </g>`;
-  const scene = (kind, bp) => glow + `<g class="s1">${dev[kind]}</g>` + beam(...bp) + agent + finale;
+  const scene = (kind, bp) => glow + `<g class="s1">${dev[kind]}</g>` + beam(...bp) + agent(kind) + finale(kind);
   const SCENES = {
     mobile: {
       steps: [
-        ["WeChat-style list runs — names, badges, timestamps observed", "微信风会话列表运行——昵称/红点/时间被观测"],
-        ["Mirror capture sweeps each screen (content frames fly out)", "镜像捕获逐屏扫描（内容帧芯片飞出）"],
-        ["Frames + UI tree feed the agent generator", "帧 + UI 树喂给 agent 生成器"],
-        ["Playable prototype assembled — gates green", "可玩原型组装完成——门禁全绿"],
+        ["Open the app and browse the chat list as usual", "打开应用，像平时一样浏览会话列表"],
+        ["One-click capture — every screen and tap is recorded", "一键捕获——逐屏截图与点击被自动记录"],
+        ["AI reads structure, colors and type into a design spec", "AI 解析结构、配色与字号，形成设计规范"],
+        ["A playable prototype is generated — ready to share", "生成浏览器可玩原型——即刻可分享"],
       ],
       svg: scene("mobile", [60, 66]),
     },
     link: {
       steps: [
-        ["Shared Douyin note opens — author, follow, health card parsed", "抖音分享笔记打开——作者/关注/健康卡被解析"],
-        ["Capture sweeps the note flow (content frames fly out)", "捕获扫描笔记流（内容帧芯片飞出）"],
-        ["Content structure feeds the agent generator", "内容结构喂给 agent 生成器"],
-        ["Playable prototype assembled — gates green", "可玩原型组装完成——门禁全绿"],
+        ["Paste a Douyin / Xiaohongshu share link", "粘贴抖音 / 小红书分享链接"],
+        ["Author, images and body text are parsed automatically", "作者、图文与正文被自动解析"],
+        ["Content is reorganized into pages and a design spec", "内容被重组为页面与设计规范"],
+        ["A playable note prototype is generated", "生成可玩的笔记原型"],
       ],
       svg: scene("link", [60, 66]),
     },
     desktop: {
       steps: [
-        ["Feishu-style doc window runs — AX tree observed", "飞书风文档窗口运行——AX 树被观测"],
-        ["Screen capture sweeps windows (content frames fly out)", "截屏扫描窗口（内容帧芯片飞出）"],
-        ["AX tree + frames feed the agent generator", "AX 树 + 帧喂给 agent 生成器"],
-        ["Playable prototype assembled — gates green", "可玩原型组装完成——门禁全绿"],
+        ["Open a desktop app (Feishu etc.) and use it normally", "打开桌面软件（飞书等），正常使用"],
+        ["Screen capture records windows and control interactions", "截屏自动记录窗口与控件交互"],
+        ["Control tree and layout become a design spec", "控件树与布局被解析为设计规范"],
+        ["A playable desktop prototype is generated", "生成可玩的桌面原型"],
       ],
       svg: scene("desktop", [48, 78]),
     },
     web: {
       steps: [
-        ["Aliyun-style console loads — DOM table observed", "阿里云风控制台加载——DOM 表格被观测"],
-        ["Headless capture sweeps pages (content frames fly out)", "无头捕获扫描页面（内容帧芯片飞出）"],
-        ["DOM + assets feed the agent generator", "DOM + 资产喂给 agent 生成器"],
-        ["Playable prototype assembled — gates green", "可玩原型组装完成——门禁全绿"],
+        ["Enter a website link (console, docs…)", "输入网站链接（控制台、文档…）"],
+        ["A headless browser walks and captures every page", "无头浏览器自动遍历并捕获页面"],
+        ["DOM structure and style tokens are extracted", "抽取 DOM 结构与样式 tokens"],
+        ["A playable website prototype is generated", "生成可玩的网站原型"],
       ],
       svg: scene("web", [48, 70]),
     },
