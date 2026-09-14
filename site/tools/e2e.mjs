@@ -110,7 +110,7 @@ ok("gallery cards", nAll >= 5, String(nAll));
 await ctx.fill("#q", "wechat"); await ctx.waitForTimeout(700);
 const nWe = await ctx.locator("#cards .pcard").count();
 ok("gallery search", nWe >= 1 && nWe < nAll, `${nWe}/${nAll}`);
-await ctx.fill("#q", ""); await ctx.waitForTimeout(500);
+await ctx.fill("#q", ""); await ctx.evaluate(() => document.getElementById("q").blur()); await ctx.waitForTimeout(500);
 const tag = ctx.locator(".tagbtn").first();
 if (await tag.count()) { await tag.click(); await ctx.waitForTimeout(600); ok("gallery tag filter", (await ctx.locator("#cards .pcard").count()) < nAll); await tag.click(); await ctx.waitForTimeout(400); }
 
