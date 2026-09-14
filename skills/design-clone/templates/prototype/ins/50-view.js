@@ -16,6 +16,8 @@
     if (S.play) { W.stage.classList.remove("dc-fade"); void W.stage.offsetWidth; W.stage.classList.add("dc-fade"); }
     W.screen.scrollTop = 0;
     if (window.DCRuntime) DCRuntime.enhance(W.stage);
+    // M86: 视图重渲染后选中框/标注必须重画（旧 overlay 节点指向已销毁 DOM → 活跟踪脱靶）
+    if (S.selected || S.ann) redraw();
     for (const [page, m] of Object.entries(S.layoutOv || {})) {
       if (page !== S.view) continue;
       for (const [dc, o] of Object.entries(m || {})) {
