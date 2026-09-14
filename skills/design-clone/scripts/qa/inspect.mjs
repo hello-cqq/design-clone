@@ -594,6 +594,32 @@ await step("brief-director", async () => {
   const okAll = (b.pages || []).length >= 4 && ((b.characters || []).length + (b.assets || []).length) >= 3 && refs >= (b.pages || []).length && !!(b.style_baseline || {}).words && !!(b.icon || {}).prompt && !!(b.cover || {}).prompt;
   ok("brief-director", okAll, `pages ${(b.pages || []).length}, refs ${refs}, chars ${(b.characters || []).length}, assets ${(b.assets || []).length}`);
 });
+await step("sel-ring-align", async () => {
+  // M85: 选中框活跟踪防复发——点选 3 个控件，等 900ms（动效/滚动落位后）ring 与元素 rect 偏差 <=3px
+  const targets = await page.evaluate(() => [...document.querySelectorAll("#dc-stage [data-dc]")].filter((n) => { const r = n.getBoundingClientRect(); const st = document.getElementById("dc-stage").getBoundingClientRect(); return r.width > 24 && r.height > 12 && r.width < st.width * 0.6 && !/\/root$/.test(n.getAttribute("data-dc")); }).slice(0, 3).map((n) => n.getAttribute("data-dc")));
+  const checked = [];
+  for (const dc of targets) {
+    const loc = page.locator(`#dc-stage [data-dc="${dc}"]`).first();
+    await loc.scrollIntoViewIfNeeded().catch(() => {});
+    const bb = await loc.boundingBox().catch(() => null);
+    if (!bb) continue;
+    const cx = bb.x + 6, cy = bb.y + 6;
+    await page.mouse.click(cx, cy);
+    await page.waitForTimeout(900);
+    const d = await page.evaluate(([px, py]) => {
+      const ep = document.elementFromPoint(px, py);
+      const t = ep && ep.closest("#dc-stage [data-dc]");
+      const box = document.querySelector("#dc-overlay .dc-sel");
+      if (!t || !box) return 0;
+      const w = document.getElementById("dc-workspace").getBoundingClientRect();
+      const r = t.getBoundingClientRect();
+      return Math.max(Math.abs(parseFloat(box.style.left) - (r.left - w.left)), Math.abs(parseFloat(box.style.top) - (r.top - w.top)), Math.abs(parseFloat(box.style.width) - r.width), Math.abs(parseFloat(box.style.height) - r.height));
+    }, [cx, cy]);
+    if (d > 3) throw new Error(`${dc} 选中框偏移 ${Math.round(d)}px（活跟踪失效）`);
+    checked.push(dc);
+  }
+  ok("sel-ring-align", checked.length >= 1, checked.join(","));
+});
 await step("art-depth", async () => {
   // M76-W3b: original 概念 run 必须 2.5D 分层（references/art-direction.md）：全视图 data-fx-parallax>=2 且 particles>=1
   if (!values.run) return;
