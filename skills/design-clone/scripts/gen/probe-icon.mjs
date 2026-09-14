@@ -10,9 +10,27 @@ import fs from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
+// M79-W1: 官方图标策展 URL 表（优先于抓取候选；视觉核验过）
+const OFFICIAL_ICON_URLS = {
+  aliyun: "https://img.alicdn.com/imgextra/i1/O1CN012QgtoH1c1Mu70xD3w_!!6000000003540-2-tps-640-640.png",
+  lark: "https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/84a9f036fe2b44f99b899fff4beeb963~tplv-jbbdkfciu3-image:100:100.image",
+  feishu: "https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/84a9f036fe2b44f99b899fff4beeb963~tplv-jbbdkfciu3-image:100:100.image",
+};
 const { values: V } = parseArgs({ options: { url: { type: "string" }, out: { type: "string" }, min: { type: "string", default: "128" } } });
 if (!V.url || !V.out) { console.log("用法: node probe-icon.mjs --url <官网> --out <dir> [--min 128]"); process.exit(1); }
 fs.mkdirSync(V.out, { recursive: true });
+for (const [k, u] of Object.entries(OFFICIAL_ICON_URLS)) {
+  if (!(V.url || "").includes(k)) continue;
+  try {
+    const r = await fetch(u, { headers: { "user-agent": "Mozilla/5.0 (design-clone probe)" } });
+    if (r.ok) {
+      const buf = Buffer.from(await r.arrayBuffer());
+      const ext = u.includes(".ico") ? "ico" : "png";
+      fs.writeFileSync(path.join(V.out, `cand-official-${k}.${ext}`), buf);
+      console.log("official cand:", k, u.slice(0, 60));
+    }
+  } catch {}
+}
 const base = new URL(V.url);
 const html = await (await fetch(base, { headers: { "user-agent": "Mozilla/5.0 (design-clone probe)" }, redirect: "follow" })).text();
 const cands = [];
