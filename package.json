@@ -1,7 +1,7 @@
 {
   "name": "design-clone-repo",
   "private": true,
-  "version": "0.6.0-snapshot.20260914.4",
+  "version": "0.6.0-snapshot.20260914.5",
   "description": "Dev-only tooling root for the design-clone skill repo. The skill itself lives in skills/design-clone and ships without these devDeps.",
   "type": "module",
   "scripts": {

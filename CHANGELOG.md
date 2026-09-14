@@ -3,6 +3,13 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/); versioning is SemVer and mirrors `SKILL.md → metadata.version`.
 
+## [0.6.0-snapshot.20260914.5] - 2026-09-14
+
+Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
+
+### M83
+- : 演示四场景预挂零卡顿切换(167ms)+replay 刷新图标+规范卡/可玩原型场景差异化与循环交互动效(tap/sheet/heart/tab/caret/row/status)+在线体验白名单五 app+原型仓下架五 app(PR47)+e2e 断言
+
 ## [0.6.0-snapshot.20260914.4] - 2026-09-14
 
 Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
