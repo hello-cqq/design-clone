@@ -70,6 +70,52 @@ function ellipseVis(x, y, w, h) {
   const r = Math.sqrt(dx * dx + dy * dy);
   return r < 0.8 ? Math.max(0, 1 - r / 0.8) : 0;
 }
+// M80: 细长暖/银组件签名（笔杆形状防复发）：连通域对角>=18 且短边<=8 且暗发邻域比>=0.6
+function stickHits(data, w, h) {
+  const lumAt2 = (i) => 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+  const cand = new Uint8Array(w * h);
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+    const i = (y * w + x) * 4;
+    const R = data[i], G = data[i + 1], B = data[i + 2], L = lumAt2(i);
+    const warm = R - G >= 8 && R - G <= 60 && Math.abs(G - B) <= 28 && L >= 40 && L <= 230;
+    const m = (lumAt2(i - 40) + lumAt2(i + 40) + lumAt2(i - w * 10) + lumAt2(i + w * 10)) / 4;
+    const silver = Math.abs(R - G) <= 12 && Math.abs(G - B) <= 12 && L > 150 && L - m > 30;
+    if (warm || silver) cand[y * w + x] = 1;
+  }
+  const seen = new Uint8Array(w * h);
+  const out = [];
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+    const i0 = y * w + x;
+    if (!cand[i0] || seen[i0]) continue;
+    const q = [[x, y]]; seen[i0] = 1;
+    let x0 = x, x1 = x, y0 = y, y1 = y, n = 0, dark = 0;
+    while (q.length) {
+      const [cx, cy] = q.pop();
+      n++;
+      x0 = Math.min(x0, cx); x1 = Math.max(x1, cx); y0 = Math.min(y0, cy); y1 = Math.max(y1, cy);
+      const ci = (cy * w + cx) * 4;
+      let dn = 0, dt = 0;
+      for (const [dx, dy] of [[-4, 0], [4, 0], [0, -4], [0, 4], [-3, -3], [3, 3], [-3, 3], [3, -3]]) {
+        const xx = cx + dx, yy = cy + dy;
+        if (xx < 0 || yy < 0 || xx >= w || yy >= h) continue;
+        dt++; if (lumAt2((yy * w + xx) * 4) < 80) dn++;
+      }
+      if (dt && dn / dt >= 0.5) dark++;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const xx = cx + dx, yy = cy + dy;
+        if (xx < 0 || yy < 0 || xx >= w || yy >= h) continue;
+        const j = yy * w + xx;
+        if (cand[j] && !seen[j]) { seen[j] = 1; q.push([xx, yy]); }
+      }
+    }
+    const bw = x1 - x0 + 1, bh = y1 - y0 + 1;
+    const diag = Math.hypot(bw, bh);
+    if (y0 > h * 0.78) continue; // 水面落日闪带豁免（铅笔从不到水面带）
+    const fill = n / (bw * bh);
+    if (diag >= 16 && fill <= 0.45 && n >= 8 && dark / n >= 0.45) out.push([x0, y0, bw, bh, n]);
+  }
+  return out;
+}
 function cornerWatermarkHits(data, w, h, masked) {
   // 豆包/pollinations 角标白字：角落矩形内高亮像素计数
   const regs = [[w - Math.min(220, w >> 2), h - Math.min(110, h >> 2), Math.min(220, w >> 2), Math.min(110, h >> 2)], [0, 0, Math.min(220, w >> 2), Math.min(110, h >> 2)]];
@@ -133,6 +179,8 @@ for (const im of IMGS) {
   const hits = await scanFile(f, ZONES[im]);
   const { data: d2, info: i2 } = await sharp(f).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const wm = cornerWatermarkHits(d2, i2.width, i2.height);
+  const sticks = stickHits(d2, i2.width, i2.height);
+  if (sticks.length) console.log(`warn ${im}: stick-like=${sticks.length}（目视复核项，非 fail：水波/发丝高光可误报）`);
   if (hits.length || wm > 25) { fail = 1; console.log(`FAIL ${im}: pencil=${hits.length} wm=${wm}`); } else console.log(`ok ${im}`);
 }
 const frames = fs.readdirSync(framesDir).filter((f) => f.endsWith(".png")).sort();
@@ -141,6 +189,8 @@ for (const f of frames) {
   const { data, info } = await sharp(path.join(framesDir, f)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const hits = pencilHits(data, info.width, info.height);
   const wm = cornerWatermarkHits(data, info.width, info.height, true);
+  const sticks = stickHits(data, info.width, info.height);
+  if (sticks.length) console.log(`warn frame ${f}: stick-like=${sticks.length}`, sticks.slice(0, 2));
   if (hits.length || wm > 25) { fbad++; if (fbad < 4) console.log(`FAIL frame ${f}: pencil=${hits.length} wm=${wm}`); }
 }
 console.log(fbad ? `FAIL ident frames: ${fbad}/${frames.length}` : `ok ident frames (${frames.length} sampled)`);
