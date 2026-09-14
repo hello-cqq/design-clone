@@ -398,10 +398,9 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
 .animstage .ripple { opacity: 0; transform-box: fill-box; transform-origin: center; }
 .animstage[data-step="4"] .ripple { opacity: 1; animation: rip 1.15s ease-out infinite; }
 @keyframes rip { from { transform: scale(.4); opacity: .9; } to { transform: scale(3.2); opacity: 0; } }
-.animstage.swap .svgbox { animation: dvSwap .45s ease; }
 @keyframes dvSwap { from { opacity: .4; transform: translateY(6px) scale(.995); } to { opacity: 1; transform: none; } }
 .animstage .cap .captxt { transition: opacity .2s ease; }
-@media (prefers-reduced-motion: reduce) { .animstage svg image, .animstage .scanline, .animstage .ripple, .animstage.swap .svgbox { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .animstage svg image, .animstage .scanline, .animstage .ripple { animation: none; } }
 
 /* M79-W2: 引导动画描绘式连接/进度/帧芯片门控 */
 .animstage .draw { stroke-dasharray: 240; stroke-dashoffset: 240; }
@@ -437,8 +436,8 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
 /* M83: 四场景预挂容器 + 可玩原型交互动效 + replay 图标 */
 #animstage.animwrap { border: 0; background: transparent; box-shadow: none; border-radius: 0; padding: 0; }
 #animstage.animwrap > .animstage { width: 100%; }
-.animstage .replay { display: inline-grid; place-items: center; width: 26px; height: 26px; padding: 0; }
-.animstage .replay svg { transition: transform .3s ease; }
+.animstage .replay { display: inline-grid; place-items: center; width: 34px; height: 34px; padding: 0; }
+.animstage .replay svg { width: 18px; height: 18px; transition: transform .3s ease; }
 .animstage .replay:hover svg { transform: rotate(90deg); }
 .animstage [class^="px-"], .animstage [class*=" px-"] { transform-box: fill-box; transform-origin: center; }
 .animstage[data-step="4"] .px-tap { animation: pxTap 4.8s ease-out infinite; }

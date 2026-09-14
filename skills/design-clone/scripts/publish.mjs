@@ -42,8 +42,14 @@ if (!smk || (smk.fail || 0) !== 0) die("ui-smoke 门未绿（fail≠0 或未跑�
 if (!fs.existsSync(path.join(run, "knowledge/privacy.json"))) die("缺 knowledge/privacy.json（隐私账本）");
 gates.push(`interact dead=${ia.total_dead}`, `inspect fail=${ins.fail} pass=${ins.pass}`, `ui-smoke fail=${smk.fail} pass=${smk.pass}`);
 
+/* ---------- 1.5 M84: 预构建导出包（静态托管"导出全部"离线 zip） ---------- */
+if (!fs.existsSync(path.join(protoSrc, "export", "all.zip"))) {
+  const r = spawnSync("node", [path.join(path.dirname(new URL(import.meta.url).pathname), "gen", "export-zip.mjs"), "--run", run, "--port", "4599"], { encoding: "utf8", timeout: 600000 });
+  if (r.status === 0) console.log("✓ export/all.zip 预构建:", (r.stdout || "").trim().split("\n").pop());
+  else console.log("· export/all.zip 跳过:", (r.stderr || r.stdout || "").slice(0, 120));
+}
 /* ---------- 2. 白名单复制 + 禁名单/PII/体积 ---------- */
-const ALLOW_DIR = new Set(["views", "assets", "variants", "design", "pages", "appicon"]);
+const ALLOW_DIR = new Set(["views", "assets", "variants", "design", "pages", "appicon", "export"]);
 const ALLOW_FILE = /^(index\.html|inspector\.[a-z0-9.]+|runtime\.[a-z0-9.]+|zipstore\.[a-z0-9.]+|utilities\.css|paths\.json|journeys\.json|products\.json|annotations\.json|version\.json)$/;
 const FORBID = [/(^|\/)node_modules\//, /(^|\/)export\//, /(^|\/)qa\//, /(^|\/)capture\//, /(^|\/)\.cache\//, /\.(mp4|webm|mov)$/i, /\.map$/i, /\.(ttf|otf|woff2?)$/i, /(^|\/)assets\/_/, /_raw-/]; // M63: 生图中间件（带水印原图）禁入社区仓
 const PII = [/1[3-9]\d{9}/, /\b\d{6}(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\b/];
@@ -58,7 +64,7 @@ const copyRec = (src, dst, rel) => {
     if (FORBID.some((x) => x.test(r))) continue;
     const s = path.join(src, e.name), d = path.join(dst, e.name);
     if (e.isDirectory()) { if (rel === "" && !ALLOW_DIR.has(e.name)) continue; fs.mkdirSync(d, { recursive: true }); copyRec(s, d, r); }
-    else { if (rel === "" && !ALLOW_FILE.test(e.name)) continue; fs.copyFileSync(s, d); bytes += fs.statSync(d).size; }
+    else { if (rel === "" && !ALLOW_FILE.test(e.name)) continue; if (r.startsWith("export" + path.sep) && e.name !== "all.zip") continue; fs.copyFileSync(s, d); bytes += fs.statSync(d).size; }
   }
 };
 copyRec(protoSrc, pdir, "");

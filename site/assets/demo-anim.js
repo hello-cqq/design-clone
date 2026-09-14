@@ -275,7 +275,6 @@
     const paint = (swap) => {
       el.setAttribute("data-step", step);
       svgEl.setAttribute("data-step", step);
-      if (swap !== false) { el.classList.remove("swap"); void el.offsetWidth; el.classList.add("swap"); }
       cap.textContent = `${step}/4 · ${sc.steps[step - 1][lang()]}`;
       dots.forEach((d, i) => { d.classList.toggle("on", i + 1 === step); d.classList.toggle("done", i + 1 < step); });
     };

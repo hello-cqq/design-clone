@@ -83,6 +83,18 @@
       downloadBlob(`design-clone-export-${stamp()}.zip`, zipStore(j.payload.map((f) => ({ name: f.name, data: b64ToU8(f.b64) }))));
       toast(`已下载 ${j.payload.length} 个文件（zip）${j.truncated ? "；超量部分只在 " + j.dir : "；服务端副本 " + j.dir}`);
     } catch (e) {
+      // M84: 静态托管（GitHub Pages）无 /__dc_export__ → 405；回退预构建 export/all.zip 离线包
+      if (/HTTP (405|403|404)/.test(String(e.message))) {
+        try {
+          const zurl = new URL("export/all.zip", new URL(location.pathname.replace(/[^/]*$/, ""), location.origin));
+          const zr = await fetch(zurl.href);
+          if (zr.ok) {
+            downloadBlob(`design-clone-export-${stamp()}.zip`, await zr.blob());
+            toast("已下载导出包（静态预构建 export/all.zip）");
+            return;
+          }
+        } catch {}
+      }
       const b = items.find((i) => i.type === "board");
       if (b) download("board.json", JSON.stringify(b.board, null, 2));
       toast(/Failed to fetch|Load failed|NetworkError/i.test(String(e.message)) && b

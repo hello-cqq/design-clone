@@ -29,7 +29,11 @@
     $("#dc-theme").onclick = () => { const n = document.documentElement.dataset.theme === "dark" ? "light" : "dark"; document.documentElement.dataset.theme = n; localStorage.setItem("dc-theme", n); };
     $("#dc-demo").onclick = () => {
       if (S.demo.active) return endDemo();
-      if (!S.journeys.length) return notify("无演示旅程", "本 run 没有 journeys.json（demo 范围可无；full 范围应由 gen/flows-skeleton.mjs 或 gen/flows-from-events.mjs 生成）。<br>可改用底栏「播放」按路径演播。");
+      if (!S.journeys.length) {
+        // M84: 无 journeys 不再死按钮——有 paths 即按路径演播兜底
+        if (S.paths && Object.keys(S.paths.perNode || {}).length) { toast("演示旅程缺失，按路径演播"); playPath(0); return; }
+        return notify("无演示旅程", "本 run 没有 journeys.json 且无 paths.json（demo 范围可无；full 范围应由 gen/flows-skeleton.mjs 或 gen/flows-from-events.mjs 生成）。");
+      }
       if (S.journeys.length > 1) demoChooser(); else startDemo(0);
     };
     $("#dc-left-fold").onclick = () => { document.body.classList.toggle("dc-left-off"); $("#dc-left-fold").textContent = document.body.classList.contains("dc-left-off") ? "›" : "‹"; };
