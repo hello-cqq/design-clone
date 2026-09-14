@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/); versioning is SemVer and mirrors `SKILL.md → metadata.version`.
 
+## [0.6.0-snapshot.20260914.3] - 2026-09-14
+
+Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
+
+### M81-fix
+- : qsuggest[hidden] display none（面板不再挡标签行）+ e2e blur/单行/推荐断言修正
+
+### M81-W1/W2/W3
+- : 六 app 概念图标+封面重生成并重发；sync-thumbs 哈希化+manifest（根治旧封面缓存）；功能演示=品牌微文案迷你 UI 重做；标签行单行高频+搜索标签推荐下拉
+
 ## [0.6.0-snapshot.20260914.2] - 2026-09-14
 
 Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
