@@ -110,3 +110,21 @@ window.DCIdent = {
     return { swap: (theme) => setActive(theme, false), phase: () => phase };
   },
 };
+
+// M76-W8f: 元素级自愈引导——任何重建/闭包失配/连接 stall 后仍能把当前主题视频拉起来
+(function identSelfHeal() {
+  const RM = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (RM) return;
+  let tries = 0;
+  const tick = () => {
+    tries++;
+    const theme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+    const v = document.querySelector(`.idf-video[data-k="${theme}"]`);
+    if (v) {
+      if (v.preload === "none") v.preload = "auto";
+      if (v.readyState >= 2 && v.paused && v.classList.contains("on")) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); }
+    }
+    if (tries < 14) setTimeout(tick, 800);
+  };
+  setTimeout(tick, 600);
+})();

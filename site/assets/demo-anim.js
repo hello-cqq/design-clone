@@ -134,27 +134,63 @@
       <div class="cap"><span class="captxt"></span>
         <span class="steps">${[1, 2, 3, 4].map((n) => `<b data-s="${n}">${n}</b>`).join("")}</span>
         <button class="replay">replay</button></div>
-      <div class="svgbox"><svg viewBox="0 0 520 290" data-step="1">${sc.svg}</svg></div>`;
+      <div class="svgbox"><svg viewBox="0 0 520 290" data-step="1">${sc.svg}</svg><canvas class="dvfx"></canvas></div>`;
     const svgEl = el.querySelector("svg");
     const cap = el.querySelector(".captxt");
     const dots = [...el.querySelectorAll(".steps b")];
     const lang = () => (document.documentElement.lang === "zh-CN" ? 1 : 0);
     let step = 1, timer = null;
-    const paint = () => {
+    const paint = (swap) => {
+      el.setAttribute("data-step", step);
       svgEl.setAttribute("data-step", step);
+      if (swap !== false) { el.classList.remove("swap"); void el.offsetWidth; el.classList.add("swap"); }
       cap.textContent = `${step}/4 · ${sc.steps[step - 1][lang()]}`;
       dots.forEach((d, i) => { d.classList.toggle("on", i + 1 === step); d.classList.toggle("done", i + 1 < step); });
     };
-    const play = () => {
-      clearInterval(timer);
-      step = 1; paint();
-      timer = setInterval(() => { if (step < 4) { step++; paint(); } else clearInterval(timer); }, 2400);
-    };
-    dots.forEach((d) => (d.onclick = () => { clearInterval(timer); step = +d.dataset.s; paint(); timer = setInterval(() => { if (step < 4) { step++; paint(); } else clearInterval(timer); }, 2400); }));
+    const cycle = () => { clearInterval(timer); timer = setInterval(() => { if (step < 4) { step++; paint(); } else clearInterval(timer); }, 2600); };
+    const play = () => { clearInterval(timer); step = 1; paint(); cycle(); };
+    dots.forEach((d) => (d.onclick = () => { clearInterval(timer); step = +d.dataset.s; paint(); cycle(); }));
     el.querySelector(".replay").onclick = play;
-    el._replayLang = () => paint();
-    play();
+    el._replayLang = () => paint(false);
+    // M78: 视口才播（离屏暂停）+ 粒子浮尘层（借鉴原型 particles 经验）
+    const rm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!rm) {
+      const cv = el.querySelector(".dvfx");
+      const ctx = cv.getContext("2d");
+      let W = 0, H = 0, ps = [], raf = null, live = false;
+      const fit = () => { const d = window.devicePixelRatio || 1; W = cv.width = cv.clientWidth * d; H = cv.height = cv.clientHeight * d; };
+      const mk = () => ({ x: Math.random() * W, y: Math.random() * H, r: (0.8 + Math.random() * 1.6) * (window.devicePixelRatio || 1), v: 0.12 + Math.random() * 0.3, ph: Math.random() * 6.283 });
+      const tick = () => {
+        if (!live) return;
+        ctx.clearRect(0, 0, W, H);
+        const dark = document.documentElement.dataset.theme === "dark";
+        for (const p of ps) {
+          p.y -= p.v; p.x += Math.sin(p.ph + p.y * 0.01) * 0.25;
+          if (p.y < -6) { p.y = H + 6; p.x = Math.random() * W; }
+          ctx.globalAlpha = 0.25 + 0.2 * Math.sin(p.ph + performance.now() * 0.001);
+          ctx.fillStyle = dark ? "#9fd8ef" : "#ffffff";
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        raf = requestAnimationFrame(tick);
+      };
+      const io = new IntersectionObserver((es) => {
+        for (const e of es) {
+          if (e.isIntersecting && !live) {
+            live = true; fit(); if (!ps.length) ps = Array.from({ length: 14 }, mk);
+            if (!raf) tick();
+            if (!el._started) { el._started = true; play(); } else cycle();
+          } else if (!e.isIntersecting && live) { live = false; clearInterval(timer); if (raf) cancelAnimationFrame(raf); raf = null; }
+        }
+      }, { threshold: 0.25 });
+      io.observe(el);
+      window.addEventListener("resize", () => { if (live) fit(); }, { passive: true });
+    } else {
+      play();
+    }
+    paint(false);
     return el;
   }
+
   window.DCAnim = { mount, scenes: Object.keys(SCENES) };
 })();
