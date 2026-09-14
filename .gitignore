@@ -7,3 +7,8 @@ design-clone-runs/
 skills/design-clone/report/
 skills/report/
 skills/design-clone/templates/prototype/inspector.built.js
+
+# M86: 生成物/纳管仓不入库
+skills/design-clone/scripts/publish-out/
+site/data/thumbs/
+prototype-repo/

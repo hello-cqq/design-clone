@@ -395,3 +395,8 @@ M44 series: full-control interactivity (`runtime.js` + `qa/interact.mjs`, dead=0
 ## [0.1.0] - 2026-09-03
 
 Initial public shape: capture (web/android/desktop/link), spec-driven generation, inspector v4 shell, fidelity/eval gates, MIT license.
+
+## M86 仓库卫生与统一纳管
+- 剔除 tracked 垃圾：根媒体 8 件（旧 ident 源 mp4×2、女生/男生/男女 jpg、女生视频3.mp4、手机1/2.jpg）、动物乐园/ 参考图×7、publish-out/、site/data/thumbs/（改 CI 生成）、site/assets/demo/*+demo-shots.mjs（M81 后零引用）、logomark-fill.png（零引用）、根 demo/ 静态页；
+- proto 仓以 prototype-repo/ 统一纳管（双仓独立 GitHub，本目录单点管理）；publish.mjs 优先复用该目录；
+- 仅清理当前树，不重写历史。

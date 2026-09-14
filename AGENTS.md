@@ -14,6 +14,8 @@
 
 - `skills/design-clone/` — skill 本体（SKILL.md + scripts/ + references/ + schema/ + presets/ + templates/）
 - `dist/` — 给无 CLI 平台（WorkBuddy 等）的 zip 产物，CI 打包，勿手工编辑
+- `prototype-repo/` — proto 仓（hello-cqq/design-clone-prototype）在本工作区的统一管理目录（gitignore；publish/批量 PR 均经此目录，M86）
+- 生成物不入库：`publish-out/`、`site/data/thumbs/`（CI 部署前 sync-thumbs 生成）；根目录禁放媒体源文件（源素材归档于 gitignore 的 design-clone-runs/_clean-src 等，M86）
 
 ## 开发约定
 
