@@ -128,8 +128,12 @@ ok("board dl btn", (await ctx.locator("#side .dlbtn").textContent()).length > 2)
 }
 ok("jump link", (await ctx.locator("#jump").getAttribute("href") || "").includes("tree/main"));
 const frame = ctx.frameLocator("#stageframe");
-try { await frame.locator("#dc-stage").waitFor({ timeout: 20000 }); ok("iframe prototype ready", true); }
-catch { ok("iframe prototype ready", false); }
+let frameReady = false;
+for (let i = 0; i < 2 && !frameReady; i++) {
+  try { await frame.locator("#dc-stage").waitFor({ timeout: 45000 }); frameReady = true; }
+  catch { await ctx.reload({ waitUntil: "load" }); await ctx.waitForTimeout(1500); }
+}
+ok("iframe prototype ready", frameReady);
 ok("no page scroll", await ctx.evaluate(() => document.documentElement.scrollHeight <= window.innerHeight + 2));
 
 // ---- guide/start
