@@ -197,6 +197,20 @@ process.exit(fails.length ? 1 : 0);{
   await mp.waitForTimeout(1200);
   ok("mobile360 proto no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
   ok("mobile step rail", await mp.locator(".steps b").count() === 4);
+  // M81: 标签单行 + 搜索推荐下拉
+  {
+    const gp2 = await b.newPage({ viewport: { width: 1280, height: 900 } });
+    await gp2.goto(base + "/gallery.html", { waitUntil: "load" });
+    await gp2.waitForTimeout(2200);
+    ok("tagrow single line", await gp2.evaluate(() => { const tr = document.getElementById("tagrow"); return tr.scrollHeight < 40 && tr.scrollWidth <= tr.clientWidth + 2; }));
+    await gp2.fill("#q", "pet");
+    await gp2.waitForTimeout(500);
+    ok("tag suggest appears", await gp2.locator("#qsuggest button").count() >= 1);
+    await gp2.locator("#qsuggest button").first().click();
+    await gp2.waitForTimeout(600);
+    ok("tag suggest applies filter", await gp2.evaluate(() => !!document.querySelector("#tagactive .chip")));
+    await gp2.close();
+  }
   await mp.close();
   // M76-W8: 无 Range 的 HTTP 服务下 ident 必须推进（防 load 门控/非 faststart 复发）
   {

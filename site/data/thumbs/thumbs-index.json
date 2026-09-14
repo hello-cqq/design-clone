@@ -1,0 +1,42 @@
+{
+ "wechat": {
+  "cover": "wechat-cover.bbe2749c.jpg",
+  "icon": "wechat-icon.f9b09f7c.png"
+ },
+ "lark": {
+  "cover": "lark-cover.2184cf7e.jpg",
+  "icon": "lark-icon.84812d90.png"
+ },
+ "ai-assistant": {
+  "cover": "ai-assistant-cover.c6adcb53.jpg",
+  "icon": "ai-assistant-icon.c07d27da.png"
+ },
+ "aliyun-console": {
+  "cover": "aliyun-console-cover.3adf0c53.jpg",
+  "icon": "aliyun-console-icon.dcac3702.png"
+ },
+ "petpark": {
+  "cover": "petpark-cover.da4a7851.jpg",
+  "icon": "petpark-icon.3b54ab0c.png"
+ },
+ "study-loft": {
+  "cover": "study-loft-cover.32a92b71.jpg",
+  "icon": "study-loft-icon.d9676373.png"
+ },
+ "neon-tape": {
+  "cover": "neon-tape-cover.3e9893b9.jpg",
+  "icon": "neon-tape-icon.22634948.png"
+ },
+ "mountain-tea": {
+  "cover": "mountain-tea-cover.beb8e418.jpg",
+  "icon": "mountain-tea-icon.1f8c3756.png"
+ },
+ "pet-health-note": {
+  "cover": "pet-health-note-cover.5dfaacd3.jpg",
+  "icon": "pet-health-note-icon.a8901c55.png"
+ },
+ "flash-bazaar": {
+  "cover": "flash-bazaar-cover.cbf36324.jpg",
+  "icon": "flash-bazaar-icon.cd2c5ad5.png"
+ }
+}

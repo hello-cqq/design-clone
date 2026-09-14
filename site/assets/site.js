@@ -149,10 +149,10 @@
     const cover = a.cover ? `${PROTO_BASE}/${a.cover}` : "";
     const name = L(a.name, a.app);
     return `<a class="pcard" href="proto.html?app=${encodeURIComponent(a.app)}">
-      <div class="th${cover ? "" : " tile"}">${cover ? `<img data-src="data/thumbs/${a.app}-cover.jpg" onerror="this.onerror=null;this.src='${cover}'" alt="" loading="lazy">` : (a.icon ? `<img class="appicon" data-src="data/thumbs/${a.app}-icon.png" onerror="this.onerror=null;this.src='${PROTO_BASE}/${a.icon}'" alt="" loading="lazy">` : "")}
+      <div class="th${cover ? "" : " tile"}">${cover ? `<img data-src="${thumbUrl(a.app, "cover", `data/thumbs/${a.app}-cover.jpg`)}" onerror="this.onerror=null;this.src='${cover}'" alt="" loading="lazy">` : (a.icon ? `<img class="appicon" data-src="${thumbUrl(a.app, "icon", `data/thumbs/${a.app}-icon.png`)}" onerror="this.onerror=null;this.src='${PROTO_BASE}/${a.icon}'" alt="" loading="lazy">` : "")}
         <span class="heat"><svg width="11" height="11" viewBox="0 0 24 24" style="fill:#ff8a5c"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>${fmtHeat(a.downloads)}</span></div>
       <div class="bd"><div class="t"><span class="nm">${name}</span>
-        ${a.icon ? `<img class="tic" data-src="data/thumbs/${a.app}-icon.png" onerror="this.onerror=null;this.src='${PROTO_BASE}/${a.icon}'" alt="" loading="lazy">` : ""}</div></div></a>`;
+        ${a.icon ? `<img class="tic" data-src="${thumbUrl(a.app, "icon", `data/thumbs/${a.app}-icon.png`)}" onerror="this.onerror=null;this.src='${PROTO_BASE}/${a.icon}'" alt="" loading="lazy">` : ""}</div></div></a>`;
   }
 
   async function renderFeatured() {
@@ -161,6 +161,7 @@
     const apps = (idx.apps || []).slice().sort((a, b) => boost(b) - boost(a)).slice(0, 4);
     const el = document.getElementById("featured");
     if (el) el.innerHTML = apps.map(card).join("");
+    await loadThumbs();
     armThumbIO();
     const sel = document.getElementById("expselect");
     if (sel && !sel.options.length) {
@@ -202,24 +203,84 @@
   }
   async function renderGallery() {
     const idx = await loadIndex();
+    await loadThumbs();
     const grid = document.getElementById("cards");
     if (!grid) return;
     const q = (document.getElementById("q") || {}).value || "";
     const sort = (document.getElementById("sort") || {}).value || "dl";
-    const tagOn = (document.querySelector(".tagbtn.on") || {}).dataset?.tag || "";
+    const tagOn = forcedTag || (document.querySelector(".tagbtn.on") || {}).dataset?.tag || "";
     let apps = idx.apps || [];
     if (tagOn) apps = apps.filter((a) => (a.tags || []).includes(tagOn));
     if (q) apps = apps.filter((a) => (L(a.name, a.app) + " " + a.app + " " + (a.tags || []).join(" ") + " " + L(a.description)).toLowerCase().includes(q.toLowerCase()));
     apps = apps.slice().sort((x, y) => sort === "upd"
       ? String(y.updated || "").localeCompare(String(x.updated || ""))
       : (y.downloads || 0) - (x.downloads || 0));
-    const tags = [...new Set((idx.apps || []).flatMap((a) => a.tags || []))];
+    // M81-W3: 标签行=频次 Top 单行；搜索框出命中标签推荐
+    const freq = {};
+    for (const a of idx.apps || []) for (const tg of a.tags || []) freq[tg] = (freq[tg] || 0) + 1;
+    const tags = Object.keys(freq).sort((x, y) => freq[y] - freq[x] || x.localeCompare(y));
     const tr = document.getElementById("tagrow");
-    if (tr) tr.innerHTML = tags.map((x) => `<button class="tagbtn${x === tagOn ? " on" : ""}" data-tag="${x}">${x}</button>`).join("");
+    if (tr) {
+      tr.innerHTML = tags.map((x) => `<button class="tagbtn${x === tagOn ? " on" : ""}" data-tag="${x}">${x}</button>`).join("");
+      // 单行裁剪：超宽即从低频端移除
+      let guard = 0;
+      while (tr.scrollWidth > tr.clientWidth + 2 && tr.children.length > 3 && guard++ < 60) {
+        const onIdx = [...tr.children].findIndex((c) => c.classList.contains("on"));
+        tr.removeChild(tr.children[tr.children.length - 1]);
+        if (onIdx >= 0 && !tr.children[onIdx]) break;
+      }
+    }
+    wireSuggest(idx, freq);
     grid.innerHTML = apps.map(card).join("") || `<p style="color:var(--mut)">${t("empty")} <a href="guide.html#publish">publish</a></p>`;
     armThumbIO();
   }
 
+  let forcedTag = "";
+  let THUMBS = null;
+  async function loadThumbs() {
+    if (THUMBS) return THUMBS;
+    try { THUMBS = await (await fetch("data/thumbs/thumbs-index.json", { cache: "default" })).json(); } catch { THUMBS = {}; }
+    return THUMBS;
+  }
+  const thumbUrl = (app, kind, fallback) => {
+    const m = (THUMBS || {})[app];
+    return m && m[kind] ? `data/thumbs/${m[kind]}` : fallback;
+  };
+  function wireSuggest(idx, freq) {
+    const q = document.getElementById("q");
+    const box = document.getElementById("qsuggest");
+    const act = document.getElementById("tagactive");
+    if (!q || !box) return;
+    const paintActive = () => {
+      if (!act) return;
+      if (!forcedTag) { act.hidden = true; act.innerHTML = ""; return; }
+      act.hidden = false;
+      act.innerHTML = `<span class="chip on">${forcedTag}<button class="x" aria-label="clear">×</button></span>`;
+      act.onclick = (e) => { if (e.target.closest(".x")) { forcedTag = ""; paintActive(); renderGallery(idx); } };
+    };
+    const close = () => { box.hidden = true; };
+    q.oninput = () => {
+      const v = q.value.trim().toLowerCase();
+      renderGallery(idx);
+      if (!v) { close(); return; }
+      const hitTags = Object.keys(freq).filter((tg) => tg.includes(v)).slice(0, 8);
+      const hitViaApps = (idx.apps || []).filter((a) => (L(a.name, a.app) || "").toLowerCase().includes(v)).flatMap((a) => a.tags || []);
+      const merged = [...new Set([...hitTags, ...hitViaApps.filter((tg) => freq[tg])])].sort((x, y) => freq[y] - freq[x]).slice(0, 8);
+      if (!merged.length) { close(); return; }
+      box.hidden = false;
+      box.innerHTML = merged.map((tg) => `<button class="chip" data-tag="${tg}">${tg}<i>${freq[tg]}</i></button>`).join("");
+      box.onclick = (e) => {
+        const b = e.target.closest("button[data-tag]");
+        if (!b) return;
+        forcedTag = b.dataset.tag;
+        q.value = "";
+        close(); paintActive(); renderGallery(idx);
+      };
+    };
+    q.onkeydown = (e) => { if (e.key === "Escape") close(); };
+    q.onblur = () => setTimeout(close, 180);
+    paintActive();
+  }
   const isMobile = () => matchMedia("(max-width: 820px)").matches;
   const protoSrc = (a, theme, pageId) => {
     const base = a.url + (a.url.includes("?") ? "&" : "?");
