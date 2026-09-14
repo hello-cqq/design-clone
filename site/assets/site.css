@@ -90,14 +90,12 @@ section.blk .sub { color: var(--mut); margin: 0 0 24px; }
 .animstage svg { display: block; width: 100%; height: auto; max-height: 460px; }
 /* step animation primitives */
 .an { opacity: 0; }
-.animstage[data-step="1"] .s1, .animstage[data-step="2"] .s1, .animstage[data-step="3"] .s1, .animstage[data-step="4"] .s1 { opacity: 1; }
-.animstage[data-step="2"] .s2, .animstage[data-step="3"] .s2, .animstage[data-step="4"] .s2 { opacity: 1; }
-.animstage[data-step="3"] .s3, .animstage[data-step="4"] .s3 { opacity: 1; }
-.animstage[data-step="4"] .s4 { opacity: 1; }
-.animstage .s1 { animation: fadeIn .5s ease both; }
-.animstage .s2 { animation: fadeIn .5s ease both; }
-.animstage .s3 { animation: fadeIn .5s ease both; }
-.animstage .s4 { animation: popIn .55s cubic-bezier(.4, 1.6, .4, 1) both; }
+/* M78 fix: 叠层默认隐藏，按 data-step 逐层点亮（旧规则 fadeIn both 把全部层提前点亮） */
+.animstage .s1 { opacity: 1; animation: fadeIn .5s ease both; }
+.animstage .s2, .animstage .s3, .animstage .s4 { opacity: 0; }
+.animstage[data-step="2"] .s2, .animstage[data-step="3"] .s2, .animstage[data-step="4"] .s2 { opacity: 1; animation: fadeIn .5s ease both; }
+.animstage[data-step="3"] .s3, .animstage[data-step="4"] .s3 { opacity: 1; animation: fadeIn .5s ease both; }
+.animstage[data-step="4"] .s4 { opacity: 1; animation: popIn .55s cubic-bezier(.4, 1.6, .4, 1) both; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes popIn { from { opacity: 0; } to { opacity: 1; } }
 .animstage .scrollfeed { animation: feedScroll 2.4s linear infinite; }
@@ -389,3 +387,18 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
   .hero { min-width: 0; overflow: hidden; }
   .idf-halo { max-width: 100vw; }
 }
+
+/* M78: 功能演示舞台动效升级（data-step 挂 .animstage + 连续微动 + 粒子层） */
+.animstage .svgbox { position: relative; }
+.animstage .dvfx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.animstage svg image { animation: dvPan 9s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+@keyframes dvPan { from { transform: scale(1) translate(0, 0); } to { transform: scale(1.07) translate(-6px, 3px); } }
+.animstage .scanline { opacity: 0; }
+.animstage[data-step="2"] .scanline { opacity: 1; animation: scan 1.6s ease-in-out infinite; }
+.animstage .ripple { opacity: 0; transform-box: fill-box; transform-origin: center; }
+.animstage[data-step="4"] .ripple { opacity: 1; animation: rip 1.15s ease-out infinite; }
+@keyframes rip { from { transform: scale(.4); opacity: .9; } to { transform: scale(3.2); opacity: 0; } }
+.animstage.swap .svgbox { animation: dvSwap .45s ease; }
+@keyframes dvSwap { from { opacity: .4; transform: translateY(6px) scale(.995); } to { opacity: 1; transform: none; } }
+.animstage .cap .captxt { transition: opacity .2s ease; }
+@media (prefers-reduced-motion: reduce) { .animstage svg image, .animstage .scanline, .animstage .ripple, .animstage.swap .svgbox { animation: none; } }
