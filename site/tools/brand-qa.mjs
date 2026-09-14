@@ -31,6 +31,7 @@ function pencilHits(data, w, h) {
   for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
     const i = (y * w + x) * 4;
     const r = data[i], g = data[i + 1], b = data[i + 2];
+    if (y > h * 0.9) continue; // 水面落日闪边误报豁免（铅笔从不到底边）
     const bright = r - b > 85 && r - g > 40 && g - b > 45 && r > 110;
     let darkNb = false;
     if (r - b > 60 && r - g > 30 && g - b > 30 && r > 90) {
