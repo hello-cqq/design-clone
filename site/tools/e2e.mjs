@@ -228,6 +228,23 @@ process.exit(fails.length ? 1 : 0);{
     await dp.locator(".ftab").nth(1).click();
     await dp.waitForTimeout(80);
     ok("scene switch fast", Date.now() - tSw < 400 && (await dp.locator("#animstage > .animstage:visible").count()) === 1);
+    // M84: 播放按钮可用（journeys 或 paths 兜底）+ 静态导出 zip
+    {
+      const pp2 = await b.newPage({ viewport: { width: 1280, height: 900 } });
+      await pp2.goto(base + "/proto.html?app=ai-assistant", { waitUntil: "load" });
+      await pp2.waitForTimeout(3500);
+      const fr = pp2.frameLocator("#stageframe");
+      await fr.locator("#dc-demo").click();
+      await pp2.waitForTimeout(1500);
+      ok("play button works", await fr.locator("body.dc-demo, #dc-caption").count() >= 1 && (await fr.locator("#dc-modal-root").count()) === 0 || !(await fr.locator("#dc-modal-root").textContent().catch(() => "")).includes("无演示旅程"));
+      const dl = pp2.waitForEvent("download", { timeout: 30000 }).catch(() => null);
+      await fr.locator("#dc-export-btn").click();
+      await pp2.waitForTimeout(400);
+      await fr.locator("#dc-export-dd button", { hasText: "导出全部" }).first().click().catch(async () => { await fr.locator("#dc-export-dd button").first().click(); });
+      const d = await dl;
+      ok("export all downloads zip", !!d && d.suggestedFilename().endsWith(".zip"));
+      await pp2.close();
+    }
     ok("step4 interactive fx", (await dp.locator("#animstage > .animstage:visible").first().locator(".steps b").nth(3).click().then(() => dp.waitForTimeout(600)).then(() => dp.locator("#animstage > .animstage:visible [class*=px-]").count())) >= 3);
     for (const n of [0, 1, 2, 3]) {
       await dp.locator("#animstage > .animstage:visible").first().locator(".steps b").nth(n).click();
