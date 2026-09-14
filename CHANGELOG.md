@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/); versioning is SemVer and mirrors `SKILL.md → metadata.version`.
 
+## [0.6.0-snapshot.20260914.1] - 2026-09-14
+
+Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
+
+### M79-W2/W3
+- : 功能演示改站点风矢量引导动画（线描设备 glyph+描绘连接+进度+帧芯片门控，弃截图）；ident 光晕掩膜收紧（亮色灰烟环消除）；全 179 帧木杆签名复核 0 残铅
+
+### M79-W1
+- : 官方图标修正——飞书双翼/阿里云橙标入 official-icons 并替换 run icon+三封面重生成（修封面内嵌旧图标）+v1.5.0 重发+probe-icon 官方 URL 策展表
+
 ## [0.6.0-snapshot.20260914] - 2026-09-14
 
 Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
