@@ -33,98 +33,126 @@
       <text x="10" y="89" font-size="7" fill="${P.mut}">capture → spec → views → gates</text>
     </g>`;
 
+  /* M79-W2: 站点风矢量引导动画——弃截图嵌入，与官网同设计语言（主题变量/玻璃/线描 glyph/描绘式连接） */
+  const glow = `
+    <ellipse cx="260" cy="150" rx="252" ry="142" fill="var(--bg2)" opacity=".7"/>
+    <circle cx="90" cy="70" r="60" fill="var(--acc)" opacity=".07"/>
+    <circle cx="440" cy="220" r="70" fill="var(--acc2)" opacity=".08"/>`;
+  const rows = (x, y, wds) => wds.map((w, i) => `<rect x="${x}" y="${y + i * 16}" width="${w}" height="7" rx="3.5" fill="var(--mut)" opacity=".32"/>`).join("");
+  const device = {
+    phone: `
+      <rect x="58" y="36" width="124" height="218" rx="20" fill="var(--card)" stroke="var(--line)"/>
+      <rect x="66" y="48" width="108" height="194" rx="12" fill="var(--bg2)"/>
+      <rect x="76" y="58" width="44" height="9" rx="4.5" fill="var(--acc)" opacity=".85"/>
+      <circle cx="160" cy="62" r="7" fill="var(--acc2)" opacity=".55"/>
+      ${rows(76, 80, [88, 72, 84, 60])}
+      <rect x="76" y="152" width="88" height="52" rx="10" fill="var(--card)" stroke="var(--line)"/>
+      <circle cx="94" cy="170" r="8" fill="var(--acc2)" opacity=".5"/>
+      <rect x="108" y="164" width="44" height="6" rx="3" fill="var(--mut)" opacity=".4"/>
+      <rect x="108" y="176" width="34" height="5" rx="2.5" fill="var(--mut)" opacity=".28"/>
+      <rect x="76" y="216" width="88" height="14" rx="7" fill="var(--card)" stroke="var(--line)"/>`,
+    mac: `
+      <rect x="42" y="56" width="196" height="132" rx="12" fill="var(--card)" stroke="var(--line)"/>
+      <rect x="42" y="56" width="196" height="20" rx="12" fill="var(--bg2)"/>
+      <circle cx="56" cy="66" r="3.2" fill="#ff5f57"/><circle cx="67" cy="66" r="3.2" fill="#febc2e"/><circle cx="78" cy="66" r="3.2" fill="#28c840"/>
+      <rect x="52" y="86" width="52" height="92" rx="8" fill="var(--bg2)"/>
+      ${rows(60, 96, [36, 30, 34])}
+      <rect x="112" y="86" width="116" height="92" rx="8" fill="var(--bg2)"/>
+      <rect x="120" y="94" width="56" height="8" rx="4" fill="var(--acc)" opacity=".8"/>
+      ${rows(120, 112, [100, 84, 92])}`,
+    browser: `
+      <rect x="42" y="48" width="196" height="146" rx="12" fill="var(--card)" stroke="var(--line)"/>
+      <rect x="42" y="48" width="196" height="22" rx="12" fill="var(--bg2)"/>
+      <rect x="52" y="54" width="52" height="10" rx="5" fill="var(--card)" stroke="var(--line)"/>
+      <rect x="110" y="54" width="52" height="10" rx="5" fill="var(--bg2)"/>
+      <rect x="52" y="80" width="176" height="46" rx="8" fill="var(--bg2)"/>
+      <rect x="60" y="88" width="70" height="9" rx="4.5" fill="var(--acc)" opacity=".8"/>
+      ${rows(60, 104, [120, 96])}
+      <rect x="52" y="136" width="84" height="48" rx="8" fill="var(--bg2)"/>
+      <rect x="144" y="136" width="84" height="48" rx="8" fill="var(--bg2)"/>`,
+    link: `
+      <rect x="52" y="40" width="176" height="26" rx="13" fill="var(--card)" stroke="var(--line)"/>
+      <circle cx="70" cy="53" r="6" fill="none" stroke="var(--acc)" stroke-width="2"/>
+      <rect x="84" y="49" width="96" height="8" rx="4" fill="var(--mut)" opacity=".4"/>
+      <rect x="58" y="80" width="124" height="170" rx="18" fill="var(--card)" stroke="var(--line)"/>
+      <rect x="66" y="92" width="108" height="146" rx="10" fill="var(--bg2)"/>
+      <circle cx="84" cy="110" r="9" fill="var(--acc2)" opacity=".55"/>
+      <rect x="100" y="104" width="52" height="7" rx="3.5" fill="var(--mut)" opacity=".45"/>
+      <rect x="66" y="132" width="108" height="60" rx="8" fill="var(--card)" stroke="var(--line)"/>
+      <circle cx="120" cy="162" r="16" fill="var(--acc)" opacity=".35"/>
+      ${rows(74, 204, [92, 70])}`,
+  };
+  const beam = (x, y, h) => `
+    <g class="s2">
+      <rect class="scanline" x="${x}" y="${y}" width="108" height="4" rx="2" fill="var(--acc)" opacity=".8"/>
+      <g class="fly"><rect x="${x + 20}" y="${y + 30}" width="26" height="34" rx="6" fill="var(--card)" stroke="var(--acc)"/></g>
+      <g class="fly" style="animation-delay:.5s"><rect x="${x + 60}" y="${y + 60}" width="26" height="34" rx="6" fill="var(--card)" stroke="var(--acc)"/></g>
+    </g>`;
+  const agent = `
+    <g class="s3">
+      <path class="draw" d="M196 150 C 240 150 250 120 296 118" fill="none" stroke="var(--acc)" stroke-width="2" stroke-dasharray="6 5"/>
+      <rect x="296" y="70" width="176" height="126" rx="16" fill="var(--card)" stroke="var(--line)"/>
+      <rect x="296" y="70" width="176" height="24" rx="16" fill="var(--bg2)"/>
+      <circle cx="310" cy="82" r="3.2" fill="#ff5f57"/><circle cx="321" cy="82" r="3.2" fill="#febc2e"/><circle cx="332" cy="82" r="3.2" fill="#28c840"/>
+      <text x="384" y="86" text-anchor="middle" font-size="9" fill="var(--mut)">agent · design-clone</text>
+      <rect x="308" y="104" width="120" height="16" rx="8" fill="var(--bg2)" stroke="var(--acc2)" stroke-opacity=".5"/>
+      <text x="316" y="115" font-size="8" fill="var(--acc2)">views:5 · tokens:38</text>
+      <g class="typing"><circle cx="314" cy="132" r="2.6" fill="var(--mut)"/><circle cx="323" cy="132" r="2.6" fill="var(--mut)"/><circle cx="332" cy="132" r="2.6" fill="var(--mut)"/></g>
+      <rect x="308" y="146" width="152" height="8" rx="4" fill="var(--bg2)"/>
+      <rect class="prog" x="308" y="146" width="152" height="8" rx="4" fill="var(--acc2)"/>
+      <text x="308" y="172" font-size="8" fill="var(--mut)">capture → spec → views → gates</text>
+    </g>`;
+  const finale = `
+    <g class="s4">
+      <rect x="330" y="96" width="104" height="150" rx="14" fill="var(--card)" stroke="var(--acc2)" stroke-width="1.6"/>
+      <rect x="338" y="104" width="88" height="18" rx="6" fill="var(--acc)" opacity=".8"/>
+      ${rows(338, 132, [80, 64, 72])}
+      <rect x="338" y="190" width="88" height="26" rx="8" fill="var(--bg2)"/>
+      <g transform="translate(382,262)">
+        <rect x="-52" y="-14" width="104" height="27" rx="13.5" fill="var(--acc2)"/>
+        <text x="0" y="4" text-anchor="middle" font-size="10.5" font-weight="700" fill="#08331f">playable ✓</text>
+      </g>
+      <g class="spark"><path d="M300 84 l3 6 6 3 -6 3 -3 6 -3 -6 -6 -3 6 -3 z" fill="var(--yellow, #ffd166)"/></g>
+      <g class="spark2"><path d="M452 92 l2.5 5 5 2.5 -5 2.5 -2.5 5 -2.5 -5 -5 -2.5 5 -2.5 z" fill="var(--yellow, #ffd166)"/></g>
+      <g class="ripple" transform="translate(120,150)"><circle r="10" fill="none" stroke="var(--acc)" stroke-width="2"/></g>
+    </g>`;
+  const scene = (kind, beamPos) => glow + `<g class="s1">${device[kind]}</g>` + beam(...beamPos) + agent + finale;
   const SCENES = {
     mobile: {
       steps: [
-        ["Phone app runs — chat list scrolls, tokens observed", "手机 App 运行——会话列表滚动，采集 tokens"],
-        ["adb/scrcpy mirror captures each screen (frame flash)", "adb/scrcpy 镜像逐屏捕获（截帧闪光）"],
+        ["Phone app runs — screens scroll, tokens observed", "手机 App 运行——界面滚动，采集 tokens"],
+        ["Mirror capture sweeps each screen (frame chips fly out)", "镜像捕获逐屏扫描（帧芯片飞出）"],
         ["Frames + UI tree feed the agent generator", "帧 + UI 树喂给 agent 生成器"],
         ["Playable prototype assembled — gates green", "可玩原型组装完成——门禁全绿"],
       ],
-      svg: `
-      <defs><clipPath id="dcm"><rect x="46" y="26" width="138" height="238" rx="16"/></clipPath><clipPath id="dcm2"><rect x="300" y="60" width="112" height="192" rx="10"/></clipPath></defs>
-      <g class="s1">
-        <rect x="40" y="20" width="150" height="250" rx="24" fill="#101820"/>
-        <image href="assets/demo/mobile.png" x="46" y="26" width="138" height="238" clip-path="url(#dcm)" preserveAspectRatio="xMidYMin slice"/>
-        <rect x="250" y="40" width="212" height="212" rx="12" fill="#161d26"/>
-        <circle cx="264" cy="52" r="3.4" fill="#ff5f57"/><circle cx="276" cy="52" r="3.4" fill="#febc2e"/><circle cx="288" cy="52" r="3.4" fill="#28c840"/>
-        <text x="356" y="55" text-anchor="middle" font-size="7" fill="#8fa3b8">scrcpy · mirror</text>
-        <image href="assets/demo/mobile.png" x="300" y="60" width="112" height="192" clip-path="url(#dcm2)" preserveAspectRatio="xMidYMin slice" opacity=".92"/>
-      </g>
-      <g class="s2"><rect x="46" y="120" width="138" height="3" fill="#6ee7ff" opacity=".85"/><rect x="40" y="20" width="150" height="250" rx="24" fill="none" stroke="#6ee7ff" stroke-width="1.4" opacity=".8"/></g>
-      <g class="s3"><path d="M196 140 C 240 140 250 170 292 170" stroke="#ffd66b" stroke-width="1.6" fill="none" stroke-dasharray="4 3"/><rect x="292" y="150" width="150" height="26" rx="13" fill="#12333f"/><text x="367" y="166" text-anchor="middle" font-size="8" fill="#9fe8d2">frames + ui-tree → spec</text></g>
-      <g class="s4"><rect x="300" y="216" width="120" height="26" rx="13" fill="#3fb899"/><text x="360" y="232" text-anchor="middle" font-size="9" fill="#06303a" font-weight="700">playable ✓</text><circle cx="115" cy="150" r="16" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/></g>
-      
-      `,
+      svg: scene("phone", [66, 60, 180]),
     },
     link: {
       steps: [
-        ["Scroll the Douyin feed — like, comment, share rail", "刷抖音视频流——点赞/评论/分享侧栏"],
-        ["Share sheet → tap “copy link”", "分享面板 → 点“复制链接”"],
-        ["Paste into agent — it parses frames & notes", "粘贴进 agent——解析帧与图文"],
-        ["Note rebuilt as a playable prototype", "笔记重建为可玩原型"],
+        ["Shared link opened — content parsed", "分享链接打开——内容解析"],
+        ["Capture sweeps the note flow (frame chips fly out)", "捕获扫描笔记流（帧芯片飞出）"],
+        ["Content structure feeds the agent generator", "内容结构喂给 agent 生成器"],
+        ["Playable prototype assembled — gates green", "可玩原型组装完成——门禁全绿"],
       ],
-      svg: `
-      <defs><clipPath id="dcl"><rect x="66" y="46" width="138" height="222" rx="14"/></clipPath></defs>
-      <g class="s1">
-        <rect x="150" y="18" width="300" height="26" rx="13" fill="#161d26"/><text x="168" y="35" font-size="8" fill="#8fa3b8">https://v.douyin.com/…  (shared link)</text>
-        <rect x="60" y="40" width="150" height="234" rx="20" fill="#101820"/>
-        <image href="assets/demo/link.png" x="66" y="46" width="138" height="222" clip-path="url(#dcl)" preserveAspectRatio="xMidYMin slice"/>
-        <rect x="250" y="70" width="200" height="170" rx="12" fill="#161d26"/>
-        <text x="266" y="92" font-size="8" fill="#8fa3b8">link parser</text>
-        <rect x="266" y="104" width="168" height="8" rx="4" fill="#2a3644"/><rect x="266" y="120" width="140" height="8" rx="4" fill="#2a3644"/><rect x="266" y="136" width="152" height="8" rx="4" fill="#2a3644"/>
-        <image href="assets/demo/link.png" x="266" y="152" width="76" height="72" preserveAspectRatio="xMidYMin slice" opacity=".9"/>
-      </g>
-      <g class="s2"><rect x="66" y="140" width="138" height="3" fill="#6ee7ff" opacity=".85"/><rect x="60" y="40" width="150" height="234" rx="20" fill="none" stroke="#6ee7ff" stroke-width="1.4" opacity=".8"/></g>
-      <g class="s3"><path d="M212 160 C 236 160 240 180 262 180" stroke="#ffd66b" stroke-width="1.6" fill="none" stroke-dasharray="4 3"/><rect x="262" y="168" width="150" height="26" rx="13" fill="#12333f"/><text x="337" y="184" text-anchor="middle" font-size="8" fill="#9fe8d2">content → views spec</text></g>
-      <g class="s4"><rect x="300" y="216" width="120" height="26" rx="13" fill="#3fb899"/><text x="360" y="232" text-anchor="middle" font-size="9" fill="#06303a" font-weight="700">playable ✓</text><circle cx="135" cy="160" r="16" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/></g>
-      
-      `,
+      svg: scene("link", [66, 96, 150]),
     },
     desktop: {
       steps: [
-        ["Desktop app operates — sidebar, panels, clicks", "桌面应用操作——侧栏、面板、点击"],
-        ["Screen capture snapshots each state (flash)", "屏幕捕获逐状态快照（闪光）"],
-        ["Tokens & layout extracted from computed styles", "从 computed 样式抽取 tokens 与布局"],
-        ["Desktop-faithful prototype assembled", "组装桌面保真原型"],
+        ["Desktop app runs — AX tree observed", "桌面软件运行——AX 树观测"],
+        ["Screen capture sweeps windows (frame chips fly out)", "截屏扫描窗口（帧芯片飞出）"],
+        ["AX tree + frames feed the agent generator", "AX 树 + 帧喂给 agent 生成器"],
+        ["Playable prototype assembled — gates green", "可玩原型组装完成——门禁全绿"],
       ],
-      svg: `
-      <defs><clipPath id="dcd"><rect x="70" y="58" width="380" height="196" rx="6"/></clipPath></defs>
-      <g class="s1">
-        <rect x="60" y="34" width="400" height="230" rx="12" fill="#161d26"/>
-        <circle cx="76" cy="46" r="3.6" fill="#ff5f57"/><circle cx="89" cy="46" r="3.6" fill="#febc2e"/><circle cx="102" cy="46" r="3.6" fill="#28c840"/>
-        <rect x="60" y="52" width="400" height="6" fill="#0d141c"/>
-        <image href="assets/demo/desktop.png" x="70" y="58" width="380" height="196" clip-path="url(#dcd)"/>
-        <rect x="150" y="252" width="220" height="10" rx="5" fill="#0d141c"/>
-        <g fill="#2a3644"><rect x="170" y="254" width="7" height="7" rx="2"/><rect x="190" y="254" width="7" height="7" rx="2"/><rect x="210" y="254" width="7" height="7" rx="2"/><rect x="230" y="254" width="7" height="7" rx="2"/><rect x="250" y="254" width="7" height="7" rx="2"/></g>
-      </g>
-      <g class="s2"><rect x="70" y="140" width="380" height="3" fill="#6ee7ff" opacity=".8"/><rect x="60" y="34" width="400" height="230" rx="12" fill="none" stroke="#6ee7ff" stroke-width="1.4" opacity=".7"/></g>
-      <g class="s3"><rect x="330" y="90" width="120" height="24" rx="12" fill="#12333f"/><text x="390" y="105" text-anchor="middle" font-size="8" fill="#9fe8d2">AX tree → spec</text></g>
-      <g class="s4"><rect x="330" y="216" width="120" height="26" rx="13" fill="#3fb899"/><text x="390" y="232" text-anchor="middle" font-size="9" fill="#06303a" font-weight="700">playable ✓</text></g>
-      
-      `,
+      svg: scene("mac", [52, 86, 110]),
     },
     web: {
       steps: [
-        ["Type the URL — crawl starts", "输入网址——开始爬取"],
-        ["Page graph grows: nav + content edges", "页面图生长：导航 + 内容边"],
-        ["Every page rebuilt as a view", "每页重建为视图"],
-        ["Whole-site prototype, playable offline", "整站原型，离线可玩"],
+        ["Website loads — DOM observed", "网站加载——DOM 观测"],
+        ["Headless capture sweeps pages (frame chips fly out)", "无头捕获扫描页面（帧芯片飞出）"],
+        ["DOM + assets feed the agent generator", "DOM + 资产喂给 agent 生成器"],
+        ["Playable prototype assembled — gates green", "可玩原型组装完成——门禁全绿"],
       ],
-      svg: `
-      <defs><clipPath id="dcw"><rect x="70" y="64" width="380" height="190" rx="4"/></clipPath></defs>
-      <g class="s1">
-        <rect x="60" y="34" width="400" height="230" rx="12" fill="#ffffff" stroke="#d7e3ea"/>
-        <rect x="60" y="34" width="400" height="24" rx="12" fill="#eef4f8"/>
-        <rect x="72" y="40" width="86" height="13" rx="6.5" fill="#ffffff" stroke="#d7e3ea"/><rect x="164" y="40" width="86" height="13" rx="6.5" fill="#f6fafc" stroke="#e2ecf2"/>
-        <rect x="70" y="58" width="380" height="6" fill="#f2f7fa"/>
-        <image href="assets/demo/web.png" x="70" y="64" width="380" height="190" clip-path="url(#dcw)"/>
-      </g>
-      <g class="s2"><rect x="70" y="150" width="380" height="3" fill="#12a8c4" opacity=".7"/><rect x="60" y="34" width="400" height="230" rx="12" fill="none" stroke="#12a8c4" stroke-width="1.4" opacity=".7"/></g>
-      <g class="s3"><rect x="330" y="92" width="120" height="24" rx="12" fill="#12333f"/><text x="390" y="107" text-anchor="middle" font-size="8" fill="#9fe8d2">DOM → spec</text></g>
-      <g class="s4"><rect x="330" y="216" width="120" height="26" rx="13" fill="#3fb899"/><text x="390" y="232" text-anchor="middle" font-size="9" fill="#06303a" font-weight="700">playable ✓</text></g>
-      
-      `,
+      svg: scene("browser", [52, 80, 110]),
     },
   };
 
