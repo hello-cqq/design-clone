@@ -158,9 +158,9 @@
     const idx = await loadIndex();
     const boost = (a) => (a.app === "ai-assistant" ? 1e9 : 0) + (a.downloads || 0); // M75-W3: 智能助理置顶精选
     const apps = (idx.apps || []).slice().sort((a, b) => boost(b) - boost(a)).slice(0, 4);
+    await loadThumbs();
     const el = document.getElementById("featured");
     if (el) el.innerHTML = apps.map(card).join("");
-    await loadThumbs();
     armThumbIO();
     const sel = document.getElementById("expselect");
     if (sel && !sel.options.length) {
