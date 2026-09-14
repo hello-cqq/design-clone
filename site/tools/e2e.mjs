@@ -86,7 +86,7 @@ ok("featured cards", await ctx.locator("#featured .pcard").count() >= 4);
 ok("flame heat", await ctx.locator("#featured .heat svg path").count() >= 4);
 ok("no footer links", await ctx.locator("footer a").count() === 0);
 await ctx.locator(".animstage").scrollIntoViewIfNeeded(); await ctx.waitForTimeout(1200);
-ok("anim stage", await ctx.locator("#animstage svg").count() === 1);
+await ctx.waitForTimeout(2500); ok("anim stage", (await ctx.locator("#animstage > .animstage:visible").count()) === 1 && (await ctx.locator("#animstage svg").count()) >= 1);
 // lang + theme
 const h1en = await ctx.locator("h1").textContent();
 await ctx.click("#langbtn"); await ctx.waitForTimeout(600);
@@ -220,10 +220,19 @@ process.exit(fails.length ? 1 : 0);{
     await dp.waitForTimeout(800);
     const txt = await dp.locator(".animstage").first().textContent();
     ok("demo no real names", !txt.includes("段雅洁"));
+    ok("expselect whitelist 5", (await dp.locator("#expselect option").count()) === 5);
+    ok("replay is icon", await dp.locator(".animstage .replay svg").first().isVisible());
+    await dp.waitForTimeout(3000);
+    ok("four stages premounted", (await dp.locator("#animstage > .animstage").count()) === 4);
+    const tSw = Date.now();
+    await dp.locator(".ftab").nth(1).click();
+    await dp.waitForTimeout(80);
+    ok("scene switch fast", Date.now() - tSw < 400 && (await dp.locator("#animstage > .animstage:visible").count()) === 1);
+    ok("step4 interactive fx", (await dp.locator("#animstage > .animstage:visible").first().locator(".steps b").nth(3).click().then(() => dp.waitForTimeout(600)).then(() => dp.locator("#animstage > .animstage:visible [class*=px-]").count())) >= 3);
     for (const n of [0, 1, 2, 3]) {
-      await dp.locator(".animstage").first().locator(".steps b").nth(n).click();
+      await dp.locator("#animstage > .animstage:visible").first().locator(".steps b").nth(n).click();
       await dp.waitForTimeout(350);
-      const cap = await dp.locator(".animstage").first().locator(".captxt").textContent();
+      const cap = await dp.locator("#animstage > .animstage:visible").first().locator(".captxt").textContent();
       ok("demo step" + (n + 1) + " user-facing", /打开|粘贴|输入|捕获|解析|生成|Open|Paste|Enter|capture|parsed|generated/i.test(cap) && !/gates|agent/.test(cap));
     }
     await dp.close();

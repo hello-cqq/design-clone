@@ -82,8 +82,7 @@
     document.querySelectorAll("[data-i18n-ph]").forEach((el) => { el.placeholder = t(el.dataset.i18nPh); });
     const lb = document.getElementById("langbtn");
     if (lb) lb.textContent = state.lang === "en" ? "中文" : "EN";
-    const cap = document.querySelector(".animstage");
-    if (cap && cap._replayLang) cap._replayLang();
+    document.querySelectorAll(".animstage").forEach((cap) => { if (cap._replayLang) cap._replayLang(); });
     if (document.getElementById("cards")) renderGallery();
     if (document.getElementById("side")) renderProto();
     if (document.getElementById("featured")) renderFeatured();
@@ -165,10 +164,12 @@
     armThumbIO();
     const sel = document.getElementById("expselect");
     if (sel && !sel.options.length) {
-      const apps = idx.apps || [];
+      // M83: 在线体验只列白名单五 app（星海/微信/飞书/动物乐园/阿里云）
+      const WL = ["ai-assistant", "wechat", "lark", "petpark", "aliyun-console"];
+      const apps = WL.map((sl) => (idx.apps || []).find((a) => a.app === sl)).filter(Boolean);
       sel.innerHTML = apps.map((a) => `<option value="${a.app}">${L(a.name, a.app)}</option>`).join("");
-      if (apps.some((a) => a.app === "ai-assistant")) sel.value = "ai-assistant"; else if (apps.some((a) => a.app === "petpark")) sel.value = "petpark";
-      switchExp(sel.value);
+      sel.value = apps[0] ? apps[0].app : "";
+      if (sel.value) switchExp(sel.value);
     }
   }
   function switchExp(app) {
@@ -395,9 +396,32 @@
     const scenes = { a: "mobile", b: "link", c: "desktop", d: "web" };
     wrap.innerHTML = Object.entries(scenes).map(([k], i) => `<button class="ftab${i === 0 ? " on" : ""}" data-s="${k}">${t("f_" + k + "_t")}</button>`).join("");
     const stage = document.getElementById("animstage");
-    // M76-W8: 演示真景图懒挂载——进入视口才 mount，不与本站首屏/视频抢连接
+    // M83: 四场景各 mount 一次（idle 错峰预挂），pill 切换=display 切换+_play()，零重建零卡顿
+    stage.classList.add("animwrap");
+    const handles = {}, kids = {};
+    const ensure = (key) => {
+      if (handles[key]) return handles[key];
+      const d = document.createElement("div");
+      d.className = "animstage";
+      d.dataset.scene = key;
+      d.style.display = "none";
+      stage.appendChild(d);
+      handles[key] = window.DCAnim.mount(d, scenes[key]);
+      kids[key] = d;
+      return handles[key];
+    };
+    const show = (key) => {
+      for (const k of Object.keys(kids)) kids[k].style.display = k === key ? "" : "none";
+      const h = handles[key];
+      if (h && h._play) h._play();
+    };
     let mounted = false;
-    const doMount = () => { if (mounted) return; mounted = true; window.DCAnim.mount(stage, scenes.a); };
+    const doMount = () => {
+      if (mounted) return; mounted = true;
+      ensure("a"); show("a");
+      const idle = window.requestIdleCallback || ((f) => setTimeout(f, 700));
+      ["b", "c", "d"].forEach((k, i) => idle(() => ensure(k), { timeout: 2500 + i * 900 }));
+    };
     if ("IntersectionObserver" in window) {
       const io = new IntersectionObserver((es) => { if (es.some((x) => x.isIntersecting)) { io.disconnect(); doMount(); } }, { rootMargin: "200px" });
       io.observe(stage);
@@ -407,7 +431,7 @@
       if (!b) return;
       wrap.querySelectorAll(".ftab").forEach((x) => x.classList.toggle("on", x === b));
       const key = b.dataset.s;
-      window.DCAnim.mount(stage, scenes[key]);
+      ensure(key); show(key);
     });
   }
 
