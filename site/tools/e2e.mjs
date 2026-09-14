@@ -211,6 +211,23 @@ process.exit(fails.length ? 1 : 0);{
     ok("tag suggest applies filter", await gp2.evaluate(() => !!document.querySelector("#tagactive .chip")));
     await gp2.close();
   }
+  // M82: demo no real names + user-facing step captions
+  {
+    const dp = await b.newPage({ viewport: { width: 1280, height: 900 } });
+    await dp.goto(base + "/index.html", { waitUntil: "load" });
+    await dp.waitForTimeout(1800);
+    await dp.locator(".animstage").first().scrollIntoViewIfNeeded();
+    await dp.waitForTimeout(800);
+    const txt = await dp.locator(".animstage").first().textContent();
+    ok("demo no real names", !txt.includes("段雅洁"));
+    for (const n of [0, 1, 2, 3]) {
+      await dp.locator(".animstage").first().locator(".steps b").nth(n).click();
+      await dp.waitForTimeout(350);
+      const cap = await dp.locator(".animstage").first().locator(".captxt").textContent();
+      ok("demo step" + (n + 1) + " user-facing", /打开|粘贴|输入|捕获|解析|生成|Open|Paste|Enter|capture|parsed|generated/i.test(cap) && !/gates|agent/.test(cap));
+    }
+    await dp.close();
+  }
   await mp.close();
   // M76-W8: 无 Range 的 HTTP 服务下 ident 必须推进（防 load 门控/非 faststart 复发）
   {
