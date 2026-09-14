@@ -3,6 +3,13 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/); versioning is SemVer and mirrors `SKILL.md → metadata.version`.
 
+## [0.6.0-snapshot.20260914.2] - 2026-09-14
+
+Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
+
+### M80
+- : ident-light 整源替换为用户无铅笔新视频（女生视频3）——左上水印+倒影逐帧 inpaint、hflip 对齐现网构图（坐姿朝右/躺姿头右）、880x660 crf19 faststart；poster 内联+logo-light 重裁+ident js 重哈希；brand-qa 增细长笔杆签名(warn 级)+木杆/角标/faststart 硬门全绿
+
 ## [0.6.0-snapshot.20260914.1] - 2026-09-14
 
 Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
