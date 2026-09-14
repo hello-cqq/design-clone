@@ -420,3 +420,15 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
 .animstage[data-step="4"] .spark2 { animation: sparkSpin 3.1s linear infinite reverse; }
 @keyframes sparkSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .animstage .draw { transition: none; } .animstage .fly, .animstage .typing circle, .animstage .spark, .animstage .spark2 { animation: none; } }
+
+/* M81-W3: 标签单行 + 搜索推荐下拉 */
+.tagrow { flex-wrap: nowrap; overflow: hidden; }
+.qsuggest { position: absolute; left: 0; right: 120px; top: calc(100% + 6px); z-index: 30; background: var(--card); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+.qsuggest .chip { border: 1px solid var(--line); background: var(--bg2); color: var(--ink); border-radius: 999px; padding: 4px 12px; font-size: 12px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+.qsuggest .chip i { font-style: normal; color: var(--mut); font-size: 10px; }
+.qsuggest .chip:hover { border-color: var(--acc); color: var(--acc); }
+.tagactive { margin: 6px 0 2px; }
+.tagactive .chip { display: inline-flex; gap: 8px; align-items: center; border: 1px solid var(--acc); color: var(--acc); border-radius: 999px; padding: 4px 12px; font-size: 12px; }
+.tagactive .chip .x { border: 0; background: transparent; color: inherit; cursor: pointer; font-size: 14px; line-height: 1; }
+
+.filters:focus-within ~ .tagrow { visibility: hidden; }

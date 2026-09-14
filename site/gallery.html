@@ -21,13 +21,15 @@
 </div></header>
 <div class="wrap">
   <section class="blk center">
-    <div class="filters">
-      <input id="q" data-i18n-ph="gal_search" placeholder="search name or tag…">
+    <div class="filters" style="position:relative">
+      <input id="q" data-i18n-ph="gal_search" placeholder="search name or tag…" autocomplete="off">
       <select id="sort">
         <option value="dl" data-i18n="gal_sort_dl">most downloads</option>
         <option value="upd" data-i18n="gal_sort_upd">recently updated</option>
       </select>
+      <div class="qsuggest" id="qsuggest" hidden></div>
     </div>
+    <div class="tagactive" id="tagactive" hidden></div>
     <div class="tagrow" id="tagrow"></div>
     <div class="cards" id="cards"></div>
   </section>

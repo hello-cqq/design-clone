@@ -88,6 +88,9 @@ for (const seed of seeds) {
       const meta = await sharp(f).metadata();
       const r = spawnSync("node", [path.join(HERE, "gen", "patch-erase.mjs"), "--in", f, "--out", f + ".wm", "--mask", `rect:${meta.width - 165},${meta.height - 36},165,36`, "--feather", "8"], { encoding: "utf8" });
       if (r.status === 0 && fs.existsSync(f + ".wm")) fs.renameSync(f + ".wm", f);
+      // M81: 水印位置不定（右下/底中）→ 补擦底中带
+      const r2 = spawnSync("node", [path.join(HERE, "gen", "patch-erase.mjs"), "--in", f, "--out", f + ".wm2", "--mask", `rect:${Math.round(meta.width * 0.28)},${meta.height - 34},${Math.round(meta.width * 0.5)},34`, "--feather", "8"], { encoding: "utf8" });
+      if (r2.status === 0 && fs.existsSync(f + ".wm2")) fs.renameSync(f + ".wm2", f);
     } catch {}
   };
   if (fs.existsSync(cached)) {
