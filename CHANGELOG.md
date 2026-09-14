@@ -3,6 +3,31 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/); versioning is SemVer and mirrors `SKILL.md → metadata.version`.
 
+## [0.6.0-snapshot.20260914] - 2026-09-14
+
+Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
+
+### M78-3
+- : 画廊缩略图同源缓存 sync-thumbs.mjs（cover jpg+icon 取自发布 icon.png）+卡片优先同源 onerror 兜底 proto+featured 挂 IO；pages.yml 部署前同步——根治封面/图标空白
+
+### M76-W8f
+- : ident 元素级自愈引导（跨重建/闭包失配/stall 仍能拉起当前主题视频）+新哈希名
+
+### M78-1
+- : v1 女生视频回归+铅笔根除（簇跟踪色彩擦+笔杆几何 poly 插值擦，179 帧）→ ident-light.ffdc4887；poster/ logo-light 同步 v1 帧；ident.js 重哈希；brand-qa 绿
+
+### M76-W8d
+- : 合并并发会话 ident 资产（ident-light 9d02b717 无铅笔快循环+logo-light 更新）与 W8 播放修复（去 load 门控/看门狗/boot preload/duo 懒挂/logo 减重/ident.js 哈希名）；brand-qa faststart+e2e 无Range HTTP 门全绿
+
+### M76-W8c
+- : ident.js 文件名哈希防边缘缓存发旧（preload/看门狗版必达）
+
+### M76-W8b
+- : 首屏连接争用修复——logo-main 1.9MB→358KB(palette png)、duo 背景懒挂、boot 即 preload 当前主题视频、demo 真景图进视口才 mount；e2e 适配懒挂载
+
+### M76-W8
+- : ident 播放修复——去 window.load 门控+看门狗重试（Pages stall 不再卡播放）；ident-dark 重封装 faststart；publish 白名单补 knowledge/tokens.css 并重发六 app；门禁：e2e 无 Range HTTP ident 推进断言+brand-qa faststart 检查
+
 ## [0.6.0-snapshot.20260913.3] - 2026-09-13
 
 Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。

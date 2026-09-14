@@ -10,7 +10,7 @@ description: >-
 license: MIT
 compatibility: opencode, claude-code, codex, qoder, qwen-code, trae
 metadata:
-  version: "0.6.0-snapshot.20260913.3"
+  version: "0.6.0-snapshot.20260914"
   homepage: https://github.com/hello-cqq/design-clone
 ---
 
