@@ -3,6 +3,13 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/); versioning is SemVer and mirrors `SKILL.md → metadata.version`.
 
+## [0.6.0-snapshot.20260914.4] - 2026-09-14
+
+Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
+
+### M82
+- : 功能演示修正——微信去真名改虚构通用会话；步骤描述改用户视角（打开/捕获/解析/生成）；右侧重做=设计规范卡(s3)+站点风成品原型卡(s4, 规范卡淡出为底)+解析/生成连接标签；e2e 增无真名与步骤文案断言
+
 ## [0.6.0-snapshot.20260914.3] - 2026-09-14
 
 Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
