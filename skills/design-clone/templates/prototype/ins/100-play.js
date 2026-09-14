@@ -69,7 +69,7 @@
     await new Promise((r) => setTimeout(r, 250));
     if (S.play !== pl) return; // 等待期间会话已结束/被取代
     const t = e.target_dc ? el(e.target_dc) : null;
-    if (t) { const r = toWS(t.getBoundingClientRect()); const ring = document.createElement("div"); ring.className = "dc-ring"; Object.assign(ring.style, { left: r.x - 4 + "px", top: r.y - 4 + "px", width: r.w + 8 + "px", height: r.h + 8 + "px" }); W.overlay.appendChild(ring); }
+    if (t) { const r = toWS(t.getBoundingClientRect()); const ring = document.createElement("div"); ring.className = "dc-ring"; Object.assign(ring.style, { left: r.x - 4 + "px", top: r.y - 4 + "px", width: r.w + 8 + "px", height: r.h + 8 + "px" }); W.overlay.appendChild(ring); liveTrack(t, ring, (rr) => Object.assign(ring.style, { left: rr.x - 4 + "px", top: rr.y - 4 + "px", width: rr.w + 8 + "px", height: rr.h + 8 + "px" })); }
     playRender(e);
     scheduleNext();
   }
@@ -117,7 +117,7 @@
     }
     if (s.page !== S.page) { try { await loadView(s.page); } catch {} }
     clearOverlay();
-    const t = el(s.target); if (t) { t.scrollIntoView({ block: "center" }); const r = toWS(t.getBoundingClientRect()); const ring = document.createElement("div"); ring.className = "dc-ring"; Object.assign(ring.style, { left: r.x - 4 + "px", top: r.y - 4 + "px", width: r.w + 8 + "px", height: r.h + 8 + "px" }); W.overlay.appendChild(ring); }
+    const t = el(s.target); if (t) { t.scrollIntoView({ block: "center" }); const r = toWS(t.getBoundingClientRect()); const ring = document.createElement("div"); ring.className = "dc-ring"; Object.assign(ring.style, { left: r.x - 4 + "px", top: r.y - 4 + "px", width: r.w + 8 + "px", height: r.h + 8 + "px" }); W.overlay.appendChild(ring); liveTrack(t, ring, (rr) => Object.assign(ring.style, { left: rr.x - 4 + "px", top: rr.y - 4 + "px", width: rr.w + 8 + "px", height: rr.h + 8 + "px" })); }
     const old = $("#dc-sim"); if (old) old.remove();
     const K = s.result.kind;
     if (K === "dialog" || K === "blocked") {

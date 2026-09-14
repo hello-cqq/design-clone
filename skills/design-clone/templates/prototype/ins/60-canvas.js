@@ -36,7 +36,25 @@
   }
 
   /* ---------- overlay ---------- */
-  function clearOverlay() { W.overlay.innerHTML = ""; }
+  /* M85: 活跟踪 ticker——视图内动效/滚动/缩放会让元素位移，选中框与演示 ring 必须每帧贴合 */
+  const trackers = new Set();
+  let tickRaf = null;
+  function tickLoop() {
+    if (!trackers.size) { tickRaf = null; return; }
+    for (const tr of [...trackers]) {
+      if (!tr.t || !tr.t.isConnected || !tr.node || !tr.node.isConnected) { trackers.delete(tr); continue; }
+      tr.apply(toWS(tr.t.getBoundingClientRect()));
+    }
+    tickRaf = requestAnimationFrame(tickLoop);
+  }
+  function liveTrack(t, node, apply) {
+    const tr = { t, node, apply };
+    trackers.add(tr);
+    if (!tickRaf) tickRaf = requestAnimationFrame(tickLoop);
+    return tr;
+  }
+  function untrack(node) { for (const tr of [...trackers]) if (tr.node === node) trackers.delete(tr); }
+  function clearOverlay() { W.overlay.innerHTML = ""; trackers.clear(); tickRaf && cancelAnimationFrame(tickRaf); tickRaf = null; }
   function redraw() {
     clearOverlay();
     if (S.ann) drawAnnotations();
@@ -102,7 +120,17 @@
     const sz = document.createElement("div"); sz.className = "dc-size"; sz.textContent = `${Math.round(r.w)} × ${Math.round(r.h)}`;
     sz.style.left = r.x + "px"; sz.style.top = r.b + 4 + "px";
     W.overlay.appendChild(sz);
+    liveTrack(t, box, (rr) => {
+      Object.assign(box.style, { left: rr.x + "px", top: rr.y + "px", width: rr.w + "px", height: rr.h + "px" });
+      sz.style.left = rr.x + "px"; sz.style.top = rr.b + 4 + "px";
+      sz.textContent = `${Math.round(rr.w)} × ${Math.round(rr.h)}`;
+    });
   }
+  // M85: 滚动/缩放/窗口变化 → 节流重绘标注（pins/cards 不再 drift）
+  let redrawT = null;
+  const queueRedraw = () => { if (!(S.ann || S.selected)) return; if (redrawT) return; redrawT = setTimeout(() => { redrawT = null; redraw(); }, 150); };
+  window.addEventListener("scroll", queueRedraw, true);
+  window.addEventListener("resize", queueRedraw);
   function measure(e) {
     W.overlay.querySelectorAll(".dc-measure").forEach((n) => n.remove());
     if (!(e.altKey && S.selected)) return;
