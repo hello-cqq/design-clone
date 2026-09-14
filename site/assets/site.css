@@ -433,3 +433,43 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
 .tagactive .chip .x { border: 0; background: transparent; color: inherit; cursor: pointer; font-size: 14px; line-height: 1; }
 
 .filters:focus-within ~ .tagrow { visibility: hidden; }
+
+/* M83: 四场景预挂容器 + 可玩原型交互动效 + replay 图标 */
+#animstage.animwrap { border: 0; background: transparent; box-shadow: none; border-radius: 0; padding: 0; }
+#animstage.animwrap > .animstage { width: 100%; }
+.animstage .replay { display: inline-grid; place-items: center; width: 26px; height: 26px; padding: 0; }
+.animstage .replay svg { transition: transform .3s ease; }
+.animstage .replay:hover svg { transform: rotate(90deg); }
+.animstage [class^="px-"], .animstage [class*=" px-"] { transform-box: fill-box; transform-origin: center; }
+.animstage[data-step="4"] .px-tap { animation: pxTap 4.8s ease-out infinite; }
+.animstage[data-step="4"] .px-sheet { animation: pxSheet 4.8s cubic-bezier(.32, 1.2, .4, 1) infinite; }
+.animstage[data-step="4"] .px-send { animation: pxSend 4.8s ease-in-out infinite; }
+.animstage[data-step="4"] .px-heart { animation: pxHeart 4.8s cubic-bezier(.34, 1.56, .64, 1) infinite; }
+.animstage[data-step="4"] .px-plus { animation: pxPlus 4.8s ease-out infinite; }
+.animstage[data-step="4"] .px-under { animation: pxUnder 4.8s cubic-bezier(.4, 0, .2, 1) infinite; }
+.animstage[data-step="4"] .px-caret { animation: pxCaret 1s steps(1) infinite; }
+.animstage[data-step="4"] .px-chip { animation: pxChip 4.8s cubic-bezier(.32, 1.2, .4, 1) infinite; }
+.animstage[data-step="4"] .px-press { animation: pxPress 4.8s ease-in-out infinite; }
+.animstage[data-step="4"] .px-rowhl { animation: pxRowHl 4.8s ease-in-out infinite; }
+.animstage[data-step="4"] .px-dot1 { animation: pxPage 4.8s steps(1) infinite; }
+.animstage[data-step="4"] .px-dot2 { animation: pxPage2 4.8s steps(1) infinite; }
+.animstage[data-step="4"] .px-stat-g1 { animation: pxStatG 4.8s steps(1) infinite; }
+.animstage[data-step="4"] .px-stat-y1 { animation: pxStatY 4.8s steps(1) infinite; }
+@keyframes pxTap { 0%, 14% { opacity: .9; transform: scale(.3); } 26%, 100% { opacity: 0; transform: scale(2.1); } }
+@keyframes pxSheet { 0%, 18% { transform: translateY(46px); opacity: 0; } 30%, 74% { transform: translateY(0); opacity: 1; } 86%, 100% { transform: translateY(46px); opacity: 0; } }
+@keyframes pxSend { 0%, 34% { opacity: .45; transform: scale(1); } 42%, 58% { opacity: 1; transform: scale(1.25); } 66%, 100% { opacity: .45; transform: scale(1); } }
+@keyframes pxHeart { 0%, 28% { transform: scale(0); opacity: 0; } 38% { transform: scale(1.3); opacity: 1; } 46%, 78% { transform: scale(1); opacity: 1; } 88%, 100% { transform: scale(0); opacity: 0; } }
+@keyframes pxPlus { 0%, 38% { opacity: 0; transform: translateY(7px); } 48%, 68% { opacity: 1; transform: translateY(0); } 78%, 100% { opacity: 0; transform: translateY(-9px); } }
+@keyframes pxUnder { 0%, 42% { transform: translateX(0); } 52%, 92% { transform: translateX(-40px); } 100% { transform: translateX(0); } }
+@keyframes pxCaret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes pxChip { 0%, 22% { opacity: 0; transform: translateY(9px) scale(.9); } 32%, 72% { opacity: 1; transform: none; } 82%, 100% { opacity: 0; transform: none; } }
+@keyframes pxPress { 0%, 28% { transform: scaleY(1); } 36%, 44% { transform: scaleY(.8); } 52%, 100% { transform: scaleY(1); } }
+@keyframes pxRowHl { 0%, 18% { opacity: 0; transform: translateY(-16px); } 28%, 48% { opacity: 1; transform: translateY(0); } 58%, 76% { opacity: 1; transform: translateY(16px); } 86%, 100% { opacity: 0; transform: translateY(16px); } }
+@keyframes pxPage { 0%, 46% { opacity: 1; } 50%, 96% { opacity: .4; } 100% { opacity: 1; } }
+@keyframes pxPage2 { 0%, 46% { opacity: .4; } 50%, 96% { opacity: 1; } 100% { opacity: .4; } }
+@keyframes pxStatG { 0%, 40% { opacity: 1; } 44%, 64% { opacity: 0; } 68%, 100% { opacity: 1; } }
+@keyframes pxStatY { 0%, 40% { opacity: 0; } 44%, 64% { opacity: 1; } 68%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .animstage [class^="px-"], .animstage [class*=" px-"] { animation: none !important; }
+  .animstage .replay:hover svg { transform: none; }
+}

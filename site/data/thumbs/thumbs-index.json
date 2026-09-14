@@ -19,24 +19,9 @@
   "cover": "petpark-cover.da4a7851.jpg",
   "icon": "petpark-icon.3b54ab0c.png"
  },
- "study-loft": {
-  "cover": "study-loft-cover.32a92b71.jpg",
-  "icon": "study-loft-icon.d9676373.png"
- },
- "neon-tape": {
-  "cover": "neon-tape-cover.3e9893b9.jpg",
-  "icon": "neon-tape-icon.22634948.png"
- },
- "mountain-tea": {
-  "cover": "mountain-tea-cover.beb8e418.jpg",
-  "icon": "mountain-tea-icon.1f8c3756.png"
- },
- "pet-health-note": {
-  "cover": "pet-health-note-cover.5dfaacd3.jpg",
-  "icon": "pet-health-note-icon.a8901c55.png"
- },
- "flash-bazaar": {
-  "cover": "flash-bazaar-cover.cbf36324.jpg",
-  "icon": "flash-bazaar-icon.cd2c5ad5.png"
- }
+ "study-loft": {},
+ "pet-health-note": {},
+ "neon-tape": {},
+ "mountain-tea": {},
+ "flash-bazaar": {}
 }

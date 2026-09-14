@@ -122,16 +122,23 @@
       <g class="fly" style="animation-delay:.5s"><rect x="${x + 150}" y="${y + 44}" width="26" height="34" rx="6" fill="var(--card)" stroke="var(--acc)"/><circle cx="${x + 163}" cy="${y + 56}" r="5" fill="var(--acc2)" opacity=".5"/><rect x="${x + 154}" y="${y + 66}" width="18" height="3" rx="1.5" fill="var(--mut)" opacity=".4"/></g>
     </g>`;
   const SPEC = {
-    mobile: { pal: ["#07c160", "#ededed", "#fa5151", "#2b3440"], pages: ["会话", "聊天", "发现", "我的"] },
-    link: { pal: ["#161823", "#fe2c55", "#ffffff", "#e8b04b"], pages: ["笔记", "评论", "作者"] },
-    desktop: { pal: ["#3370ff", "#eef4ff", "#28c840", "#2b3440"], pages: ["文档", "评论", "知识库"] },
-    web: { pal: ["#ff6a00", "#f5f5f6", "#2f9e63", "#2b3440"], pages: ["概览", "实例", "监控"] },
+    mobile: { pal: ["#07c160", "#ededed", "#fa5151", "#2b3440"], pages: ["会话", "聊天", "发现", "我的"], rule: "圆角 22 · 软阴影 · 列表行高 56", glyph: "phone" },
+    link: { pal: ["#161823", "#fe2c55", "#ffffff", "#e8b04b"], pages: ["笔记", "评论", "作者"], rule: "沉浸暗 · 图文 3:4 · 关注粉 #fe2c55", glyph: "cols" },
+    desktop: { pal: ["#3370ff", "#eef4ff", "#28c840", "#2b3440"], pages: ["文档", "评论", "知识库"], rule: "侧栏 240 · 行高 1.8 · 评论蓝 #3370ff", glyph: "win" },
+    web: { pal: ["#ff6a00", "#f5f5f6", "#2f9e63", "#2b3440"], pages: ["概览", "实例", "监控"], rule: "行高 48 · 状态色语义 · 主橙 #ff6a00", glyph: "table" },
+  };
+  const GLYPH = {
+    phone: `<rect x="0" y="0" width="10" height="16" rx="3" fill="none" stroke="var(--mut)" stroke-width="1.2"/><rect x="2" y="3" width="6" height="8" rx="1" fill="var(--mut)" opacity=".4"/>`,
+    cols: `<rect x="0" y="0" width="7" height="16" rx="2" fill="none" stroke="var(--mut)" stroke-width="1.2"/><rect x="9" y="0" width="7" height="16" rx="2" fill="none" stroke="var(--mut)" stroke-width="1.2"/><rect x="1.5" y="3" width="4" height="5" rx="1" fill="var(--mut)" opacity=".4"/>`,
+    win: `<rect x="0" y="0" width="16" height="12" rx="2.5" fill="none" stroke="var(--mut)" stroke-width="1.2"/><rect x="0" y="0" width="16" height="3.5" rx="1.7" fill="var(--mut)" opacity=".4"/>`,
+    table: `<rect x="0" y="0" width="16" height="12" rx="2" fill="none" stroke="var(--mut)" stroke-width="1.2"/><rect x="0" y="3.5" width="16" height="1" fill="var(--mut)" opacity=".5"/><rect x="5" y="0" width="1" height="12" fill="var(--mut)" opacity=".5"/>`,
   };
   const agent = (kind) => `
     <g class="s3 spec">
       <path class="draw" d="M196 150 C 240 150 250 120 292 116" fill="none" stroke="var(--acc)" stroke-width="2" stroke-dasharray="6 5"/>
       ${T(248, 140, "解析", 6.4, "var(--acc)", "middle", 600)}
-      <rect x="292" y="58" width="184" height="118" rx="16" fill="var(--card)" stroke="var(--line)"/>
+      <rect x="292" y="58" width="184" height="126" rx="16" fill="var(--card)" stroke="var(--line)"/>
+      <g transform="translate(452,70)">${GLYPH[SPEC[kind].glyph]}</g>
       ${T(306, 78, "设计规范", 8, "var(--ink)", "", 700)}
       ${SPEC[kind].pal.map((c, i) => `<circle cx="${312 + i * 20}" cy="94" r="7" fill="${c}" stroke="var(--line)"/>`).join("")}
       ${T(398, 97, "Aa 14/12", 7, "var(--mut)")}
@@ -141,31 +148,79 @@
       ${T(349, 153, "页面 5 · 交互 12", 6.2, "var(--acc2)", "middle")}
       <rect x="400" y="142" width="62" height="16" rx="8" fill="var(--bg2)" stroke="var(--line)"/>
       ${T(431, 153, "tokens 38", 6.2, "var(--mut)", "middle")}
+      ${T(306, 174, SPEC[kind].rule, 6, "var(--mut)")}
     </g>`;
-  const finale = (kind) => `
+  const PFRAME = (header) => `
+      <rect x="318" y="96" width="112" height="152" rx="16" fill="var(--card)" stroke="var(--acc2)" stroke-width="1.6"/>
+      ${header}`;
+  const finale = {
+    mobile: () => `
     <g class="s4">
       <path class="draw" d="M240 210 C 280 214 292 200 318 196" fill="none" stroke="var(--acc2)" stroke-width="2" stroke-dasharray="6 5"/>
       ${T(280, 226, "生成", 6.4, "var(--acc2)", "middle", 600)}
-      <rect x="318" y="96" width="112" height="152" rx="16" fill="var(--card)" stroke="var(--acc2)" stroke-width="1.6"/>
-      <rect x="326" y="104" width="96" height="18" rx="7" fill="var(--acc)" opacity=".9"/>
-      ${T(374, 116, SPEC[kind].pages[0], 6.6, "#ffffff", "middle", 600)}
-      <rect x="326" y="130" width="96" height="34" rx="8" fill="var(--bg2)"/>
-      <circle cx="338" cy="147" r="7" fill="${SPEC[kind].pal[0]}" opacity=".8"/>
-      <rect x="350" y="140" width="60" height="4.5" rx="2.2" fill="var(--mut)" opacity=".55"/>
-      <rect x="350" y="149" width="44" height="4.5" rx="2.2" fill="var(--mut)" opacity=".38"/>
-      <rect x="326" y="170" width="96" height="34" rx="8" fill="var(--bg2)"/>
-      <circle cx="338" cy="187" r="7" fill="${SPEC[kind].pal[2]}" opacity=".8"/>
-      <rect x="350" y="180" width="56" height="4.5" rx="2.2" fill="var(--mut)" opacity=".55"/>
-      <rect x="350" y="189" width="40" height="4.5" rx="2.2" fill="var(--mut)" opacity=".38"/>
-      <rect x="326" y="210" width="96" height="16" rx="8" fill="var(--bg2)"/>
-      <circle cx="340" cy="218" r="3.4" fill="${SPEC[kind].pal[0]}"/><circle cx="362" cy="218" r="3.4" fill="var(--mut)" opacity=".4"/><circle cx="384" cy="218" r="3.4" fill="var(--mut)" opacity=".4"/><circle cx="406" cy="218" r="3.4" fill="var(--mut)" opacity=".4"/>
-      <g transform="translate(374,266)">
-        <rect x="-56" y="-14" width="112" height="27" rx="13.5" fill="var(--acc2)"/>
-        ${T(0, 4, "可玩原型 ✓", 8, "#08331f", "middle", 700)}
-      </g>
-      <g class="ripple" transform="translate(374,160)"><circle r="10" fill="none" stroke="var(--acc2)" stroke-width="2"/></g>
-    </g>`;
-  const scene = (kind, bp) => glow + `<g class="s1">${dev[kind]}</g>` + beam(...bp) + agent(kind) + finale(kind);
+      ${PFRAME(`<rect x="326" y="104" width="96" height="16" rx="7" fill="#07c160"/>${T(374, 115, "会话", 6.4, "#ffffff", "middle", 600)}`)}
+      <g class="px-rowhl"><rect x="326" y="126" width="96" height="26" rx="7" fill="#07c160" opacity=".14"/></g>
+      <circle cx="338" cy="139" r="7" fill="#8ea6c9"/><rect x="350" y="133" width="52" height="4.5" rx="2.2" fill="var(--mut)" opacity=".55"/><rect x="350" y="141" width="38" height="4" rx="2" fill="var(--mut)" opacity=".35"/>
+      <circle cx="338" cy="167" r="7" fill="#07c160"/><rect x="350" y="161" width="46" height="4.5" rx="2.2" fill="var(--mut)" opacity=".55"/><rect x="350" y="169" width="34" height="4" rx="2" fill="var(--mut)" opacity=".35"/>
+      <g class="px-tap" transform="translate(374,139)"><circle r="9" fill="none" stroke="#07c160" stroke-width="2"/></g>
+      <g class="px-sheet"><rect x="326" y="182" width="96" height="40" rx="10" fill="var(--bg2)" stroke="var(--line)"/><rect x="334" y="190" width="44" height="12" rx="6" fill="#07c160" opacity=".25"/><circle class="px-send" cx="412" cy="196" r="6" fill="#07c160"/><rect x="334" y="208" width="60" height="6" rx="3" fill="var(--bg2)" stroke="var(--line)"/></g>
+      <circle class="px-dot1" cx="340" cy="236" r="3.4" fill="#07c160"/><circle class="px-dot2" cx="362" cy="236" r="3.4" fill="var(--mut)" opacity=".4"/><circle cx="384" cy="236" r="3.4" fill="var(--mut)" opacity=".4"/><circle cx="406" cy="236" r="3.4" fill="var(--mut)" opacity=".4"/>
+      <g transform="translate(374,266)"><rect x="-56" y="-14" width="112" height="27" rx="13.5" fill="var(--acc2)"/>${T(0, 4, "可玩原型 ✓", 8, "#08331f", "middle", 700)}</g>
+    </g>`,
+    link: () => `
+    <g class="s4">
+      <path class="draw" d="M240 210 C 280 214 292 200 318 196" fill="none" stroke="var(--acc2)" stroke-width="2" stroke-dasharray="6 5"/>
+      ${T(280, 226, "生成", 6.4, "var(--acc2)", "middle", 600)}
+      ${PFRAME(`<rect x="326" y="104" width="96" height="16" rx="7" fill="#161823"/>${T(352, 115, "关注", 6.2, "#8b93a0", "middle")}${T(392, 115, "推荐", 6.2, "#ffffff", "middle", 600)}<rect class="px-under" x="378" y="118" width="28" height="2" rx="1" fill="#fe2c55"/>`)}
+      <rect x="326" y="126" width="96" height="62" rx="8" fill="#1f2129"/>
+      <circle cx="374" cy="152" r="14" fill="#e8b04b" opacity=".85"/>
+      <g class="px-heart" transform="translate(408,136)"><path d="M0 3 C -4 -2 -9 1 -6 5 L 0 10 L 6 5 C 9 1 4 -2 0 3 Z" fill="#fe2c55"/></g>
+      <g class="px-plus" transform="translate(408,124)">${T(0, 0, "+1", 6.4, "#fe2c55", "middle", 700)}</g>
+      <rect x="334" y="196" width="52" height="5" rx="2.5" fill="#ffffff" opacity=".75"/>
+      <rect x="334" y="205" width="38" height="4.5" rx="2.2" fill="#8b93a0" opacity=".6"/>
+      <rect x="326" y="216" width="96" height="14" rx="7" fill="#fe2c55"/>
+      ${T(374, 225.5, "和我聊聊", 6, "#ffffff", "middle", 600)}
+      <g transform="translate(374,266)"><rect x="-56" y="-14" width="112" height="27" rx="13.5" fill="var(--acc2)"/>${T(0, 4, "可玩原型 ✓", 8, "#08331f", "middle", 700)}</g>
+    </g>`,
+    desktop: () => `
+    <g class="s4">
+      <path class="draw" d="M240 210 C 280 214 292 200 318 196" fill="none" stroke="var(--acc2)" stroke-width="2" stroke-dasharray="6 5"/>
+      ${T(280, 226, "生成", 6.4, "var(--acc2)", "middle", 600)}
+      ${PFRAME(`<rect x="326" y="104" width="96" height="14" rx="6" fill="var(--bg2)"/><circle cx="334" cy="111" r="2.2" fill="#ff5f57"/><circle cx="341" cy="111" r="2.2" fill="#febc2e"/><circle cx="348" cy="111" r="2.2" fill="#28c840"/>${T(392, 113.5, "产品周报", 5.8, "var(--mut)", "middle")}`)}
+      <rect x="326" y="122" width="26" height="102" rx="6" fill="#eef4ff"/>
+      <rect x="330" y="128" width="18" height="4" rx="2" fill="#3370ff"/><rect x="330" y="136" width="14" height="4" rx="2" fill="#9db9f5"/><rect x="330" y="144" width="16" height="4" rx="2" fill="#9db9f5"/>
+      ${T(358, 132, "产品周报 · 32 期", 6.4, "var(--ink)", "", 600)}
+      <rect x="358" y="138" width="62" height="4" rx="2" fill="var(--mut)" opacity=".45"/>
+      <rect class="px-caret" x="358" y="146" width="1.6" height="8" fill="#3370ff"/>
+      <rect x="358" y="148" width="54" height="4" rx="2" fill="var(--mut)" opacity=".45"/>
+      <rect x="358" y="156" width="58" height="4" rx="2" fill="var(--mut)" opacity=".45"/>
+      <g class="px-chip"><rect x="358" y="166" width="52" height="14" rx="7" fill="#e8f2ff" stroke="#3370ff" stroke-opacity=".5"/>${T(384, 175.5, "补交互说明", 5.4, "#2456c4", "middle")}</g>
+      <g class="px-press" transform="translate(410,214)"><rect x="-8" y="-6" width="16" height="12" rx="4" fill="var(--bg2)" stroke="var(--line)"/><circle r="2.4" fill="#3370ff"/></g>
+      <rect x="326" y="228" width="96" height="10" rx="5" fill="var(--bg2)"/>
+      <g transform="translate(374,266)"><rect x="-56" y="-14" width="112" height="27" rx="13.5" fill="var(--acc2)"/>${T(0, 4, "可玩原型 ✓", 8, "#08331f", "middle", 700)}</g>
+    </g>`,
+    web: () => `
+    <g class="s4">
+      <path class="draw" d="M240 210 C 280 214 292 200 318 196" fill="none" stroke="var(--acc2)" stroke-width="2" stroke-dasharray="6 5"/>
+      ${T(280, 226, "生成", 6.4, "var(--acc2)", "middle", 600)}
+      ${PFRAME(`<rect x="326" y="104" width="96" height="14" rx="6" fill="var(--bg2)"/><rect x="332" y="107" width="30" height="8" rx="4" fill="var(--card)" stroke="var(--line)"/>${T(347, 113, "控制台", 5.2, "var(--ink)", "middle", 600)}${T(382, 113, "监控", 5.2, "var(--mut)", "middle")}`)}
+      <rect x="326" y="122" width="96" height="10" rx="3" fill="var(--bg2)"/>
+      ${T(332, 129, "实例", 5, "var(--mut)", "", 600)}${T(372, 129, "状态", 5, "var(--mut)", "", 600)}${T(406, 129, "地域", 5, "var(--mut)", "", 600)}
+      ${[0, 1, 2].map((i) => `
+        <rect x="326" y="${134 + i * 16}" width="96" height="14" rx="3" fill="transparent" stroke="var(--line)" stroke-opacity=".6"/>
+        ${T(332, 143 + i * 16, "web-0" + (i + 1), 5, "var(--ink)")}
+        <circle class="px-stat-g${i}" cx="370" cy="${141 + i * 16}" r="2.6" fill="#2f9e63"/>
+        <circle class="px-stat-y${i}" cx="370" cy="${141 + i * 16}" r="2.6" fill="#e8a53c" opacity="0"/>
+        ${T(378, 143 + i * 16, "运行中", 5, "#2f9e63")}
+        ${T(406, 143 + i * 16, "杭州", 5, "var(--mut)")}`).join("")}
+      <g class="px-rowhl"><rect x="326" y="150" width="96" height="14" rx="3" fill="#ff6a00" opacity=".12"/></g>
+      <circle class="px-dot1" cx="362" cy="190" r="3" fill="#ff6a00"/><circle class="px-dot2" cx="374" cy="190" r="3" fill="var(--mut)" opacity=".4"/><circle cx="386" cy="190" r="3" fill="var(--mut)" opacity=".4"/>
+      <rect x="326" y="200" width="96" height="16" rx="6" fill="var(--bg2)"/>
+      <rect x="332" y="205" width="40" height="6" rx="3" fill="#ff6a00" opacity=".8"/>
+      <g transform="translate(374,266)"><rect x="-56" y="-14" width="112" height="27" rx="13.5" fill="var(--acc2)"/>${T(0, 4, "可玩原型 ✓", 8, "#08331f", "middle", 700)}</g>
+    </g>`,
+  };
+  const scene = (kind, bp) => glow + `<g class="s1">${dev[kind]}</g>` + beam(...bp) + agent(kind) + finale[kind]();
   const SCENES = {
     mobile: {
       steps: [
@@ -210,7 +265,7 @@
     el.innerHTML = `
       <div class="cap"><span class="captxt"></span>
         <span class="steps">${[1, 2, 3, 4].map((n) => `<b data-s="${n}">${n}</b>`).join("")}</span>
-        <button class="replay">replay</button></div>
+        <button class="replay" aria-label="replay" title="replay"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 11a8 8 0 1 0-2.3 6.3"/><path d="M20 5v6h-6"/></svg></button></div>
       <div class="svgbox"><svg viewBox="0 0 520 290" data-step="1">${sc.svg}</svg><canvas class="dvfx"></canvas></div>`;
     const svgEl = el.querySelector("svg");
     const cap = el.querySelector(".captxt");
@@ -229,6 +284,7 @@
     dots.forEach((d) => (d.onclick = () => { clearInterval(timer); step = +d.dataset.s; paint(); cycle(); }));
     el.querySelector(".replay").onclick = play;
     el._replayLang = () => paint(false);
+    el._play = play;
     // M78: 视口才播（离屏暂停）+ 粒子浮尘层（借鉴原型 particles 经验）
     const rm = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!rm) {
