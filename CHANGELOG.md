@@ -3,6 +3,43 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/); versioning is SemVer and mirrors `SKILL.md → metadata.version`.
 
+## [Unreleased]
+
+未发车的快照变更（M74 与 M84–M95；此前仅记于 git log / SESSION-SUMMARY / SESSION-HANDOFF）。
+
+### M74
+- : 并发方案归并裁决——安装 UI=站点单命令方案胜出（渠道仅留 CLI `--ref/--channel` 旗标，不恢复渠道 UI）；index v5 pages 定为 spec 页数据源；死代码清理（site.js relbadge 块、pages.yml release.json 嵌入步，落于 M75-W7a）；核实 M63.1 修复在 M73 后仍生效（详见 docs/SESSION-HANDOFF.md §2.2）
+
+### M84
+- : replay 图标 34px+去步进整箱闪动；静态托管导出全部=预构建 export/all.zip（gen/export-zip.mjs+publish 集成+110-export 405 回退 GET zip）；播放 journeys 缺失时 paths 兜底+assistant/petpark 真 journeys；五 app 重发布含 all.zip+journeys；e2e 播放/导出 zip 断言
+
+### M85
+- : 选中框/演示 ring 活跟踪（rAF ticker 每帧贴合）+标注 scroll/zoom 节流重绘+inspect sel-ring-align 门；五 app 外壳同步并重发布 x.1
+
+### M86
+- : 仓库卫生——剔除根媒体/参考图/publish-out/thumbs/旧 demo 资产等 tracked 垃圾+gitignore 生成物；prototype-repo 统一纳管 proto 仓+publish 复用；fix：featured 卡片 thumbs manifest 先载再渲染（修无哈希 404）+e2e iframe ready 重试抗边缘冷启动；fix2：loadView 后 redraw() 根除选中框跟踪脱靶；28 run 外壳同步、五 app x.2 重发布
+
+### M87
+- : 项目空间重组——repo/ 双仓统一+archive/ 归档+publish 管理副本切同级 proto 仓+仓内 prototype-repo 删除；fix：管理副本切换补落
+
+### M88
+- : 功能演示点击即播——show() 强制活层+舞台不可见时最小滚入；IO 恢复分支对已跑完场景重播；e2e 离屏点击自动播放/重播断言
+
+### M89/M90
+- : 空间布局定稿——GitHub 代码入 repo/design-clone/、proto 仓 repo/design-clone-prototype/、archive/ 归空间根；publish 管理路径与 .gitignore/AGENTS/CHANGELOG 同步（M89 为目录修正中间步）
+
+### M91
+- : 站点 logo 换用户新标（lockup/mark/favicon/apple/og 派生资产+导航页脚锁排图）+主题冰蓝微调（light/dark acc 系/btn.pri 止色）+字标 CSS/e2e 断言退役更新
+
+### M93
+- : 导航 logo 改用户视频动图（193 帧去水印+硬键透明+裁切去字行，60 帧@12fps 96px animated webp，img2webp mixed）；标签/og/apple 保持静图；暗主题亮度提升融入
+
+### M94
+- : logo 透明纯度+暗色适配——逐帧四角中位数 bg+硬键+alpha-unmix+雾斑/碎片清除+底部字行填充；暗变体=flood-key 封闭填充保留+三档冰蓝 posterize+仅主连通域；主题联动切换 lock src+favicon href；brand-qa veil 门（<0.75%，实测 0.499/0.193%）
+
+### M95
+- : logo 绿幕源重制（archive/logo-source-{day,night}.mp4）——平面拟合逐像素 bg+软键+despill+去字行/水印填充+主块保留；light=day 原色（白填充保留）、dark=night 三档冰蓝 posterize；webp 262/243KB（原 323/218）；veil 门收紧 0.5%（实测 0.221/0.366%）
+
 ## [0.6.0-snapshot.20260914.5] - 2026-09-14
 
 Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
@@ -151,7 +188,7 @@ Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版
 Snapshot build（prerelease）。覆盖自上一 tag 的全部变更；正式版手动发车（--minor）。
 
 ### M75
-- docs: LESSONS 153-155 + ROADMAP M75
+- docs: LESSONS 168-170 + ROADMAP M75
 
 ### M75-W7b
 - : e2e 断言对齐 M75-W1 字标（wordmark span/art-clip/footer）+ demo-assistant products.json 三要素补齐并发布 v1.1.0

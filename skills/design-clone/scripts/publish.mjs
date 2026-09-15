@@ -7,7 +7,7 @@
  *                    [--attest original|licensed|public-material] [--note "..."]
  *                    [--repo hello-cqq/design-clone-prototype] [--dry]
  * 前置（强验）：run 的 interact/inspect/ui-smoke 三门 summary 全绿 + knowledge/privacy.json 在场。
- * 产出：PR（分支 publish/<app>-<flavor>-<ts>），合并后 Pages 可玩 + 自动 Release 打 tag。
+ * 产出：PR（分支 publish/<app>-<ts>），合并后 Pages 可玩 + 自动 Release 打 tag。
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -122,7 +122,7 @@ fs.writeFileSync(path.join(fdir, "meta.json"), JSON.stringify({
   version, created_at: new Date().toISOString(),
 }, null, 1));
 const brand = attest === "original" ? "" : `\n> Unofficial study replica generated with design-clone. All trademarks and brand assets belong to their respective owners; no affiliation or endorsement implied.\n`;
-fs.writeFileSync(path.join(fdir, "PROVENANCE.md"), `# ${values.title} (${values.app}/${values.flavor})\n${brand}\n- source: ${scope.source || "original"} / ${scope.target || values.app}\n- retire: ${values.retire || "—"}\n- skill version: ${skillVer}\n- gates: ${gates.join(" | ")}\n\n## Changes\n- v${version}: initial publish\n`);
+fs.writeFileSync(path.join(fdir, "PROVENANCE.md"), `# ${values.title} (${values.app})\n${brand}\n- source: ${scope.source || "original"} / ${scope.target || values.app}\n- retire: ${values.retire || "—"}\n- skill version: ${skillVer}\n- gates: ${gates.join(" | ")}\n\n## Changes\n- v${version}: initial publish\n`);
 // v2：app 级 meta 即 flavor meta（平铺），不再写第二份 app meta
 
 /* ---------- 4. 提交 PR ---------- */
