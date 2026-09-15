@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * brand-qa.mjs（M76-W1）——品牌资产铅笔残渍/伪影像素门。
- * 扫描 site/assets 下品牌图（logo-main/logo-girl/logo-main-256/favicon/logomark-fill）与
+ * 扫描 site/assets 下在用品牌图（logo-main/favicon/logo-mark{,-dark}）与
  * ident 视频抽帧，统计"铅笔木杆橙"签名像素（高饱和橙：r-b>85, r-g>40, g-b>45）。
  * 皮肤/暖光不满足 g-b>45，故不误报。任何命中即 exit 1（CI 部署前门禁）。
  * 用法: node brand-qa.mjs [--frames-dir <dir>] （默认抽 ident 视频 20 帧到临时目录）
@@ -15,13 +15,10 @@ const sharp = createRequire(import.meta.url)("sharp");
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const A = path.join(ROOT, "assets");
-const IMGS = ["logo-main.png", "logo-girl.png", "logo-main-256.png", "favicon.png", "logomark-fill.png", "logo-light.png", "logo-dark.png"];
+const IMGS = ["logo-main.png", "favicon.png"]; // 铅笔/角标门仅适用不透明合成资产；透明键控资产（logo-mark*）走 veil 门
 // 铅笔只在耳上发区出现；全图扫会把暖发丝/皮肤误报 → 分区扫描（M76-W1）
 const ZONES = {
-  "logo-girl.png": [700, 260, 220, 220],
   "logo-main.png": [400, 340, 180, 180],
-  "logomark-fill.png": [400, 340, 180, 180],
-  "logo-main-256.png": [80, 68, 36, 36],
 };
 
 const lumAt = (data, w, i) => 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
