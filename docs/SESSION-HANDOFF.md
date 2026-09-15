@@ -113,9 +113,9 @@
 
 ## ③ 准备做什么
 
-### 3.1 M95 — 已批准未执行（最高优先）
+### 3.1 M95 — ✅ 已落地（2026-09-15 本会话执行完毕）
 
-用户 09-15 16:32 提供了**绿幕 day/night 两个源视频**，16:39 出计划，16:43 用户回「执行」，但会话在此结束，**未落地**。
+用户 09-15 16:32 提供绿幕 day/night 源视频；16:43 批准；当日晚间会话执行完毕（commit 见主仓 `M95:` 提交）。结果：平面拟合绿幕键控替 M94 白底启发式；webp 262/243KB；veil 门收紧 0.5% 实测 0.221/0.366%；细节见 SESSION-SUMMARY §1 M95 节。原计划条目保留如下供追溯：
 
 - 源：`archive/logo-source-day.mp4`、`archive/logo-source-night.mp4`
 - 帧已抽好在 **`/tmp/ls-day/`、`/tmp/ls-night/`（各 193 帧，仍在，重启即失）**
@@ -127,27 +127,27 @@
 - 参考实现：`/tmp/m94-process.mjs`（M94 白底启发式键控版，仍在）；复跑命令见 `SESSION-SUMMARY-M76-M94.md` §4
 - 完成后 veil 门阈值可从 0.75% 收紧回 0.5%
 
-### 3.2 文档记账债（建议一次性清）
+### 3.2 文档记账债 — ✅ 1-4 已清（2026-09-15），5 留专项
 
-1. **`docs/ROADMAP.md` 止于 M77**，缺 M10、M19c/d、M20–M23、M29–M43、M48、M52、M57–M61、M63、M74、M78–M94。要么补行，要么在文件头显式声明「M78+ 以 `SESSION-SUMMARY-M76-M94.md` 为权威」。
-2. **`ROADMAP.md` 有两条都叫 M62 的行**（:61「首页片头 ident」+ :65「画廊就绪三件套」）——M74 计划里本就写了要修订措辞，未执行。
-3. **`docs/LESSONS.md` 编号重复**：151/152/153 各出现两次（M55/M56 一组、M62/M75 一组），151–160 段整体错位交叉（第 197–199 行顺序为 164、165、153）。需重排。
-4. **`CHANGELOG.md` 缺 M84/M85/M88/M91/M93/M94**；**M74 在 ROADMAP 和 CHANGELOG 双缺**（内容见本文 §2.2）。
-5. `index.json` 版本号语义混乱：文件内恒为 `version: 3`，而文档口语称 v4（creator/icon/files.json）、v5（pages）。建议字段代次与 `version` 对齐。
+1. ✅ ROADMAP 头部已加「M78+ 以 SESSION-SUMMARY 为权威」声明（洞清单保留在声明行）。
+2. ✅ 双 M62 行：第二条改名 **M62b**（并发撞号，头部声明 b 后缀规则）。
+3. ✅ LESSONS 重排：首现 151–165 不动，重复的 10 条改挂尾部 **166–175**（M62 画廊/封面=166-167，M75=168-170，M76=171-173，M77=174-175）；ROADMAP/CHANGELOG 相应引用同步改。
+4. ✅ CHANGELOG 增 `[Unreleased]` 段补 M74/M84-M91/M93/M94/M95。
+5. ⏳ index.json version 语义（留专项，见 SESSION-SUMMARY §5）。
 
-### 3.3 已核实的代码缺陷（可直接修）
+### 3.3 已核实的代码缺陷 — ✅ 已修（2026-09-15，下表为修复记录）
 
 | 位置 | 问题 | 影响 |
 |---|---|---|
-| `skills/design-clone/scripts/publish.mjs:125` | PROVENANCE 模板仍引用 v2 已删除的 `values.flavor` | 线上五个 app 的 PROVENANCE 标题全是 `# X (app/undefined)`。同文件 `:10` 注释也仍写 `publish/<app>-<flavor>-<ts>`（实际分支是 `publish/<app>-<ts>`）。注：`gates` 拼接是正确的，不受影响 |
-| `repo/design-clone-prototype/README.md`、`CONTRIBUTING.md` | 仍是 **v1（flavor 两级目录）** | 与 `SPEC.md` v2 + `validate.mjs:79`（flavor 残留即 fail）**自相矛盾**；新贡献者照 README 做必被 pr-gate 拒 |
-| `repo/design-clone-prototype/scripts/index.mjs:73` | 用了 `execSync` 但顶部 import（:6-8）**没有引入** | GitHub API 失败时的 `creator` 回退路径会抛 ReferenceError；当前靠 API 成功掩盖 |
-| `repo/design-clone-prototype/scripts/index.mjs` | `apps.push({...})` 对象字面量里 `icon` 键出现两次 | 前者是死代码 |
-| proto 仓本地工作副本 | 空 flavor 残留目录：`aliyun-console/web/`、`lark/desktop-mac/` 等 | M56 迁移用 shutil 覆盖而非 `git mv` 留下；git 不跟踪空目录，仅本地脏 |
-| `skills/design-clone/references/publish-guide.md` | 标题写「SPEC.md v1」，步骤 4 仍列已删除的「flavor-shell 映射」门 | 半陈旧 |
-| `site/data/release.json`、`site/favicon-test.html` | M72 删徽章后的遗留物（站点已不读 release.json） | 死文件 |
-| 五个 app 的 `meta.platform` | `aliyun-console`/`lark` 为空串（run 的 `knowledge/scope.json` 缺字段） | 展示不全 |
-| `ai-assistant` 的 meta | en 描述是通用模板句、zh 是具体内容，**双语不同源** | 违反 SPEC §3 |
+| ~~publish.mjs:125~~ | ✅ PROVENANCE 标题改 `# X (app)`；:10 注释改 `publish/<app>-<ts>` | 已修 |
+| ~~proto README/CONTRIBUTING~~ | ✅ 升 v2 平铺（layout/版本 tag/publish 命令/URL 全改） | 已修 |
+| ~~index.mjs execSync~~ | ✅ 补 `node:child_process` import | 已修 |
+| ~~index.mjs 双 icon 键~~ | ✅ 合并为单一回退链（appicon→icon.png→icon.svg→cover） | 已修 |
+| ~~proto 空 flavor 目录~~ | ✅ 本地 rmdir（web/desktop-mac/mobile-android） | 已修 |
+| ~~publish-guide~~ | ✅ v2 措辞+删 flavor-shell 门+去 `?about` flavor | 已修 |
+| ~~`site/data/release.json`、`site/favicon-test.html`~~ | 已删 release.json（favicon-test.html 早前已不存在） | ✅ |
+| ~~meta.platform 空串~~ | ✅ proto meta 补 web/macos；四 run scope.json 同步补 | 已修 |
+| ~~ai-assistant 双语~~ | ✅ 同源重写（星海对话 AI 聊天伙伴，中英同义） | 已修 |
 
 ### 3.4 长期未决（承接自 SESSION-SUMMARY §5）
 
@@ -226,7 +226,8 @@
 | 路径 | 内容 | 状态 |
 |---|---|---|
 | `/tmp/ls-day/`、`/tmp/ls-night/` | **M95 输入帧，各 193 帧** | 仍在 |
-| `/tmp/m94-process.mjs` | M94 logo 双模式键控管线 | 仍在 |
+| `/tmp/m94-process.mjs` | M94 logo 双模式键控管线（已退役） | 仍在 |
+| `/tmp/m95-process.mjs`、`/tmp/m95-{light,dark}/`、`/tmp/ls-{day,night}/` | **M95 现行管线+60 帧产物+源帧** | 仍在（重启即失） |
 | `/tmp/logo-anim-f/` | M93/M94 帧 | 仍在 |
 | `/tmp/dc-handoff/` | 本次导出的 4 会话信号文本（user/assistant/files/todo） | 本次生成 |
 | `/tmp/s2c` | s2c 源码克隆（M29–M41 深研） | 未核实 |

@@ -37,6 +37,13 @@
 - M94 透明纯度+暗色适配：逐帧四角中位数 bg、硬键 alpha=clamp((dist-36)/8)、alpha-unmix 去色边、近零半透明清零、雾斑/碎片连通域清除、底部字行背景填充；暗变体=flood-key（封闭填充保留）+三档冰蓝 posterize+仅主连通域；主题联动切换 `.logolock` src 与 favicon href；brand-qa veil 门（512 静图孤立半透明<0.75%：light 0.499%/dark 0.193%）。
 - 资产：`logo-anim-light.webp`(316KB)/`logo-anim-dark.webp`(214KB)/`logo-mark{,-dark}.png`/`favicon{,-dark}.png`/`apple-touch-icon.png`。
 
+### M95 logo 绿幕源重制（2026-09-15）
+- 源：用户绿幕视频 `archive/logo-source-day.mp4` / `-night.mp4`（720×720/24fps/193 帧；背景=鼠尾草绿非纯绿，day≈(145,164,144)/night≈(103,131,110) 带轻渐变）。
+- 管线（会话脚本 /tmp/m95-process.mjs，未入库）：逐像素**平面拟合 bg**（边缘采样最小二乘 a+bx+cy，根治渐变 halo）→ 软键 `a=clamp((dist-26)/14)` → despill（半透明像素 G≤max(R,B)+20）→ despeckle<4 + 孤立低 alpha 清除 + <300px 连通域清除 → 字行(y564-614)/水印(x8-145,y8-58，逐帧检测 27/60 帧出现)先以平面 bg 填充 → 固定裁切 (70,13,606²)（并集 art bbox x80-666/y71-561+pad 平方化）。
+- light=day 原色（白填充保留不透明，亮导航近白融底）；dark=night 键控后三档冰蓝 posterize（#e8f2fa/#96bee0/#5f93c4）。不再需要 M94 的 flood/连通域猜测（填充与背景色可分离）。
+- 产出（文件名不变，零站点改动）：webp 60 帧@12fps 96px `img2webp -loop 0 -mixed -q 70`：light 262KB/dark 243KB（M94=323/218）；静图 logo-mark{,-dark}/favicon{,-dark}/apple-touch-icon/logo-lockup（frame 160，艺术全展帧）。
+- 门禁：veil 门收紧 0.75%→**0.5%** 实测 light 0.221%/dark 0.366%；brand-qa/e2e/loadtest 全绿（1000req 0 错 rps 1536 p95 75ms）；双主题导航目视通过。
+
 ## 2. 门禁清单（当前）
 - regress（28 run）：interact dead=0 / inspect / ui-smoke / paths-qa。
 - inspect：`art-depth`（original run 分层+粒子）、`sel-ring-align`（选中框活跟踪 ≤3px）、design-artifacts、view-weight、cover-geometry、pasted-screenshot 等。
@@ -52,10 +59,13 @@
 - 生成：`genimg.mjs`(双 rect 擦水印)、`enrich.mjs`、`style-pick.mjs`、`cover.mjs`、`appicon.mjs`、`gallery-meta.mjs`、`collect-design.mjs`、`export-zip.mjs`、`patch-erase.mjs`、`brief-flows.mjs`、`ref-images.mjs`。
 - QA：`qa/interact.mjs`、`qa/inspect.mjs`、`qa/ui-smoke.mjs`、`paths-qa.mjs`、`site/tools/{e2e,loadtest,brand-qa,sync-thumbs,demo-shots(退役引用)}.mjs`。
 - 发布：`publish.mjs`（管理副本=space/repo/design-clone-prototype；export/all.zip 自动预构建；--retire）。
-- logo 管线（会话内脚本，未入库）：/tmp/m94-process.mjs（双模式键控+posterize+裁切）——如需复跑：源=`archive/logo-source.mp4` 抽帧 /tmp/logo-anim-f → node /tmp/m94-process.mjs → img2webp 编码。
+- logo 管线（会话内脚本，未入库）：**M95 现行** /tmp/m95-process.mjs（平面拟合绿幕键控+posterize+固定裁切）——复跑：源帧 /tmp/ls-day、/tmp/ls-night（各 193，重启即失，需从 archive/logo-source-{day,night}.mp4 重抽 `ffmpeg -i src %04d.png`）→ node /tmp/m95-process.mjs → img2webp 编码（命令见 M95 节）。M94 白底启发式版 /tmp/m94-process.mjs 已退役。
 
 ## 5. 未决/后续
 - brand-qa `logo-main.png stick-like=27` 为 warn（水波/发丝高光误报），目视复核项，未 fail。
-- logo 动图 316/214KB：如仍需瘦身可降帧至 40 或 80px。
+- logo 动图 M95 后 262/243KB；如仍需瘦身可降帧至 40 或 80px。
+- 暗色 favicon 仍依赖 JS applyTheme 切换，无 `prefers-color-scheme` 静态回退（加 media link 会与 e2e 的 link[rel=icon] 断言冲突，待专项）。
 - proto 仓 index.json 由仓 workflow 重扫；新增 app 发布走 publish.mjs。
+- claude code headless 403（账号资格）待有资格账号复验；iOS 真机 WDA 未跑（本机无 Xcode）。
+- proto 仓 index.json `version: 3` 字段代次与文档口语 v4/v5 不对齐（建议专项：字段代次与 version 对齐）。
 - 暗色 favicon 依赖 JS 切换（无 prefers-color-scheme 静态回退）。
