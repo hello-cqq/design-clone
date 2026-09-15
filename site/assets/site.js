@@ -8,63 +8,29 @@
   const I18N = {
     en: {
       nav_home: "Home", nav_gallery: "Gallery",
-      kick: "Agent Skill · MIT · opencode / claude code / codex",
       h1a: "Clone any app into", h1b: "a playable prototype.",
-      lead: "One sentence: design-clone captures real apps, sites, or shared links and rebuilds them as fully interactive prototypes — with design specs your team can ship.",
       install_label: "Install",
-      cta_gallery: "Browse gallery", cta_gh: "GitHub", cta_publish: "Publish yours",
       exp_title: "Try it live", exp_note: "hosted on GitHub Pages · tap, play, export",
-      feat_h: "Feature demos", feat_sub: "Four sources, one workflow — watch each 4-step story.",
-      guide_h: "Guide", start_h: "Install in one command",
-      f_a_t: "Mobile GUI capture", f_a_d: "adb/scrcpy mirror captures every screen and gesture of a phone app, then rebuilds it as a playable mobile prototype.",
-      f_a_1: "Phone app runs — pages, gestures, tokens observed", f_a_2: "GUI mirror capture (adb/scrcpy) frames every screen", f_a_3: "Frames + UI tree feed the spec-driven generator", f_a_4: "Playable prototype assembled — gates green",
-      f_b_t: "Douyin / RED links", f_b_d: "Share a Douyin or Xiaohongshu link: the skill parses the video/note frames and rebuilds the experience as a prototype.",
-      f_c_t: "Desktop GUI capture", f_c_d: "macOS/Windows desktop apps captured state-by-state (windows, panels, flows) into desktop-faithful prototypes.",
-      f_c_1: "Desktop app operates — windows, panels, flows", f_c_2: "Screen capture snapshots each state", f_c_3: "Tokens & layout extracted from computed styles", f_c_4: "Desktop-faithful prototype assembled",
-      f_d_t: "Website links", f_d_d: "Paste any site URL: crawl the page graph, rebuild every page as a view, ship a whole-site playable prototype.",
-      f_d_1: "Open the site — crawl starts from the URL", f_d_2: "Page graph grows (nav + content edges)", f_d_3: "Every page rebuilt as a view", f_d_4: "Whole-site prototype, playable offline",
-      f_b_1: "Scroll the Douyin / RED note or video", f_b_2: "Share → copy link", f_b_3: "Paste the link into your agent", f_b_4: "Frames parsed → prototype generated",
-      top_h: "Top prototypes", top_sub: "Ranked by downloads — every card is playable and downloadable.",
-      more: "More",
-      gal_h: "Gallery", gal_sub: "Community prototypes on GitHub Pages. Search, filter by tag, play, download, remix.",
+      feat_h: "Feature demos", guide_h: "Guide", start_h: "Install in one command",
+      f_a_t: "Mobile GUI capture", f_b_t: "Douyin / RED links", f_c_t: "Desktop GUI capture", f_d_t: "Website links", top_h: "Top prototypes", more: "More",
       gal_search: "search name or tag…", gal_sort_dl: "most downloads", gal_sort_upd: "recently updated",
-      proto_dl: "Download offline zip", proto_jump: "source on GitHub", proto_meta: "Details", proto_contrib: "Contributors", proto_spec: "Design specs",
-      proto_tags: "Tags", proto_ver: "Version", proto_license: "License", proto_src: "Source", proto_clone: "Clone & remix",
-      stat_apps: "prototypes", stat_dl: "total downloads", stat_contrib: "contributors",
-      ft_note: "MIT · prototypes carry their own license · brand replicas are unofficial study works",
+      proto_dl: "Download offline zip", proto_jump: "source on GitHub", proto_contrib: "Contributors", proto_spec: "Design specs",
+      proto_tags: "Tags", ft_note: "MIT · prototypes carry their own license · brand replicas are unofficial study works",
       empty: "No prototypes yet — be the first:",
     },
     zh: {
       nav_home: "首页", nav_gallery: "画廊",
-      kick: "Agent Skill · MIT · opencode / claude code / codex",
       h1a: "把任意应用克隆成", h1b: "可玩的原型。",
-      lead: "一句话：design-clone 捕获真实 App、网站或分享链接，重建为完全可交互的原型——并附上团队可直接开工的设计规格。",
       install_label: "安装",
-      cta_gallery: "浏览画廊", cta_gh: "GitHub", cta_publish: "发布你的原型",
       exp_title: "在线体验", exp_note: "GitHub Pages 托管 · 可点可玩可导出",
-      feat_h: "功能演示", feat_sub: "四种来源、同一条工作流——看四步演示。",
-      guide_h: "指南", start_h: "一条命令安装",
-      f_a_t: "手机 GUI 抓取", f_a_d: "adb/scrcpy 镜像逐屏捕获手机应用的页面与手势，重建为可玩移动原型。",
-      f_a_1: "手机 App 运行——采集页面、手势与 tokens", f_a_2: "GUI 镜像抓取（adb/scrcpy）逐屏截帧", f_a_3: "帧 + UI 树喂给规格驱动生成器", f_a_4: "可玩原型组装完成——门禁全绿",
-      f_b_t: "抖音 / 小红书链接", f_b_d: "分享抖音或小红书链接：解析视频/图文帧，把体验重建为原型。",
-      f_c_t: "桌面 GUI 抓取", f_c_d: "macOS/Windows 桌面应用逐状态捕获（窗口、面板、流程），生成桌面保真原型。",
-      f_c_1: "桌面应用操作——窗口、面板、流程", f_c_2: "屏幕捕获逐状态快照", f_c_3: "从 computed 样式抽取 tokens 与布局", f_c_4: "组装桌面保真原型",
-      f_d_t: "网站链接", f_d_d: "粘贴任意网址：爬取页面图，每页重建为视图，交付整站可玩原型。",
-      f_d_1: "打开网站——从 URL 开始爬取", f_d_2: "页面图生长（导航 + 内容边）", f_d_3: "每页重建为视图", f_d_4: "整站原型，离线可玩",
-      f_b_1: "刷抖音 / 小红书视频或图文", f_b_2: "分享 → 复制链接", f_b_3: "把链接粘贴进 Agent", f_b_4: "解析帧 → 生成原型",
-      top_h: "精选原型", top_sub: "按下载量排序——每张卡都可玩可下载。",
-      more: "更多",
-      gal_h: "画廊", gal_sub: "GitHub Pages 上的社区原型。搜索、按标签筛选、玩、下载、再混。",
+      feat_h: "功能演示", guide_h: "指南", start_h: "一条命令安装",
+      f_a_t: "手机 GUI 抓取", f_b_t: "抖音 / 小红书链接", f_c_t: "桌面 GUI 抓取", f_d_t: "网站链接", top_h: "精选原型", more: "更多",
       gal_search: "搜索名称或标签…", gal_sort_dl: "最多下载", gal_sort_upd: "最近更新",
-      proto_dl: "下载离线 zip", proto_jump: "GitHub 源码", proto_meta: "详情", proto_contrib: "贡献者", proto_spec: "设计规格",
-      proto_tags: "标签", proto_ver: "版本", proto_license: "许可", proto_src: "来源", proto_clone: "克隆并再混",
-      stat_apps: "原型", stat_dl: "总下载", stat_contrib: "贡献者",
-      ft_note: "MIT · 原型各自携带许可 · 品牌复刻为非官方学习作品",
+      proto_dl: "下载离线 zip", proto_jump: "GitHub 源码", proto_contrib: "贡献者", proto_spec: "设计规格",
+      proto_tags: "标签", ft_note: "MIT · 原型各自携带许可 · 品牌复刻为非官方学习作品",
       empty: "暂无原型——成为第一个：",
     },
   };
-
-;
 
   const state = {
     lang: localStorage.getItem("dc-lang") || "en",
@@ -101,8 +67,9 @@
     // M94: logo 动图/标签图标随主题切换
     const lockSrc = `assets/logo-anim-${state.theme === "dark" ? "dark" : "light"}.webp`;
     document.querySelectorAll(".logolock").forEach((im) => { im.src = lockSrc; });
-    const fav = document.querySelector('link[rel="icon"]');
-    if (fav) fav.href = state.theme === "dark" ? "assets/favicon-dark.png" : "assets/favicon.png";
+    const favs = [...document.querySelectorAll('link[rel="icon"]')];
+    favs.forEach((fav) => { fav.href = state.theme === "dark" ? "assets/favicon-dark.png" : "assets/favicon.png"; });
+
 
   }
 
@@ -147,9 +114,6 @@
     if (n >= 1000) { const k = n / 1000; return (k >= 10 ? Math.floor(k) : Math.round(k * 10) / 10) + "k+"; }
     return String(n);
   };
-  const av = (c, size = 20) => (c.login && !c.login.includes("["))
-    ? `<span class="av" style="width:${size}px;height:${size}px" title="${c.name} (@${c.login}) · ${c.commits}"><img src="https://github.com/${c.login}.png?size=48" alt=""></span>`
-    : `<span class="av" style="width:${size}px;height:${size}px" title="${c.name} · ${c.commits}">${(c.name || "?").slice(0, 1).toUpperCase()}</span>`;
 
   function card(a) {
     const cover = a.cover ? `${PROTO_BASE}/${a.cover}` : "";
@@ -185,7 +149,7 @@
     const fl = document.getElementById("expframe");
     // M76-W7: live-proof iframe 延到 window.load+idle 再挂 src——proto 边缘慢时不拖主文档 load（首页卡加载/视频不出的根因）
     if (fl) {
-      const setSrc = () => { fl.src = a ? (isMobile() ? a.url + (a.url.includes("?") ? "&" : "?") + "chrome=0&embed=1&theme=" + state.theme : a.url) : `${PROTO_BASE}/ai-assistant/prototype/`; };
+      const setSrc = () => { fl.src = a ? (isMobile() ? a.url + (a.url.includes("?") ? "&" : "?") + "chrome=0&embed=1&theme=" + state.theme : a.url) : ((idx.apps || [])[0] ? (idx.apps[0].url) : "about:blank"); };
       const idle = window.requestIdleCallback || ((f) => setTimeout(f, 300));
       afterLoadOr(() => idle(setSrc), 4000);
     }
@@ -289,7 +253,7 @@
     q.onblur = () => setTimeout(close, 180);
     paintActive();
   }
-  const isMobile = () => matchMedia("(max-width: 820px)").matches;
+  const isMobile = () => matchMedia("(max-width: 980px)").matches;
   const protoSrc = (a, theme, pageId) => {
     const base = a.url + (a.url.includes("?") ? "&" : "?");
     if (isMobile()) return base + "chrome=0&embed=1&theme=" + theme + (pageId ? "#pages/" + pageId : "");
@@ -449,12 +413,14 @@
   document.addEventListener("DOMContentLoaded", () => {
     applyTheme(); applyI18n(); wireNav(); wireStars(); wireFeatureTabs();
     const lb = document.getElementById("langbtn");
-    if (lb) lb.onclick = () => { state.lang = state.lang === "en" ? "zh" : "en"; localStorage.setItem("dc-lang", state.lang); applyI18n(); wireFeatureTabs(); };
+    if (lb) lb.onclick = () => { state.lang = state.lang === "en" ? "zh" : "en"; localStorage.setItem("dc-lang", state.lang); applyI18n(); };
     const tb = document.getElementById("themebtn");
     if (tb) tb.onclick = () => { state.theme = state.theme === "dark" ? "light" : "dark"; localStorage.setItem("dc-theme", state.theme); applyTheme(); };
     const sel = document.getElementById("expselect");
     if (sel) sel.onchange = () => switchExp(sel.value);
     if (document.getElementById("cards")) {
+      const qp = new URLSearchParams(location.search).get("q");
+      const q0 = document.getElementById("q"); if (qp && q0) q0.value = qp;
       renderGallery();
       const q = document.getElementById("q"); if (q) q.addEventListener("input", renderGallery);
       const so = document.getElementById("sort"); if (so) so.addEventListener("change", renderGallery);
@@ -472,23 +438,19 @@
       sfr.onclick = () => { const src = frame.src; frame.src = ""; frame.src = src + (src.includes("?") ? "&" : "?") + "r=" + Date.now(); arm(); };
       new MutationObserver(() => arm()).observe(frame, { attributes: true, attributeFilter: ["src"] });
     }
-    const dlb = document.getElementById("dlbtn");
-    if (dlb) dlb.addEventListener("click", async (e) => {
-      const url = dlb.getAttribute("href");
-      try {
-        const r = await fetch(url, { method: "HEAD" });
-        if (r.ok) return; // 直链可用，放行默认下载
-      } catch {}
+    // M98: dlbtn 由 renderProto 异步生成——改文档级委托，HEAD 探测+clientZip 兜底真正生效
+    document.addEventListener("click", async (e) => {
+      const dlb = e.target.closest(".dlbtn"); if (!dlb) return;
+      const url = dlb.getAttribute("href"); if (!url) return;
+      try { const r = await fetch(url, { method: "HEAD" }); if (r.ok) return; } catch {}
       e.preventDefault();
-      await clientZip(dlb.dataset.app);
+      try { await clientZip(dlb.dataset.app); } catch {}
     });
-    const fsb = document.getElementById("fsbtn");
-    if (fsb) fsb.onclick = () => { const f = document.getElementById("stageframe"); if (f.requestFullscreen) f.requestFullscreen(); };
     const code0 = document.getElementById("installcmd");
     const STABLE_CMD = "curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/main/install.sh | bash";
     if (code0) code0.textContent = STABLE_CMD;
     const cp = document.getElementById("copycmd");
-    if (cp) cp.onclick = () => { navigator.clipboard.writeText(document.getElementById("installcmd").textContent); cp.textContent = "✓"; setTimeout(() => (cp.textContent = "copy"), 1200); };
+    if (cp) cp.onclick = () => { const done = () => { cp.textContent = "✓"; setTimeout(() => (cp.textContent = "copy"), 1200); }; try { navigator.clipboard.writeText(document.getElementById("installcmd").textContent).then(done).catch(done); } catch { done(); } };
 
   });
 })();

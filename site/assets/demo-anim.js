@@ -8,30 +8,6 @@
     acc: "#ff8a5c", acc2: "#6fd3b2", acc3: "#7fb7ef", green: "#3fca6b", red: "#ff5b6b", yellow: "#ffd166",
   };
 
-  const cursor = (x, y, cls = "") => `<g class="${cls}"><circle cx="${x}" cy="${y}" r="4" fill="#fff" stroke="#2b3440" stroke-width="1.4"/><circle class="ripple" cx="${x}" cy="${y}" r="6" fill="none" stroke="${P.acc}" stroke-width="2"/></g>`;
-  const rippleCss = true; void rippleCss;
-
-  const badge = (x, y) => `
-    <g class="s4" transform="translate(${x},${y})">
-      <rect x="-46" y="-14" width="92" height="26" rx="13" fill="${P.acc2}"/>
-      <text x="0" y="3" text-anchor="middle" font-size="10" font-weight="600" fill="#08331f">playable ✓</text>
-      <g class="spark"><path d="M-58 -18 l3 6 6 3 -6 3 -3 6 -3 -6 -6 -3 6 -3 z" fill="${P.yellow}"/></g>
-      <g class="spark2"><path d="M56 -20 l2.5 5 5 2.5 -5 2.5 -2.5 5 -2.5 -5 -5 -2.5 5 -2.5 z" fill="${P.yellow}"/></g>
-    </g>`;
-
-  const agentWin = (x, y, link) => `
-    <g class="s3" transform="translate(${x},${y})">
-      <rect width="190" height="96" rx="12" fill="${P.dark}" stroke="${P.line}"/>
-      <rect width="190" height="22" rx="12" fill="rgba(255,255,255,.06)"/>
-      <circle cx="12" cy="11" r="3" fill="${P.red}"/><circle cx="22" cy="11" r="3" fill="${P.yellow}"/><circle cx="32" cy="11" r="3" fill="${P.green}"/>
-      <text x="95" y="15" text-anchor="middle" font-size="8" fill="${P.mut}">agent · design-clone</text>
-      <rect x="10" y="30" width="120" height="16" rx="8" fill="rgba(127,183,239,.16)" stroke="rgba(127,183,239,.5)"/>
-      <text x="18" y="41" font-size="7.5" fill="${P.acc3}">${link}</text>
-      <g class="typing"><circle cx="18" cy="58" r="2.4" fill="${P.mut}"/><circle cx="26" cy="58" r="2.4" fill="${P.mut}"/><circle cx="34" cy="58" r="2.4" fill="${P.mut}"/></g>
-      <rect x="10" y="70" width="170" height="7" rx="3.5" fill="rgba(255,255,255,.1)"/>
-      <rect class="prog" x="10" y="70" width="40" height="7" rx="3.5" fill="${P.acc2}"/>
-      <text x="10" y="89" font-size="7" fill="${P.mut}">capture → spec → views → gates</text>
-    </g>`;
 
   /* M81-W2: 可辨认迷你 UI 引导动画——每场景=品牌色板+真实微文案的矢量迷你界面（借 enrich/brief 经验） */
   const glow = `

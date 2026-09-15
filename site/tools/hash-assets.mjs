@@ -10,7 +10,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const A = path.join(ROOT, "assets");
-const TARGETS = ["site.css", "site.js", "ident.js", "demo-anim.js", "zip.min.js"];
+const TARGETS = ["site.css", "site.js", "ident.b9590629.js", "demo-anim.js", "zipstore.site.js"];
 const htmls = fs.readdirSync(ROOT).filter((f) => f.endsWith(".html"));
 for (const t of TARGETS) {
   const src = path.join(A, t);

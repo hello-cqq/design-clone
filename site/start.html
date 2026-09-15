@@ -3,8 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:title" content="design-clone install">
+<meta property="og:description" content="One-command install for opencode / Claude Code / Codex.">
+<meta property="og:image" content="https://hello-cqq.github.io/design-clone/assets/logo-mark.png">
 <title>Install — design-clone</title>
-<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="icon" type="image/png" media="(prefers-color-scheme: light)" href="assets/favicon.png">
+<link rel="icon" type="image/png" media="(prefers-color-scheme: dark)" href="assets/favicon-dark.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/site.css">
 </head>
@@ -25,7 +29,6 @@
     <h2 data-i18n="start_h">Install in one command</h2>
     <p class="sub">Pick your agent — the command installs the skill globally plus its gate dependencies (Node ≥20.19, Playwright Chromium). Re-run anytime to update.</p>
     <div class="installbox" style="max-width:900px">
-      <div class="agents" id="agentswitch"></div>
       <code id="installcmd"></code>
       <button class="pillbtn" id="copycmd">copy</button>
     </div>
@@ -38,7 +41,6 @@
   </section>
 </div>
 <footer class="ft"><div class="wrap"><span data-i18n="ft_note">MIT · prototypes carry their own license · brand replicas are unofficial study works</span></div></footer>
-<script src="assets/demo-anim.js"></script>
 <script src="assets/site.js"></script>
 </body>
 </html>
