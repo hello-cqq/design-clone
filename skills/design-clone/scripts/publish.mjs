@@ -138,7 +138,12 @@ if (values.dry) {
 }
 const work = fs.mkdtempSync(path.join(process.env.TMPDIR || "/tmp", "dcp-work-"));
 // M75: 缓存克隆复用——proto 仓体积大、全量 clone 慢且易超时；固定缓存目录 fetch --depth 1 增量更新
-const cache = path.join(process.env.HOME || "/tmp", ".cache", "design-clone-publish", values.repo);
+// M87: proto 仓统一纳管——优先同级 repo/design-clone-prototype（唯一管理副本），回退旧 prototype-repo/ 与 ~/.cache
+const here = path.dirname(new URL(import.meta.url).pathname);
+const managed = fs.existsSync(path.resolve(here, "..", "..", "..", "..", "design-clone-prototype", ".git"))
+  ? path.resolve(here, "..", "..", "..", "..", "design-clone-prototype")
+  : path.resolve(here, "..", "..", "..", "prototype-repo");
+const cache = fs.existsSync(path.join(managed, ".git")) ? managed : path.join(process.env.HOME || "/tmp", ".cache", "design-clone-publish", values.repo);
 fs.mkdirSync(path.dirname(cache), { recursive: true });
 if (fs.existsSync(path.join(cache, ".git"))) {
   execSync(`git -C "${cache}" fetch --depth 1 origin main`, { stdio: "inherit" });
