@@ -1,6 +1,11 @@
 <div align="center">
 
-# 🥷 design-clone
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/logo-anim-dark.gif">
+  <img src="docs/img/logo-anim-light.gif" alt="design-clone — 动图标识" width="168">
+</picture>
+
+# design-clone
 
 **把任何应用克隆成可交互原型。** · *Clone any app into a playable prototype.*
 
@@ -11,7 +16,7 @@
 
 **[🌐 官网与在线画廊 →](https://hello-cqq.github.io/design-clone/)** · [English](README.md) · [Gallery 画廊](https://hello-cqq.github.io/design-clone/gallery.html)
 
-<img src="https://raw.githubusercontent.com/hello-cqq/design-clone-prototype/main/ai-assistant/cover.png" alt="PetPark —— 由 design-clone 端到端生成的 3D 萌宠乐园原型" width="720" />
+<img src="https://raw.githubusercontent.com/hello-cqq/design-clone-prototype/main/ai-assistant/cover.png" alt="星海对话 —— 由 design-clone 端到端生成的新海诚风 AI 聊天伙伴原型" width="720" />
 
 *↑ [智能助理](https://hello-cqq.github.io/design-clone/proto.html?app=ai-assistant)：skill 端到端生成——切换形象/音色、聊天、通话、可播可导出。*
 
@@ -27,6 +32,24 @@
 - 🎛 **每个控件都能点**——硬门保证：死控件=0、活 HTML 视图（禁止截图当视图）。
 - 📐 **附设计规格**——每页 `spec.json` + 可导入 Figma 的源、tokens、标注、交互路径。
 - 🖼 **画廊就绪**——双语 `meta.json` + 图标 + 3:2 封面自动生成；一条命令发布到社区画廊。
+
+## 架构
+
+skill 完全跑在你的 agent 内——六个本地离线阶段，从原始来源到门禁放行的可玩产出（深入：[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)）：
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/architecture-dark.png">
+  <img src="docs/img/architecture.png" alt="design-clone 核心管线：四类来源、捕获与测量、知识层、生成层、质量门、产出" width="100%">
+</picture>
+
+## 从任何来源到可玩原型
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/feature-flow-dark.png">
+  <img src="docs/img/feature-flow.png" alt="四类来源——移动应用、分享链接、桌面应用、网站——各自捕获为设计规范，再编译为可玩原型" width="100%">
+</picture>
+
+*官网[四段功能演示](https://hello-cqq.github.io/design-clone/)的浓缩：每类来源被捕获、提炼为设计规范（配色·字号·页面·tokens），再编译为每个控件都能点的可玩原型。*
 
 ## 安装（一条命令）
 
