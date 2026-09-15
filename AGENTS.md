@@ -14,7 +14,7 @@
 
 - `skills/design-clone/` — skill 本体（SKILL.md + scripts/ + references/ + schema/ + presets/ + templates/）
 - `dist/` — 给无 CLI 平台（WorkBuddy 等）的 zip 产物，CI 打包，勿手工编辑
-- 项目空间布局（M87）：`<space>/repo/design-clone`（本仓）+ `<space>/repo/design-clone-prototype`（proto 仓唯一管理副本，publish/批量 PR 均经此）+ `<space>/archive/`（过期资源归档）；两 GitHub 仓独立、本空间单点管理
+- 项目空间布局（M89 修正）：工作区根=本仓 `design-clone/`；仓内 `repo/design-clone-prototype/`=proto 仓唯一管理副本（gitignore；publish/批量 PR 均经此）；仓内 `archive/`=过期资源归档（gitignore）；两 GitHub 仓独立、本目录单点管理
 - 生成物不入库：`publish-out/`、`site/data/thumbs/`（CI 部署前 sync-thumbs 生成）；run 产物在仓内 gitignore 的 `design-clone-runs/`
 - 生成物不入库：`publish-out/`、`site/data/thumbs/`（CI 部署前 sync-thumbs 生成）；根目录禁放媒体源文件（源素材归档于 gitignore 的 design-clone-runs/_clean-src 等，M86）
 
