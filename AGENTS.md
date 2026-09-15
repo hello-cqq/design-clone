@@ -4,6 +4,7 @@
 
 ## 必读文档（改任何东西前）
 
+- `docs/SESSION-HANDOFF.md` — **新会话第一篇**：历史会话索引（可 resume 的 session id）+ 文档缺口补全（M45–M78）+ 待办 + 资源地图
 - `docs/VISION.md` — 诉求与定位（"活 PRD"，唯一权威）
 - `docs/DECISIONS.md` — 架构决策（ADR），偏离前先改这里
 - `docs/RESEARCH.md` — 调研结论与许可存档
@@ -14,7 +15,8 @@
 
 - `skills/design-clone/` — skill 本体（SKILL.md + scripts/ + references/ + schema/ + presets/ + templates/）
 - `dist/` — 给无 CLI 平台（WorkBuddy 等）的 zip 产物，CI 打包，勿手工编辑
-- 项目空间布局（M90）：空间根 `design-clone/`=项目目录（非 git 仓）；`repo/design-clone/`=本仓 GitHub 代码（run 产物在其 gitignore 的 `design-clone-runs/`）；`repo/design-clone-prototype/`=proto 仓唯一管理副本；`archive/`=开发过程过期资源归档；两 GitHub 仓独立、本空间单点管理
+- 项目空间布局（M90）：空间根 `design-clone/`=项目目录（非 git 仓，仅 `repo/` + `archive/` + 一个指路用 `AGENTS.md`）；`repo/design-clone/`=本仓 GitHub 代码（run 产物在其 gitignore 的 `design-clone-runs/`）；`repo/design-clone-prototype/`=proto 仓唯一管理副本；`archive/`=开发过程过期资源归档；两 GitHub 仓独立、本空间单点管理
+- ⚠️ 空间根**故意不是 git 仓**：opencode 按 git 根解析项目，所以在空间根启动时会话归入 `global` 项目而非独立项目。2026-09-15 已把 design-clone 的 16 个历史 session 迁到该归属下（详见 `docs/SESSION-HANDOFF.md` §4.1）。**不要在空间根 `git init`**，否则会再次改变会话归属。
 - 生成物不入库：`publish-out/`、`site/data/thumbs/`（CI 部署前 sync-thumbs 生成）；run 产物在仓内 gitignore 的 `design-clone-runs/`
 - 生成物不入库：`publish-out/`、`site/data/thumbs/`（CI 部署前 sync-thumbs 生成）；根目录禁放媒体源文件（源素材归档于 gitignore 的 design-clone-runs/_clean-src 等，M86）
 
