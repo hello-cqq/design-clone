@@ -18,16 +18,24 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - name: install skill deps (sharp for sync-thumbs)
+        run: npm ci --no-audit --no-fund --prefix skills/design-clone/scripts
       - name: embed live data (stars + index snapshot)
         run: |
           mkdir -p site/data
           curl -fsSL --max-time 20 https://api.github.com/repos/hello-cqq/design-clone | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);process.stdout.write(JSON.stringify({stars:j.stargazers_count||0}))}catch{process.stdout.write('{}')}})" > site/data/stars.json || echo '{}' > site/data/stars.json
       - name: embed gallery fallback snapshot
         run: |
-          curl -fsSL --max-time 20 https://hello-cqq.github.io/design-clone-prototype/index.json -o site/data/index.fallback.json \
-            || echo "keep committed fallback"
+          curl -fsSL --max-time 20 https://hello-cqq.github.io/design-clone-prototype/index.json -o site/data/index.fallback.json.tmp \
+            && mv site/data/index.fallback.json.tmp site/data/index.fallback.json \
+            || echo "keep committed fallback (curl failed; committed file untouched)"
+          rm -f site/data/index.fallback.json.tmp
       - name: sync gallery thumbs (same-origin, proto edge cold-safe)
-        run: node site/tools/sync-thumbs.mjs || echo "thumbs sync skipped"
+        env:
+          NODE_PATH: ${{ github.workspace }}/skills/design-clone/scripts/node_modules
+        run: node site/tools/sync-thumbs.mjs
       - name: hash site child assets (edge-cache bust)
         run: node site/tools/hash-assets.mjs
       - uses: actions/configure-pages@v5
