@@ -345,7 +345,7 @@
 
   function wireNav() {
     // M91: logo 锁定为用户新标图片（mark+手写体锁排），替代渐变字标
-    const LOCK = (cls) => `<img class="${cls}" src="assets/logo-lockup.png" alt="design-clone">`;
+    const LOCK = (cls) => `<img class="${cls}" src="assets/logo-anim.webp" alt="design-clone">`;
     document.querySelectorAll(".logo").forEach((el) => { if (!el.querySelector(".logolock")) el.innerHTML = LOCK("logolock"); });
     document.querySelectorAll(".ftbrand").forEach((el) => { el.innerHTML = LOCK("logolock logolock--ft"); });
 

@@ -75,7 +75,7 @@ try {
   await ctx.click("#themebtn");
   await ctx.waitForTimeout(1600);
 }
-ok("logo lockup theme-stable (M91)", (await ctx.locator(".logo .logolock").getAttribute("src")) === "assets/logo-lockup.png");
+ok("logo lockup theme-stable (M91)", (await ctx.locator(".logo .logolock").getAttribute("src")) === "assets/logo-anim.webp");
 ok("footer lockup (M91)", await ctx.locator(".ftbrand .logolock").count() === 1);
 ok("wordmark no plain text", await ctx.evaluate(() => ![...document.querySelector(".logo").childNodes].some((n) => n.nodeType === 3 && n.textContent.trim() === "design-clone")));
 ok("footer lockup ft (M91)", await ctx.locator("footer .logolock--ft").count() === 1);
