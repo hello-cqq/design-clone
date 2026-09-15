@@ -70,3 +70,4 @@ await b.close();
 fs.writeFileSync(path.join(run, "qa/parity.json"), JSON.stringify(out, null, 1));
 const bad = Object.entries(out).filter(([k, v]) => v.mode !== "na" && ((v.control_coverage != null && v.control_coverage < 0.8) || v.interaction_coverage < 0.9 || v.mode === "none"));
 console.log(JSON.stringify({ views: Object.keys(out).length, bad: bad.map(([k]) => k) }));
+process.exit(bad.length ? 4 : 0);

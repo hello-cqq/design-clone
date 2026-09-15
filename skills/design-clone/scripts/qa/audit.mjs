@@ -88,5 +88,6 @@ await browser.close();
 fs.mkdirSync(path.dirname(outP), { recursive: true });
 fs.writeFileSync(outP, JSON.stringify(result, null, 1));
 const waive = (() => { try { return JSON.parse(fs.readFileSync(path.join(run, "qa/audit-waive.json"), "utf8")); } catch { return {}; } })();
-const bad = Object.entries(result).filter(([k, r]) => ((r.truncRatio > 0.2 && !waive[k]?.trunc) || (r.overflow > 2 && !waive[k]?.overflow)));
+const bad = Object.entries(result).filter(([k, r]) => ((r.truncRatio > 0.2 && !waive[k]?.trunc) || (r.overflow > 2 && !waive[k]?.overflow) || (r.recall != null && r.recall < 0.8 && !waive[k]?.recall)));
 console.log(JSON.stringify({ views: Object.keys(result).length, bad: bad.map(([k]) => k + `(rec=${result[k].recall ?? "-"} fid=${result[k].fidelity ?? "-"} trunc=${result[k].truncRatio})`) }));
+process.exit(bad.length ? 4 : 0);
