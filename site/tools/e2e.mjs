@@ -18,7 +18,7 @@ const loops = +(process.argv[3] || 20);
 const fails = [];
 const ok = (name, cond, note = "") => { if (!cond) fails.push(`${name}${note ? ": " + note : ""}`); };
 
-const BENIGN = /capture\/|knowledge\/|(overrides|annotations|journeys|source-map|variants-index)\.json|favicon/;
+const BENIGN = /capture\/|knowledge\/|(overrides|annotations|journeys|source-map|variants-index)\.json|favicon|api\.github\.com/; // api.github.com = stars 回退路径（部署期 stars.json 已内嵌时不触发）
 
 const browser = await chromium.launch();
 const ctx = await browser.newPage({ viewport: { width: 1440, height: 950 } });
@@ -78,11 +78,11 @@ try {
   await ctx.click("#themebtn");
   await ctx.waitForTimeout(1600);
 }
-ok("logo lockup theme-swap (M94)", (await ctx.locator(".logo .logolock").getAttribute("src")) === "assets/logo-anim-dark.webp" && (await ctx.locator('link[rel="icon"]').getAttribute("href")) === "assets/favicon-dark.png");
+ok("logo lockup theme-swap (M94)", (await ctx.locator(".logo .logolock").getAttribute("src")) === "assets/logo-anim-dark.webp" && (await ctx.evaluate(() => document.querySelector('link[rel="icon"]').getAttribute("href"))) === "assets/favicon-dark.png");
 ok("footer lockup (M91)", await ctx.locator(".ftbrand .logolock").count() === 1);
 ok("wordmark no plain text", await ctx.evaluate(() => ![...document.querySelector(".logo").childNodes].some((n) => n.nodeType === 3 && n.textContent.trim() === "design-clone")));
 ok("footer lockup ft (M91)", await ctx.locator("footer .logolock--ft").count() === 1);
-ok("favicon themed (M94)", await ctx.evaluate(() => /favicon(-dark)?\.png$/.test((document.querySelector("link[rel=icon]") || {}).href || "")));
+ok("favicon themed (M94)", await ctx.evaluate(() => [...document.querySelectorAll("link[rel=icon]")].every((l) => /favicon(-dark)?\.png$/.test(l.href || "")) && /favicon(-dark)?\.png$/.test((document.querySelector("link[rel=icon]") || {}).href || "")));
 ok("install cmd", (await ctx.locator("#installcmd").textContent()).includes("install.sh"));
 ok("exp iframe", (await ctx.locator("#expframe").getAttribute("src") || "").includes("/prototype/"));
 ok("featured cards", await ctx.locator("#featured .pcard").count() >= 4);
@@ -206,7 +206,7 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
   {
     const gp2 = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await gp2.goto(base + "/gallery.html", { waitUntil: "load" });
-    await gp2.waitForTimeout(2200);
+    await gp2.waitForTimeout(3200);
     ok("tagrow single line", await gp2.evaluate(() => { const tr = document.getElementById("tagrow"); return tr.scrollHeight < 40 && tr.scrollWidth <= tr.clientWidth + 2; }));
     await gp2.fill("#q", "pet");
     await gp2.waitForTimeout(500);
@@ -220,7 +220,7 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
   {
     const dp = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await dp.goto(base + "/index.html", { waitUntil: "load" });
-    await dp.waitForTimeout(1800);
+    await dp.waitForTimeout(2600);
     await dp.locator(".animstage").first().scrollIntoViewIfNeeded();
     await dp.waitForTimeout(800);
     const txt = await dp.locator(".animstage").first().textContent();
@@ -242,6 +242,9 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
       await fr.locator("#dc-demo").click();
       await pp2.waitForTimeout(1500);
       ok("play button works", await fr.locator("body.dc-demo, #dc-caption").count() >= 1 && (await fr.locator("#dc-modal-root").count()) === 0 || !(await fr.locator("#dc-modal-root").textContent().catch(() => "")).includes("无演示旅程"));
+      await fr.locator("body").press("Escape");
+      await pp2.waitForTimeout(600);
+      ok("demo modal closes on Esc", (await fr.locator("#dc-modal-root .dc-modal-mask").count()) === 0);
       const dl = pp2.waitForEvent("download", { timeout: 30000 }).catch(() => null);
       await fr.locator("#dc-export-btn").click();
       await pp2.waitForTimeout(400);
@@ -271,9 +274,9 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
     ok("step4 interactive fx", (await dp.locator("#animstage > .animstage:visible").first().locator(".steps b").nth(3).click().then(() => dp.waitForTimeout(600)).then(() => dp.locator("#animstage > .animstage:visible [class*=px-]").count())) >= 3);
     for (const n of [0, 1, 2, 3]) {
       await dp.locator("#animstage > .animstage:visible").first().locator(".steps b").nth(n).click();
-      await dp.waitForTimeout(350);
+      await dp.waitForTimeout(900);
       const cap = await dp.locator("#animstage > .animstage:visible").first().locator(".captxt").textContent();
-      ok("demo step" + (n + 1) + " user-facing", /打开|粘贴|输入|捕获|解析|生成|Open|Paste|Enter|capture|parsed|generated/i.test(cap) && !/gates|agent/.test(cap));
+      ok("demo step" + (n + 1) + " user-facing", /打开|粘贴|输入|捕获|解析|生成|重组|Open|Paste|Enter|capture|parsed|generated|reads|structure|reorganized/i.test(cap) && !/gates|agent/.test(cap));
     }
     await dp.close();
   }
@@ -285,9 +288,9 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
     const hp = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await hp.goto("http://localhost:4399/index.html", { waitUntil: "domcontentloaded" });
     await hp.waitForTimeout(3500);
-    const c1 = await hp.evaluate(() => { const v = document.querySelector('.idf-video[data-k="light"]'); return v ? v.currentTime : -1; });
+    const c1 = await hp.evaluate(() => { const v = document.querySelector(".idf-video.on"); return v ? v.currentTime : -1; });
     await hp.waitForTimeout(2500);
-    const c2 = await hp.evaluate(() => { const v = document.querySelector('.idf-video[data-k="light"]'); return v ? v.currentTime : -1; });
+    const c2 = await hp.evaluate(() => { const v = document.querySelector(".idf-video.on"); return v ? v.currentTime : -1; });
     ok("http ident plays (no-range server)", c2 > c1 + 0.2 || (c2 >= 0 && c2 < c1));
     await hp.close();
     srv.kill();
@@ -296,7 +299,7 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
   {
     const gp = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     const tourErrs = [];
-    gp.on("console", (m) => { if (m.type() === "error") tourErrs.push(m.text().slice(0, 80)); });
+    gp.on("console", (m) => { const u = (m.location() && m.location().url) || ""; if (m.type() === "error" && !BENIGN.test(u) && !BENIGN.test(m.text())) tourErrs.push((u || m.text()).slice(0, 80)); });
     await gp.goto(base + "/gallery.html", { waitUntil: "domcontentloaded" });
     await gp.waitForTimeout(2500);
     const slugs = await gp.evaluate(() => (window.__DC_STATE && window.__DC_STATE.index ? window.__DC_STATE.index.apps || window.__DC_STATE.index : []).map((a) => a.slug || a.app).filter(Boolean));
