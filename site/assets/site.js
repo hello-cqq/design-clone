@@ -344,15 +344,11 @@
   }
 
   function wireNav() {
-    // M75-W1 艺术字标：主题生图（双联昼/夜）作字形填充——亮=昼半海空、暗=夜半星月，与头像图标同源同主题
-    const WM_TXT = "design-clone";
-    const WORDMARK = `<span class="wordmark" role="img" aria-label="design-clone">` + [...WM_TXT].map((c, i) => `<i class="wm-c" style="--i:${i}" aria-hidden="true">${c}</i>`).join("") + `</span>`;
-    document.querySelectorAll(".logo").forEach((el) => {
-      if (el.querySelector(".wordmark")) return;
-      const txt = [...el.childNodes].find((n) => n.nodeType === 3 && n.textContent.trim());
-      if (txt) txt.replaceWith(document.createRange().createContextualFragment(WORDMARK));
-    });
-    document.querySelectorAll(".ftbrand").forEach((el) => { el.innerHTML = WORDMARK.replace('class="wordmark"', 'class="wordmark wordmark--ft"'); });
+    // M91: logo 锁定为用户新标图片（mark+手写体锁排），替代渐变字标
+    const LOCK = (cls) => `<img class="${cls}" src="assets/logo-lockup.png" alt="design-clone">`;
+    document.querySelectorAll(".logo").forEach((el) => { if (!el.querySelector(".logolock")) el.innerHTML = LOCK("logolock"); });
+    document.querySelectorAll(".ftbrand").forEach((el) => { el.innerHTML = LOCK("logolock logolock--ft"); });
+
     matchMedia("(max-width: 820px)").addEventListener("change", () => { if (document.getElementById("stageframe")) renderProto(); });
     const idn = document.getElementById("ident");
     if (idn && window.DCIdent && window.DCIdent.build) {
