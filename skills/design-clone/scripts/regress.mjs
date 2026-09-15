@@ -53,20 +53,21 @@ for (let i = 0; i < runs.length; i++) {
   const smkFail = smkBroken ? 1 : (smkj.fail || 0);
   if (process.env.REGRESS_DEBUG) fs.writeFileSync("/tmp/regress-dbg.json", JSON.stringify({ r, iaStatus: ia.status, iaOut: (ia.stdout || "").length, insStatus: ins.status, insSignal: ins.signal, insOut: (ins.stdout || "").slice(-200), insErr: (ins.stderr || "").slice(-300), smkStatus: smk.status, smkSignal: smk.signal, smkOut: (smk.stdout || "").slice(-200), smkErr: (smk.stderr || "").slice(-300) }, null, 1));
   let fid = "";
-  if (full) { const f = spawnSync("node", [path.join(HERE, "qa/fidelity-all.mjs"), "--run", path.join(ROOT, r), "--base", base], { encoding: "utf8" }); const fj = (() => { try { return JSON.parse((f.stdout || "").trim().split("\n").pop()); } catch { return {}; } })(); fid = (fj.hard || []).length ? `fid-hard=${fj.hard.length}` : "fid-ok"; }
+  let fidHard = false;
+  if (full) { const f = spawnSync("node", [path.join(HERE, "qa/fidelity-all.mjs"), "--run", path.join(ROOT, r), "--base", base], { encoding: "utf8" }); const fj = (() => { try { return JSON.parse((f.stdout || "").trim().split("\n").pop()); } catch { return {}; } })(); fidHard = (fj.hard || []).length > 0; fid = fidHard ? `fid-hard=${fj.hard.length}` : "fid-ok"; }
   srv.kill();
   const dead = iaBroken ? -1 : (iaj.total_dead || 0);
   const fail = insBroken ? -1 : insj.fail;
   // 完整性：输出不可解析/进程异常/serve 未就绪 一律记为失败，绝不静默全绿
-  const ok = ready && !iaBroken && !insBroken && !smkBroken && dead === 0 && fail === 0 && smkFail === 0 && !(iaj.bad || []).length;
+  const ok = ready && !iaBroken && !insBroken && !smkBroken && dead === 0 && fail === 0 && smkFail === 0 && !(iaj.bad || []).length && (insj.pageErrors || 0) === 0 && !(full && fidHard);
   if (!ok) bad++;
   const brokenNote = !ready ? "serve-not-ready" : iaBroken ? "interact-broken" : insBroken ? "inspect-broken" : smkBroken ? "smoke-broken" : "";
-  rows.push(`| ${r} | dead=${dead} | inspect ${fail < 0 ? "BROKEN" : fail ? "FAIL" + fail : "pass" + insj.pass} | smoke ${smkBroken ? "BROKEN" : smkFail ? "FAIL" + smkFail : "pass" + smkj.pass} | ${insj.warnFail || 0} warn | ${fid || "-"} | ${ok ? "✅" : "❌ " + brokenNote} |`);
+  rows.push(`| ${r} | dead=${dead} | inspect ${fail < 0 ? "BROKEN" : fail ? "FAIL" + fail : "pass" + insj.pass} | smoke ${smkBroken ? "BROKEN" : smkFail ? "FAIL" + smkFail : "pass" + smkj.pass} | ${insj.warnFail || 0} warn / ${insj.consoleErrors || 0} cerr / ${insj.pageErrors || 0} perr | ${fid || "-"} | ${ok ? "✅" : "❌ " + brokenNote} |`);
   console.log(`${r}: ready=${ready} dead=${dead} inspectFail=${fail} smokeFail=${smkFail} warnFail=${insj.warnFail || 0} ${fid || ""} ${ok ? "OK" : "BAD " + brokenNote}`);
 }
 const ts = new Date().toISOString().replace(/[:.]/g, "-");
 const md = `# 回归报告 ${ts}\n\n| run | interact | inspect | smoke | warn | fidelity | 结果 |\n|---|---|---|---|---|---|---|\n${rows.join("\n")}\n`;
-fs.mkdirSync(path.join(HERE, "..", "..", "report"), { recursive: true });
-fs.writeFileSync(path.join(HERE, "..", "..", "report", `regress-${ts}.md`), md);
+fs.mkdirSync(path.join(HERE, "..", "..", "..", "report"), { recursive: true });
+fs.writeFileSync(path.join(HERE, "..", "..", "..", "report", `regress-${ts}.md`), md);
 console.log(bad ? `REGRESS BAD: ${bad} run(s)` : "REGRESS ALL GREEN");
 process.exit(bad ? 3 : 0);

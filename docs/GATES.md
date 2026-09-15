@@ -54,18 +54,39 @@
 
 ## 4. 门禁清单（为什么"绿"在这里有意义）
 
-- `doctor.mjs`——环境探针（adb/权限/点击通道）先行。
-- `qa/interact.mjs`——**点每个控件**并断言可观测变化（`dead=0`）。
-- `qa/inspect.mjs`——硬门：live-views、placeholder-scan、asset-qa、layout-sanity、privacy-anon、paths-sanity（方向/回边/互反）、appicon-present、structural-critique、parity、**design-artifacts**、**gallery-ready**、**pasted-screenshot**、**view-weight-budget**、ui-smoke。
+> 级别约定：**hard**=不绿即失败（exit≠0，regress/publish/CI 计入）；**warn**=计入报告 warn 列与债表公示，不拦；
+> inspect 的 `consoleErrors`/`requestfailed` 为 **warn 级**（良性 404 如 overrides/variants 已过滤），`fail`/`pageErrors` 为 hard。
+
+### 4.1 run 级门（本地自觉 + regress 汇总；run 产物 gitignored，CI 不跑）
+
+- `doctor.mjs`——环境探针（adb/权限/点击通道）先行；`--onboard` 产 capability 报告（advisory）。
+- `qa/interact.mjs`——**点每个控件**并断言可观测变化（`dead=0`，hard）。
+- `qa/inspect.mjs`——硬门：live-views、placeholder-scan、asset-qa、layout-sanity、privacy-anon、paths-sanity（方向/回边/互反）、appicon-present、structural-critique、parity、**design-artifacts**、**gallery-ready**、**pasted-screenshot**、**view-weight-budget**、art-depth、brief-director、sel-ring-align；consoleErrors/requestfailed=warn 列。
 - `qa/ui-smoke.mjs`——点外壳：播放/导出下载(含设计规格断言)/分享/设备/标注写/产品写/变体写/画布标签排版/`?chrome=0`/过滤/帮助/代码视图/**canvas-text-budget**/**wire-ink**/**wire-label-lite**/**tree-dir-clean**/**path-rows-all**/**cover-geometry**/**export-design-artifacts**。
-- `fidelity.mjs` / `qa/fidelity-all.mjs`——与源像素 diff（view↔capture 正确配对）+ 样式 parity。
+- `qa/parity.mjs`——逐控件/交互覆盖（control≥0.8、interaction≥0.9，hard；存量 cutoff 前=warn+`report/parity-debt.md` 公示）。
+- `fidelity.mjs` / `qa/fidelity-all.mjs`——与源像素 diff（view↔capture 正确配对）+ 样式 parity（hard>0.40 未 waive）。
 - `qa/critique.mjs`——VLM 结构 critique（像素指标对稀疏浅色 UI 结构盲）。
-- `qa/privacy.mjs`——真名/脸/PII 必须匿名或 genimg 替换；品牌资产需 `knowledge/consent.json`。
+- `qa/privacy.mjs`——真名/脸/PII 必须匿名或 genimg 替换（hard）；**consent 红线实际执法点在 `clone.mjs` 采集期**（无 `knowledge/consent.json` 拒绝启动 GUI 捕获）。
 - `qa/paths-qa.mjs`——路径方向硬门：回边入路径/回退 nav 叶/互反双向/巨链导航化。
-- `eval.mjs`——聚合分（fidelity/interactivity/perf/ux/stability/privacy）。
-- 存量债口径：新门对 M- cutoff 前的存量 run 记 warn 并公示（`report/parity-debt.md` 等），新 run 硬拦。
+- `qa/audit.mjs`——标注 recall≥0.8 / truncated≤0.2 / overflow≤2（hard，M98 起 exit 真执法）。
+- `eval/eval.mjs`——聚合分（fidelity/interactivity/perf/ux/stability/privacy），clone.mjs 收口跑。
+- `regress.mjs`——对全部**有视图的 run**（capture-only run 无视图，隐式排除并在报告头注明）跑 interact+inspect+ui-smoke 三门（`--full` 加 fidelity-all 并计入判定），报告写 `report/regress-<ts>.md`（入库）。
+- 存量债口径：新门对 cutoff（`meta.json created_at` 为准，M98 起不再用可 touch 的 mtime）前的存量 run 记 warn 并公示，新 run 硬拦。
 
+| 门 | 子门 | 内容 | 级别 |
+|---|---|---|---|
 | inspect | art-depth | original 概念 run：全视图 data-fx-parallax≥2 且 data-fx="particles"≥1（M76-W3b，见 references/art-direction.md） | hard |
-| brand-qa | pencil-zone | 品牌资产耳上发区铅笔签名像素=0；ident 抽帧全帧=0（M76-W1） | hard（CI 前置） |
+| inspect | brief-director | original/concept run：knowledge/brief.json 齐（pages≥4/角色+资产≥3/风格基准/图标/封面词）且 references/manifest 参考图≥页数（2026-09-13 前存量=warn） | hard |
+| inspect | sel-ring-align | 选中框 rAF 活跟踪偏移 ≤3px（M85） | hard |
 
-| inspect | brief-director | original/concept run：knowledge/brief.json 齐（pages≥4/角色+资产≥3/风格基准/图标/封面词）且 references/manifest 参考图≥页数（M77 前存量=warn） | hard |
+### 4.2 工程/站点门（CI 必跑，`.github/workflows/ci.yml`）
+
+- 单测（node:test）· eslint 0 errors · tsc --noEmit · shell 构建确定性 · version-sync（SKILL.md==package.json==CHANGELOG 首个非 Unreleased 段）· zip 纯度（runs/devDeps/二进制未登记件=0）。
+- `qa/ip-scan.mjs`——跟踪二进制仅限 REGISTERED 登记区（site 品牌资产/docs 图/策展官方图标，归属见 THIRD-PARTY）；外件=hard。
+- `qa/secret-scan.mjs`——key/token/phone/ID 模式=hard。
+- site e2e（`site/tools/e2e.mjs`，20 轮+复活断言集）· loadtest · **brand-qa**（pencil/veil/faststart/角标水印；M98 起挂 CI）。
+
+### 4.3 发布链门
+
+- `publish.mjs` 前置：interact dead=0 · inspect fail=0 · ui-smoke fail=0（M98 起真读 summary/聚合字段）+ privacy 绿 + 门 JSON 新鲜度（晚于 prototype/index.html 改动）。
+- proto 仓 `pr-gate.yml`：SPEC v2 结构/meta/cover/icon/体积/禁名单/PII grep/冒烟（仅 PR 触发；直推 main 无校验=已知缺口，见 SESSION-SUMMARY 未决）。

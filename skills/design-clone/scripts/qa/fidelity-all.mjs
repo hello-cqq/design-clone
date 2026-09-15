@@ -94,3 +94,4 @@ fs.mkdirSync(path.dirname(reportP), { recursive: true });
 fs.writeFileSync(reportP, JSON.stringify({ generated_at: new Date().toISOString(), checks }, null, 2));
 const bad = Object.entries(out).filter(([k, v]) => v.hard);
 console.log(JSON.stringify({ views: Object.keys(out).length, hard: bad.map(([k]) => k + ":r" + out[k].ratio + "/s" + out[k].struct), detail: Object.fromEntries(Object.entries(out).map(([k, v]) => [k, { r: v.ratio, s: v.struct }])) }));
+process.exit(bad.length ? 4 : 0);

@@ -56,6 +56,8 @@ jobs:
         run: NODE_PATH=$PWD/skills/design-clone/scripts/node_modules node site/tools/e2e.mjs http://localhost:8090 20
       - name: load smoke (500 req / 50 conc)
         run: node site/tools/loadtest.mjs http://localhost:8090 50 10
+      - name: brand-qa (pencil/veil/faststart/watermark)
+        run: NODE_PATH=$PWD/skills/design-clone/scripts/node_modules node site/tools/brand-qa.mjs
   package:
     runs-on: ubuntu-24.04
     steps:

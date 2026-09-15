@@ -29,6 +29,11 @@ const shots = path.resolve(values.shots);
 fs.mkdirSync(shots, { recursive: true });
 
 const R = { name, base, at: new Date().toISOString(), checks: {}, consoleErrors: [], pageErrors: [] };
+// M98: run 年龄以 meta.json created_at 为准（scope.json mtime 可被 touch 翻转）；无 meta 回退 scope mtime
+const runCreatedMs = (run) => {
+  try { const m = JSON.parse(fs.readFileSync(path.join(run, "meta.json"), "utf8")); if (m.created_at) return Date.parse(m.created_at); } catch {}
+  try { return fs.statSync(path.join(run, "knowledge/scope.json")).mtimeMs; } catch { return 0; }
+};
 const ok = (k, v, note = "") => { R.checks[k] = { pass: !!v, note }; };
 const okw = (k, v, note = "") => { R.checks[k] = { pass: !!v, warn: true, note }; };
 const browser = await chromium.launch();
@@ -117,7 +122,7 @@ await page.waitForTimeout(700);
     // M49：控件覆盖/交互覆盖=存量保真债。M49 门落地后新建 run 硬拦（demo-orbit 已证新管线达标）；
     // 存量 run 记 warn 并进 report/parity-debt.md 公示，不清债不删门。
     let legacy = false;
-    try { legacy = fs.statSync(path.join(values.run, "knowledge/scope.json")).mtimeMs < 1788998400000; } catch {}
+    legacy = runCreatedMs(values.run) < 1788998400000;
     if (lowCov.length) {
       if (legacy) { ok("parity", true, "存量保真债（warn）: " + lowCov.slice(0, 6).join(",")); R.checks.parity.warn = true; }
       else throw new Error(lowCov.length + " parity 控件覆盖不足: " + lowCov.slice(0, 4).join(","));
@@ -588,7 +593,10 @@ await step("brief-director", async () => {
   let src = ""; try { src = (JSON.parse(fs.readFileSync(path.join(values.run, "knowledge/scope.json"), "utf8")).source) || ""; } catch {}
   if (src !== "original") { ok("brief-director", true, "非 original skip"); return; }
   const bp = path.join(values.run, "knowledge/brief.json");
-  if (!fs.existsSync(bp)) { ok("brief-director", true, "存量无 brief（warn）", true); R.checks["brief-director"].warn = true; return; }
+  if (!fs.existsSync(bp)) {
+    if (runCreatedMs(values.run) < Date.parse("2026-09-13T00:00:00Z")) { ok("brief-director", true, "存量无 brief（warn）", true); R.checks["brief-director"].warn = true; return; }
+    throw new Error("original run 缺 knowledge/brief.json（M77 后硬门，跑 gen/director.mjs）");
+  }
   const b = JSON.parse(fs.readFileSync(bp, "utf8"));
   let refs = 0; try { refs = (JSON.parse(fs.readFileSync(path.join(values.run, "references/manifest.json"), "utf8")).items || []).length; } catch {}
   const okAll = (b.pages || []).length >= 4 && ((b.characters || []).length + (b.assets || []).length) >= 3 && refs >= (b.pages || []).length && !!(b.style_baseline || {}).words && !!(b.icon || {}).prompt && !!(b.cover || {}).prompt;
@@ -645,7 +653,7 @@ await step("design-artifacts", async () => {
   try { specs = fs.readdirSync(pagesDir).filter((x) => x.endsWith(".spec.json")); } catch {}
   const hasFig = fs.existsSync(fig);
   let legacy = false;
-  try { legacy = fs.statSync(path.join(values.run, "knowledge/scope.json")).mtimeMs < 1789084800000; } catch {}
+  legacy = runCreatedMs(values.run) < 1789084800000;
   const miss = specs.length < nPages || !hasFig;
   for (const f of specs) {
     const j = JSON.parse(fs.readFileSync(path.join(pagesDir, f), "utf8"));
@@ -667,7 +675,7 @@ await step("gallery-ready", async () => {
   const iconP = path.join(values.run, "icon.png");
   const coverP = path.join(values.run, "cover.png");
   let legacy = false;
-  try { legacy = fs.statSync(path.join(values.run, "knowledge/scope.json")).mtimeMs < 1789084800000; } catch {}
+  legacy = runCreatedMs(values.run) < 1789084800000;
   const problems = [];
   if (!meta) problems.push("缺 meta.json");
   else {

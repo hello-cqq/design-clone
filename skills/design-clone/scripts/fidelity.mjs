@@ -36,3 +36,4 @@ if (values.report) {
   fs.writeFileSync(values.report, JSON.stringify(rep, null, 2));
 }
 console.log(JSON.stringify(result));
+if (!waiveArg && result.ratio > parseFloat(process.env.DC_FID_HARD || "0.40")) process.exit(4);
