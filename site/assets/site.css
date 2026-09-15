@@ -27,7 +27,6 @@ a:hover { text-decoration: none; opacity: .92; }
 
 /* ---------- M91 logo lockup ---------- */
 .logolock { display: block; height: 40px; width: auto; }
-[data-theme="dark"] .logolock { filter: brightness(1.5) saturate(1.05); }
 .logolock--ft { height: 26px; border-radius: 7px; opacity: .95; }
 .logo { line-height: 0; }
 

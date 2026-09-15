@@ -97,6 +97,12 @@
     if (tb) tb.innerHTML = state.theme === "dark"
       ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>'
       : '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+    // M94: logo 动图/标签图标随主题切换
+    const lockSrc = `assets/logo-anim-${state.theme === "dark" ? "dark" : "light"}.webp`;
+    document.querySelectorAll(".logolock").forEach((im) => { im.src = lockSrc; });
+    const fav = document.querySelector('link[rel="icon"]');
+    if (fav) fav.href = state.theme === "dark" ? "assets/favicon-dark.png" : "assets/favicon.png";
+
   }
 
   async function loadIndex() {
@@ -345,7 +351,8 @@
 
   function wireNav() {
     // M91: logo 锁定为用户新标图片（mark+手写体锁排），替代渐变字标
-    const LOCK = (cls) => `<img class="${cls}" src="assets/logo-anim.webp" alt="design-clone">`;
+    const LOCKSRC = () => `assets/logo-anim-${state.theme === "dark" ? "dark" : "light"}.webp`;
+    const LOCK = (cls) => `<img class="${cls}" src="${LOCKSRC()}" alt="design-clone">`;
     document.querySelectorAll(".logo").forEach((el) => { if (!el.querySelector(".logolock")) el.innerHTML = LOCK("logolock"); });
     document.querySelectorAll(".ftbrand").forEach((el) => { el.innerHTML = LOCK("logolock logolock--ft"); });
 
