@@ -37,6 +37,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 ### M94
 - : logo 透明纯度+暗色适配——逐帧四角中位数 bg+硬键+alpha-unmix+雾斑/碎片清除+底部字行填充；暗变体=flood-key 封闭填充保留+三档冰蓝 posterize+仅主连通域；主题联动切换 lock src+favicon href；brand-qa veil 门（<0.75%，实测 0.499/0.193%）
 
+### M97
+- : 仓清理 ~17.4MB——智能助理/ 四参考图（13MB 零引用）移空间 archive/智能助理-ref/ 后 git rm；site/assets 死资产九件 git rm（logo-girl/boy、logo-light/dark、logo-main-256、logo-lockup、logo-anim.webp、ident 双 poster jpg——poster 已内联 base64）；死代码清（site.js .logoimg 切换行、site.css 双 .logoimg 块）；brand-qa 铅笔/角标门名单收敛为不透明合成资产（logo-main/favicon），透明键控资产走 veil 门；架构图 v2 分层重画（六层带+mono 模块盒+层间数据流产物芯片+宿主 VLM 贯穿轨，文字量-70%）替换 docs/img/architecture{,-dark}.png
+
 ### M96
 - : README 美化+双图——头部 🥷 换双主题动图 GIF（<picture> light/dark，168px）；hero alt 错配修正（PetPark→星海对话）；新增 Architecture 节（核心管线六阶段双主题 PNG，不涉官网）与 From any source to a playable prototype 节（官网四演示 s1/s3/s4 层拆分合成的双语全景图）；六资产入 docs/img/；zh 版同步
 

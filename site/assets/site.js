@@ -89,7 +89,6 @@
   }
   function applyTheme() {
     document.documentElement.dataset.theme = state.theme;
-    document.querySelectorAll(".logoimg").forEach((im) => { im.src = state.theme === "dark" ? "assets/logo-boy.png" : "assets/logo-girl.png"; });
     if (window.__identCtrl && window.__identCtrl.swap) window.__identCtrl.swap(state.theme);
     const sf = document.getElementById("stageframe");
     if (sf && sf.contentWindow) { try { sf.contentWindow.postMessage({ type: "dc-theme", theme: state.theme }, "*"); window.__postedTheme = state.theme; } catch {} }
