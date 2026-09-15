@@ -1,6 +1,11 @@
 <div align="center">
 
-# 🥷 design-clone
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/logo-anim-dark.gif">
+  <img src="docs/img/logo-anim-light.gif" alt="design-clone — animated logo" width="168">
+</picture>
+
+# design-clone
 
 **Clone any app into a playable prototype.** — 把任何应用克隆成可交互原型。
 
@@ -11,7 +16,7 @@
 
 **[🌐 Official site & live gallery →](https://hello-cqq.github.io/design-clone/)** · [中文文档](README.zh.md) · [Gallery 画廊](https://hello-cqq.github.io/design-clone/gallery.html)
 
-<img src="https://raw.githubusercontent.com/hello-cqq/design-clone-prototype/main/ai-assistant/cover.png" alt="PetPark — a 3D plush-cute pet park prototype built with design-clone" width="720" />
+<img src="https://raw.githubusercontent.com/hello-cqq/design-clone-prototype/main/ai-assistant/cover.png" alt="AI Assistant — a Shinkai-style AI chat companion prototype built end-to-end by design-clone" width="720" />
 
 *↑ [AI Assistant](https://hello-cqq.github.io/design-clone/proto.html?app=ai-assistant): generated end-to-end by the skill — switch persona/voice, chat, call, play it live.*
 
@@ -27,6 +32,24 @@ An [Agent Skill](https://agentskills.io) for opencode / Claude Code / Codex / Qo
 - 🎛 **Every control works** — hard-gated: `dead=0` clicks, live HTML views (never screenshot-as-view).
 - 📐 **Design specs included** — per-page `spec.json` + Figma-importable source, tokens, annotations, interaction paths.
 - 🖼 **Gallery-ready** — bilingual `meta.json` + icon + 3:2 cover auto-generated; one command publishes to the community gallery.
+
+## Architecture
+
+The skill runs entirely inside your agent — six local, offline stages from raw source to gated, playable output (deep dive: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)):
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/architecture-dark.png">
+  <img src="docs/img/architecture.png" alt="design-clone core pipeline: four sources, capture & measure, knowledge, generate, quality gates, outputs" width="100%">
+</picture>
+
+## From any source to a playable prototype
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/feature-flow-dark.png">
+  <img src="docs/img/feature-flow.png" alt="Four source types — mobile app, share link, desktop app, website — each captured into a design spec, then compiled into a playable prototype" width="100%">
+</picture>
+
+*The four [feature demos](https://hello-cqq.github.io/design-clone/) condensed: every source is captured, distilled into a design spec (palette · type · pages · tokens), and compiled into a prototype where every control works.*
 
 ## Install (one command)
 

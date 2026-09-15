@@ -37,6 +37,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 ### M94
 - : logo 透明纯度+暗色适配——逐帧四角中位数 bg+硬键+alpha-unmix+雾斑/碎片清除+底部字行填充；暗变体=flood-key 封闭填充保留+三档冰蓝 posterize+仅主连通域；主题联动切换 lock src+favicon href；brand-qa veil 门（<0.75%，实测 0.499/0.193%）
 
+### M96
+- : README 美化+双图——头部 🥷 换双主题动图 GIF（<picture> light/dark，168px）；hero alt 错配修正（PetPark→星海对话）；新增 Architecture 节（核心管线六阶段双主题 PNG，不涉官网）与 From any source to a playable prototype 节（官网四演示 s1/s3/s4 层拆分合成的双语全景图）；六资产入 docs/img/；zh 版同步
+
 ### M95
 - : logo 绿幕源重制（archive/logo-source-{day,night}.mp4）——平面拟合逐像素 bg+软键+despill+去字行/水印填充+主块保留；light=day 原色（白填充保留）、dark=night 三档冰蓝 posterize；webp 262/243KB（原 323/218）；veil 门收紧 0.5%（实测 0.221/0.366%）
 
