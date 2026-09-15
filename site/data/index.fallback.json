@@ -1,1 +1,468 @@
-{"version":2,"updated_at":null,"apps":[]}
+{
+ "version": 3,
+ "updated_at": "2026-09-15T13:11:38.281Z",
+ "apps": [
+  {
+   "app": "wechat",
+   "name": {
+    "en": "WeChat",
+    "zh": "微信"
+   },
+   "description": {
+    "en": "Study replica of WeChat mobile: chats, contacts, discover, group settings — fictional text.",
+    "zh": "微信手机版学习复刻：会话列表、单聊/群聊、通讯录、发现、群设置——文本全虚构。"
+   },
+   "tags": [
+    "chat",
+    "social",
+    "mobile",
+    "study"
+   ],
+   "category": "social",
+   "shell": "c_mobile",
+   "version": "1.6.2",
+   "license": "CC-BY-4.0",
+   "source": {
+    "kind": "device",
+    "ref": "wechat-full"
+   },
+   "ip_attestation": "public-material",
+   "brand_disclaimer": "Unofficial study replica of WeChat; trademarks belong to their owners; no affiliation or endorsement implied.",
+   "cover": "wechat/cover.png",
+   "url": "https://hello-cqq.github.io/design-clone-prototype/wechat/prototype/",
+   "repo_dir": "https://github.com/hello-cqq/design-clone-prototype/tree/main/wechat",
+   "pages": [
+    {
+     "id": "01-chatlist",
+     "name": "会话列表"
+    },
+    {
+     "id": "02-contacts",
+     "name": "通讯录"
+    },
+    {
+     "id": "03-discover",
+     "name": "发现"
+    },
+    {
+     "id": "04-me",
+     "name": "我"
+    },
+    {
+     "id": "05-services",
+     "name": "服务"
+    },
+    {
+     "id": "06-moments",
+     "name": "朋友圈"
+    },
+    {
+     "id": "07-plus",
+     "name": "加号菜单"
+    },
+    {
+     "id": "08-search",
+     "name": "搜索"
+    },
+    {
+     "id": "09-chat",
+     "name": "单聊·小陈"
+    },
+    {
+     "id": "10-wallet",
+     "name": "钱包"
+    },
+    {
+     "id": "11-single-chat",
+     "name": "单聊·文件传输助手"
+    },
+    {
+     "id": "12-group-chat",
+     "name": "群聊·家"
+    },
+    {
+     "id": "13-group-settings",
+     "name": "群设置"
+    },
+    {
+     "id": "14-friend-settings",
+     "name": "好友资料"
+    },
+    {
+     "id": "15-longpress",
+     "name": "长按菜单"
+    },
+    {
+     "id": "16-miniprogram-tray",
+     "name": "小程序托盘"
+    },
+    {
+     "id": "17-miniprogram",
+     "name": "小程序"
+    },
+    {
+     "id": "18-search",
+     "name": "搜索流"
+    },
+    {
+     "id": "19-loading",
+     "name": "加载态"
+    }
+   ],
+   "downloads": 5,
+   "creator": "hello-cqq",
+   "icon": "wechat/prototype/appicon/icon-256.png",
+   "contributors": [
+    {
+     "name": "AhahahQ",
+     "login": "AhahahQ",
+     "commits": 8
+    },
+    {
+     "name": "cqq",
+     "login": "hello-cqq",
+     "commits": 7
+    }
+   ],
+   "commits": 16,
+   "updated": "2026-09-15T21:10:39+08:00"
+  },
+  {
+   "app": "ai-assistant",
+   "name": {
+    "en": "AI Assistant",
+    "zh": "星海对话"
+   },
+   "description": {
+    "en": "Xinghai Dialogue — an AI chat companion prototype: full conversation flows with live controls, design specs and user paths, cloned from a real source by design-clone.",
+    "zh": "星海对话——AI 聊天伙伴原型：完整会话流程、全控件可交互、含设计规格与用户路径，由 design-clone 自真实来源克隆。"
+   },
+   "tags": [
+    "ai-companion",
+    "assistant",
+    "anime",
+    "voice",
+    "original",
+    "chat"
+   ],
+   "category": "social",
+   "shell": "c_mobile",
+   "version": "2.1.2",
+   "license": "CC-BY-4.0",
+   "source": {
+    "kind": "original",
+    "ref": "demo-assistant"
+   },
+   "ip_attestation": "original",
+   "brand_disclaimer": null,
+   "cover": "ai-assistant/cover.png",
+   "url": "https://hello-cqq.github.io/design-clone-prototype/ai-assistant/prototype/",
+   "repo_dir": "https://github.com/hello-cqq/design-clone-prototype/tree/main/ai-assistant",
+   "pages": [
+    {
+     "id": "00-launch",
+     "name": "启动页"
+    },
+    {
+     "id": "01-home",
+     "name": "首页·角色选择"
+    },
+    {
+     "id": "02-chat",
+     "name": "文字聊天"
+    },
+    {
+     "id": "03-call",
+     "name": "视频通话"
+    },
+    {
+     "id": "04-settings",
+     "name": "设置·形象音色"
+    }
+   ],
+   "downloads": 4,
+   "creator": "hello-cqq",
+   "icon": "ai-assistant/prototype/appicon/icon-256.png",
+   "contributors": [
+    {
+     "name": "AhahahQ",
+     "login": "AhahahQ",
+     "commits": 9
+    },
+    {
+     "name": "cqq",
+     "login": "hello-cqq",
+     "commits": 1
+    }
+   ],
+   "commits": 10,
+   "updated": "2026-09-15T21:10:39+08:00"
+  },
+  {
+   "app": "aliyun-console",
+   "name": {
+    "en": "Aliyun",
+    "zh": "阿里云"
+   },
+   "description": {
+    "en": "Study replica of Aliyun marketing/console: hub nav, ECS pages, pricing.",
+    "zh": "阿里云官网/控制台学习复刻：枢纽导航、ECS 产品页、价格表。"
+   },
+   "tags": [
+    "cloud",
+    "console",
+    "web",
+    "study"
+   ],
+   "category": "cloud",
+   "shell": "c_browser",
+   "version": "1.6.2",
+   "license": "CC-BY-4.0",
+   "source": {
+    "kind": "original",
+    "ref": "web-aliyun"
+   },
+   "ip_attestation": "public-material",
+   "brand_disclaimer": "Unofficial study replica of Aliyun; trademarks belong to their owners; no affiliation or endorsement implied.",
+   "cover": "aliyun-console/cover.png",
+   "url": "https://hello-cqq.github.io/design-clone-prototype/aliyun-console/prototype/",
+   "repo_dir": "https://github.com/hello-cqq/design-clone-prototype/tree/main/aliyun-console",
+   "pages": [
+    {
+     "id": "01-home",
+     "name": "首页"
+    },
+    {
+     "id": "02-ecs",
+     "name": "ECS"
+    },
+    {
+     "id": "03-price",
+     "name": "定价"
+    },
+    {
+     "id": "04-docs",
+     "name": "文档"
+    },
+    {
+     "id": "05-ecs-features",
+     "name": "ECS 特性"
+    },
+    {
+     "id": "06-ecs-pricing",
+     "name": "ECS 价格"
+    },
+    {
+     "id": "07-price-strategy",
+     "name": "定价详情"
+    }
+   ],
+   "downloads": 4,
+   "creator": "hello-cqq",
+   "icon": "aliyun-console/prototype/appicon/icon-256.png",
+   "contributors": [
+    {
+     "name": "cqq",
+     "login": "hello-cqq",
+     "commits": 7
+    },
+    {
+     "name": "AhahahQ",
+     "login": "AhahahQ",
+     "commits": 7
+    }
+   ],
+   "commits": 15,
+   "updated": "2026-09-15T21:10:39+08:00"
+  },
+  {
+   "app": "lark",
+   "name": {
+    "en": "Lark",
+    "zh": "飞书"
+   },
+   "description": {
+    "en": "Study replica of Lark desktop: messages, calendar, docs, app center — fictional text.",
+    "zh": "飞书桌面端学习复刻：消息、日历、文档、应用中心——文本全虚构。"
+   },
+   "tags": [
+    "office",
+    "collab",
+    "desktop",
+    "messenger",
+    "study"
+   ],
+   "category": "office",
+   "shell": "c_desktop",
+   "version": "1.6.2",
+   "license": "CC-BY-4.0",
+   "source": {
+    "kind": "original",
+    "ref": "mac-lark"
+   },
+   "ip_attestation": "public-material",
+   "brand_disclaimer": "Unofficial study replica of Lark; trademarks belong to their owners; no affiliation or endorsement implied.",
+   "cover": "lark/cover.png",
+   "url": "https://hello-cqq.github.io/design-clone-prototype/lark/prototype/",
+   "repo_dir": "https://github.com/hello-cqq/design-clone-prototype/tree/main/lark",
+   "pages": [
+    {
+     "id": "01-messages",
+     "name": "消息"
+    },
+    {
+     "id": "02-calendar",
+     "name": "日历"
+    },
+    {
+     "id": "03-docs",
+     "name": "云文档"
+    },
+    {
+     "id": "04-meeting",
+     "name": "视频会议"
+    },
+    {
+     "id": "05-workbench",
+     "name": "工作台"
+    },
+    {
+     "id": "06-contacts",
+     "name": "通讯录"
+    },
+    {
+     "id": "07-tasks",
+     "name": "任务"
+    },
+    {
+     "id": "08-kb",
+     "name": "知识库"
+    },
+    {
+     "id": "09-bitable",
+     "name": "多维表格"
+    },
+    {
+     "id": "10-appcenter",
+     "name": "应用中心"
+    },
+    {
+     "id": "11-chat",
+     "name": "聊天窗"
+    },
+    {
+     "id": "14-group-chat",
+     "name": "群聊"
+    },
+    {
+     "id": "15-group-settings",
+     "name": "群设置"
+    },
+    {
+     "id": "16-contact",
+     "name": "联系人卡片"
+    }
+   ],
+   "downloads": 4,
+   "creator": "hello-cqq",
+   "icon": "lark/prototype/appicon/icon-256.png",
+   "contributors": [
+    {
+     "name": "AhahahQ",
+     "login": "AhahahQ",
+     "commits": 8
+    },
+    {
+     "name": "cqq",
+     "login": "hello-cqq",
+     "commits": 7
+    }
+   ],
+   "commits": 16,
+   "updated": "2026-09-15T21:10:39+08:00"
+  },
+  {
+   "app": "petpark",
+   "name": {
+    "en": "PetPark",
+    "zh": "动物乐园"
+   },
+   "description": {
+    "en": "Interactive game prototype (mobile): full UI flows, live controls, design specs and user paths — cloned from a real source by design-clone.",
+    "zh": "游戏类应用原型：动物城全景+群像挥手+开始冒险。由 design-clone 自真实来源克隆，全控件可交互、含设计规格与路径。"
+   },
+   "tags": [
+    "3d",
+    "mobile",
+    "original",
+    "build",
+    "dashboard",
+    "player"
+   ],
+   "category": "game",
+   "shell": "c_mobile",
+   "version": "2.2.2",
+   "license": "CC-BY-4.0",
+   "source": {
+    "kind": "original",
+    "ref": "demo-petpark"
+   },
+   "ip_attestation": "original",
+   "brand_disclaimer": null,
+   "cover": "petpark/cover.png",
+   "url": "https://hello-cqq.github.io/design-clone-prototype/petpark/prototype/",
+   "repo_dir": "https://github.com/hello-cqq/design-clone-prototype/tree/main/petpark",
+   "pages": [
+    {
+     "id": "00-launch",
+     "name": "启动页"
+    },
+    {
+     "id": "01-home",
+     "name": "首页·大世界"
+    },
+    {
+     "id": "02-interact",
+     "name": "单动物互动"
+    },
+    {
+     "id": "03-band",
+     "name": "动物乐队"
+    },
+    {
+     "id": "04-map",
+     "name": "地图导游"
+    },
+    {
+     "id": "05-build",
+     "name": "家园搭建"
+    },
+    {
+     "id": "06-dex",
+     "name": "动物图鉴"
+    },
+    {
+     "id": "07-tasks",
+     "name": "任务与活动"
+    }
+   ],
+   "downloads": 4,
+   "creator": "hello-cqq",
+   "icon": "petpark/prototype/appicon/icon-256.png",
+   "contributors": [
+    {
+     "name": "AhahahQ",
+     "login": "AhahahQ",
+     "commits": 10
+    },
+    {
+     "name": "cqq",
+     "login": "hello-cqq",
+     "commits": 9
+    }
+   ],
+   "commits": 20,
+   "updated": "2026-09-15T21:10:39+08:00"
+  }
+ ]
+}

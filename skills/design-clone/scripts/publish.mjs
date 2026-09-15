@@ -36,11 +36,24 @@ const readJ = (p) => { try { return JSON.parse(fs.readFileSync(p, "utf8")); } ca
 const ia = readJ(path.join(run, "qa/interact.json"));
 const ins = readJ(path.join(run, "qa/inspect.json"));
 const smk = readJ(path.join(run, "qa/ui-smoke.json"));
-if (!ia || (ia.total_dead || 0) !== 0) die("交互门未绿（interact dead≠0 或未跑）");
-if (!ins || (ins.fail || 0) !== 0) die("inspect 门未绿（fail≠0 或未跑）");
-if (!smk || (smk.fail || 0) !== 0) die("ui-smoke 门未绿（fail≠0 或未跑）");
+// M98: interact.json 为 per-view 字典（无顶层 total_dead）；inspect/ui-smoke 读 summary——此前读错字段恒通过
+const iaDead = ia ? Object.values(ia).reduce((a, v) => a + ((v && Array.isArray(v.dead)) ? v.dead.length : 0), 0) : null;
+if (iaDead === null) die("交互门未跑（缺 qa/interact.json）");
+if (iaDead !== 0) die(`交互门未绿（interact dead=${iaDead}）`);
+const insS = ins && ins.summary;
+if (!insS || (insS.fail || 0) !== 0) die("inspect 门未绿（fail≠0 或未跑）");
+const smkS = smk && smk.summary;
+if (!smkS || (smkS.fail || 0) !== 0) die("ui-smoke 门未绿（fail≠0 或未跑）");
 if (!fs.existsSync(path.join(run, "knowledge/privacy.json"))) die("缺 knowledge/privacy.json（隐私账本）");
-gates.push(`interact dead=${ia.total_dead}`, `inspect fail=${ins.fail} pass=${ins.pass}`, `ui-smoke fail=${smk.fail} pass=${smk.pass}`);
+const pv = readJ(path.join(run, "qa/privacy.json"));
+if (pv && pv.ok !== true) die("qa/privacy.json 非绿（隐私门红态不可发布）");
+// M98: 门新鲜度——三门 JSON 必须晚于原型最后改动（防拿旧门发布新原型）
+const protoMtime = fs.statSync(path.join(protoSrc, "index.html")).mtimeMs - 60_000;
+for (const [nm, j] of [["interact", ia], ["inspect", ins], ["ui-smoke", smk]]) {
+  const p = path.join(run, "qa", nm + ".json");
+  if (fs.statSync(p).mtimeMs < protoMtime) die(`${nm} 门已过期（早于 prototype/index.html 最后改动，请重跑）`);
+}
+gates.push(`interact dead=${iaDead}`, `inspect fail=${insS.fail} pass=${insS.pass}`, `ui-smoke fail=${smkS.fail} pass=${smkS.pass}`);
 
 /* ---------- 1.5 M84: 预构建导出包（静态托管"导出全部"离线 zip） ---------- */
 if (!fs.existsSync(path.join(protoSrc, "export", "all.zip"))) {

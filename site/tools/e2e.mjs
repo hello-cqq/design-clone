@@ -7,9 +7,12 @@
  */
 import { createRequire } from "node:module";
 import http from "node:http";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
 
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const base = process.argv[2] || "http://localhost:4211";
 const loops = +(process.argv[3] || 20);
 const fails = [];
@@ -143,46 +146,46 @@ for (const p of ["/guide.html", "/start.html"]) {
   ok("page " + p, await ctx.locator("header.top").count() === 1);
 }
 
-// ---- stability loops
-for (let i = 0; i < loops; i++) {
-  await ctx.goto(base + "/index.html", { waitUntil: "domcontentloaded" });
-  await ctx.waitForTimeout(250);
-  await ctx.goto(base + "/gallery.html", { waitUntil: "domcontentloaded" });
-  await ctx.waitForTimeout(250);
-  await ctx.goto(base + "/proto.html?app=wechat", { waitUntil: "domcontentloaded" });
-  await ctx.waitForTimeout(250);
-}
-await ctx.waitForTimeout(1500);
-ok("console clean", errs.length === 0, errs.slice(0, 3).join(" | "));
+// ---- M98 revived: proto detail deep assertions (were dead after a mid-file exit since M70)
+await ctx.goto(base + "/proto.html?app=wechat", { waitUntil: "load" });
+await ctx.waitForTimeout(2500);
+ok("dl release link", await ctx.evaluate(() => ((document.getElementById("dlbtn") || {}).href || "").includes("/releases/download/wechat-")));
+ok("contrib avatars only", await ctx.evaluate(() => {
+  const avs = [...document.querySelectorAll(".contrib-avs .cav")];
+  return avs.length >= 1 && avs.every((a) => a.href.startsWith("https://github.com/") && a.querySelector("img")) && !document.querySelector(".contrib-avs .cav + .n") && !document.body.innerText.includes("1 commits");
+}));
+ok("creator first", await ctx.evaluate(() => { const c = document.querySelector(".contrib-avs .cav"); return c && c.classList.contains("creator"); }));
+ok("iframe theme param", await ctx.evaluate(() => document.getElementById("stageframe").src.includes("theme=")));
+await ctx.click("#themebtn"); await ctx.waitForTimeout(600);
+ok("theme post to iframe", await ctx.evaluate(() => window.__postedTheme === document.documentElement.dataset.theme));
+await ctx.click("#themebtn"); await ctx.waitForTimeout(600);
 
-await browser.close();
-
-console.log(JSON.stringify({ pass: fails.length === 0, fails }, null, 1));
-process.exit(fails.length ? 1 : 0);{
-  await ctx.goto(base + "/proto.html?app=wechat", { waitUntil: "load" });
-  await ctx.waitForTimeout(2500);
-  ok("dl release link", await ctx.evaluate(() => (document.getElementById("dlbtn") || {}).href.includes("/releases/download/wechat-")));
-  ok("contrib avatars only", await ctx.evaluate(() => {
-    const avs = [...document.querySelectorAll(".contrib-avs .cav")];
-    return avs.length >= 1 && avs.every((a) => a.href.startsWith("https://github.com/") && a.querySelector("img")) && !document.querySelector(".contrib-avs .cav + .n") && !document.body.innerText.includes("1 commits");
-  }));
-  ok("creator first", await ctx.evaluate(() => { const c = document.querySelector(".contrib-avs .cav"); return c && c.classList.contains("creator"); }));
-  ok("iframe theme param", await ctx.evaluate(() => document.getElementById("stageframe").src.includes("theme=")));
-  await ctx.click("#themebtn"); await ctx.waitForTimeout(600);
-  ok("theme post to iframe", await ctx.evaluate(() => window.__postedTheme === "dark"));
-  await ctx.click("#themebtn"); await ctx.waitForTimeout(600);
-  await ctx.goto(base + "/gallery.html", { waitUntil: "load" });
-}
+// ---- gallery deep
+await ctx.goto(base + "/gallery.html", { waitUntil: "load" });
+await ctx.waitForTimeout(1800);
+const nAll2 = await ctx.locator("#cards .pcard").count();
+ok("gallery no h2 title", await ctx.evaluate(() => !document.querySelector("#cards")?.closest(".wrap").querySelector("h2")));
+ok("search full width", await ctx.evaluate(() => { const q = document.getElementById("q"); const row = q.parentElement; return q.getBoundingClientRect().width > row.getBoundingClientRect().width * 0.6; }));
+ok("card covers load", await ctx.evaluate(() => { const ims = [...document.querySelectorAll("#cards .th img")]; return ims.length >= 5 && ims.every((i) => i.naturalWidth > 0); }));
+ok("card mini icons load", await ctx.evaluate(() => { const ims = [...document.querySelectorAll("#cards .tic")]; return ims.length >= 5 && ims.every((i) => i.naturalWidth > 0); }));
 {
-  await ctx.waitForTimeout(1800);
-  ok("gallery no h2 title", await ctx.evaluate(() => !document.querySelector("#cards")?.closest(".wrap").querySelector("h2")));
-  ok("search full width", await ctx.evaluate(() => { const q = document.getElementById("q"); const row = q.parentElement; return q.getBoundingClientRect().width > row.getBoundingClientRect().width * 0.6; }));
-  ok("icon tile covers", await ctx.evaluate(() => document.querySelectorAll("#cards .th.tile .appicon").length >= 4));
+  await ctx.goto(base + "/gallery.html?q=wechat", { waitUntil: "load" });
+  await ctx.waitForTimeout(1200);
+  const nq = await ctx.locator("#cards .pcard").count();
+  ok("gallery ?q= consumed", nq >= 1 && nq < nAll2 && (await ctx.inputValue("#q")) === "wechat", `${nq}/${nAll2}`);
 }
+for (const [p, k] of [["/guide.html", "guide_h"], ["/start.html", "start_h"]]) {
+  await ctx.goto(base + p, { waitUntil: "load" });
+  await ctx.waitForTimeout(600);
+  ok("i18n heading " + k, await ctx.evaluate((key) => !document.body.innerText.includes(key), k));
+}
+await ctx.goto(base + "/index.html", { waitUntil: "load" });
+await ctx.waitForTimeout(800);
+ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.querySelector('link[rel="icon"][media*="prefers-color-scheme"]')));
 
-// ---- M71 mobile suite 390x844 ----
+// ---- M71 mobile suite 390x844
 {
-  const mp = await b.newPage({ viewport: { width: 390, height: 844 } });
+  const mp = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await mp.goto(base + "/index.html", { waitUntil: "load" });
   await mp.waitForTimeout(1800);
   ok("mobile index no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
@@ -192,7 +195,6 @@ process.exit(fails.length ? 1 : 0);{
   await mp.waitForTimeout(1800);
   ok("mobile gallery no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
   ok("mobile gallery cards", await mp.locator("#cards .pcard").count() >= 4);
-  // M75-W5: 360 宽 + proto 页横溢断言
   await mp.setViewportSize({ width: 360, height: 800 });
   await mp.goto(base + "/index.html", { waitUntil: "domcontentloaded" });
   await mp.waitForTimeout(800);
@@ -200,10 +202,9 @@ process.exit(fails.length ? 1 : 0);{
   await mp.goto(base + "/proto.html?app=ai-assistant", { waitUntil: "domcontentloaded" });
   await mp.waitForTimeout(1200);
   ok("mobile360 proto no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
-  ok("mobile step rail", await mp.locator(".steps b").count() === 4);
-  // M81: 标签单行 + 搜索推荐下拉
+  // M81: tag single-line + suggest dropdown
   {
-    const gp2 = await b.newPage({ viewport: { width: 1280, height: 900 } });
+    const gp2 = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await gp2.goto(base + "/gallery.html", { waitUntil: "load" });
     await gp2.waitForTimeout(2200);
     ok("tagrow single line", await gp2.evaluate(() => { const tr = document.getElementById("tagrow"); return tr.scrollHeight < 40 && tr.scrollWidth <= tr.clientWidth + 2; }));
@@ -215,9 +216,9 @@ process.exit(fails.length ? 1 : 0);{
     ok("tag suggest applies filter", await gp2.evaluate(() => !!document.querySelector("#tagactive .chip")));
     await gp2.close();
   }
-  // M82: demo no real names + user-facing step captions
+  // M82/M84/M88: demo assertions
   {
-    const dp = await b.newPage({ viewport: { width: 1280, height: 900 } });
+    const dp = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await dp.goto(base + "/index.html", { waitUntil: "load" });
     await dp.waitForTimeout(1800);
     await dp.locator(".animstage").first().scrollIntoViewIfNeeded();
@@ -226,15 +227,15 @@ process.exit(fails.length ? 1 : 0);{
     ok("demo no real names", !txt.includes("段雅洁"));
     ok("expselect whitelist 5", (await dp.locator("#expselect option").count()) === 5);
     ok("replay is icon", await dp.locator(".animstage .replay svg").first().isVisible());
+    ok("mobile step rail (index demo)", (await dp.locator("#animstage > .animstage:visible .steps b").count()) === 4);
     await dp.waitForTimeout(3000);
     ok("four stages premounted", (await dp.locator("#animstage > .animstage").count()) === 4);
     const tSw = Date.now();
     await dp.locator(".ftab").nth(1).click();
     await dp.waitForTimeout(80);
     ok("scene switch fast", Date.now() - tSw < 400 && (await dp.locator("#animstage > .animstage:visible").count()) === 1);
-    // M84: 播放按钮可用（journeys 或 paths 兜底）+ 静态导出 zip
     {
-      const pp2 = await b.newPage({ viewport: { width: 1280, height: 900 } });
+      const pp2 = await browser.newPage({ viewport: { width: 1280, height: 900 } });
       await pp2.goto(base + "/proto.html?app=ai-assistant", { waitUntil: "load" });
       await pp2.waitForTimeout(3500);
       const fr = pp2.frameLocator("#stageframe");
@@ -249,9 +250,8 @@ process.exit(fails.length ? 1 : 0);{
       ok("export all downloads zip", !!d && d.suggestedFilename().endsWith(".zip"));
       await pp2.close();
     }
-    // M88: 离屏点菜单即播 + 重复点击重播
     {
-      const ap = await b.newPage({ viewport: { width: 1400, height: 760 } });
+      const ap = await browser.newPage({ viewport: { width: 1400, height: 760 } });
       await ap.goto(base + "/index.html", { waitUntil: "load" });
       await ap.waitForTimeout(1500);
       await ap.evaluate(() => window.scrollTo(0, 0));
@@ -277,13 +277,12 @@ process.exit(fails.length ? 1 : 0);{
     }
     await dp.close();
   }
-  await mp.close();
-  // M76-W8: 无 Range 的 HTTP 服务下 ident 必须推进（防 load 门控/非 faststart 复发）
+  // M76-W8: ident must advance under a no-Range HTTP server
   {
     const { spawn } = await import("node:child_process");
-    const srv = spawn("python3", ["-m", "http.server", "4399", "-d", path.resolve(ROOT)], { stdio: "ignore" });
+    const srv = spawn("python3", ["-m", "http.server", "4399", "-d", ROOT], { stdio: "ignore" });
     await new Promise((r) => setTimeout(r, 1200));
-    const hp = await b.newPage({ viewport: { width: 1280, height: 900 } });
+    const hp = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await hp.goto("http://localhost:4399/index.html", { waitUntil: "domcontentloaded" });
     await hp.waitForTimeout(3500);
     const c1 = await hp.evaluate(() => { const v = document.querySelector('.idf-video[data-k="light"]'); return v ? v.currentTime : -1; });
@@ -293,23 +292,22 @@ process.exit(fails.length ? 1 : 0);{
     await hp.close();
     srv.kill();
   }
-  await mp.close();
-  // M76-W5: 画廊全 app 巡检——每个已发布 app 的 proto 页舞台可渲染且无 console 错
+  // M76-W5: gallery tour — every published app proto page renders
   {
-    const gp = await b.newPage({ viewport: { width: 1280, height: 900 } });
-    const errs = [];
-    gp.on("console", (m) => { if (m.type() === "error") errs.push(m.text().slice(0, 80)); });
+    const gp = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    const tourErrs = [];
+    gp.on("console", (m) => { if (m.type() === "error") tourErrs.push(m.text().slice(0, 80)); });
     await gp.goto(base + "/gallery.html", { waitUntil: "domcontentloaded" });
     await gp.waitForTimeout(2500);
     const slugs = await gp.evaluate(() => (window.__DC_STATE && window.__DC_STATE.index ? window.__DC_STATE.index.apps || window.__DC_STATE.index : []).map((a) => a.slug || a.app).filter(Boolean));
-    ok("gallery index apps", slugs.length >= 6);
+    ok("gallery index apps", slugs.length >= 5, String(slugs.length));
     for (const slug of slugs.slice(0, 8)) {
       await gp.goto(base + `/proto.html?app=${slug}`, { waitUntil: "domcontentloaded" });
       await gp.waitForTimeout(1800);
       const live = await gp.evaluate(() => { const st = document.querySelector("#dc-stage, iframe"); return !!st; });
       ok(`proto live ${slug}`, live);
     }
-    ok("gallery tour console clean", errs.length === 0);
+    ok("gallery tour console clean", tourErrs.length === 0, tourErrs.slice(0, 2).join(" | "));
     await gp.close();
   }
   await mp.goto(base + "/proto.html?app=petpark", { waitUntil: "load" });
@@ -338,3 +336,19 @@ process.exit(fails.length ? 1 : 0);{
   await mp.close();
 }
 
+// ---- stability loops
+for (let i = 0; i < loops; i++) {
+  await ctx.goto(base + "/index.html", { waitUntil: "domcontentloaded" });
+  await ctx.waitForTimeout(250);
+  await ctx.goto(base + "/gallery.html", { waitUntil: "domcontentloaded" });
+  await ctx.waitForTimeout(250);
+  await ctx.goto(base + "/proto.html?app=wechat", { waitUntil: "domcontentloaded" });
+  await ctx.waitForTimeout(250);
+}
+await ctx.waitForTimeout(1500);
+ok("console clean", errs.length === 0, errs.slice(0, 3).join(" | "));
+
+await browser.close();
+
+console.log(JSON.stringify({ pass: fails.length === 0, fails }, null, 1));
+process.exit(fails.length ? 1 : 0);

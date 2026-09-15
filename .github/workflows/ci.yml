@@ -37,7 +37,7 @@ jobs:
             const fs=require("fs");
             const sk=fs.readFileSync("skills/design-clone/SKILL.md","utf8").match(/version: "([^"]+)"/)[1];
             const pk=JSON.parse(fs.readFileSync("package.json","utf8")).version;
-            const cl=fs.readFileSync("CHANGELOG.md","utf8").match(/## \[([^\]]+)\]/)[1];
+            const cl=fs.readFileSync("CHANGELOG.md","utf8").match(/## \[(?!Unreleased)([^\]]+)\]/)[1];
             if(!(sk===pk&&pk===cl)){console.error(`version drift: skill=${sk} pkg=${pk} changelog=${cl}`);process.exit(1)}
             console.log("version sync ok:",sk);
           '
@@ -69,7 +69,8 @@ jobs:
           python3 - <<'EOF'
           import zipfile, sys
           names = zipfile.ZipFile("/tmp/design-clone.zip").namelist()
-          bad = [n for n in names if any(k in n for k in ("design-clone-runs/", "node_modules/", ".git/", "inspector.built.js")) or n.lower().endswith((".png", ".jpg", ".jpeg", ".webp", ".gif", ".zip", ".woff", ".woff2", ".ttf", ".mp4"))]
+          ALLOW_BIN = ("skills/design-clone/references/official-icons/",)  # M98: 策展官方图标登记（归属 THIRD-PARTY.md）
+          bad = [n for n in names if any(k in n for k in ("design-clone-runs/", "node_modules/", ".git/", "inspector.built.js")) or (n.lower().endswith((".png", ".jpg", ".jpeg", ".webp", ".gif", ".zip", ".woff", ".woff2", ".ttf", ".mp4")) and not n.startswith(ALLOW_BIN))]
           print("entries:", len(names))
           sys.exit(1 if bad else 0)
           EOF

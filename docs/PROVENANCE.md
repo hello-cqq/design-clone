@@ -5,7 +5,7 @@ This document answers one question with evidence: **what in this repository is o
 ## 1. What is original (written for this repo)
 
 - All scripts under `skills/design-clone/scripts/` (capture orchestration, generators, gates, exporter, server).
-- The inspector shell (`templates/prototype/{index.html,inspector.js,inspector.css,runtime.js}`) and the three component libraries (`templates/components/{mobile-im,desktop-app,web-marketing}.css` + their `.md` contracts).
+- The inspector shell (`templates/prototype/index.html` + `templates/prototype/ins/` 17 segments, built to the gitignored `inspector.built.js`; plus `runtime.js`/`inspector.css`/`zipstore.js`) and the three component libraries (`templates/components/{mobile-im,desktop-app,web-marketing}.css` + their `.md` contracts).
 - The schema (`schema/page.spec.schema.json`), presets (`presets/*`: genimg styles, style-pick index, component pattern index), and all docs.
 - Status-bar/shell SVG glyphs: hand-drawn paths (see `docs/THIRD-PARTY.md`).
 
@@ -26,7 +26,7 @@ Runs (`design-clone-runs/`, gitignored) contain captures of real products: scree
 - `prototype/assets-manifest.json` — per-asset provenance (`source-original` / `crop` / `genimg`), written automatically by `extract-assets.mjs` / `genimg.mjs`.
 - Gates: `qa/privacy.mjs` (PII/real-name/face), `img/asset-qa.mjs` (quality), `qa/critique.mjs` (structure).
 
-Because runs are gitignored, **this repository ships zero third-party screenshots, logos, brand tiles, faces or fonts.** CI never uploads runs; `dist/*.zip` contains skill code only.
+Because runs are gitignored, **this repository ships zero third-party screenshots, faces or fonts**, and zero third-party logos except the four curated official icons registered in `docs/THIRD-PARTY.md` §Curated official icons (M98). CI never uploads runs; `dist/*.zip` contains skill code plus the registered icon directory only.
 
 ## 4. Rules enforced in code (not just in prose)
 
@@ -37,11 +37,17 @@ Because runs are gitignored, **this repository ships zero third-party screenshot
 5. Cloned output is labeled a clone: handoff docs declare coverage/exclusions; showcase entries carry `source` metadata.
 6. Exports never embed the inspector chrome (`?chrome=0`) so downstream consumers get prototype pixels only.
 
-## 5. Planned enforcement (open source hardening)
+## 5. Enforcement (implemented, M45+; CI-wired)
 
-- `qa/ip-scan.mjs` (CI): fails if tracked files ever contain binary brand assets, foreign copyright headers, bundled fonts, or run artifacts.
+- `qa/ip-scan.mjs` (CI, `npm run scan`): fails on any tracked binary outside the REGISTERED list (site brand assets, README figures, curated official icons), on foreign copyright headers, and on tracked run/dist artifacts.
 - `qa/secret-scan.mjs` (CI): fails on key/token/phone/ID patterns in tracked files.
-- README/gallery visuals will come exclusively from the self-authored demo target (`demo/`), never from cloned third-party UI.
+- README/gallery visuals come from self-authored demo scenes (`site/assets/demo-anim.js`) and original-concept runs (`gen-*`), never from cloned third-party UI pixels.
+
+## 5b. Brand assets of this project (self-authored chain)
+
+- `site/assets/ident-{light,dark}.*.mp4`: user-provided AI-generated videos (Doubao) → per-frame corner-watermark inpaint → H.264 + faststart + delogo → dark variant hflip; posters inlined base64 in `ident.*.js`.
+- `site/assets/logo-anim-{light,dark}.webp` + `docs/img/logo-anim-*.gif` + `logo-mark{,-dark}.png`/favicons: M95 green-screen re-key of the user-provided day/night source videos (`archive/logo-source-{day,night}.mp4`, outside this repo) — plane-fit background key + despill; dark variant = three-band ice posterize.
+- All above carry no third-party likeness; character designs originate from the user's own generation tools.
 
 ## 6. If you believe something here infringes your rights
 
