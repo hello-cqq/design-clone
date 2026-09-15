@@ -42,24 +42,24 @@ ok("dual video layers", await ctx.locator(".ident .idf-video").count() === 2 && 
   const st = await ctx.evaluate(() => ({
     lightOn: document.querySelector('.idf-video[data-k="light"]').classList.contains("on"),
     darkOn: document.querySelector('.idf-video[data-k="dark"]').classList.contains("on"),
-    logo: (document.querySelector(".wordmark") || {}).textContent || "",
-    wmGrad: getComputedStyle(document.querySelector(".wm-c")).backgroundImage,
+    logo: (document.querySelector(".logolock") || {}).alt || "",
+    wmGrad: getComputedStyle(document.documentElement).getPropertyValue("--acc"),
   }));
   ok("theme crossfade swap", st.lightOn && !st.darkOn && (st.logo || "").includes("design-clone"));
   await ctx.click("#themebtn"); await ctx.waitForTimeout(1000);
   const st2 = await ctx.evaluate(() => ({
-    wmGrad2: getComputedStyle(document.querySelector(".wm-c")).backgroundImage,
+    wmGrad2: getComputedStyle(document.documentElement).getPropertyValue("--acc"),
     lightOn: document.querySelector('.idf-video[data-k="light"]').classList.contains("on"),
     darkOn: document.querySelector('.idf-video[data-k="dark"]').classList.contains("on"),
   }));
   ok("theme crossfade back", st2.darkOn && !st2.lightOn && st2.wmGrad2 !== st.wmGrad);
 }
-ok("nav logo wordmark (M75-W1)", await ctx.locator(".logo .wordmark").count() === 1);
+ok("nav logo lockup (M91)", await ctx.locator(".logo .logolock").count() === 1 && (await ctx.locator(".logo .logolock").evaluate((n) => n.naturalWidth)) > 0);
 ok("no agent switcher", await ctx.locator(".agentbtn").count() === 0);
 ok("install label", ((await ctx.locator("[data-i18n=install_label]").textContent()) || "").trim().toLowerCase() === "install");
 ok("universal install cmd", ((await ctx.locator("#installcmd").textContent()) || "").includes("install.sh | bash") && !((await ctx.locator("#installcmd").textContent()) || "").includes("--agent"));
 ok("subs removed", await ctx.evaluate(() => !document.body.innerText.includes("按下载量排序") && !document.body.innerText.includes("四种来源") && !document.body.innerText.includes("Ranked by downloads") && !document.body.innerText.includes("Four sources")));
-ok("nav logo art-clip stagger (M76-W1b)", await ctx.evaluate(() => { const cs0 = [...document.querySelectorAll(".logo .wm-c")]; if (cs0.length !== 12) return false; const c = getComputedStyle(cs0[0]); const trs = new Set(cs0.map((x) => getComputedStyle(x).transform)); const fs = parseFloat(getComputedStyle(document.querySelector(".logo .wordmark")).fontSize); return (c.webkitBackgroundClip || c.backgroundClip) === "text" && c.color === "rgba(0, 0, 0, 0)" && (c.backgroundImage || "").includes("gradient") && trs.size >= 8 && fs >= 26; }));
+ok("footer logo lockup (M91)", await ctx.locator(".ftbrand .logolock").count() === 1);
 ok("no static brandmark", await ctx.locator(".brandmark").count() === 0);
 ok("duo layer present", await ctx.locator(".ident .idf-duo").count() === 1);
 try {
@@ -75,10 +75,10 @@ try {
   await ctx.click("#themebtn");
   await ctx.waitForTimeout(1600);
 }
-ok("wordmark span art", await ctx.locator(".logo span.wordmark").count() === 1);
-ok("footer wordmark", await ctx.locator(".ftbrand .wordmark").count() === 1);
+ok("logo lockup theme-stable (M91)", (await ctx.locator(".logo .logolock").getAttribute("src")) === "assets/logo-lockup.png");
+ok("footer lockup (M91)", await ctx.locator(".ftbrand .logolock").count() === 1);
 ok("wordmark no plain text", await ctx.evaluate(() => ![...document.querySelector(".logo").childNodes].some((n) => n.nodeType === 3 && n.textContent.trim() === "design-clone")));
-ok("footer wordmark", await ctx.locator("footer .wordmark--ft").count() === 1);
+ok("footer lockup ft (M91)", await ctx.locator("footer .logolock--ft").count() === 1);
 ok("favicon diptych", await ctx.evaluate(() => (document.querySelector("link[rel=icon]") || {}).href.includes("favicon.png")));
 ok("install cmd", (await ctx.locator("#installcmd").textContent()).includes("install.sh"));
 ok("exp iframe", (await ctx.locator("#expframe").getAttribute("src") || "").includes("/prototype/"));
