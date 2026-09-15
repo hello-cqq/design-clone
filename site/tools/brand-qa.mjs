@@ -116,6 +116,26 @@ function stickHits(data, w, h) {
   }
   return out;
 }
+// M94: logo 透明纯度——半透明 veil 像素(0<a<40)占比 <0.5%
+async function logoVeilCheck() {
+  const A = path.join(ROOT, "assets");
+  let bad = 0;
+  for (const f of ["logo-mark.png", "logo-mark-dark.png"]) { // 小尺寸 AA 主导，仅门 512 静图
+    const { data, info } = await sharp(path.join(A, f)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    // veil = 半透明且不邻接(2px 内)不透明像素 → 背景雾残留；AA 边像素邻接不透明=合法
+    const w = info.width, h = info.height;
+    const solid = (x, y) => { for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= w || yy >= h) continue; if (data[(yy * w + xx) * 4 + 3] > 120) return true; } return false; };
+    let veil = 0, tot = 0;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const a = data[(y * w + x) * 4 + 3];
+      tot++;
+      if (a > 0 && a < 25 && !solid(x, y)) veil++;
+    }
+    const ratio = veil / tot;
+    if (ratio > 0.0075) { bad++; console.log(`FAIL ${f}: veil ${(ratio * 100).toFixed(2)}%`); } else console.log(`ok ${f} veil ${(ratio * 100).toFixed(3)}%`);
+  }
+  return bad;
+}
 function cornerWatermarkHits(data, w, h, masked) {
   // 豆包/pollinations 角标白字：角落矩形内高亮像素计数
   const regs = [[w - Math.min(220, w >> 2), h - Math.min(110, h >> 2), Math.min(220, w >> 2), Math.min(110, h >> 2)], [0, 0, Math.min(220, w >> 2), Math.min(110, h >> 2)]];
@@ -173,6 +193,7 @@ for (const v of fs.readdirSync(A).filter((f) => /^ident-.*\.mp4$/.test(f))) {
   const moov = order.indexOf("moov"), mdat = order.indexOf("mdat");
   if (moov === -1 || mdat === -1 || moov > mdat) { fail = 1; console.log(`FAIL ${v}: 非 faststart（${order.join(",")}）`); } else console.log(`ok ${v} faststart`);
 }
+fail += await logoVeilCheck();
 for (const im of IMGS) {
   const f = path.join(A, im);
   if (!fs.existsSync(f)) { console.log("skip", im); continue; }

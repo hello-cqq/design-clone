@@ -75,11 +75,11 @@ try {
   await ctx.click("#themebtn");
   await ctx.waitForTimeout(1600);
 }
-ok("logo lockup theme-stable (M91)", (await ctx.locator(".logo .logolock").getAttribute("src")) === "assets/logo-anim.webp");
+ok("logo lockup theme-swap (M94)", (await ctx.locator(".logo .logolock").getAttribute("src")) === "assets/logo-anim-dark.webp" && (await ctx.locator('link[rel="icon"]').getAttribute("href")) === "assets/favicon-dark.png");
 ok("footer lockup (M91)", await ctx.locator(".ftbrand .logolock").count() === 1);
 ok("wordmark no plain text", await ctx.evaluate(() => ![...document.querySelector(".logo").childNodes].some((n) => n.nodeType === 3 && n.textContent.trim() === "design-clone")));
 ok("footer lockup ft (M91)", await ctx.locator("footer .logolock--ft").count() === 1);
-ok("favicon diptych", await ctx.evaluate(() => (document.querySelector("link[rel=icon]") || {}).href.includes("favicon.png")));
+ok("favicon themed (M94)", await ctx.evaluate(() => /favicon(-dark)?\.png$/.test((document.querySelector("link[rel=icon]") || {}).href || "")));
 ok("install cmd", (await ctx.locator("#installcmd").textContent()).includes("install.sh"));
 ok("exp iframe", (await ctx.locator("#expframe").getAttribute("src") || "").includes("/prototype/"));
 ok("featured cards", await ctx.locator("#featured .pcard").count() >= 4);
