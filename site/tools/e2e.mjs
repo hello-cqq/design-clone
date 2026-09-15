@@ -249,6 +249,25 @@ process.exit(fails.length ? 1 : 0);{
       ok("export all downloads zip", !!d && d.suggestedFilename().endsWith(".zip"));
       await pp2.close();
     }
+    // M88: 离屏点菜单即播 + 重复点击重播
+    {
+      const ap = await b.newPage({ viewport: { width: 1400, height: 760 } });
+      await ap.goto(base + "/index.html", { waitUntil: "load" });
+      await ap.waitForTimeout(1500);
+      await ap.evaluate(() => window.scrollTo(0, 0));
+      await ap.waitForTimeout(600);
+      const off = await ap.evaluate(() => { const r = document.getElementById("animstage").getBoundingClientRect(); return r.top > innerHeight || r.bottom < 0; });
+      await ap.locator(".ftab").nth(1).click();
+      await ap.waitForTimeout(3400);
+      const cap1 = await ap.locator("#animstage > .animstage:visible .captxt").textContent();
+      ok("offscreen click autoplays", !off || /^[2-4]\//.test(cap1 || ""), cap1 || "");
+      await ap.locator("#animstage > .animstage:visible .steps b").nth(0).click().catch(() => {});
+      await ap.locator(".ftab").nth(1).click();
+      await ap.waitForTimeout(700);
+      const cap2 = await ap.locator("#animstage > .animstage:visible .captxt").textContent();
+      ok("re-click replays from 1", /^1\//.test(cap2 || ""), cap2 || "");
+      await ap.close();
+    }
     ok("step4 interactive fx", (await dp.locator("#animstage > .animstage:visible").first().locator(".steps b").nth(3).click().then(() => dp.waitForTimeout(600)).then(() => dp.locator("#animstage > .animstage:visible [class*=px-]").count())) >= 3);
     for (const n of [0, 1, 2, 3]) {
       await dp.locator("#animstage > .animstage:visible").first().locator(".steps b").nth(n).click();
