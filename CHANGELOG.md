@@ -408,3 +408,7 @@ Initial public shape: capture (web/android/desktop/link), spec-driven generation
 ## M89 目录修正（撤销 M87 父级搬迁）
 - 工作区根恢复为 `design-clone/`（所有代码/资源/项目文件仍在当前目录）；`repo/` 改建于当前目录内收纳 proto 仓（`repo/design-clone-prototype/`）；`archive/` 收进当前目录；父级空间仅留本仓与个人项目；
 - publish.mjs 管理路径=`<root>/repo/design-clone-prototype`；.gitignore 增 /repo/ /archive/。
+
+## M90 空间布局定稿
+- 空间根 `design-clone/` 为项目目录（非 git 仓）；GitHub 代码迁入 `repo/design-clone/`；proto 仓 `repo/design-clone-prototype/`；开发过期资源归档于空间根 `archive/`；
+- publish.mjs 管理副本=`<space>/repo/design-clone-prototype`；.gitignore 移除已不适用的 /repo/ /archive/ 条目。
