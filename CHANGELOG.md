@@ -404,3 +404,7 @@ Initial public shape: capture (web/android/desktop/link), spec-driven generation
 ## M87 项目空间重组
 - 新建 `<space>/repo/`：design-clone 与 design-clone-prototype 两仓迁入其下统一管理；过期同级 design-clone-runs（12K 空壳）归档至 `<space>/archive/design-clone-runs-stale-20260915`；清理 .DS_Store；
 - publish.mjs 管理副本切换为同级 proto 仓（仓内 prototype-repo/ 重复克隆删除）；AGENTS 布局记账。
+
+## M89 目录修正（撤销 M87 父级搬迁）
+- 工作区根恢复为 `design-clone/`（所有代码/资源/项目文件仍在当前目录）；`repo/` 改建于当前目录内收纳 proto 仓（`repo/design-clone-prototype/`）；`archive/` 收进当前目录；父级空间仅留本仓与个人项目；
+- publish.mjs 管理路径=`<root>/repo/design-clone-prototype`；.gitignore 增 /repo/ /archive/。
