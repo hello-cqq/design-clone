@@ -414,6 +414,13 @@
       for (const k of Object.keys(kids)) kids[k].style.display = k === key ? "" : "none";
       const h = handles[key];
       if (h && h._play) h._play();
+      // M88: 点击即播——强制活层 + 舞台不可见时最小滚入
+      if (h && h._forceLive) h._forceLive();
+      const kid = kids[key];
+      if (kid) {
+        const r = kid.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > innerHeight) kid.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
     };
     let mounted = false;
     const doMount = () => {

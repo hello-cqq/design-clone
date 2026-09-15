@@ -311,11 +311,14 @@
           if (e.isIntersecting && !live) {
             live = true; fit(); if (!ps.length) ps = Array.from({ length: 14 }, mk);
             if (!raf) tick();
-            if (!el._started) { el._started = true; play(); } else cycle();
+            // M88: 未开始或已跑完 → 重播；其余续播
+            if (!el._started || (step >= 4 && !timer)) { el._started = true; play(); } else cycle();
           } else if (!e.isIntersecting && live) { live = false; clearInterval(timer); if (raf) cancelAnimationFrame(raf); raf = null; }
         }
       }, { threshold: 0.25 });
       io.observe(el);
+      // M88: 点击菜单即播——绕过 IO 等待强制开启粒子/画布活层
+      el._forceLive = () => { live = true; fit(); if (!ps.length) ps = Array.from({ length: 14 }, mk); if (!raf) tick(); };
       window.addEventListener("resize", () => { if (live) fit(); }, { passive: true });
     } else {
       play();
