@@ -132,7 +132,7 @@ async function logoVeilCheck() {
       if (a > 0 && a < 25 && !solid(x, y)) veil++;
     }
     const ratio = veil / tot;
-    if (ratio > 0.0075) { bad++; console.log(`FAIL ${f}: veil ${(ratio * 100).toFixed(2)}%`); } else console.log(`ok ${f} veil ${(ratio * 100).toFixed(3)}%`);
+    if (ratio > 0.005) { bad++; console.log(`FAIL ${f}: veil ${(ratio * 100).toFixed(2)}%`); } else console.log(`ok ${f} veil ${(ratio * 100).toFixed(3)}%`);
   }
   return bad;
 }
