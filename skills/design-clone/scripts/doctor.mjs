@@ -136,10 +136,10 @@ const s2cKey = process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY || pr
 let _ps = { image: [], video: [] };
 add(s2cKey ? "opt" : "skip", "s2c 加速", s2cKey ? "检测到 provider key→可用 gen/s2c-adapter 加速（可选）" : "无 key→用内置宿主-agent 免费管线（默认）；如需完美复刻自备 key 或起本地 backend:7001");
 {
-  const { providerSummary } = await import("./gen/providers.mjs");
-  const ps = providerSummary(); _ps = ps;
-  add(ps.image.length ? "opt" : "skip", "生图 provider", ps.image.length ? ps.image.join("/") + "（key 已配；端点未授权时 genimg 自动回落 pollinations，见 probe-providers 报告）" : "无 key→genimg 回落 pollinations 匿名档");
-  add(ps.video.length ? "opt" : "skip", "生视频 provider", ps.video.length ? ps.video.join("/") + "（key 已配；端点未授权时 genvideo exit 3 走 agent-native 履约协议）" : "无 key→genvideo exit 3 写 media-request.json（agent-native 协议）");
+  const { providerSummary, officialSkillPath } = await import("./gen/providers.mjs");
+  const ps = providerSummary(); void ps; _ps = ps;
+  add(officialSkillPath("image") ? "opt" : "skip", "生图 means", officialSkillPath("image") ? "官方 byted-ark-seedream-skill 在位（agent 履约通道）" : "官方 seedream skill 未装→agent-native/匿名档");
+  add(officialSkillPath("video") ? "opt" : "skip", "生视频 means", officialSkillPath("video") ? "官方 byted-ark-seedance-skill 在位（agent 履约通道）" : "官方 seedance skill 未装→agent-native 待办");
   {
     const { discoverAgentPlan } = await import("./gen/providers.mjs");
     const srcs = discoverAgentPlan();
