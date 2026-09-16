@@ -6,6 +6,9 @@
  * 纪律：不假设 key 存在；无 key 静默返回 null；所有调用带超时与轮询上限；不打印 key/响应体全文。
  */
 import { createHmac } from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import os from "node:os";
 
 const ENV = process.env;
 const j = (r) => r.json();
@@ -168,10 +171,149 @@ const kling = {
   },
 };
 
+/* ---------- Agent 配置发现（M100：火山 AgentPlan 等不假设 env，读三端配置） ---------- */
+const stripJsonc = (t) => t
+  .replace(/\/\*[\s\S]*?\*\//g, "")
+  .replace(/(^|[^:"'\\])\/\/[^\n]*/g, "$1") // 行注释剥离但保护 URL 的 ://
+  .replace(/,\s*([}\]])/g, "$1");
+export function discoverAgentPlan() {
+  const sources = [];
+  for (const f of ["opencode.json", "opencode.jsonc"]) {
+    const fp = path.join(os.homedir(), ".config", "opencode", f);
+    if (!fs.existsSync(fp)) continue;
+    try {
+      const d = JSON.parse(stripJsonc(fs.readFileSync(fp, "utf8")));
+      for (const [name, prov] of Object.entries(d.provider || {})) {
+        const o = (prov && prov.options) || {};
+        if (!o.baseURL || !o.apiKey) continue;
+        sources.push({ agent: "opencode", provider: name, baseURL: o.baseURL, apiKey: o.apiKey, volc: /volces\.com/.test(o.baseURL), models: Object.keys(prov.models || {}) });
+      }
+    } catch {}
+  }
+  const cs = path.join(os.homedir(), ".claude", "settings.json");
+  if (fs.existsSync(cs)) {
+    try {
+      const e = JSON.parse(fs.readFileSync(cs, "utf8")).env || {};
+      const k = e.ANTHROPIC_AUTH_TOKEN || e.ANTHROPIC_API_KEY;
+      if (e.ANTHROPIC_BASE_URL && k) sources.push({ agent: "claude", provider: "anthropic-env", baseURL: e.ANTHROPIC_BASE_URL, apiKey: k, volc: /volces\.com/.test(e.ANTHROPIC_BASE_URL), models: [e.ANTHROPIC_MODEL].filter(Boolean), anthropic: true });
+    } catch {}
+  }
+  const ct = path.join(os.homedir(), ".codex", "config.toml");
+  if (fs.existsSync(ct)) {
+    try {
+      const t = fs.readFileSync(ct, "utf8");
+      for (const m of t.matchAll(/\[model_providers\.([^\]]+)\]([\s\S]*?)(?=\n\[|$)/g)) {
+        const block = m[2];
+        const bu = (block.match(/base_url\s*=\s*"([^"]+)"/) || [])[1];
+        const ek = (block.match(/env_key\s*=\s*"([^"]+)"/) || [])[1];
+        const kv = ek ? process.env[ek] || "" : "";
+        const inline = (block.match(/api_key\s*=\s*"([^"]+)"/) || [])[1];
+        const key = kv || inline;
+        if (bu && key) sources.push({ agent: "codex", provider: m[1], baseURL: bu, apiKey: key, volc: /volces\.com/.test(bu), models: [] });
+      }
+    } catch {}
+  }
+  return sources;
+}
+const volcSources = () => discoverAgentPlan().filter((x) => x.volc);
+const arkBases = (src) => {
+  const u = new URL(src.baseURL);
+  const cand = [ENV.ARK_BASE_URL, `${u.origin}/api/v3`, `${u.origin}/api/plan/v3`, src.baseURL].filter(Boolean);
+  return [...new Set(cand)];
+};
+const makeArk = (src, tag) => ({
+  name: `ark-${tag}`,
+  _bases: arkBases(src),
+  _key: src.apiKey,
+  async image(args) {
+    for (const base of this._bases) {
+      try {
+        const r = await fetch(`${base.replace(/\/$/, "")}/images/generations`, {
+          method: "POST", headers: auth(this._key),
+          body: JSON.stringify({ model: ENV.ARK_IMAGE_MODEL || "doubao-seedream-4-5-251128", prompt: args.prompt, size: `${args.w}x${args.h}`, response_format: "b64_json", ...(args.seed != null ? { seed: args.seed } : {}) }),
+          signal: AbortSignal.timeout(180000),
+        });
+        if (!r.ok) { if (r.status === 404 || r.status === 401 || r.status === 403) continue; throw new Error(`ark ${r.status}`); }
+        const d = await j(r);
+        const it = (d.data || [])[0];
+        if (!it) throw new Error("ark 空响应");
+        this._imgBase = base;
+        return it.b64_json ? b64buf(it.b64_json) : urlbuf(it.url);
+      } catch (e) { if (/ark \d|空响应/.test(String(e.message))) continue; }
+    }
+    throw new Error("ark bases 全败");
+  },
+  vname: `ark-${tag}-seedance`,
+  async video(args) {
+    for (const base of this._bases) {
+      try {
+        const r = await fetch(`${base.replace(/\/$/, "")}/contents/generations/tasks`, {
+          method: "POST", headers: auth(this._key),
+          body: JSON.stringify({ model: ENV.ARK_VIDEO_MODEL || "doubao-seedance-1-5-pro-251215", content: [{ type: "text", text: args.prompt }] }),
+          signal: AbortSignal.timeout(60000),
+        });
+        if (!r.ok) { if ([401, 403, 404].includes(r.status)) continue; throw new Error(`ark video ${r.status}`); }
+        const id = (await j(r)).id;
+        this._vidBase = base;
+        return poll(async () => {
+          const q = await fetch(`${base.replace(/\/$/, "")}/contents/generations/tasks/${id}`, { headers: auth(this._key), signal: AbortSignal.timeout(30000) });
+          const d = await j(q);
+          if (d.status === "failed") throw new Error("ark video failed");
+          if (d.status === "succeeded") return urlbuf(d.content.video_url);
+          return null;
+        });
+      } catch (e) { if (/ark video \d/.test(String(e.message))) continue; throw e; }
+    }
+    throw new Error("ark video bases 全败");
+  },
+});
+
+/* ---------- VLM 语义通道（M100：AgentPlan doubao-seed / claude-env anthropic） ---------- */
+export async function vlmChat(text, imageB64, opts = {}) {
+  const srcs = discoverAgentPlan();
+  const volc = srcs.find((x) => x.volc && !x.anthropic);
+  if (volc && !opts.force) {
+    const model = opts.model || (volc.models || []).find((m) => /seed-2\.1|seed-evolving/.test(m)) || "doubao-seed-2.1-turbo";
+    const content = imageB64 ? [{ type: "text", text }, { type: "image_url", image_url: { url: `data:image/png;base64,${imageB64}` } }] : text;
+    for (const base of [volc.baseURL, new URL(volc.baseURL).origin + "/api/plan/v3"]) {
+      try {
+        const r = await fetch(`${base.replace(/\/$/, "")}/chat/completions`, {
+          method: "POST", headers: auth(volc.apiKey),
+          body: JSON.stringify({ model, messages: [{ role: "user", content }], max_tokens: opts.maxTokens || 600 }),
+          signal: AbortSignal.timeout(90000),
+        });
+        if (!r.ok) continue;
+        const d = await j(r);
+        const t = (d.choices || [])[0]?.message?.content;
+        if (t) return { engine: `agent-plan:${volc.provider}/${model}`, text: t };
+      } catch {}
+    }
+  }
+  const anth = srcs.find((x) => x.anthropic);
+  if (anth) {
+    try {
+      const content = imageB64 ? [{ type: "text", text }, { type: "image", source: { type: "base64", media_type: "image/png", data: imageB64 } }] : [{ type: "text", text }];
+      const r = await fetch(`${anth.baseURL.replace(/\/$/, "")}/messages`, {
+        method: "POST",
+        headers: { "x-api-key": anth.apiKey, "anthropic-version": "2023-06-01", "Content-Type": "application/json" },
+        body: JSON.stringify({ model: opts.model || (anth.models || [])[0] || "claude-sonnet-4-5", max_tokens: opts.maxTokens || 600, messages: [{ role: "user", content }] }),
+        signal: AbortSignal.timeout(90000),
+      });
+      if (r.ok) {
+        const d = await j(r);
+        const t = (d.content || []).map((c) => c.text || "").join("");
+        if (t) return { engine: `claude-env:${anth.models?.[0] || "sonnet"}`, text: t };
+      }
+    } catch {}
+  }
+  return null;
+}
+
 /* ---------- 探测与路由 ---------- */
 export function imageProviders() {
   const list = [];
   if (ENV.ARK_API_KEY) list.push(ark);
+  for (const src of volcSources()) list.push(makeArk(src, "agentplan"));
   if (ENV.DASHSCOPE_API_KEY) list.push(dash);
   if (ENV.MINIMAX_API_KEY) list.push(minimax);
   const want = ENV.DC_IMAGE_PROVIDER;
@@ -181,6 +323,7 @@ export function imageProviders() {
 export function videoProviders() {
   const list = [];
   if (ENV.ARK_API_KEY) list.push(ark);
+  for (const src of volcSources()) list.push(makeArk(src, "agentplan"));
   if (ENV.KLING_ACCESS_KEY && ENV.KLING_SECRET_KEY) list.push(kling);
   if (ENV.DASHSCOPE_API_KEY) list.push(dash);
   if (ENV.MINIMAX_API_KEY) list.push(minimax);

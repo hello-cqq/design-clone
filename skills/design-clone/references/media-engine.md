@@ -18,6 +18,16 @@
 - 缓存纪律：genimg 缓存键不变，另写 `<cache>.eng` 记录引擎；**仅 pollinations 档擦水印**，provider 档不擦。
 - manifest 登记：`images.json` 的 `engine` 字段写真引擎名（溯源/门禁可核）。
 
+## 1b. AgentPlan 适配（M100 实测）
+
+三端配置形态（`discoverAgentPlan()` 自动解析，不假设 env）：
+- **opencode** `~/.config/opencode/opencode.json(c)` → `provider.volcengine-agent-plan`（baseURL `https://ark.cn-beijing.volces.com/api/plan/v3` + `ark-…` key，OpenAI/Responses 兼容）
+- **claude code** `~/.claude/settings.json` env（ANTHROPIC_BASE_URL/AUTH_TOKEN）
+- **codex** `~/.codex/config.toml` `[model_providers.*]`（base_url + env_key/api_key）
+
+**实测结论（report/provider-probe-*.json 留档）**：AgentPlan key 仅授权 `/api/plan/v3` 的 LLM/VLM（chat/completions 含 vision）；标准 `/api/v3` 返回 401、生图/生视频端点全 base 败 → **生图/生视频仍走 pollinations 回落 + agent-native 履约协议**；**VLM 语义面已接入**：gen-loop 四维 rubric（切题/质感/美感/可用性）由 doubao-seed-2.1-turbo 打分（无配置静默回落启发式），`vlmChat()` 亦可供 critique/语义自检复用。
+配额纪律：probe-providers.mjs 单次仅 1 张 512 图+1 条 3s 视频任务+1 次 chat；结果掩码留档。
+
 ## 2. agent-native 回落协议（无 key 时的主路径）
 
 宿主 agent（opencode/Claude Code/Codex/Qoder…）通常自配了图像/视频模型（豆包、可灵、MiniMax、千问、imagegen 工具等）。skill 不假设 key，改走**履约请求**：
