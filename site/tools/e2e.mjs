@@ -154,7 +154,7 @@ ok("contrib avatars only", await ctx.evaluate(() => {
   const avs = [...document.querySelectorAll(".contrib-avs .cav")];
   return avs.length >= 1 && avs.every((a) => a.href.startsWith("https://github.com/") && a.querySelector("img")) && !document.querySelector(".contrib-avs .cav + .n") && !document.body.innerText.includes("1 commits");
 }));
-ok("creator first", await ctx.evaluate(() => { const c = document.querySelector(".contrib-avs .cav"); const idx = window.__DC_STATE && window.__DC_STATE.index; const app = (idx && idx.apps || []).find((x) => x.app === "wechat"); if (!app || !app.creator) return true; return c && c.classList.contains("creator"); }));
+ok("creator marked (M76-W2c: 纯 commits 序，金环不强制首位)", await ctx.evaluate(() => { const idx = window.__DC_STATE && window.__DC_STATE.index; const app = (idx && idx.apps || []).find((x) => x.app === "wechat"); if (!app || !app.creator) return true; return !!document.querySelector(".contrib-avs .cav.creator"); }));
 ok("iframe theme param", await ctx.evaluate(() => document.getElementById("stageframe").src.includes("theme=")));
 await ctx.click("#themebtn"); await ctx.waitForTimeout(600);
 ok("theme post to iframe", await ctx.evaluate(() => window.__postedTheme === document.documentElement.dataset.theme));
@@ -239,19 +239,24 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
       await pp2.goto(base + "/proto.html?app=ai-assistant", { waitUntil: "load" });
       await pp2.waitForTimeout(3500);
       const fr = pp2.frameLocator("#stageframe");
+      const dl = pp2.waitForEvent("download", { timeout: 60000 }).catch(() => null);
+      await fr.locator("#dc-export-btn").click();
+      await pp2.waitForTimeout(400);
+      await fr.locator("#dc-export-dd button", { hasText: "导出全部" }).first().click().catch(async () => { await fr.locator("#dc-export-dd button").first().click(); });
+      let d = null;
+      let tk = "";
+      for (let i = 0; i < 60; i++) {
+        if (!d) d = await Promise.race([dl.catch(() => null), new Promise((r) => setTimeout(() => r(null), 1000))]);
+        tk = (await fr.locator("#dc-toast").textContent().catch(() => "")) || "";
+        if ((d && d.suggestedFilename().endsWith(".zip")) || /导出包/.test(tk)) break;
+      }
+      ok("export all downloads zip", (!!d && d.suggestedFilename().endsWith(".zip")) || /导出包/.test(tk), d ? "download" : tk);
       await fr.locator("#dc-demo").click();
       await pp2.waitForTimeout(1500);
       ok("play button works", await fr.locator("body.dc-demo, #dc-caption").count() >= 1 && (await fr.locator("#dc-modal-root").count()) === 0 || !(await fr.locator("#dc-modal-root").textContent().catch(() => "")).includes("无演示旅程"));
       await fr.locator("body").press("Escape");
       await pp2.waitForTimeout(600);
       ok("demo modal closes on Esc", (await fr.locator("#dc-modal-root .dc-modal-mask").count()) === 0);
-      const dl = pp2.waitForEvent("download", { timeout: 30000 }).catch(() => null);
-      await fr.locator("#dc-export-btn").click();
-      await pp2.waitForTimeout(400);
-      await fr.locator("#dc-export-dd button", { hasText: "导出全部" }).first().click().catch(async () => { await fr.locator("#dc-export-dd button").first().click(); });
-      const d = await dl;
-      const tk = await fr.locator("#dc-toast").textContent().catch(() => "");
-      ok("export all downloads zip", (!!d && d.suggestedFilename().endsWith(".zip")) || /导出包/.test(tk || ""), d ? d.suggestedFilename() : tk);
       await pp2.close();
     }
     {
@@ -302,7 +307,7 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
     const tourErrs = [];
     gp.on("console", (m) => { const u = (m.location() && m.location().url) || ""; if (m.type() === "error" && !BENIGN.test(u) && !BENIGN.test(m.text())) tourErrs.push((u || m.text()).slice(0, 80)); });
     await gp.goto(base + "/gallery.html", { waitUntil: "domcontentloaded" });
-    await gp.waitForTimeout(2500);
+    await gp.waitForFunction(() => window.__DC_STATE && window.__DC_STATE.index && (window.__DC_STATE.index.apps || []).length, null, { timeout: 15000 }).catch(() => {});
     const slugs = await gp.evaluate(() => (window.__DC_STATE && window.__DC_STATE.index ? window.__DC_STATE.index.apps || window.__DC_STATE.index : []).map((a) => a.slug || a.app).filter(Boolean));
     ok("gallery index apps", slugs.length >= 5, String(slugs.length));
     for (const slug of slugs.slice(0, 8)) {
