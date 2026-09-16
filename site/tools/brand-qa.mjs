@@ -171,7 +171,12 @@ if (!framesDir) {
     const v = fs.readdirSync(A).find((f) => pat.test(f));
     if (!v) continue;
     const src = path.join(A, v);
-    execFileSync("ffmpeg", ["-v", "error", "-i", src, "-vf", "select=not(mod(n\\,9))", "-fps_mode", "vfr", path.join(framesDir, v.split(".")[0] + "-%03d.png")]);
+    try {
+      execFileSync("ffmpeg", ["-v", "error", "-i", src, "-vf", "select=not(mod(n\\,9))", "-fps_mode", "vfr", path.join(framesDir, v.split(".")[0] + "-%03d.png")]);
+    } catch (e) {
+      if (e && e.code === "ENOENT") { console.log("skip ident 抽帧（环境无 ffmpeg；faststart/veil 门不受影响）"); framesDir = argFrames || tmpDir; break; }
+      throw e;
+    }
   }
 }
 let fail = 0;
