@@ -51,8 +51,8 @@ if (values.kind === "image") {
   if (!vs) fail("无视频流");
   rep.checks.codec = vs.codec_name;
   const fmt = probe.format || {};
-  rep.checks.duration = +(fmt.duration || 0).toFixed(1);
-  rep.checks.bytes = +(fmt.size || 0);
+  rep.checks.duration = +Number(fmt.duration || 0).toFixed(1);
+  rep.checks.bytes = +Number(fmt.size || 0);
   if (!/mp4|mov/.test(fmt.format_name || "")) fail("容器非 mp4/mov");
   // faststart 检查+必要时转码
   const moov = execSync(`ffprobe -v trace -i "${IN}" 2>&1 | grep -m1 -o "type:'moov'" || true`, { encoding: "utf8", shell: "/bin/bash" });
@@ -77,8 +77,8 @@ if (values.kind === "image") {
   rep.checks.also = also;
   // M102 可循环性：首尾帧平均绝对差 ≤12 判 loop-ok（idle 循环接入参考）
   try {
-    const frames = execSync(`ffmpeg -v error -i "${cur}" -vf "select='eq(n\\,0)+eq(n\\,999999)'" -vsync vfr -frames:v 2 "${cur}.ff-%d.png" -y`, { encoding: "utf8", shell: "/bin/bash" });
-    void frames;
+    execSync(`ffmpeg -y -v error -i "${cur}" -vf "select='eq(n\\,0)'" -fps_mode vfr -frames:v 1 "${cur}.ff-1.png"`, { encoding: "utf8", shell: "/bin/bash" });
+    execSync(`ffmpeg -y -v error -sseof -0.15 -i "${cur}" -frames:v 1 "${cur}.ff-2.png"`, { encoding: "utf8", shell: "/bin/bash" });
     const f1 = `${cur}.ff-1.png`, f2 = `${cur}.ff-2.png`;
     if (fs.existsSync(f1) && fs.existsSync(f2)) {
       const a1 = await sharp(f1).grayscale().raw().toBuffer();
