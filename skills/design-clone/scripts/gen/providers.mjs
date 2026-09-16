@@ -312,6 +312,53 @@ export function officialSkillPath(kind) {
 }
 export const arkKeyForOfficial = () => { const v = volcSources()[0]; return v ? v.apiKey : (ENV.ARK_API_KEY || null); };
 
+/* ---------- 标准 Ark key 直连档（M102：后付费 /api/v3，仅视频；consent 门控） ---------- */
+export function arkStandardKey() {
+  if (ENV.ARK_API_KEY && /^ark-/.test(ENV.ARK_API_KEY)) return ENV.ARK_API_KEY;
+  try {
+    const f = path.join(os.homedir(), ".config", "design-clone", "ark.key");
+    if (fs.existsSync(f)) { const k = fs.readFileSync(f, "utf8").trim(); if (/^ark-/.test(k)) return k; }
+  } catch {}
+  return null;
+}
+const STD_BASE = "https://ark.cn-beijing.volces.com/api/v3";
+const VIDEO_MODEL_SEQ = () => (ENV.ARK_VIDEO_MODEL ? [ENV.ARK_VIDEO_MODEL] : ["doubao-seedance-2-0-mini-260615", "doubao-seedance-2-0-260128", "doubao-seedance-2-5-260628"]);
+export async function arkStandardVideo(args = {}) {
+  const key = arkStandardKey();
+  if (!key) throw new Error("无标准 Ark key（ARK_API_KEY 或 ~/.config/design-clone/ark.key）");
+  const content = [{ type: "text", text: args.prompt }];
+  if (args.firstFrame) {
+    const buf = fs.existsSync(args.firstFrame) ? fs.readFileSync(args.firstFrame) : null;
+    if (!buf) throw new Error("首帧文件不存在: " + args.firstFrame);
+    const mime = args.firstFrame.endsWith(".png") ? "image/png" : "image/jpeg";
+    content.push({ type: "image_url", image_url: { url: `data:${mime};base64,${buf.toString("base64")}` }, role: "first_frame" });
+  }
+  let lastErr = null;
+  for (const model of VIDEO_MODEL_SEQ()) {
+    try {
+      const r = await fetch(`${STD_BASE}/contents/generations/tasks`, {
+        method: "POST", headers: auth(key),
+        body: JSON.stringify({ model, content, ratio: args.firstFrame ? "adaptive" : (args.ratio || "adaptive"), duration: args.duration || 4, resolution: args.resolution || "480p", generate_audio: false, watermark: false }),
+        signal: AbortSignal.timeout(60000),
+      });
+      if (!r.ok) { const t = await r.text(); lastErr = new Error(`${model}: ${r.status} ${t.slice(0, 120)}`); continue; }
+      const id = (await j(r)).id;
+      const task = await poll(async () => {
+        const q = await fetch(`${STD_BASE}/contents/generations/tasks/${id}`, { headers: auth(key), signal: AbortSignal.timeout(30000) });
+        const d = await j(q);
+        if (d.status === "failed") throw new Error(`${model} failed: ${(d.error || {}).code || ""}`);
+        if (d.status === "succeeded") return d;
+        return null;
+      }, { interval: 10000, timeout: 1800000 });
+      const url = task.content && task.content.video_url;
+      if (!url) throw new Error("无 video_url");
+      const buf = await urlbuf(url); // 24h/100 次→即下载
+      return { engine: `ark-standard:${model}`, buf, meta: { duration: task.duration, ratio: task.ratio, resolution: task.resolution, tokens: (task.usage || {}).completion_tokens } };
+    } catch (e) { lastErr = e; if (/UnsupportedModel/.test(String(e.message))) continue; throw e; }
+  }
+  throw lastErr || new Error("标准档视频全模型败");
+}
+
 /* ---------- 探测与路由 ---------- */
 export function imageProviders() { return []; } // M101: 生图一律 agent 履约；此处仅保留接口兼容
 export function videoProviders() { return []; }

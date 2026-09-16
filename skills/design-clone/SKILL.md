@@ -345,12 +345,14 @@ node {SKILL_DIR}/scripts/eval/eval.mjs --run <run目录> --base <base-url>   # M
 
 **教义**：skill 是指挥者，不是生成器。生图/生视频由**宿主 agent 用其已配置 means**（官方 byted-ark-seedream/seedance skill、自配图像/视频工具）履约；skill 负责机会识别、授权申请、出规格、验收登记。**VLM 语义策略由 skill 自控**（vlmChat：rubric 打分/选层/机会判断），免单独申请。
 
+0. **媒体规划**（知识提炼后必跑）：`node scripts/gen/media-plan.mjs --run <run>` → `knowledge/media-plan.json`（槽位×means 序×成本预估×回落；策略总纲 `references/media-strategy.md`：生图按槽位结构化模板+pro/lite 路由+变异重试≤2+角色一致性锁 seed；生图默认 0 成本档优先；生视频默认 CSS/精灵假动效，直连档仅 idle/hero 且 consent+估价，长视频先 draft 样片，禁用于 UI 反馈/文字精度场景）。
 1. **机会识别**（构建/Remix 原型时）：缺艺术资产、虚拟人/角色立绘、hero 动效、风格转换、图层拆分需求 → 判定「生成能提升对用户诉求的符合度」。
 2. **授权申请**（按需、每 session 至多一次）：`node scripts/media-consent.mjs --ask-text --kind <image|video|layers> --what "<内容>"` 打印标准话术 → 向用户展示（拟生成内容/means/配额形态/不批准的回落）→ 用户批准后宿主 agent 导出 `DC_MEDIA_CONSENT=<means|all>`；**匿名 pollinations 档免申请**（PROVENANCE 披露）。
 3. **出规格**：`genimg.mjs --defer-agent` / `genvideo.mjs` / `gen/layers.mjs --spec` 写 `media-request.json`（官方契约：模型候选/size 钳制/watermark:false/首帧 role/ratio adaptive/24h URL 纪律）。
 4. **履约**：宿主 agent 按 spec 调用其 means（官方 skill 优先；**不跨模型重试、不转后付费接口**——官方 skill 纪律）。
 5. **验收登记**：`node scripts/media-verify.mjs --kind <image|video> --in <产物> --run <runDir> --consent "<note>"`（image：尺寸/空白/VLM rubric；video：ffprobe+faststart+≤2MB+webm+poster）→ 登记 assets-manifest（source=agent-media, engine, consent）；layers 用 `gen/layers.mjs --ingest`。
 6. **接入原型**：验收产物入 views（.far 远景/角色层/video hero 层遵守 ADR-M99-video：poster+reduced-motion+同层活控件）→ 四门复跑。
+7. **直连档纪律（M102）**：标准 Ark key（`~/.config/design-clone/ark.key` 0600 或 `ARK_API_KEY`，**永不入仓/日志/报告**）仅视频直连 `/api/v3`；默认 `doubao-seedance-2-0-mini` 480p/4-5s/无声/免水印；首帧 first_frame+adaptive；poll 10s/30min；video_url 24h 即下载；queued 超时 DELETE 止损；成本预估进申请话术。
 
 ## 红线（任何模式下必须遵守）
 

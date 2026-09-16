@@ -5,6 +5,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M102
+- 标准 Ark key 直连档（后付费 /api/v3 视频）：key 仓外 0600 保管（~/.config/design-clone/ark.key 或 ARK_API_KEY，全输出掩码）；create→poll→24h 即下载→normalize；模型序 2-0-mini→2-0→2-5（ARK_VIDEO_MODEL 覆写）；480p/4-5s/无声/免水印；首帧 first_frame+adaptive；queued DELETE 止损
+- 策略层：references/media-strategy.md 总纲（生图槽位模板+pro/lite 路由+变异重试+角色一致性；生视频机会分类+draft 样片+loop-ok+成本纪律）；gen/media-plan.mjs 产 media-plan.json（consent 附摘要）；inspect media-plan warn 步；media-verify 增 loop-ok；media-consent/doctor 增标准档+费用预估；SKILL §G 媒体规划步+直连档纪律
+- 实测：任务提交链路通；账户侧 QuotaExceeded（Seedance 开通需余额>200 元或资源包）→ 视频槽留待办，未产生费用
+
+
 ### M101
 - 指挥闭环定稿：skill 不直调生图/生视频；官方 byted-ark-seedream/seedance skill 全局接入；media-consent（发现/标准申请话术/DC_MEDIA_CONSENT 授权门，每 session 至多一次，匿名档免申请）+media-verify（image: 尺寸/空白/VLM rubric；video: ffprobe/faststart/≤2MB/webm/poster；manifest 登记 consent）+gen/layers.mjs（拆层规格+验收）；SKILL §G+media-engine 教义节
 - 示范履约：session 授权→Seedream 5.0 pro 全身立绘×2+layer_decomposition 透明人物层×2→星海对话 .vh 替换+分层 idle（proto PR#68, v3.0.6）；seedance 全模型 UnsupportedModel→视频留 agent-native 待办（LESSONS 183）

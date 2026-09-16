@@ -213,3 +213,5 @@
 182. M100 「配了 key」≠「全能力可用」：火山 AgentPlan 的 plan-scoped key 只授权 /api/plan/v3 的 LLM/VLM，标准 /api/v3 生图/生视频 401——provider 适配必须**端点级探针**（probe-providers 留档）而非 key 存在即宣称能力；doctor/文档措辞跟随探针事实。
 183. M101 AgentPlan 视频权益「控制台可见≠API 可用」：控制台视觉模型页列 seedance-1.5-pro（即将下线），但 plan base 对 1.5-pro/2.0/2.5/日期版全返 UnsupportedModel——订阅页 Skill 接入指引与实际权益不同步。教训：视频 means 必须以**探针/首次提交的 API 响应**为准登记能力，控制台截图只作线索；不可用时按教义留 agent-native 待办而非静默降级。
 184. M101 跨仓路径事故：在主仓 cwd 下 `$PWD/repo/design-clone-prototype` 拼出嵌套 decoy 路径（proto 实为 `$PWD/../design-clone-prototype`），cp 静默失败后 heredoc 断链使后续命令在**主仓**执行——误开主仓分支+PR#1。教训：跨仓操作一律绝对路径或先 `realpath` 断言；heredoc 后的命令用 `&&` 串联防断链漂移。
+185. M102 密钥纪律落地：付费 key 只存仓外 0600 文件或会话 env，providers 按序读取、所有日志/报告/manifest 掩码；secret-scan 复核仓内零密钥。聊天中出现过的 key 应视为敏感（可轮换）。
+186. M102 后付费档「链路通≠能花钱」：Seedance 开通条件=余额>200 元或资源包，未满足时任务创建成功也异步 QuotaExceeded（失败不计费）；mini/2.0 未开通则创建即 non-ok。直连档履约前应先探针账户开通态，避免空轮询。

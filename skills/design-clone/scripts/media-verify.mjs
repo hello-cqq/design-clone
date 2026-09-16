@@ -75,6 +75,21 @@ if (values.kind === "image") {
   if (also.includes("webm")) execSync(`ffmpeg -y -v error -i "${cur}" -c:v libvpx-vp9 -crf 34 -b:v 0 -an "${cur.replace(/\.mp4$/, ".webm")}"`);
   if (also.includes("poster")) execSync(`ffmpeg -y -v error -i "${cur}" -vf "select=eq(n\\,0)" -frames:v 1 "${cur.replace(/\.mp4$/, "-poster.png")}"`);
   rep.checks.also = also;
+  // M102 可循环性：首尾帧平均绝对差 ≤12 判 loop-ok（idle 循环接入参考）
+  try {
+    const frames = execSync(`ffmpeg -v error -i "${cur}" -vf "select='eq(n\\,0)+eq(n\\,999999)'" -vsync vfr -frames:v 2 "${cur}.ff-%d.png" -y`, { encoding: "utf8", shell: "/bin/bash" });
+    void frames;
+    const f1 = `${cur}.ff-1.png`, f2 = `${cur}.ff-2.png`;
+    if (fs.existsSync(f1) && fs.existsSync(f2)) {
+      const a1 = await sharp(f1).grayscale().raw().toBuffer();
+      const a2 = await sharp(f2).grayscale().raw().toBuffer();
+      let d = 0; const n = Math.min(a1.length, a2.length);
+      for (let i = 0; i < n; i += 7) d += Math.abs(a1[i] - a2[i]);
+      rep.checks.loop_diff = +(d / (n / 7)).toFixed(1);
+      rep.checks.loop_ok = rep.checks.loop_diff <= 12;
+      fs.rmSync(f1, { force: true }); fs.rmSync(f2, { force: true });
+    }
+  } catch {}
 } else fail("未知 kind");
 
 if (values.run) {

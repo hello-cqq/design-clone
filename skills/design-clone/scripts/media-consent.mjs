@@ -13,7 +13,7 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import { parseArgs } from "node:util";
-import { discoverAgentPlan, officialSkillPath, vlmChat } from "./gen/providers.mjs";
+import { discoverAgentPlan, officialSkillPath, vlmChat, arkStandardKey } from "./gen/providers.mjs";
 
 const { values } = parseArgs({ options: { discover: { type: "boolean" }, "ask-text": { type: "boolean" }, check: { type: "boolean" }, kind: { type: "string", default: "image" }, what: { type: "string", default: "原型所需的艺术资产/动效素材" }, help: { type: "boolean" } } });
 if (values.help) { console.log("用法: node media-consent.mjs --discover | --ask-text --kind <k> [--what ...] | --check"); process.exit(0); }
@@ -37,6 +37,8 @@ if (values.discover) {
   }
   const vlm = await vlmChat("只回 ok 两个字母", null, { maxTokens: 8 }).catch(() => null);
   means.push({ id: "vlm-channel", kind: "semantic", engine: vlm ? vlm.engine : null, quota: "AgentPlan LLM（skill 自控策略，免单独申请）", available: !!vlm });
+  const stdKey = arkStandardKey();
+  if (stdKey) means.push({ id: "ark-standard", kind: "video", key: stdKey.slice(0, 8) + "…" + stdKey.slice(-4), quota: "标准 Ark key 后付费（/api/v3；2.0 mini 480/720p 促销≈0.2 元/s 至 2026-10-07；2.5 1080p≈2.7 元/s）", available: true });
   means.push({ id: "pollinations-anon", kind: "image", quota: "匿名免费档（免申请，PROVENANCE 披露）", available: true });
   console.log(JSON.stringify({ agentplan_sources: srcs.map((s) => ({ agent: s.agent, provider: s.provider, volc: s.volc })), means }, null, 1));
   process.exit(0);
@@ -47,7 +49,7 @@ if (values["ask-text"]) {
   console.log([
     `【design-clone 生成授权申请（本 session 仅此次）】`,
     `为让原型更贴合你的诉求，拟${values.kind === "video" ? "生成短视频素材" : values.kind === "layers" ? "对图做图层拆分" : "生成图片资产"}：${values.what}。`,
-    `拟用 means：${sk ? `官方 ${values.kind === "video" ? "byted-ark-seedance-skill" : "byted-ark-seedream-skill"}（火山方舟 AgentPlan 订阅内配额）` : "你当前 agent 已配置的生图/生视频工具"}；skill 不直调端点，由你批准的 agent 通道履约。`,
+    `拟用 means：${values.kind === "video" && arkStandardKey() ? "标准 Ark key 直连档（后付费 /api/v3，2.0 mini 480p 无声，预估 ≈" + ((+ (process.env.DC_EST_DURATION || 4)) * 0.2).toFixed(1) + " 元/条）" : sk ? `官方 ${values.kind === "video" ? "byted-ark-seedance-skill" : "byted-ark-seedream-skill"}（火山方舟 AgentPlan 订阅内配额）` : "你当前 agent 已配置的生图/生视频工具"}；视频直连档由 skill 按策略直调，其余由你批准的 agent 通道履约。`,
     `不批准的回落：匿名免费档（图片）/静态分层动效（视频），效果上限较低。`,
     `批准请回复「同意」或指定 means；批准后本 session 内不再重复询问。`,
   ].join("\n"));
