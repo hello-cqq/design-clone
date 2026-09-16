@@ -10,7 +10,7 @@ description: >-
 license: MIT
 compatibility: opencode, claude-code, codex, qoder, qwen-code, trae
 metadata:
-  version: "0.6.0-snapshot.20260914.5"
+  version: "0.6.0"
   homepage: https://github.com/hello-cqq/design-clone
 ---
 
@@ -277,7 +277,7 @@ Tweaks 调参（**「存为变体」落 prototype/variants/<名>/{tokens.json,to
      awesome-design-md 的 74 个品牌 DESIGN.md 可引用）或从用户给的参考图/链接提取 tokens 覆盖
    - 组件级（换/加/删元素）→ 改对应 `pages/*.spec.yaml` 的 regions/components
    - 布局级（改版式）→ 改 spec 的 regions/layout
-   - 动效级（转场/微交互）→ 改 `prototype/motion.js`（GSAP，语法见 `references/remix-protocol.md`）
+   - 动效级（转场/微交互）→ 改视图内 CSS transition/@keyframes 与 `data-fx` 粒子/视差属性（模板零 GSAP/零 CDN，语法见 `references/remix-protocol.md` §5）
 2. **执行**：先改规格文件再重新生成受影响页面，**禁止整站重新生成**；每次修改在
    `spec.yaml` 的 `meta.change_log` 追加一条记录
 3. **验证**（三重+评审，见 `references/remix-protocol.md`）：

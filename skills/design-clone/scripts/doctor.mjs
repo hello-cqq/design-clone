@@ -145,14 +145,16 @@ const missing = rows.filter((r) => r.level === "need");
 const warnings = rows.filter((r) => r.level === "warn");
 console.log("");
 if (process.argv.includes("--onboard")) {
-  const has = (n) => rows.some((r) => r.name === n && r.level !== "miss");
+  const lvl = (n) => (rows.find((r) => r.name === n) || {}).level;
+  const okc = (n) => lvl(n) === "ok";
+  const optc = (n) => lvl(n) === "ok" || lvl(n) === "opt";
   const OS_SUPPORT = { mac: "yes", android: "yes", web: "yes", ios: "partial(simctl)", windows: "roadmap", linux: "roadmap", harmony: "roadmap" };
   const cap = {
     platforms: OS_SUPPORT,
     capabilities: {
-      web_capture: has("playwright"), android_gui: has("adb"), desktop_gui: platform === "darwin",
-      ios_sim: platform === "darwin", link_ladder: has("lux") || has("yt-dlp") || has("you-get"),
-      figma_export: has("figma-mcp") || true, genimg: has("genimg-net") || true, vlm: has("provider-key"),
+      web_capture: okc("Chromium"), android_gui: okc("adb"), desktop_gui: platform === "darwin" && okc("桌面点击通道"),
+      ios_sim: platform === "darwin" && !!sh("command -v xcrun"), link_ladder: optc("lux") || optc("yt-dlp") || optc("you-get"),
+      figma_export: lvl("Figma MCP") === "opt", genimg: true, vlm: true, // genimg=匿名免费档无需 key；vlm=宿主 agent 自带（skill 运行前提）
     },
     entry: "node scripts/entry.mjs \"<一句话|链接|图片|app名>\" → clone/link/remix/export",
     note: "windows/linux/harmony 采集为 roadmap；当前 mac/android/web 全支持",

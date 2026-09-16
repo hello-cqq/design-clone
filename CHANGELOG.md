@@ -5,6 +5,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+（下一波变更记这里。）
+
+## [0.6.0] - 2026-09-16
+
+稳定版：M0–M98 全量交付（skill 管线+官网+社区画廊+发布链），含 M96-M98 终极审查清债。
+
 未发车的快照变更（M74 与 M84–M95；此前仅记于 git log / SESSION-SUMMARY / SESSION-HANDOFF）。
 
 ### M74
@@ -39,6 +45,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ### M97
 - : 仓清理 ~17.4MB——智能助理/ 四参考图（13MB 零引用）移空间 archive/智能助理-ref/ 后 git rm；site/assets 死资产九件 git rm（logo-girl/boy、logo-light/dark、logo-main-256、logo-lockup、logo-anim.webp、ident 双 poster jpg——poster 已内联 base64）；死代码清（site.js .logoimg 切换行、site.css 双 .logoimg 块）；brand-qa 铅笔/角标门名单收敛为不透明合成资产（logo-main/favicon），透明键控资产走 veil 门；架构图 v2 分层重画（六层带+mono 模块盒+层间数据流产物芯片+宿主 VLM 贯穿轨，文字量-70%）替换 docs/img/architecture{,-dark}.png
+
+### M98
+- : 终极审查清债波——W4 proto 资产契约归一（PR#63：五 app appicon 以策展 icon 重派生/cover 重合成/孤儿哈希外壳清退/meta 真值+双语同源/PROVENANCE 真门值重生成/SPEC 单口径+validate 增 created_at·CDN grep/index.yml 不再覆盖策展 cover；下架 6 app Release+5 个 v1 tag 清理）；W5 doctor 能力矩阵真值化、sim-capture record 补 iOS 录屏、motion.js/GSAP CDN 教学根除（零 CDN 红线归位）、official-names/README.zh/e2e 名对齐、HANDOFF/SUMMARY/ROADMAP/parity-debt 漂移清、稳定版 v0.6.0 发车（README --ref 示例与 install.sh 回退诚实化）
 
 ### M96
 - : README 美化+双图——头部 🥷 换双主题动图 GIF（<picture> light/dark，168px）；hero alt 错配修正（PetPark→星海对话）；新增 Architecture 节（核心管线六阶段双主题 PNG，不涉官网）与 From any source to a playable prototype 节（官网四演示 s1/s3/s4 层拆分合成的双语全景图）；六资产入 docs/img/；zh 版同步

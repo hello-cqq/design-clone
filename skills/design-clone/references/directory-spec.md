@@ -27,7 +27,7 @@
 │   ├── pages/                   # 每屏规格：<screen-id>.spec.yaml
 │   ├── views/                   # 每屏实现：<screen-id>.html（元素带 data-dc 锚点）
 │   ├── assets/                  # 图标/图片素材：extract-assets 裁剪 / genimg 生成；images.json 清单 + .cache 缓存
-│   ├── motion.js                # 动效（GSAP，可选）
+│   ├── utilities.css            # 本地编译 utility 子集；动效=原生 @keyframes（零 CDN）
 │   └── README.md                # 运行说明
 ├── export/                      # 导出层（serve.mjs /__dc_export__ 产出，原型本体不含外壳）
 │   └── <ts>/                    # pages/<id>(+ann).png / scene-full.png / node-*.png / path-*.png / path-*.webm / board.json / manifest.json

@@ -45,7 +45,7 @@
 - 门禁：veil 门收紧 0.75%→**0.5%** 实测 light 0.221%/dark 0.366%；brand-qa/e2e/loadtest 全绿（1000req 0 错 rps 1536 p95 75ms）；双主题导航目视通过。
 
 ## 2. 门禁清单（当前）
-- regress（28 run）：interact dead=0 / inspect / ui-smoke / paths-qa。
+- regress（26 入集 run）：interact dead=0 / inspect / ui-smoke / paths-qa。
 - inspect：`art-depth`（original run 分层+粒子）、`sel-ring-align`（选中框活跟踪 ≤3px）、design-artifacts、view-weight、cover-geometry、pasted-screenshot 等。
 - brand-qa：ident faststart（moov<mdat）、残铅木杆签名、细长笔杆签名(warn)、角标水印、**logo veil 门**。
 - site e2e：ident 播放/主题联动、画廊巡检（全 app proto 就绪+console 干净）、demo 断言（步骤用户视角/离屏点击即播/重播/step4 交互动效）、logo 锁排/主题切换/favicon 主题化、标签单行+搜索推荐、导出 zip download、移动端横溢。
@@ -57,15 +57,19 @@
 
 ## 4. 关键脚本索引
 - 生成：`genimg.mjs`(双 rect 擦水印)、`enrich.mjs`、`style-pick.mjs`、`cover.mjs`、`appicon.mjs`、`gallery-meta.mjs`、`collect-design.mjs`、`export-zip.mjs`、`patch-erase.mjs`、`brief-flows.mjs`、`ref-images.mjs`。
-- QA：`qa/interact.mjs`、`qa/inspect.mjs`、`qa/ui-smoke.mjs`、`paths-qa.mjs`、`site/tools/{e2e,loadtest,brand-qa,sync-thumbs,demo-shots(退役引用)}.mjs`。
+- QA：`qa/interact.mjs`、`qa/inspect.mjs`、`qa/ui-smoke.mjs`、`paths-qa.mjs`、`site/tools/{e2e,loadtest,brand-qa,sync-thumbs,hash-assets}.mjs`。
 - 发布：`publish.mjs`（管理副本=space/repo/design-clone-prototype；export/all.zip 自动预构建；--retire）。
 - logo 管线（会话内脚本，未入库）：**M95 现行** /tmp/m95-process.mjs（平面拟合绿幕键控+posterize+固定裁切）——复跑：源帧 /tmp/ls-day、/tmp/ls-night（各 193，重启即失，需从 archive/logo-source-{day,night}.mp4 重抽 `ffmpeg -i src %04d.png`）→ node /tmp/m95-process.mjs → img2webp 编码（命令见 M95 节）。M94 白底启发式版 /tmp/m94-process.mjs 已退役。
+
+### M96–M98 终极大审查波（09-15→16）
+- M96 README 美化：双主题动图 GIF 头、架构分层图（六层+数据流芯片+VLM 贯穿轨）、功能全景图（四演示 s1/s3/s4 合成）。
+- M97 清债 W1-W3：ip-scan 登记制、e2e 死区复活、publish 门真读、css 去重 240 行、jump 移面包屑行、parity/fidelity/audit 真 exit、brand-qa 挂 CI、GATES 全量清算。
+- M98 W4-W5：proto 资产契约归一（PR#63：icon/cover/PROVENANCE/meta/SPEC/validate/index.yml）、下架 app Release/tag 清理、doctor 能力矩阵真值化、sim-capture record、motion.js/CDN 教学根除、文档漂移清、稳定版 v0.6.0。
 
 ## 5. 未决/后续
 - brand-qa `logo-main.png stick-like=27` 为 warn（水波/发丝高光误报），目视复核项，未 fail。
 - logo 动图 M95 后 262/243KB；如仍需瘦身可降帧至 40 或 80px。
-- 暗色 favicon 仍依赖 JS applyTheme 切换，无 `prefers-color-scheme` 静态回退（加 media link 会与 e2e 的 link[rel=icon] 断言冲突，待专项）。
+- ~~暗色 favicon 无静态回退~~：M98-W2 已加 `prefers-color-scheme` 双 link（e2e 断言同步改 querySelectorAll）。
 - proto 仓 index.json 由仓 workflow 重扫；新增 app 发布走 publish.mjs。
 - claude code headless 403（账号资格）待有资格账号复验；iOS 真机 WDA 未跑（本机无 Xcode）。
 - proto 仓 index.json `version: 3` 字段代次与文档口语 v4/v5 不对齐（建议专项：字段代次与 version 对齐）。
-- 暗色 favicon 依赖 JS 切换（无 prefers-color-scheme 静态回退）。
