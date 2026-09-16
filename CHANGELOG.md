@@ -46,6 +46,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 ### M97
 - : 仓清理 ~17.4MB——智能助理/ 四参考图（13MB 零引用）移空间 archive/智能助理-ref/ 后 git rm；site/assets 死资产九件 git rm（logo-girl/boy、logo-light/dark、logo-main-256、logo-lockup、logo-anim.webp、ident 双 poster jpg——poster 已内联 base64）；死代码清（site.js .logoimg 切换行、site.css 双 .logoimg 块）；brand-qa 铅笔/角标门名单收敛为不透明合成资产（logo-main/favicon），透明键控资产走 veil 门；架构图 v2 分层重画（六层带+mono 模块盒+层间数据流产物芯片+宿主 VLM 贯穿轨，文字量-70%）替换 docs/img/architecture{,-dark}.png
 
+### M98-fix
+- : proto 仓 export/all.zip 真入仓（PR#65：上轮 cp 落嵌套 decoy 路径）+五 app 再 bump（SPEC §10 同 PR bump 纪律）；inspect cutoff 改 scope.json mtime 主源（meta.created_at 会被重发布刷新）；slytherin parity 债回 warn 通道 regress 全绿
+
 ### M98
 - : 终极审查清债波——W4 proto 资产契约归一（PR#63：五 app appicon 以策展 icon 重派生/cover 重合成/孤儿哈希外壳清退/meta 真值+双语同源/PROVENANCE 真门值重生成/SPEC 单口径+validate 增 created_at·CDN grep/index.yml 不再覆盖策展 cover；下架 6 app Release+5 个 v1 tag 清理）；W5 doctor 能力矩阵真值化、sim-capture record 补 iOS 录屏、motion.js/GSAP CDN 教学根除（零 CDN 红线归位）、official-names/README.zh/e2e 名对齐、HANDOFF/SUMMARY/ROADMAP/parity-debt 漂移清、稳定版 v0.6.0 发车（README --ref 示例与 install.sh 回退诚实化）
 
