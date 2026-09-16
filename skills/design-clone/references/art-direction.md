@@ -14,7 +14,7 @@
 | 生视频 | genvideo.mjs provider 路由（Seedance/可灵/万相/MiniMax）或 agent-native 履约；无 key  exit 3 写 media-request.json | M99-2 起允许 hero/idle 视频层（ADR-M99-video：poster+reduced-motion+≤2MB+同层活控件），见 references/media-engine.md |
 
 ## 2. 深度分层（硬要求 ≥3 层）
-1. **far**：大气远景（genimg anime-cel 背景带：天空/海面/星野/林冠），`scale(1.06)` 慢视差；
+1. **far**：大气远景（genimg anime-cel 背景带：天空/海面/星野/林冠），`scale(1.06)` 慢视差；**M99-3 起 far 层必须带 `class="far"`**（pasted-screenshot 门唯一豁免口径，data-fx-parallax≤0.6 自动迁移）；
 2. **mid**：光云/体积光/漂浮物（第二张 genimg 或 CSS 光斑），视差 ±8px；
 3. **near**：角色/主体渲染（rim light + 发丝高光），idle 呼吸+浮动；
 4. **ui**：玻璃 HUD 卡（`backdrop-filter: blur(14px)` + 内发光 1px + 软影），承载信息。
