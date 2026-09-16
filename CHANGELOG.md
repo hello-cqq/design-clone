@@ -6,6 +6,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 ## [Unreleased]
 
 ### M99（进行中）
+- M99-4BC: 两 demo 原型体感修复——pasted 背景退 .far 远景+kb 呼吸改 background-size（修 transform 溢出 layout 假红）+全身虚拟人 idle 层（.vh，限宽修横溢）+02-interact 活控件动作组+annotations/manifest/spec 卫生+孤儿视图清退+layout-sanity 双采样抗动画假红；proto PR#67（pr-gate 事件失联，本地同口径 VALIDATE+regress 绿后合并）
 - M99-0: ui-smoke export-design-artifacts 导航稳定+3 次重试（修新壳时序假红）
 - M99-1: 架构图 v3 改 archify 管线产出——双主题自适配 SVG 单文件（semantic 配色/正交链路/创新·硬门·M99 标签/图例），README 单 img 引用随 GitHub 主题切换，弃双 PNG
 
