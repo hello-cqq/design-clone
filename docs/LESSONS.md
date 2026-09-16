@@ -208,3 +208,5 @@
 177. M98 清孤儿哈希外壳时按「文件名带哈希=活」直觉删除，实际 index.html 引用的正是哈希件、裸名才是孤儿——五 app 原型当场全坏（validate 冒烟全红抓现）。教训：**清理复制产物前先 grep 入口 html 的真实引用**，方向反了比不清更糟。
 178. M98 ip-scan「零二进制」前提与官网同仓现实自 M55 起就矛盾，CI 长期红而被无视。教训：**门的 premise 变了要改门（登记制），不能让红变常态**——常态化的红等于没有门。
 179. M98 跨仓拷贝两连坑：`--src repo/design-clone-prototype/...` 与 `cp repo/design-clone-prototype/...` 在主仓 cwd 下拼出嵌套 decoy 路径（repo/design-clone/repo/...），产物落进无人引用的影子目录——appicon 用错源、all.zip 根本没入仓。**跨空间路径一律绝对路径或先 `realpath` 校验存在**。
+180. M99 两道「假红/假绿」新形态：①CSS transform 动画（scale 呼吸）会把绝对定位层的 rect 撑出根盒→layout-sanity 横向 scrollWidth 假 clip；动画表达改用 background-size 等不污染盒模型的属性。②视图切换动画中途采样 clip 必假红→门禁双采样（500ms 复采仅持续者判）。教训：**门禁度量要分清「设计溢出」与「度量溢出」**，后者修度量不修设计。
+181. M99 GitHub pr-gate 对个别 PR 的 pull_request 事件失联（close/reopen/空提交均不触发）——CI 不是绝对可靠的事实源；本地同口径门禁（validate/regress）绿+记录说明后可合并，但必须在 CHANGELOG 记账失联事件。

@@ -61,6 +61,13 @@
 - 发布：`publish.mjs`（管理副本=space/repo/design-clone-prototype；export/all.zip 自动预构建；--retire）。
 - logo 管线（会话内脚本，未入库）：**M95 现行** /tmp/m95-process.mjs（平面拟合绿幕键控+posterize+固定裁切）——复跑：源帧 /tmp/ls-day、/tmp/ls-night（各 193，重启即失，需从 archive/logo-source-{day,night}.mp4 重抽 `ffmpeg -i src %04d.png`）→ node /tmp/m95-process.mjs → img2webp 编码（命令见 M95 节）。M94 白底启发式版 /tmp/m94-process.mjs 已退役。
 
+### M99 媒体引擎+体感+新海诚波（09-16）
+- W0/W1：ui-smoke 重试修假红；架构图 v3=archify 双主题自适配 SVG（README 单 img）。
+- W2：媒体引擎——genimg provider 路由（Seedream/万相/MiniMax→pollinations）、genvideo.mjs（Seedance/可灵 JWT/万相/MiniMax+agent-native media-request 履约协议）、media.mjs 工具集、doctor 真值化、ADR-M99-video。
+- W3：门禁第二轮——background-image 覆盖入 pasted-screenshot、豁免收窄 .far、asset-refs 扫 CSS url()、inspector goto 同时选中/Alt 只选中、cover 路径 bug。
+- W4BC：两 demo 活控件化+全身虚拟人 idle 层+far/kb 修溢+annotations/spec/manifest 卫生+孤儿视图清退（proto PR#67）；layout-sanity 双采样抗动画假红。
+- W6/W7：官网新海诚重绘（五页 tokens+光轴+胶片粒+母题）；数据线字重审计与流程图柔化。
+
 ### M96–M98 终极大审查波（09-15→16）
 - M96 README 美化：双主题动图 GIF 头、架构分层图（六层+数据流芯片+VLM 贯穿轨）、功能全景图（四演示 s1/s3/s4 合成）。
 - M97 清债 W1-W3：ip-scan 登记制、e2e 死区复活、publish 门真读、css 去重 240 行、jump 移面包屑行、parity/fidelity/audit 真 exit、brand-qa 挂 CI、GATES 全量清算。
