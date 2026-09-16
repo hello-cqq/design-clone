@@ -215,3 +215,8 @@
 184. M101 跨仓路径事故：在主仓 cwd 下 `$PWD/repo/design-clone-prototype` 拼出嵌套 decoy 路径（proto 实为 `$PWD/../design-clone-prototype`），cp 静默失败后 heredoc 断链使后续命令在**主仓**执行——误开主仓分支+PR#1。教训：跨仓操作一律绝对路径或先 `realpath` 断言；heredoc 后的命令用 `&&` 串联防断链漂移。
 185. M102 密钥纪律落地：付费 key 只存仓外 0600 文件或会话 env，providers 按序读取、所有日志/报告/manifest 掩码；secret-scan 复核仓内零密钥。聊天中出现过的 key 应视为敏感（可轮换）。
 186. M102 后付费档「链路通≠能花钱」：Seedance 开通条件=余额>200 元或资源包，未满足时任务创建成功也异步 QuotaExceeded（失败不计费）；mini/2.0 未开通则创建即 non-ok。直连档履约前应先探针账户开通态，避免空轮询。
+187. M103 门代码自己坏的两副面孔：Node 侧断言里直接用 `document`（evaluate 返回值应只含纯数据）→ wire-label-lite 自爆 "document is not defined"；主题判定必须在页内探针里做完随结果带回。教训：**门的新增代码先跑绿一次再算完成**，浏览器上下文与 Node 上下文严禁混写。
+188. M103 便利规则 `.hero > * { position:relative }` 把绝对定位装饰层（motif）的 absolute 顶掉入流→整页布局被顶高、hero 散架。教训：**全局子选择器必须 `:not()` 排除装饰/环境层**；加层后双主题截图核布局位移，不看代码看盒子。
+189. M103 ident 假警报：查「视频不播」时抓第一个 `.idf-video`（light 主题隐藏视频）即断言全坏，实则 dark 视频正常播放。教训：双主题双视频组件采样**按 data-k 指定**，className/readyState 成组打印再下结论；假警报比无警报更费会话预算。
+190. M103 官方 seedream skill 纪律好用：`--dry-run` 先验参数（路由/尺寸/水印）再真跑；API_KEY 走 env 注入不进 argv（进程列表不泄）；WxH 自定义尺寸在普通生成路径需 pro。教训：付费生成 dry-run→真跑两步走，key 一律 env/仓外文件。
+191. M103 cover hero 坑：concept run 无 capture/screens 时 cover 设备框内嵌了 cover-bg art=艺术重复入画。教训：**cover 的 hero 永远是原型真截图**（场景一致性来源），art 只做底；无 capture 必须 --base 现拍，合成后目视一帧。

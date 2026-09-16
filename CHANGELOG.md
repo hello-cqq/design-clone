@@ -5,6 +5,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M103
+- W1 数据线字重复发锁：亮色 wiremark 提浅（#6f757c→#8a9097）；ui-smoke wire-label-lite 扩 computed 断言（字重≤400+亮/暗主题填充亮度下限/上限），复发即红
+- W2 图标/封面 v2：原创两 app 图标 full-bleed 圆角重出（seedream-5.0-pro 经官方 byted-ark-seedream-skill，AgentPlan 订阅配额）；品牌三 app 官方图标 compose 前透明角主色 flatten 归一（满版无透角）；cover.mjs 新增 art-cinematic 分支（references/cover-bg.png 存在即启用：art 满底+底部 scrim+极简中英名+去 pills/瓷砖/奶油盘），经典分支同步去 pills
+- W3 官网五页新海诚叙事流：home hero 叠星海 idle webm 环境层（弱透明+羽化，reduced-motion 降级 poster）；hero 丁达尔光轴；h1 尾句暮金渐变字；三幕故事带（看见→复刻→游玩，链 gallery/guide/#try）；gallery/proto/guide/start 叙事眉标（Act I-III/Backstage，i18n 双语）；gallery 卡片 cinematic hover（渐变罩+微缩放+标题微光）；页脚海面反射带；云体视差层（滚动驱动，reduced-motion 关）
+- W4 星海对话灵动升级：runtime 新增 data-act=vid-replay（点角色/控件=关联视频从头重播+脉动反馈）与 data-fx=lipstate（HUD 状态文案循环，reduced-motion 静帧）；静音循环视频视图载入自播（环境层通用规则）；03-call 挂接（点星海=挥手 toast+重播、⏯  pill 真重播、通话 HUD 口型态循环）
+- 发布：proto PR#71/#72 合并（ai-assistant/petpark 3.1.0：full-bleed 图标+cinematic 封面+灵动通话）；品牌三 app 1.7.0 发布随 W4 尾波
+- 记账：proto scripts/index.mjs version 语义定案（顶层=schema 固定 3；apps[].version=发布 semver，不得混称）
+
 ### M102
 - 标准 Ark key 直连档（后付费 /api/v3 视频）：key 仓外 0600 保管（~/.config/design-clone/ark.key 或 ARK_API_KEY，全输出掩码）；create→poll→24h 即下载→normalize；模型序 2-0-mini→2-0→2-5（ARK_VIDEO_MODEL 覆写）；480p/4-5s/无声/免水印；首帧 first_frame+adaptive；queued DELETE 止损
 - 策略层：references/media-strategy.md 总纲（生图槽位模板+pro/lite 路由+变异重试+角色一致性；生视频机会分类+draft 样片+loop-ok+成本纪律）；gen/media-plan.mjs 产 media-plan.json（consent 附摘要）；inspect media-plan warn 步；media-verify 增 loop-ok；media-consent/doctor 增标准档+费用预估；SKILL §G 媒体规划步+直连档纪律

@@ -17,6 +17,8 @@
       proto_dl: "Download offline zip", proto_jump: "source on GitHub", proto_contrib: "Contributors", proto_spec: "Design specs",
       proto_tags: "Tags", ft_note: "MIT · prototypes carry their own license · brand replicas are unofficial study works",
       empty: "No prototypes yet — be the first:",
+      s1_t: "See", s1_d: "capture any app, site or link", s2_t: "Clone", s2_d: "the agent rebuilds it as a living prototype", s3_t: "Play", s3_d: "tap through, tweak, export the design",
+      ph_gal: "Act II · pick a world", gal_h: "Every clone, one shelf", ph_proto: "Act III · step inside", ph_guide: "Backstage · how it works", ph_start: "Act I · take it home",
     },
     zh: {
       nav_home: "首页", nav_gallery: "画廊",
@@ -29,6 +31,8 @@
       proto_dl: "下载离线 zip", proto_jump: "GitHub 源码", proto_contrib: "贡献者", proto_spec: "设计规格",
       proto_tags: "标签", ft_note: "MIT · 原型各自携带许可 · 品牌复刻为非官方学习作品",
       empty: "暂无原型——成为第一个：",
+      s1_t: "看见", s1_d: "抓取任意应用、网站或链接", s2_t: "复刻", s2_d: "agent 把它重建为活的原型", s3_t: "游玩", s3_d: "点按、调整、导出设计",
+      ph_gal: "第二幕 · 挑选一个世界", gal_h: "所有复刻，同一面墙", ph_proto: "第三幕 · 走进原型", ph_guide: "幕后 · 它如何工作", ph_start: "第一幕 · 带它回家",
     },
   };
 
@@ -54,6 +58,35 @@
     if (document.getElementById("cards")) renderGallery();
     if (document.getElementById("side")) renderProto();
     if (document.getElementById("featured")) renderFeatured();
+  }
+  /* M103-W3：hero 环境视频守卫 + 云体视差 */
+  function wireAmbient() {
+    const vid = document.querySelector(".heroambient video");
+    if (vid) {
+      const rm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (rm) vid.remove();
+      else { vid.play().catch(() => {}); vid.addEventListener("mouseenter", () => {}); }
+    }
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const layer = document.createElement("div");
+    layer.className = "cloudlayer"; layer.setAttribute("aria-hidden", "true");
+    const spots = [[8, 12, 340, 90], [62, 6, 420, 110], [30, 58, 300, 80], [78, 44, 260, 70]];
+    for (const [x, y, w, h] of spots) {
+      const d = document.createElement("div");
+      d.className = "cl"; d.style.cssText = `left:${x}%;top:${y}%;width:${w}px;height:${h}px`;
+      d.dataset.sp = (0.04 + Math.random() * 0.05).toFixed(3);
+      layer.appendChild(d);
+    }
+    document.body.appendChild(layer);
+    let tick = false;
+    addEventListener("scroll", () => {
+      if (tick) return; tick = true;
+      requestAnimationFrame(() => {
+        const y = scrollY;
+        layer.querySelectorAll(".cl").forEach((d) => { d.style.transform = `translateY(${(-y * parseFloat(d.dataset.sp)).toFixed(1)}px)`; });
+        tick = false;
+      });
+    }, { passive: true });
   }
   function applyTheme() {
     document.documentElement.dataset.theme = state.theme;
@@ -280,7 +313,7 @@
     }
     document.getElementById("jump").href = a.repo_dir;
     const crumb = document.getElementById("crumb");
-    if (crumb) crumb.innerHTML = `<a href="gallery.html">${t("nav_gallery")}</a><span>/</span><b>${L(a.name, a.app)}</b>`;
+    if (crumb) crumb.innerHTML = `<span class="eyebrow">${t("ph_proto")}</span><span>/</span><a href="gallery.html">${t("nav_gallery")}</a><span>/</span><b>${L(a.name, a.app)}</b>`;
     const rel = `hello-cqq/design-clone-prototype/releases?q=${encodeURIComponent(a.app + "-")}`;
 
     side.innerHTML = `
@@ -411,7 +444,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    applyTheme(); applyI18n(); wireNav(); wireStars(); wireFeatureTabs();
+    applyTheme(); applyI18n(); wireNav(); wireStars(); wireFeatureTabs(); wireAmbient();
     const lb = document.getElementById("langbtn");
     if (lb) lb.onclick = () => { state.lang = state.lang === "en" ? "zh" : "en"; localStorage.setItem("dc-lang", state.lang); applyI18n(); };
     const tb = document.getElementById("themebtn");

@@ -124,8 +124,12 @@ async function genBase() {
 
 async function compose(base, sp) {
   const radius = sp.radius != null ? sp.radius : 0.22;
+  // M103-W2：透明角先按主色 flatten→满版不透明再蒙版（品牌官方图标归一）
+  const bgData = await sharp(base).resize({ width: 1, height: 1 }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const bg = sp.bg || `rgb(${bgData.data[0]},${bgData.data[1]},${bgData.data[2]})`;
+  const solid = await sharp(base).flatten({ background: bg }).png().toBuffer();
   for (const s of SIZES) {
-    let img = sharp(base).resize({ width: s, height: s, fit: "cover" });
+    let img = sharp(solid).resize({ width: s, height: s, fit: "cover" });
     if (radius > 0) {
       const r = Math.round(s * radius);
       const mask = Buffer.from(`<svg width="${s}" height="${s}"><rect width="${s}" height="${s}" rx="${r}" ry="${r}" fill="#fff"/></svg>`);
@@ -134,11 +138,9 @@ async function compose(base, sp) {
     await img.png().toFile(path.join(outDir, `icon-${s}.png`));
   }
   // maskable: bg + 80% safe icon
-  const { data } = await sharp(base).resize({ width: 1, height: 1 }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
-  const bg = sp.bg || `rgb(${data[0]},${data[1]},${data[2]})`;
   const inner = Math.round(512 * 0.8);
   await sharp({ create: { width: 512, height: 512, channels: 3, background: bg } })
-    .composite([{ input: await sharp(base).resize({ width: inner, height: inner, fit: "contain" }).png().toBuffer(), left: 32, top: 32 }])
+    .composite([{ input: await sharp(solid).resize({ width: inner, height: inner, fit: "contain" }).png().toBuffer(), left: 32, top: 32 }])
     .png().toFile(path.join(outDir, "icon-maskable-512.png"));
 }
 

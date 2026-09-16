@@ -419,11 +419,17 @@ await step("wire-label-lite", async () => {
     const nu = document.querySelector(".wires .wnum");
     if (!el) return null;
     const ce = getComputedStyle(el), cn = nu ? getComputedStyle(nu) : null;
-    return { fw: parseInt(ce.fontWeight, 10), fs: parseFloat(ce.fontSize), nfw: cn ? parseInt(cn.fontWeight, 10) : 400 };
+    const dark = document.documentElement.classList.contains("dc-dark") || document.documentElement.getAttribute("data-dc-theme") === "dark" || document.body.classList.contains("dc-dark");
+    return { fw: parseInt(ce.fontWeight, 10), fs: parseFloat(ce.fontSize), nfw: cn ? parseInt(cn.fontWeight, 10) : 400, fill: ce.fill || null, dark };
   });
   if (!st) return;
   if (st.fw > 400 || st.nfw > 400) throw new Error("线上标注/序号字重>400: " + st.fw + "/" + st.nfw);
   if (st.fs > 10) throw new Error("线上标注字号过大: " + st.fs);
+  // M103：标注/序号填充色亮度下限（亮色主题不得深过 wire 线色；复发锁）
+  const lum = (hex) => { const m = /^#?([0-9a-f]{6})$/i.exec(hex); if (!m) return null; const v = parseInt(m[1], 16); return (((v >> 16) & 255) * 299 + ((v >> 8) & 255) * 587 + (v & 255) * 114) / 1000; };
+  const dark = !!st.dark;
+  if (!dark && st.fill != null) { const l = lum(st.fill); if (l != null && l < 100) throw new Error("亮色主题数据线标注过深(fill lum=" + l.toFixed(0) + "): " + st.fill); }
+  if (dark && st.fill != null) { const l = lum(st.fill); if (l != null && l > 220) throw new Error("暗色主题数据线标注过亮(fill lum=" + l.toFixed(0) + "): " + st.fill); }
 });
 
 await step("path-rows-all", async () => {
