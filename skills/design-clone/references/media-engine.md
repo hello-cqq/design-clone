@@ -24,7 +24,7 @@
 
 官方契约速查（AgentPlan plan base `https://ark.cn-beijing.volces.com/api/plan/v3`，**勿碰 /api/v3 后付费**）：
 - 图：`doubao-seedream-5.0-pro|lite`；size 总像素 [921600,4624220]、宽高比 [1/16,16]（clampArkSize 钳制）；`watermark:false`；`layer_decomposition:true`（Pro，1 底图+≤16 透明层，z_index/bounding_box/name/description）；`background:transparent` 仅图生图且输入带 alpha；URL 24h→即下载；拆层预扣 17 IPM。
-- 视频：`doubao-seedance-1.5-pro`（AgentPlan 在列，即将下线）→`2.0`→`2.5`（2.5 需余额/资源包）；首帧 `role:first_frame`+`ratio:adaptive`；480p 省配额；URL 24h/100 次→即下载；不收真人人脸参考。
+- 视频：**实测（M101）AgentPlan plan base 对 seedance 全模型返 UnsupportedModel**（1.5-pro/2.0/2.5/日期版皆然，与控制台「即将下线」一致）→ 视频 means 当前=agent-native 待办（宿主自配视频通道）；直连档仅在探针命中后启用。参数契约仍按：`doubao-seedance-1.5-pro`→`2.0`→`2.5` 序；首帧 `role:first_frame`+`ratio:adaptive`；480p 省配额；URL 24h/100 次→即下载；不收真人人脸参考。
 
 ## 1b. AgentPlan 适配（M100 实测）
 
