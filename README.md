@@ -37,10 +37,7 @@ An [Agent Skill](https://agentskills.io) for opencode / Claude Code / Codex / Qo
 
 The skill runs entirely inside your agent — six local, offline stages from raw source to gated, playable output (deep dive: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)):
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/img/architecture-dark.png">
-  <img src="docs/img/architecture.png" alt="design-clone core pipeline: four sources, capture & measure, knowledge, generate, quality gates, outputs" width="100%">
-</picture>
+<img src="docs/img/architecture.svg" alt="design-clone core pipeline: four sources → capture → measure → knowledge → spec2view/inspector → gates → prototype & asset pack; host VLM and media engine as cross-cutting capabilities" width="100%">
 
 ## From any source to a playable prototype
 
