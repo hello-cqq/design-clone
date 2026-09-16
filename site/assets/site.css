@@ -8,18 +8,23 @@
   --sans: -apple-system, "SF Pro Text", "PingFang SC", "Segoe UI", Inter, sans-serif;
 }
 :root[data-theme="light"] {
-  --bg: #f2f9fb; --bg2: #ffffff; --card: #ffffff; --line: rgba(47, 127, 166, .16);
+  --bg: #f2f9fb; --bg2: #ffffff; --card: #ffffff; --line: rgba(47, 127, 166, .16); --sky: #dff0ff; --gold: #e8b04b;
   --ink: #1c3a55; --mut: #5d7f9a; --acc: #2f6ea5; --acc2: #5b8fc0; --acc3: #4a86b8;
   --glow: rgba(47, 110, 165, .25); --shadow: 0 18px 44px rgba(47, 100, 130, .16);
 }
 :root[data-theme="dark"] {
-  --bg: #0a1424; --bg2: #101c2e; --card: #101c2e; --line: rgba(140, 190, 220, .14);
+  --bg: #0a1424; --bg2: #101c2e; --card: #101c2e; --line: rgba(140, 190, 220, .14); --sky: #0d1b30; --gold: #e8b04b;
   --ink: #e6f2f8; --mut: #8fb2c4; --acc: #7fb3e0; --acc2: #67c7e8; --acc3: #9cc4e4;
   --glow: rgba(127, 179, 224, .22); --shadow: 0 18px 50px rgba(0, 0, 0, .5);
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body { background: var(--bg); color: var(--ink); font: 15px/1.7 var(--sans); -webkit-font-smoothing: antialiased; }
+/* M99-6 新海诚层：天空纵grad + 星野/月晕 + 胶片粒 */
+body { background: linear-gradient(180deg, var(--sky) 0%, var(--bg) 42%, var(--bg) 100%); background-attachment: fixed; }
+:root[data-theme="dark"] body { background: radial-gradient(1200px 500px at 82% -60px, rgba(127,179,224,.16), transparent 60%), radial-gradient(2px 2px at 12% 18%, rgba(230,242,248,.5), transparent 55%), radial-gradient(1.6px 1.6px at 34% 9%, rgba(230,242,248,.42), transparent 55%), radial-gradient(1.4px 1.4px at 58% 22%, rgba(230,242,248,.36), transparent 55%), radial-gradient(1.8px 1.8px at 76% 12%, rgba(230,242,248,.45), transparent 55%), radial-gradient(1.2px 1.2px at 90% 28%, rgba(230,242,248,.3), transparent 55%), linear-gradient(180deg, #050d1a 0%, var(--bg) 46%, #0d1b30 100%); background-attachment: fixed; }
+body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 60; opacity: .05; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E"); }
+:root[data-theme="dark"] body::after { opacity: .07; }
 a { color: var(--acc3); text-decoration: none; }
 a:hover { text-decoration: none; opacity: .92; }
 .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
@@ -107,6 +112,10 @@ section.blk .sub { color: var(--mut); margin: 0 0 24px; }
 @media (max-width: 1000px) { .cards { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 620px) { .cards { grid-template-columns: 1fr; } }
 .pcard { display: block; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; color: var(--ink); transition: transform .18s ease, box-shadow .18s ease, border-color .18s; }
+.pcard { transition: transform .28s cubic-bezier(.2,.7,.3,1), box-shadow .28s ease; }
+.pcard:hover { transform: translateY(-4px); box-shadow: 0 26px 60px rgba(31, 82, 122, .22); }
+.pcard .th img { transition: transform .5s cubic-bezier(.2,.7,.3,1); }
+.pcard:hover .th img { transform: scale(1.035); }
 .pcard:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--acc) 40%, transparent); }
 .pcard .th { aspect-ratio: 3/2; background: var(--bg2); overflow: hidden; position: relative; border-radius: 14px 14px 0 0; }
 .pcard .th img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
@@ -174,6 +183,11 @@ footer.ft .wrap { display: flex; gap: 18px; flex-wrap: wrap; align-items: center
 
 /* M64 floating video ident — desktop-pet vignette, no rectangle */
 .ident { position: relative; width: min(560px, 92vw); aspect-ratio: 4 / 3; margin: 2px auto 8px; background: transparent; border: none; box-shadow: none; cursor: pointer; }
+.ident::before { content: ""; position: absolute; inset: -8% -12%; pointer-events: none; background: linear-gradient(100deg, transparent 42%, rgba(255,255,255,.5) 50%, transparent 58%), linear-gradient(80deg, transparent 62%, rgba(255,255,255,.28) 70%, transparent 78%); mix-blend-mode: screen; animation: rays 26s ease-in-out infinite alternate; }
+:root[data-theme="dark"] .ident::before { background: linear-gradient(100deg, transparent 42%, rgba(103,199,232,.22) 50%, transparent 58%), linear-gradient(80deg, transparent 62%, rgba(127,179,224,.16) 70%, transparent 78%); }
+@keyframes rays { from { transform: translateX(-4%) rotate(-1.2deg); opacity: .7; } to { transform: translateX(4%) rotate(1.2deg); opacity: 1; } }
+.ident::after { content: ""; position: absolute; left: 6%; right: 6%; bottom: -26px; height: 64px; pointer-events: none; background: radial-gradient(60% 100% at 50% 0%, var(--glow), transparent 70%); filter: blur(6px); }
+@media (prefers-reduced-motion: reduce) { .ident::before { animation: none; } }
 .ident::after { content: ""; position: absolute; left: 50%; bottom: 4%; width: 44%; height: 5%; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(20, 40, 60, .26), transparent 70%); animation: idfSh 6s ease-in-out infinite; pointer-events: none; }
 :root[data-theme="dark"] .ident::after { background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, .5), transparent 70%); }
 .idf-halo { position: absolute; inset: -7% -9%; background-size: cover; background-position: center; filter: blur(30px) saturate(1.18) brightness(1.02); opacity: 0; border-radius: 50%; pointer-events: none; transition: opacity .7s ease; }
@@ -374,4 +388,6 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
 }
 .pillbtn { border: 1px solid var(--line); background: var(--bg2); color: var(--mut); border-radius: 999px; padding: 4px 14px; font: 11px var(--sans); cursor: pointer; }
 .pillbtn:hover { color: var(--ink); border-color: var(--acc); }
-
+/* M99-6 故事母题：星海/海西 剪影呼应（index hero 与 gallery 头） */
+.motif { position: absolute; right: 4%; bottom: 6px; height: 148px; opacity: .16; pointer-events: none; filter: saturate(.9); -webkit-mask-image: radial-gradient(ellipse 62% 60% at 50% 46%, #000 40%, transparent 74%); mask-image: radial-gradient(ellipse 62% 60% at 50% 46%, #000 40%, transparent 74%); }
+:root[data-theme="dark"] .motif { opacity: .2; filter: saturate(.8) brightness(1.05); }

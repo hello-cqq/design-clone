@@ -5,7 +5,7 @@
   const P = {
     dark: "#171c24", dark2: "#1f2630", line: "rgba(255,255,255,.14)", mut: "#8b95a3",
     light: "#f6f8fb", white: "#ffffff", ink: "#2b3440",
-    acc: "#ff8a5c", acc2: "#6fd3b2", acc3: "#7fb7ef", green: "#3fca6b", red: "#ff5b6b", yellow: "#ffd166",
+    acc: "#3f86d6", acc2: "#67c7e8", acc3: "#7fb7ef", green: "#3fca6b", red: "#ff5b6b", yellow: "#e8b04b",
   };
 
 
