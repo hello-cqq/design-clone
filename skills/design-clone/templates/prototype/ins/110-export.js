@@ -66,6 +66,16 @@
     }
     return { count: j.payload.length, where: "所选目录" };
   }
+  let _serverProbe = null;
+  const probeServer = () => (_serverProbe ??= fetch("/__dc_export__", { method: "POST", body: "{}" }).then((r) => r.ok).catch(() => false));
+  const staticPackUrl = () => new URL("export/all.zip", new URL(location.pathname.replace(/[^/]*$/, ""), location.origin)).href;
+  async function tryStaticPack() {
+    try {
+      const zr = await fetch(staticPackUrl());
+      if (zr.ok) { downloadBlob(`design-clone-export-${stamp()}.zip`, await zr.blob()); toast("已下载导出包（静态预构建 export/all.zip）"); return true; }
+    } catch {}
+    return false;
+  }
   async function runExport(items) {
     if (exportBusy) { toast("导出进行中，请稍候…"); return; }
     const mode = exportMode();
@@ -77,6 +87,8 @@
         return;
       }
       if (mode === "dir") toast("当前浏览器不支持选目录，改用本地下载 zip");
+      // M98: 静态托管先走预构建包（确定性路径，不依赖错误文本；跨域 iframe 下载需宿主 iframe allow="downloads"）
+      if (!(await probeServer())) { if (await tryStaticPack()) return; }
       const wantFiles = mode !== "server";
       const j = await requestExport(items, wantFiles);
       if (!wantFiles || !j.payload) { toast(`已导出 → ${j.dir}（${j.files.length} 文件）`); return; }
