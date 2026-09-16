@@ -391,3 +391,61 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
 /* M99-6 故事母题：星海/海西 剪影呼应（index hero 与 gallery 头） */
 .motif { position: absolute; right: 4%; bottom: 6px; height: 148px; opacity: .16; pointer-events: none; filter: saturate(.9); -webkit-mask-image: radial-gradient(ellipse 62% 60% at 50% 46%, #000 40%, transparent 74%); mask-image: radial-gradient(ellipse 62% 60% at 50% 46%, #000 40%, transparent 74%); }
 :root[data-theme="dark"] .motif { opacity: .2; filter: saturate(.8) brightness(1.05); }
+
+/* ---------- M103-W3 新海诚叙事层 ---------- */
+/* hero 环境视频（星海 idle）：深埋内容之下，弱透明+羽化 */
+.heroambient { position: absolute; left: -60px; right: -60px; top: -30px; height: 560px; z-index: 0; pointer-events: none; overflow: hidden; }
+.heroambient video { width: 100%; height: 100%; object-fit: cover; opacity: .10; filter: saturate(1.05) blur(1.5px);
+  -webkit-mask-image: radial-gradient(56% 52% at 50% 34%, #000 22%, transparent 72%); mask-image: radial-gradient(56% 52% at 50% 34%, #000 22%, transparent 72%); }
+:root[data-theme="dark"] .heroambient video { opacity: .15; }
+.hero > *:not(.heroambient):not(.motif) { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) { .heroambient video { display: none; } .heroambient { background: center top/cover no-repeat url("xinghai-idle-poster.webp"); opacity: .34;
+  -webkit-mask-image: radial-gradient(56% 52% at 50% 34%, #000 18%, transparent 70%); mask-image: radial-gradient(56% 52% at 50% 34%, #000 18%, transparent 70%); } }
+/* hero 光轴（丁达尔） */
+.hero::after { content: ""; position: absolute; inset: -60px 0 auto; height: 480px; pointer-events: none; z-index: 0; mix-blend-mode: screen; opacity: .5;
+  background: linear-gradient(112deg, transparent 44%, rgba(255,244,214,.34) 49%, transparent 55%), linear-gradient(96deg, transparent 62%, rgba(255,244,214,.2) 68%, transparent 74%);
+  animation: heroRays 22s ease-in-out infinite alternate; }
+:root[data-theme="dark"] .hero::after { background: linear-gradient(112deg, transparent 44%, rgba(127,179,224,.2) 49%, transparent 55%), linear-gradient(96deg, transparent 62%, rgba(103,199,232,.14) 68%, transparent 74%); }
+@keyframes heroRays { from { transform: translateX(-2.5%) skewX(-1deg); opacity: .38; } to { transform: translateX(2.5%) skewX(1deg); opacity: .6; } }
+@media (prefers-reduced-motion: reduce) { .hero::after { animation: none; } }
+/* h1 尾句：暮色→金的渐变字（四场景同色系纽带） */
+.hero h1 em { background: linear-gradient(100deg, var(--acc) 0%, var(--gold) 58%, var(--acc2) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+/* 三幕故事带 */
+.storynav { display: flex; align-items: stretch; gap: 0; margin: 30px auto 6px; max-width: 900px; }
+.storynav .act { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 16px 12px 14px; border-radius: 18px; color: var(--ink);
+  background: color-mix(in srgb, var(--card) 72%, transparent); border: 1px solid var(--line); backdrop-filter: blur(8px); transition: transform .25s ease, box-shadow .25s ease, border-color .25s; }
+.storynav .act:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--acc) 45%, transparent); }
+.storynav .act b { width: 26px; height: 26px; border-radius: 999px; display: grid; place-items: center; font: 600 12px var(--mono); color: #fff;
+  background: linear-gradient(135deg, var(--acc), var(--gold)); box-shadow: 0 6px 16px var(--glow); }
+.storynav .act span { font-weight: 600; font-size: 14.5px; }
+.storynav .act i { font-style: normal; font-size: 11.5px; color: var(--mut); text-align: center; }
+.storynav .actline { flex: 0 0 46px; align-self: center; height: 2px; background: linear-gradient(90deg, transparent, var(--acc), var(--gold), transparent); opacity: .7; }
+@media (max-width: 700px) { .storynav { flex-direction: column; gap: 8px; } .storynav .actline { width: 2px; height: 22px; flex: none; align-self: center; background: linear-gradient(180deg, transparent, var(--acc), transparent); } }
+/* 子页叙事眉标+天际过渡 */
+.pagehead { position: relative; padding: 26px 0 6px; text-align: center; }
+.pagehead::before { content: ""; position: absolute; inset: -70px 0 auto; height: 150px; pointer-events: none;
+  background: radial-gradient(60% 80% at 50% 0%, color-mix(in srgb, var(--acc2) 14%, transparent), transparent 72%); }
+.pagehead .eyebrow { font: 600 11px var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--acc2); }
+.pagehead h2 { margin: 6px 0 0; font-size: 26px; font-weight: 600; }
+/* gallery 卡片 cinematic hover：渐变罩+标题微光 */
+.pcard .th::after { content: ""; position: absolute; inset: 0; opacity: 0; transition: opacity .35s ease; pointer-events: none;
+  background: linear-gradient(180deg, transparent 46%, color-mix(in srgb, #0b1220 58%, transparent) 100%); }
+.pcard:hover .th::after { opacity: 1; }
+.pcard:hover .th img { transform: scale(1.06); filter: saturate(1.06); }
+.pcard:hover .t .nm { text-shadow: 0 0 18px var(--glow); }
+/* 页脚前海面反射带 */
+footer.ft { position: relative; }
+footer.ft::before { content: ""; position: absolute; left: 0; right: 0; top: -46px; height: 46px; pointer-events: none; opacity: .5;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--acc2) 10%, transparent) 60%, color-mix(in srgb, var(--acc) 16%, transparent));
+  -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 9px); mask-image: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 9px); }
+/* 云体视差层（JS 滚动驱动，reduced-motion 关闭） */
+.cloudlayer { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: .5; will-change: transform; }
+:root[data-theme="dark"] .cloudlayer { opacity: .3; }
+.cloudlayer .cl { position: absolute; border-radius: 50%; filter: blur(26px); background: radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,.5), transparent 70%); }
+:root[data-theme="dark"] .cloudlayer .cl { background: radial-gradient(50% 50% at 50% 50%, rgba(127,179,224,.16), transparent 70%); }
+.wrap, header.top, footer.ft { position: relative; z-index: 1; }
+
+.eyebrow { font: 600 11px var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--acc2); }
+.crumb .eyebrow { margin-right: 2px; }
+.pagehead--left { text-align: left; padding: 22px 0 2px; }
+.pagehead--left::before { background: radial-gradient(50% 90% at 18% 0%, color-mix(in srgb, var(--acc2) 12%, transparent), transparent 70%); }

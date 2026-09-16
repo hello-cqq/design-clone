@@ -54,10 +54,27 @@
   .dc-slider .fl{position:absolute;left:0;top:0;height:4px;border-radius:2px;background:#07c160;width:var(--p,40%)}
   .dc-slider .th{position:absolute;left:var(--p,40%);width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.3);transform:translateX(-9px)}
   `;
+  function vidReplay(el) {
+    const doc = el.ownerDocument || document;
+    let vid = null;
+    try { if (el.dataset.target) vid = resolve(el, el.dataset.target); } catch {}
+    if (!vid) vid = el.closest("video") || doc.querySelector("video");
+    if (vid) { try { vid.currentTime = 0; const pr = vid.play(); if (pr && pr.catch) pr.catch(() => {}); } catch {} }
+    el.classList.remove("dc-vrp"); void el.offsetWidth; el.classList.add("dc-vrp");
+    setTimeout(() => el.classList.remove("dc-vrp"), 950);
+    toast(el.dataset.msg || "从头重播了一遍（演示）");
+  }
+  function fxLipstate(el) {
+    const states = (el.getAttribute("data-fx-states") || "").split("|").map((s) => s.trim()).filter(Boolean);
+    if (states.length < 2) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = states[0]; return; }
+    let i = 0;
+    setInterval(() => { i = (i + 1) % states.length; el.style.opacity = "0"; setTimeout(() => { el.textContent = states[i]; el.style.opacity = "1"; }, 260); }, 3400);
+  }
   function injectCSS() {
     if (!document.getElementById("dc-fx-css")) {
       const st = document.createElement("style"); st.id = "dc-fx-css";
-      st.textContent = 'canvas[data-fx="particles"]{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}[data-fx-parallax]{will-change:transform;transition:transform .22s ease-out}';
+      st.textContent = 'canvas[data-fx="particles"]{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}[data-fx-parallax]{will-change:transform;transition:transform .22s ease-out}[data-fx="lipstate"]{transition:opacity .26s ease}.dc-vrp{animation:dcVrp .9s cubic-bezier(.34,1.56,.64,1)}@keyframes dcVrp{0%{transform:scale(1)}30%{transform:scale(1.045) rotate(-1.2deg)}60%{transform:scale(.985) rotate(.8deg)}100%{transform:scale(1)}}@media (prefers-reduced-motion: reduce){.dc-vrp{animation:none}}';
       (document.head || document.documentElement).appendChild(st);
     }
     if (document.getElementById("dc-runtime-css")) return;
@@ -233,6 +250,7 @@
       case "sheet": openSheet(el); break;
       case "dialog": openDialog(el); break;
       case "toast": toast(el.dataset.msg || el.textContent.trim() || "已操作"); break;
+      case "vid-replay": vidReplay(el); break; // M103-W4：点角色/控件=重播关联视频+脉动反馈
       case "step": stepper(el); break;
       case "slider": slider(el, ev); break;
       case "back": doBack(el); break;
@@ -257,6 +275,11 @@
       if (act === "radio") { if (!el.hasAttribute("aria-checked")) el.setAttribute("aria-checked", el.classList.contains("on") ? "true" : "false"); }
       if (act === "tab") { if (!el.hasAttribute("aria-selected")) el.setAttribute("aria-selected", el.classList.contains("on") ? "true" : "false"); }
       if (!nativeForm && !/^(button|a)$/i.test(el.tagName) && !el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
+    });
+    // M103-W4：静音循环视频=环境层，视图载入即自播（reduced-motion 尊重 CSS 隐藏/暂停）
+    (root || document).querySelectorAll("video[muted][loop]").forEach((v) => {
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) { v.pause(); return; }
+      if (v.paused) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); }
     });
   };
 
@@ -305,6 +328,7 @@
   }
   DCR.fx = function (root) {
     (root || document).querySelectorAll('canvas[data-fx="particles"]').forEach(fxParticles);
+    (root || document).querySelectorAll('[data-fx="lipstate"]').forEach(fxLipstate);
     fxParallax(root || document);
   };
 

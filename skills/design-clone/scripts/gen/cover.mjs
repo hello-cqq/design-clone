@@ -77,8 +77,33 @@ for (const c of [path.join(run, "icon.png"), path.join(run, "prototype/appicon/i
 const mob = shell === "c_mobile" || shell === "c_tablet";
 const FW = mob ? 330 : 660, FH = mob ? 620 : 430, FX = 1200 - FW - 90, FY = mob ? 90 : 150;
 const heroB64 = (await sharp(heroBuf).resize(FW - 24, FH - 24, { fit: "cover" }).png().toBuffer()).toString("base64");
+/* ---------- M103-W2：art-cinematic 合成（references/cover-bg.png 存在即启用；无则回落经典版式） ---------- */
+const artPath = path.join(run, "references", "cover-bg.png");
+const hasArt = fs.existsSync(artPath);
 const pills = tags.map((t, i) => `<rect x="${70 + i * 150}" y="560" rx="999" ry="999" width="140" height="44" fill="#fffdf8" opacity=".92"/><text x="${140 + i * 150}" y="588" font-size="20" fill="#4a3b2e" text-anchor="middle" font-family="PingFang SC, Noto Sans CJK SC, sans-serif">${String(t).replace(/[<>&]/g, "")}</text>`).join("");
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+let svg;
+if (hasArt) {
+  const artB64 = (await sharp(artPath).resize(1200, 800, { fit: "cover" }).png().toBuffer()).toString("base64");
+  const heroSh = `<rect x="${FX}" y="${FY}" width="${FW}" height="${FH}" rx="${mob ? 42 : 18}" fill="#000" opacity=".35" transform="translate(6 10)"/>`;
+  svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+<defs>
+  <clipPath id="scr"><rect x="${FX + 12}" y="${FY + 12}" width="${FW - 24}" height="${FH - 24}" rx="${mob ? 30 : 12}"/></clipPath>
+  <linearGradient id="scrim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1220" stop-opacity="0"/><stop offset=".55" stop-color="#0b1220" stop-opacity=".18"/><stop offset="1" stop-color="#0b1220" stop-opacity=".72"/></linearGradient>
+  <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="8"/></filter>
+</defs>
+<image href="data:image/png;base64,${artB64}" width="1200" height="800" preserveAspectRatio="xMidYMid slice"/>
+<rect width="1200" height="800" fill="url(#scrim)"/>
+${heroSh}
+<rect x="${FX}" y="${FY}" width="${FW}" height="${FH}" rx="${mob ? 42 : 18}" fill="#0e1524" opacity=".9"/>
+<rect x="${FX}" y="${FY}" width="${FW}" height="${FH}" rx="${mob ? 42 : 18}" fill="none" stroke="#ffffff" stroke-opacity=".22" stroke-width="1.5"/>
+${mob ? `<rect x="${FX + FW / 2 - 40}" y="${FY + 14}" width="80" height="12" rx="6" fill="#fff" opacity=".22"/>` : `<g fill="#fff" opacity=".35"><circle cx="${FX + 22}" cy="${FY + 16}" r="4"/><circle cx="${FX + 38}" cy="${FY + 16}" r="4"/><circle cx="${FX + 54}" cy="${FY + 16}" r="4"/></g><rect x="${FX + 76}" y="${FY + 10}" width="${FW - 100}" height="12" rx="6" fill="#fff" opacity=".10"/>`}
+<image href="data:image/png;base64,${heroB64}" x="${FX + 12}" y="${FY + 12}" width="${FW - 24}" height="${FH - 24}" preserveAspectRatio="xMidYMid slice" clip-path="url(#scr)"/>
+${iconB64 ? `<rect x="64" y="84" width="120" height="120" rx="30" fill="#0b1220" opacity=".45" filter="url(#soft)"/><image href="data:image/png;base64,${iconB64}" x="70" y="90" width="108" height="108" preserveAspectRatio="xMidYMid slice"/>` : ""}
+<text x="70" y="672" font-size="${String(nameZh).length > 10 ? (String(nameZh).length > 14 ? 34 : 42) : 56}" font-weight="600" fill="#ffffff" font-family="PingFang SC, Noto Sans CJK SC, sans-serif">${String(nameZh).slice(0, 16).replace(/[<>&]/g, "")}</text>
+<text x="70" y="712" font-size="${String(nameEn).length > 22 ? 17 : 22}" fill="#e8eef8" opacity=".82" font-family="-apple-system, Segoe UI, sans-serif">${String(nameEn).slice(0, 34).replace(/[<>&]/g, "")}</text>
+</svg>`;
+} else {
+svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
 <defs>
   <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${bg1}"/><stop offset="1" stop-color="${bg2}"/></linearGradient>
   <clipPath id="scr"><rect x="${FX + 12}" y="${FY + 12}" width="${FW - 24}" height="${FH - 24}" rx="${mob ? 30 : 12}"/></clipPath>
@@ -97,9 +122,9 @@ ${iconB64 ? `<rect x="70" y="90" width="112" height="112" rx="28" fill="#fffdf8"
 <text x="70" y="290" font-size="${String(nameZh).length > 10 ? (String(nameZh).length > 14 ? 30 : 38) : 52}" font-weight="600" fill="#4a3b2e" font-family="PingFang SC, Noto Sans CJK SC, sans-serif">${String(nameZh).slice(0, 16).replace(/[<>&]/g, "")}</text>
 <text x="70" y="330" font-size="${String(nameEn).length > 22 ? 17 : 24}" fill="#8a7660" font-family="-apple-system, Segoe UI, sans-serif">${String(nameEn).slice(0, 34).replace(/[<>&]/g, "")}</text>
 <rect x="70" y="370" width="64" height="10" rx="5" fill="${accent}"/>
-${pills}
 <text x="70" y="730" font-size="20" fill="#8a7660" font-family="-apple-system, Segoe UI, sans-serif">design-clone · playable prototype</text>
 </svg>`;
+}
 
 let buf = await sharp(Buffer.from(svg)).png({ palette: true, quality: 80, compressionLevel: 9 }).toBuffer();
 if (buf.length > 300 * 1024) buf = await sharp(Buffer.from(svg)).png({ palette: true, quality: 60, compressionLevel: 9, colors: 128 }).toBuffer();

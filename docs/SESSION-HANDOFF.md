@@ -63,7 +63,9 @@
 | M78-1 / M78-3 | 09-14 | ⚠️ 并发会话：v1 女生视频回归 + 铅笔根除（簇跟踪色彩擦 + 笔杆几何 poly 插值擦，179 帧）；`sync-thumbs.mjs` 同源缩略图入 `pages.yml` | ❌ | ✅ |
 | M78-2 | — | **编号跳空，三处均无记录** | ❌ | ❌ |
 | **M84/M85/M88/M91/M93/M94** | 09-14→15 | 演示点击即播、选中框 rAF 活跟踪 + `sel-ring-align` 门、导出 `all.zip`、logo 换用户图 + 主题冰蓝、导航 logo 动图 webp、透明纯度 veil 门 | ❌ | ❌（M93/M94 仅在 SESSION-SUMMARY） |
-| **M99** | 09-16 | 架构图 v3（archify 双主题 SVG）；媒体引擎（provider 路由+genvideo+agent-native 协议+media 工具集）；门禁第二轮（bg 覆盖/.far 豁免/选中语义）；两 demo 体感修复（PR#67）；官网新海诚重绘；数据线审计 | ✅ | ✅ |
+| **M99** | 09-16 | 架构图 v3（archify 双主题 SVG）；媒体引擎（provider 路由+genvideo+agent-native 协议+media 工具集）；门禁第二轮（bg 覆盖/.far 豁免/选中语义）；两 demo 体感修复（PR#67）；官网新海诚重绘；数据线审计；全身立绘 v2+透明人物层（seedream pro） | ✅ | ✅ |
+| **M100–M102** | 09-16 | 指挥闭环定版（media-consent/plan/verify 三件套+官方 skill 桥）；标准 Ark key 直连档（仓外 0600+掩码+DELETE 止损）；media-strategy 总纲；Seedance 2.0-mini 实测履约（星海/耳廓狐 idle 视频，安全体验模式=SetLimitExceeded 真因）；双 demo 视频 hero 层（PR#69/#70） | ✅ | ✅ CHANGELOG |
+| **M103** | 09-16 | 数据线字重复发锁（wiremark 提浅+computed 门）；图标 full-bleed v2+品牌 flatten 归一；cover art-cinematic 分支（去 pills）；官网五页新海诚叙事流（hero idle webm 环境层+三幕故事带+眉标+cinematic hover+云视差+海面反射带）；runtime vid-replay/lipstate/静音自播；proto PR#71/#72（3.1.0）+品牌 1.7.0；index.json version 语义定案 | ✅ | ✅ CHANGELOG |
 | **M96–M98** | 09-15→16 | README 美化（双主题 GIF 头/架构分层图/功能全景图）；官网效果修复波；门禁真实化；proto 资产契约归一（PR#63+下架残留清理）；终极审查清债+稳定版 v0.6.0 | ✅ | ✅ CHANGELOG |
 
 > **M92 从未使用**（M91 → M93 跳号）。
@@ -191,11 +193,11 @@
 ### 4.3 五个已发布原型
 | slug | 中文名 | 来源 run | 版本 | downloads | pages | 备注 |
 |---|---|---|---|---|---|---|
-| `wechat` | — | `wechat-full` | 1.6.2 | 5 | 19 | `ip_attestation=public-material` + brand_disclaimer；shell `c_mobile` |
-| `ai-assistant` | 星海对话 | `demo-assistant` | 2.1.2 | 4 | 5 | M75-W3 引入；M98 双语同源+版本对齐 Release |
-| `lark` | — | `mac-lark` | 1.6.2 | 4 | 14 | shell `c_desktop`；pages id 跳号（01-11,14,15,16） |
-| `aliyun-console` | — | `web-aliyun` | 1.6.2 | 3 | 7 | shell `c_browser`；M98 补 platform=web |
-| `petpark` | 动物乐园 | `demo-petpark` | 2.2.2 | 2 | 8 | commits 最多(19)；官网 live proof / 精选置顶默认用它 |
+| `wechat` | — | `wechat-full` | 1.7.0 | 5 | 19 | `ip_attestation=public-material` + brand_disclaimer；shell `c_mobile`；M103 图标归一+封面去 pills |
+| `ai-assistant` | 星海对话 | `demo-assistant` | 3.1.0 | 4 | 5 | M75-W3 引入；M103 full-bleed 图标+cinematic 封面+灵动通话（vid-replay/lipstate） |
+| `lark` | — | `mac-lark` | 1.7.0 | 4 | 14 | shell `c_desktop`；pages id 跳号（01-11,14,15,16）；M103 图标归一+封面去 pills |
+| `aliyun-console` | — | `web-aliyun` | 1.7.0 | 3 | 7 | shell `c_browser`；M98 补 platform=web；M103 图标归一+封面去 pills |
+| `petpark` | 动物乐园 | `demo-petpark` | 3.1.0 | 2 | 8 | commits 最多；官网 live proof / 精选置顶默认用它；M103 耳廓狐 full-bleed 图标+草甸 cinematic 封面 |
 
 > M55 的五种子 ≠ 今天的五个：种子之一 `dy-note`（源 `link-dy4`）→ M76-W2 `--retire` 改名 `pet-health-note` → 再被 `ai-assistant` 替换；`pet-health-note` 现亦不在仓。
 

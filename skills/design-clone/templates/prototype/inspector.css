@@ -9,7 +9,7 @@
   /* M44k：画布连线上的编号/标签专用浅色（此前复用 --sh-line=#111，用户反馈"太黑太粗"） */
   --sh-mark: #8a9099; --sh-mark-bg: rgba(255, 255, 255, .92); --sh-mark-line: #c9ced4;
   /* M49：数据线=细浅黑（亮）/细灰白（暗）；线上标注/序号=不黑不粗的中间色 */
-  --sh-wire: #44484d; --sh-wiremark: #6f757c;
+  --sh-wire: #4a4e54; --sh-wiremark: #8a9097;
   --w-rail: 56px; --w-left: 216px; --w-right: 280px;
 }
 :root[data-theme="dark"] {

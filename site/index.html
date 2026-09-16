@@ -31,6 +31,11 @@
 
 <div class="wrap">
   <section class="hero">
+    <div class="heroambient" aria-hidden="true">
+      <video muted loop playsinline preload="metadata" poster="assets/xinghai-idle-poster.webp">
+        <source src="assets/xinghai-idle.webm" type="video/webm">
+      </video>
+    </div>
     <img class="motif" src="assets/character-xinghai.png" alt="">
     <div class="ident" id="ident" title="replay"></div>
     <h1><span data-i18n="h1a">Clone any app into</span> <em data-i18n="h1b">a playable prototype.</em></h1>
@@ -41,7 +46,15 @@
     </div>
   </section>
 
-  <section class="exp">
+  <nav class="storynav" aria-label="story">
+    <a class="act" href="gallery.html"><b>1</b><span data-i18n="s1_t">See</span><i data-i18n="s1_d">capture any app, site or link</i></a>
+    <span class="actline" aria-hidden="true"></span>
+    <a class="act" href="guide.html"><b>2</b><span data-i18n="s2_t">Clone</span><i data-i18n="s2_d">the agent rebuilds it as a living prototype</i></a>
+    <span class="actline" aria-hidden="true"></span>
+    <a class="act" href="#try" id="act3"><b>3</b><span data-i18n="s3_t">Play</span><i data-i18n="s3_d">tap through, tweak, export the design</i></a>
+  </nav>
+
+  <section class="exp" id="try">
     <div class="frame">
       <div class="bar"><span class="dot"></span><span data-i18n="exp_title">Try it live</span>
         <select id="expselect"></select>
