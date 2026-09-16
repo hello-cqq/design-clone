@@ -37,10 +37,7 @@
 
 skill 完全跑在你的 agent 内——六个本地离线阶段，从原始来源到门禁放行的可玩产出（深入：[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)）：
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/img/architecture-dark.png">
-  <img src="docs/img/architecture.png" alt="design-clone 核心管线：四类来源、捕获与测量、知识层、生成层、质量门、产出" width="100%">
-</picture>
+<img src="docs/img/architecture.svg" alt="design-clone core pipeline: four sources → capture → measure → knowledge → spec2view/inspector → gates → prototype & asset pack; host VLM and media engine as cross-cutting capabilities" width="100%">
 
 ## 从任何来源到可玩原型
 

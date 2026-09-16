@@ -5,6 +5,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M99（进行中）
+- M99-0: ui-smoke export-design-artifacts 导航稳定+3 次重试（修新壳时序假红）
+- M99-1: 架构图 v3 改 archify 管线产出——双主题自适配 SVG 单文件（semantic 配色/正交链路/创新·硬门·M99 标签/图例），README 单 img 引用随 GitHub 主题切换，弃双 PNG
+
+
 （下一波变更记这里。）
 
 ## [0.6.0] - 2026-09-16

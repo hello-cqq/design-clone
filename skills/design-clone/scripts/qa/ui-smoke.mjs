@@ -447,10 +447,19 @@ await step("path-rows-all", async () => {
 
 await step("export-design-artifacts", async () => {
   // M51：导出 zip 必含每页设计 JSON + figma 源（对 live 重采集=含编辑）
-  const r = await page.evaluate(async () => {
-    const res = await fetch("/__dc_export__", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ items: [{ type: "design-json" }, { type: "figma" }], returnFiles: true }) });
-    return res.json();
-  });
+  // M99: 前置 share 步可能留有导航竞态——等 load 稳定 + 3 次重试（旧版单次 fetch 遇导航打断即 Failed to fetch 假红）
+  let r = null;
+  let lastErr = null;
+  for (let i = 0; i < 3 && !r; i++) {
+    try {
+      await page.waitForLoadState("load", { timeout: 5000 }).catch(() => {});
+      r = await page.evaluate(async () => {
+        const res = await fetch("/__dc_export__", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ items: [{ type: "design-json" }, { type: "figma" }], returnFiles: true }) });
+        return res.json();
+      });
+    } catch (e) { lastErr = e; await page.waitForTimeout(900); }
+  }
+  if (!r) throw lastErr || new Error("export-design-artifacts 三次重试仍失败");
   const names = (r.files || []).map((f) => f.name || f);
   if (!names.some((n) => /figma-source\.json$/.test(n))) throw new Error("导出缺 figma-source.json");
   if (!names.some((n) => /\.spec\.json$/.test(n))) throw new Error("导出缺 pages/*.spec.json");
