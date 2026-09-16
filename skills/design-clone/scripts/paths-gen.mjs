@@ -53,7 +53,7 @@ if (fs.existsSync(graphPath)) {
     const html = fs.readFileSync(path.join(viewsDir, f), "utf8");
     for (const m of html.matchAll(/data-goto="([^"]+)"/g)) {
       const to = m[1];
-      if (to.startsWith("placeholder:") || !nodes[to]) continue;
+      if (to.startsWith("placeholder:") || !nodes[to] || to === from) continue; // M104-W4：本页 tab 的 self 边无导航语义，不入图
       const win = html.slice(Math.max(0, m.index - 600), m.index);
       const cls = [...win.matchAll(/class="([^"]+)"/g)].pop();
       const dcd = [...win.matchAll(/data-dc="([^"]+)"/g)].pop();

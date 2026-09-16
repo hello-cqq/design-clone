@@ -177,9 +177,9 @@ body.dc-chromeless .dc-framebar, body.dc-chromeless .dc-statusbar { display: non
 /* M44k：连线编号与标签的排版**只在此处**定义（JS 只写几何 cx/cy/x/y），
    并按画布 zoom 反向缩放（<g scale(1/z)> / --fc-inv），保证任何缩放下都是恒定的小浅字。
    旧实现把 font/fill 写在 inline style 且复用 --sh-line(#111)，既压过 CSS 又随 zoom 放大 → "太黑太粗"反复出现的根因。 */
-.wires .elabel { fill: var(--sh-wiremark); font: 400 9px -apple-system, "PingFang SC", "Helvetica Neue", sans-serif; letter-spacing: .02em; }
+.wires .elabel { fill: var(--sh-wiremark); font: 400 9px -apple-system, "PingFang SC", "Helvetica Neue", sans-serif; letter-spacing: .02em; stroke: none; stroke-width: 0; } /* M104-W0：全局 svg{stroke:currentColor;1.7} 会继承到 SVG text=深粗描边根因，必须复位 */
 .wires .wbadge { fill: var(--sh-mark-bg); stroke: var(--sh-wire); stroke-width: 1; }
-.wires .wnum { fill: var(--sh-wiremark); font: 400 8px ui-monospace, SFMono-Regular, Menlo, monospace; text-anchor: middle; }
+.wires .wnum { fill: var(--sh-wiremark); font: 400 8px ui-monospace, SFMono-Regular, Menlo, monospace; text-anchor: middle; stroke: none; stroke-width: 0; }
 .fc-node { position: relative; display: inline-block; vertical-align: top; }
 .fc-card { background: var(--sh-canvas); border: 1px solid var(--sh-border); border-radius: 16px; overflow: hidden;
   box-shadow: 0 4px 18px var(--sh-shadow); cursor: pointer; position: relative; }

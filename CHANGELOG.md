@@ -5,6 +5,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M104
+- 标准体系立宪：references/quality-standard.md（六法+六类输入矩阵+点缀元素法+反作弊四机制）；SKILL.md 挂接；CI 增 no-run-specialcase 反特判门
+- 新门七件：empty-band（空带≤12% 屏高，url() 艺术含 ::before 才算覆盖）、bg-cover（@keyframes 禁改 background-size）、motion-min（每页≥1 idle 动效）、unstyled-view-classes 祖先真匹配校验（死 CSS 根因）、flow-truth（声明边⊆真接线+不可达 fail）、style-anchor（资产 prompt 携带本 run 锚指纹）、wire-label-lite 扩 SVG stroke=0 断言（树标签"深粗"perennial 根因=全局 svg{stroke} 继承）
+- 生成器修因：director.mjs 删硬编码放射/顺连流；brief-flows 退役为 paths-gen 转调 wrapper（paths 单源=DOM data-goto∪capture，self 边过滤）；brief-views .far 拆 ::before（parallax 与呼吸不互吃）；cover.mjs 品牌色改 icon 主色取样+锚拒合成+cover-meta 落盘；publish 前置 cover-meta hero=真截图
+- 星海对话 in-place 重制：清 pollinations 四资产（17 处引用换 seedream 昼夜海+full 裁切胸像）；02 高度链重建输入栏钉底；03 视频=唯一表现全屏影像+死 CSS 根类修复+挂断真返回；04 背景 radio 真切换+缩略图；00 昼夜硬缝改蒙版融合
+- 动物乐园 in-place 重制：zootopia-3d 锚 6 张 3D art（中心裁切去烘焙 UI）；00 地图满铺；02 狐狸视频满幅去白环黄饼；03 补 tab 修死端；04/06 补入口修不可达；05 满铺场景+托盘；06 三真卡+双锁剪影；孤儿资产清理
+- 官网无边界重做：1px 硬线全退场、全屏大段、View Transitions 页间过渡、IO 滚动 reveal、素描氛围人物三张（白底生成+本地抠白+clip-path 扫显）、页脚地平线
+- 封面 v3：petpark/assistant 按 brief.cover.prompt 锚对齐重出；品牌三 app=icon 主色取样+真截图极简；五 run cover-meta hero=screenshot
+- 变异测试+双新场景演练（W7b）入 QA 矩阵
+
 ### M103
 - W1 数据线字重复发锁：亮色 wiremark 提浅（#6f757c→#8a9097）；ui-smoke wire-label-lite 扩 computed 断言（字重≤400+亮/暗主题填充亮度下限/上限），复发即红
 - W2 图标/封面 v2：原创两 app 图标 full-bleed 圆角重出（seedream-5.0-pro 经官方 byted-ark-seedream-skill，AgentPlan 订阅配额）；品牌三 app 官方图标 compose 前透明角主色 flatten 归一（满版无透角）；cover.mjs 新增 art-cinematic 分支（references/cover-bg.png 存在即启用：art 满底+底部 scrim+极简中英名+去 pills/瓷砖/奶油盘），经典分支同步去 pills

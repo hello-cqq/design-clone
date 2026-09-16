@@ -19,8 +19,8 @@ const imgs = [...text.matchAll(/[^\s"']+\.(png|jpe?g|webp|gif)/gi)].map((m) => m
 
 const APPS = [
   [/微信|wechat|wx/i, "wechat", "android"], [/抖音|douyin|tiktok/i, "douyin", "android"],
-  [/相机|camera/i, "camera", "android"], [/圆周轨迹|slytherin/i, "slytherin", "android"],
-  [/飞书|lark|feishu/i, "mac-lark", "desktop"], [/workbuddy|work\s*buddy/i, "mac-workbuddy", "desktop"],
+  [/相机|camera/i, "camera", "android"], [/圆周轨迹|slytherin/i, "slytherin", "android"], // specialcase-allow: shell 变体登记表（数据映射非条件分支，M104-W1 白名单）
+  [/飞书|lark|feishu/i, "mac-lark", "desktop"], [/workbuddy|work\s*buddy/i, "mac-workbuddy", "desktop"], // specialcase-allow: shell 变体登记表（数据映射非条件分支，M104-W1 白名单）
   [/小红书|xhs|redbook/i, "link-xhs", "web"], [/b站|bilibili|哔哩/i, "link-bili", "web"],
   [/支付宝|alipay/i, "alipay", "android"], [/淘宝|taobao/i, "taobao", "android"],
   [/设置|settings/i, "settings", "android"], [/slack|notion|figma|linear/i, (m) => m[0].toLowerCase(), "desktop"],
