@@ -12,12 +12,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { execSync } from "node:child_process";
-import { arkRequestSpec, officialSkillPath } from "./gen/providers.mjs";
+import { arkRequestSpec, officialSkillPath, arkStandardKey, arkStandardVideo } from "./gen/providers.mjs";
 
 const { values } = parseArgs({
   options: {
     prompt: { type: "string" }, out: { type: "string" }, brief: { type: "string" },
-    duration: { type: "string", default: "5" }, aspect: { type: "string", default: "16:9" },
+    duration: { type: "string", default: "5" }, aspect: { type: "string", default: "16:9" }, "first-frame": { type: "string" },
     also: { type: "string" }, verify: { type: "boolean" }, help: { type: "boolean" },
   },
 });
@@ -41,7 +41,7 @@ if (values.brief) {
   (b.video_prompts || []).forEach((v, i) => jobs.push({ prompt: typeof v === "string" ? v : v.prompt, out: path.join(values.out, `video-${String(i + 1).padStart(2, "0")}.mp4`), duration: (typeof v === "object" && v.duration) || +values.duration }));
   if (!jobs.length) { console.error("brief 无 video_prompts"); process.exit(1); }
 } else if (values.prompt && values.out) {
-  jobs.push({ prompt: values.prompt, out: values.out, duration: +values.duration });
+  jobs.push({ prompt: values.prompt, out: values.out, duration: +values.duration, firstFrame: values["first-frame"] || null });
 } else { console.error("需 --prompt+--out 或 --brief+--out"); process.exit(1); }
 
 if (values.verify) {
@@ -59,6 +59,20 @@ if (values.verify) {
   process.exit(0);
 }
 const done = [];
+// M102 直连档：标准 key 在位+本 session 授权（DC_MEDIA_CONSENT）→ skill 直接履约（后付费，省配额默认 480p/4s/无声）
+if (arkStandardKey() && process.env.DC_MEDIA_CONSENT) {
+  for (const jb of jobs) {
+    try {
+      const r = await arkStandardVideo({ prompt: jb.prompt, duration: Math.min(jb.duration || 4, 5), resolution: "480p", firstFrame: jb.firstFrame || null });
+      const raw = path.join(path.dirname(path.resolve(jb.out)), ".raw-" + path.basename(jb.out));
+      fs.writeFileSync(raw, r.buf);
+      normalize(raw, path.resolve(jb.out), values.also);
+      fs.rmSync(raw, { force: true });
+      done.push({ out: path.resolve(jb.out), engine: r.engine, meta: r.meta, prompt: jb.prompt.slice(0, 120) });
+      console.log("video:", path.basename(jb.out), `(${r.engine}, ${r.meta.duration}s, tokens=${r.meta.tokens})`);
+    } catch (e) { console.error("直连档失败→回落 defer:", String(e.message).slice(0, 140)); break; }
+  }
+}
 if (!done.length) {
   // M101 教义：skill 不直调生视频——写履约请求（含官方契约规格），宿主 agent 用其已配置 means
   // （官方 byted-ark-seedance-skill / 自配视频工具）产出同路径 mp4 后重跑 --verify 验收

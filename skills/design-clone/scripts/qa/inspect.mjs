@@ -754,6 +754,18 @@ await step("pasted-screenshot", async () => {
   if (bad.length) throw new Error("整屏贴图视图: " + bad.slice(0, 3).join(","));
 });
 
+await step("media-plan", async () => {
+  // M102: media-plan 履约率公示（warn 级）：有 plan 且存在未履约槽位 → warn
+  const pp = path.join(values.run || ".", "knowledge/media-plan.json");
+  if (!values.run || !fs.existsSync(pp)) return;
+  const plan = JSON.parse(fs.readFileSync(pp, "utf8"));
+  const mf = path.join(values.run, "prototype/assets-manifest.json");
+  const man = fs.existsSync(mf) ? JSON.parse(fs.readFileSync(mf, "utf8")).assets || {} : {};
+  const fulfilled = Object.values(man).some((a) => /agent-media|ark-standard|agentplan/.test(a.source || a.engine || ""));
+  const open = (plan.slots || []).length - (fulfilled ? 1 : 0);
+  if ((plan.slots || []).length && open > 0) { ok("media-plan", true, `${open}/${plan.slots.length} 槽位待履约（${plan.summary}）`, true); }
+});
+
 await step("view-weight-budget", async () => {
   // M48：视图文本字重预算 <=600（700/800 在 CJK 下观感=黑粗；OS 状态栏保真豁免）
   const bad = await page.evaluate(() => {

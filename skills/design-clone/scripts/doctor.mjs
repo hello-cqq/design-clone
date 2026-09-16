@@ -140,6 +140,7 @@ add(s2cKey ? "opt" : "skip", "s2c 加速", s2cKey ? "检测到 provider key→�
   const ps = providerSummary(); void ps; _ps = ps;
   add(officialSkillPath("image") ? "opt" : "skip", "生图 means", officialSkillPath("image") ? "官方 byted-ark-seedream-skill 在位（agent 履约通道）" : "官方 seedream skill 未装→agent-native/匿名档");
   add(officialSkillPath("video") ? "opt" : "skip", "生视频 means", officialSkillPath("video") ? "官方 byted-ark-seedance-skill 在位（agent 履约通道）" : "官方 seedance skill 未装→agent-native 待办");
+  { const k = (await import("./gen/providers.mjs")).arkStandardKey(); add(k ? "opt" : "skip", "标准 Ark key 直连档", k ? `在位（${k.slice(0, 8)}…${k.slice(-4)}，后付费 /api/v3 视频）` : "未配置（~/.config/design-clone/ark.key 或 ARK_API_KEY）"); }
   {
     const { discoverAgentPlan } = await import("./gen/providers.mjs");
     const srcs = discoverAgentPlan();
