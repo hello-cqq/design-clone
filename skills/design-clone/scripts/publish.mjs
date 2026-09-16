@@ -45,6 +45,14 @@ if (!insS || (insS.fail || 0) !== 0) die("inspect 门未绿（fail≠0 或未跑
 const smkS = smk && smk.summary;
 if (!smkS || (smkS.fail || 0) !== 0) die("ui-smoke 门未绿（fail≠0 或未跑）");
 if (!fs.existsSync(path.join(run, "knowledge/privacy.json"))) die("缺 knowledge/privacy.json（隐私账本）");
+// M104-W6：concept run 封面 hero 必须真截图（cover-meta.json 由 cover.mjs 落盘）
+{
+  const m = readJ(path.join(run, "meta.json")) || {};
+  if ((m.ip_attestation || m.provenance) === "original") {
+    const cm = readJ(path.join(run, "prototype/cover-meta.json"));
+    if (!cm || cm.hero !== "screenshot") die("封面 hero 非真截图（cover-meta.json 缺失或 hero!=screenshot）——先 node gen/cover.mjs --base <url> 重合成");
+  }
+}
 const pv = readJ(path.join(run, "qa/privacy.json"));
 if (pv && pv.ok !== true) die("qa/privacy.json 非绿（隐私门红态不可发布）");
 // M98: 门新鲜度——三门 JSON 必须晚于原型最后改动（防拿旧门发布新原型）

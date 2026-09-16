@@ -410,17 +410,6 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
 @media (prefers-reduced-motion: reduce) { .hero::after { animation: none; } }
 /* h1 尾句：暮色→金的渐变字（四场景同色系纽带） */
 .hero h1 em { background: linear-gradient(100deg, var(--acc) 0%, var(--gold) 58%, var(--acc2) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-/* 三幕故事带 */
-.storynav { display: flex; align-items: stretch; gap: 0; margin: 30px auto 6px; max-width: 900px; }
-.storynav .act { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 16px 12px 14px; border-radius: 18px; color: var(--ink);
-  background: color-mix(in srgb, var(--card) 72%, transparent); border: 1px solid var(--line); backdrop-filter: blur(8px); transition: transform .25s ease, box-shadow .25s ease, border-color .25s; }
-.storynav .act:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--acc) 45%, transparent); }
-.storynav .act b { width: 26px; height: 26px; border-radius: 999px; display: grid; place-items: center; font: 600 12px var(--mono); color: #fff;
-  background: linear-gradient(135deg, var(--acc), var(--gold)); box-shadow: 0 6px 16px var(--glow); }
-.storynav .act span { font-weight: 600; font-size: 14.5px; }
-.storynav .act i { font-style: normal; font-size: 11.5px; color: var(--mut); text-align: center; }
-.storynav .actline { flex: 0 0 46px; align-self: center; height: 2px; background: linear-gradient(90deg, transparent, var(--acc), var(--gold), transparent); opacity: .7; }
-@media (max-width: 700px) { .storynav { flex-direction: column; gap: 8px; } .storynav .actline { width: 2px; height: 22px; flex: none; align-self: center; background: linear-gradient(180deg, transparent, var(--acc), transparent); } }
 /* 子页叙事眉标+天际过渡 */
 .pagehead { position: relative; padding: 26px 0 6px; text-align: center; }
 .pagehead::before { content: ""; position: absolute; inset: -70px 0 auto; height: 150px; pointer-events: none;
@@ -433,11 +422,8 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
 .pcard:hover .th::after { opacity: 1; }
 .pcard:hover .th img { transform: scale(1.06); filter: saturate(1.06); }
 .pcard:hover .t .nm { text-shadow: 0 0 18px var(--glow); }
-/* 页脚前海面反射带 */
+/* 页脚前海面反射带（M104-W0：条纹带删除，地平线改 W5 重绘） */
 footer.ft { position: relative; }
-footer.ft::before { content: ""; position: absolute; left: 0; right: 0; top: -46px; height: 46px; pointer-events: none; opacity: .5;
-  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--acc2) 10%, transparent) 60%, color-mix(in srgb, var(--acc) 16%, transparent));
-  -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 9px); mask-image: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 9px); }
 /* 云体视差层（JS 滚动驱动，reduced-motion 关闭） */
 .cloudlayer { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: .5; will-change: transform; }
 :root[data-theme="dark"] .cloudlayer { opacity: .3; }
@@ -450,3 +436,44 @@ footer.ft::before { content: ""; position: absolute; left: 0; right: 0; top: -46
 .pagehead--left { text-align: left; padding: 22px 0 2px; }
 .pagehead--left::before { background: radial-gradient(50% 90% at 18% 0%, color-mix(in srgb, var(--acc2) 12%, transparent), transparent 70%); }
 .pagehead .ph-title { margin: 6px 0 0; font-size: 26px; font-weight: 600; }
+
+/* ---------- M104-W5 无边界新海诚叙事层 ---------- */
+/* 硬线退场：1px border 全改阴影/渐变（无边界原则） */
+header.top { border-bottom: 0; background: transparent; transition: background .35s ease, box-shadow .35s ease; }
+header.top.scrolled { background: color-mix(in srgb, var(--bg) 74%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 12px 34px color-mix(in srgb, var(--ink) 7%, transparent); }
+.iconbtn, .btn, .pillbtn, .ftab, .pcard, .chip, .filters input, .filters select, .tagbtn, .stage, .side, .fcard, .installbox, .exp .frame, .exp .bar select, .animstage, .qsuggest, .qsuggest .chip, .pagechips .pchip, .crumbrow .jump, .pcard .th .heat, .tagactive .chip { border: 0; }
+.installbox, .pcard, .fcard, .exp .frame, .animstage, .filters input, .filters select, .stage, .side { box-shadow: 0 18px 44px color-mix(in srgb, var(--ink) 8%, transparent); }
+.exp .bar { border-bottom: 0; background: color-mix(in srgb, var(--card) 62%, transparent); border-radius: 18px 18px 0 0; }
+.animstage .cap { border-bottom: 0; }
+.contrib-avs .cav { border: 0; box-shadow: 0 0 0 2px var(--bg); }
+/* 大页面：全屏段节奏 */
+section.hero { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: 96px 20px 48px; }
+section.exp { min-height: 92svh; display: flex; flex-direction: column; justify-content: center; margin: 0; padding: 72px 20px; }
+.exp .frame { height: min(640px, 70svh); border-radius: 24px; overflow: hidden; }
+section.blk { padding: 120px 20px; }
+.pagehead { padding: 60px 0 10px; }
+/* 滚动叙事 reveal */
+[data-rv] { opacity: 0; transform: translateY(24px); transition: opacity .85s ease, transform .85s cubic-bezier(.22, .9, .32, 1); }
+[data-rv].rv-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { [data-rv] { opacity: 1; transform: none; transition: none; } }
+/* 素描氛围人物（点缀元素法） */
+section, footer.ft { position: relative; }
+.sketch { position: absolute; pointer-events: none; z-index: 0; opacity: .10; mix-blend-mode: multiply; }
+:root[data-theme="dark"] .sketch { opacity: .16; mix-blend-mode: screen; filter: invert(1); }
+.sketch img { width: 100%; height: 100%; object-fit: contain; clip-path: inset(0 0 100% 0); }
+.sketch.rv-in img { animation: skdraw 1.6s cubic-bezier(.3, .7, .3, 1) .15s both; }
+@keyframes skdraw { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 -4% 0); } }
+@media (prefers-reduced-motion: reduce) { .sketch img { clip-path: none; } .sketch.rv-in img { animation: none; } }
+/* 页脚地平线 */
+footer.ft { border-top: 0; margin-top: 0; padding: 0; }
+.ft-sky { position: relative; height: 200px; background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--acc2) 10%, transparent) 52%, color-mix(in srgb, var(--acc) 16%, transparent) 80%, color-mix(in srgb, var(--ink) 22%, transparent)); }
+.ft-sky::after { content: ""; position: absolute; left: 0; right: 0; bottom: 32%; height: 2px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--gold) 75%, transparent), transparent); opacity: .85; filter: blur(.4px); }
+.ft-in { position: relative; padding: 24px 20px 44px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.ft-in .ftbrand { width: 44px; height: 44px; }
+.ft-in span { font-size: 11.5px; color: var(--mut); }
+/* View Transitions 页间共享天空过渡 */
+::view-transition-old(root) { animation: vtOut .32s ease both; }
+::view-transition-new(root) { animation: vtIn .44s cubic-bezier(.22, .9, .32, 1) both; }
+@keyframes vtOut { to { opacity: 0; transform: translateY(-12px); } }
+@keyframes vtIn { from { opacity: 0; transform: translateY(14px); } }
+@media (prefers-reduced-motion: reduce) { ::view-transition-old(root), ::view-transition-new(root) { animation: none; } }

@@ -220,3 +220,7 @@
 189. M103 ident 假警报：查「视频不播」时抓第一个 `.idf-video`（light 主题隐藏视频）即断言全坏，实则 dark 视频正常播放。教训：双主题双视频组件采样**按 data-k 指定**，className/readyState 成组打印再下结论；假警报比无警报更费会话预算。
 190. M103 官方 seedream skill 纪律好用：`--dry-run` 先验参数（路由/尺寸/水印）再真跑；API_KEY 走 env 注入不进 argv（进程列表不泄）；WxH 自定义尺寸在普通生成路径需 pro。教训：付费生成 dry-run→真跑两步走，key 一律 env/仓外文件。
 191. M103 cover hero 坑：concept run 无 capture/screens 时 cover 设备框内嵌了 cover-bg art=艺术重复入画。教训：**cover 的 hero 永远是原型真截图**（场景一致性来源），art 只做底；无 capture 必须 --base 现拍，合成后目视一帧。
+192. M104 「修了很多次修不好」的两类真根因：①树标签深粗=全局 `svg{stroke:currentColor;stroke-width:1.7}` 经继承给 SVG text 套描边，而门只锁 fill/字重——**继承型污染要在接收端显式复位（stroke:none）**，门要锁 computed 全属性。②空带/塌缩=百分比高度链在 auto 父级上逐级失效（LESSONS#34 会在每一层重演）——壳高链一律 absolute inset 或显式 height，禁 min-height:100% 连锁。
+193. M104 门自身也会作弊：pretty-print JSON 让 regress 的 lastJson 末行解析恒空→门假绿；display:none 元素零矩形被当 clipped；ambient canvas 全屏被当内容；纯渐变被当艺术覆盖。**门的每个判定常量都要用「已知坏样例」校准过才上线**（W7b 变异矩阵制度化）。
+194. M104 生图模型会自作主张加烘焙 UI（"no text" 也出按钮面板）——背景类资产统一**中心裁切**再用；角色类 prompt 加 isolated/transparent 语义但透明底需参考图（skill 限制），白底生成+本地抠白是稳定替代。
+195. M104 风格锚是产品契约不是建议：brief.style_anchor 与实生 prompt 不符=封面/图标错魂（petpark 三锚并存教训）。修：style-anchor 门（manifest 锚指纹）+ cover.mjs 锚拒合成 + manifest 登记强制 style 字段。

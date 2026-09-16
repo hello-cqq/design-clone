@@ -47,8 +47,10 @@ const ctlHTML = (c, i) => {
 const navHTML = (cur) => `<div class="bv-nav">${brief.pages.map((p) => `<span class="${p.id === cur ? "on" : ""}" data-goto="${p.id}">${p.name.slice(0, 4)}</span>`).join("")}</div>`;
 const CSS = `
   .bv{position:relative;min-height:100%;overflow:hidden;font-family:ui-rounded,-apple-system,"PingFang SC","Segoe UI",sans-serif;color:${INK};background:${BG}}
-  .bv .far{position:absolute;inset:0;${bgFile ? `background:url(${bgFile}) center/cover;opacity:.5;` : `background:linear-gradient(160deg,${BG},${C1}33);`}animation:kb 36s ease-in-out infinite alternate}
-  @keyframes kb{from{transform:scale(1.1)}to{transform:scale(1.03)}}
+  .bv .far{position:absolute;inset:0}
+  .bv .far::before{content:"";position:absolute;inset:-7%;${bgFile ? `background:url(${bgFile}) center/cover;opacity:.5;` : `background:linear-gradient(160deg,${BG},${C1}33);`}animation:kb 36s ease-in-out infinite alternate}
+  @keyframes kb{from{transform:scale(1.08)}to{transform:scale(1.02)}}
+  @media (prefers-reduced-motion: reduce){.bv .far::before{animation:none}}
   .bv .scroll{position:relative;z-index:4;padding:52px 16px 108px;box-sizing:border-box}
   .bv h1{font-size:18px;font-weight:600;margin:0 2px 4px}
   .bv .fn{font-size:11px;color:${INK}99;margin:0 2px 12px}

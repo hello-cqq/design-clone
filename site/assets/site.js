@@ -17,7 +17,6 @@
       proto_dl: "Download offline zip", proto_jump: "source on GitHub", proto_contrib: "Contributors", proto_spec: "Design specs",
       proto_tags: "Tags", ft_note: "MIT · prototypes carry their own license · brand replicas are unofficial study works",
       empty: "No prototypes yet — be the first:",
-      s1_t: "See", s1_d: "capture any app, site or link", s2_t: "Clone", s2_d: "the agent rebuilds it as a living prototype", s3_t: "Play", s3_d: "tap through, tweak, export the design",
       ph_gal: "Act II · pick a world", gal_h: "Every clone, one shelf", ph_proto: "Act III · step inside", ph_guide: "Backstage · how it works", ph_start: "Act I · take it home",
     },
     zh: {
@@ -31,7 +30,6 @@
       proto_dl: "下载离线 zip", proto_jump: "GitHub 源码", proto_contrib: "贡献者", proto_spec: "设计规格",
       proto_tags: "标签", ft_note: "MIT · 原型各自携带许可 · 品牌复刻为非官方学习作品",
       empty: "暂无原型——成为第一个：",
-      s1_t: "看见", s1_d: "抓取任意应用、网站或链接", s2_t: "复刻", s2_d: "agent 把它重建为活的原型", s3_t: "游玩", s3_d: "点按、调整、导出设计",
       ph_gal: "第二幕 · 挑选一个世界", gal_h: "所有复刻，同一面墙", ph_proto: "第三幕 · 走进原型", ph_guide: "幕后 · 它如何工作", ph_start: "第一幕 · 带它回家",
     },
   };
@@ -58,6 +56,27 @@
     if (document.getElementById("cards")) renderGallery();
     if (document.getElementById("side")) renderProto();
     if (document.getElementById("featured")) renderFeatured();
+  }
+  /* M104-W5：无边界叙事——滚动感知页眉 / IO reveal+素描扫显 / View Transitions 页间过渡 */
+  function wireNarrative() {
+    const hd = document.querySelector("header.top");
+    if (hd) addEventListener("scroll", () => hd.classList.toggle("scrolled", scrollY > 24), { passive: true });
+    const rm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const targets = document.querySelectorAll("[data-rv], .sketch");
+    if ("IntersectionObserver" in window && targets.length) {
+      const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("rv-in"); io.unobserve(e.target); } }), { threshold: 0.18 });
+      targets.forEach((t) => io.observe(t));
+    } else targets.forEach((t) => t.classList.add("rv-in"));
+    if (rm) return;
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest && e.target.closest("a[href]");
+      if (!a || e.metaKey || e.ctrlKey || e.shiftKey || a.target === "_blank") return;
+      const href = a.getAttribute("href") || "";
+      if (!/^(index|gallery|proto|guide|start)\.html/.test(href) && !href.endsWith(".html")) return;
+      if (!document.startViewTransition) return;
+      e.preventDefault();
+      document.startViewTransition(() => { location.href = href; });
+    }, true);
   }
   /* M103-W3：hero 环境视频守卫 + 云体视差 */
   function wireAmbient() {
@@ -444,7 +463,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    applyTheme(); applyI18n(); wireNav(); wireStars(); wireFeatureTabs(); wireAmbient();
+    applyTheme(); applyI18n(); wireNav(); wireStars(); wireFeatureTabs(); wireAmbient(); wireNarrative();
     const lb = document.getElementById("langbtn");
     if (lb) lb.onclick = () => { state.lang = state.lang === "en" ? "zh" : "en"; localStorage.setItem("dc-lang", state.lang); applyI18n(); };
     const tb = document.getElementById("themebtn");

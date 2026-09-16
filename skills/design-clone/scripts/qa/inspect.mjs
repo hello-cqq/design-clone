@@ -547,6 +547,76 @@ await step("layout-sanity", async () => {
     ok("layout-sanity", true, "demo warn: " + all.slice(0, 4).join(" | ")); R.checks["layout-sanity"].warn = true;
   }
 });
+await step("bg-cover", async () => {
+  // M104-W1：@keyframes 改 background-size = 背景 cover 被呼吸动画覆写（奶油空带）根因；背景只准 transform/opacity 动
+  const decl = await page.evaluate(() => {
+    const bad = [];
+    const walk = (rs) => { for (const r of rs) { if (r.type === CSSRule.KEYFRAMES_RULE) { for (const f of r.cssRules) { if (f.style && /background-size/i.test(f.style.cssText)) bad.push(r.name); } } else if (r.cssRules) walk(r.cssRules); } };
+    for (const sh of document.styleSheets) { let rules; try { rules = sh.cssRules; } catch { continue; } walk(rules); }
+    return [...new Set(bad)];
+  });
+  if (decl.length) throw new Error("@keyframes 改 background-size（背景 cover 被动画覆写）: " + decl.join(","));
+});
+
+await step("motion-min", async () => {
+  // M104-W1：每页 ≥1 idle 动效（video 播放中 / CSS animation / canvas fx），reduced-motion 兜底另门
+  const btns = page.locator("#dc-pages button"); const n = await btns.count(); const bad = [];
+  for (let i = 0; i < n; i++) {
+    await btns.nth(i).click(); await page.waitForTimeout(350);
+    const ok = await page.evaluate(() => {
+      const stage = document.querySelector("#dc-stage"); if (!stage) return true;
+      if (stage.querySelector("canvas[data-fx]")) return true;
+      if ([...stage.querySelectorAll("video")].some((v) => !v.paused)) return true;
+      for (const el of stage.querySelectorAll("*")) { const a = getComputedStyle(el).animationName; if (a && a !== "none") return true; }
+      return false;
+    });
+    if (!ok) bad.push("view" + i);
+  }
+  if (bad.length) throw new Error("无 idle 动效页（video/animation/fx 全无）: " + bad.join(","));
+});
+
+await step("empty-band", async () => {
+  // M104-W1：空带门=无内容且视觉平（截图 stddev<15）的垂直区间合计 ≤12% 屏高；艺术背景（高 stddev）不算空带
+  const sharp = require("sharp");
+  const btns = page.locator("#dc-pages button"); const n = await btns.count(); const bad = [];
+  for (let i = 0; i < n; i++) {
+    await btns.nth(i).click(); await page.waitForTimeout(420);
+    const shot = await page.locator("#dc-stage").screenshot();
+    const meta = await sharp(shot).metadata(); const H = meta.height, W = meta.width;
+    const content = await page.evaluate(() => {
+      const stage = document.querySelector("#dc-stage"); const sr = stage.getBoundingClientRect(); const ys = [];
+      const covers = [];
+      for (const el of stage.querySelectorAll("*")) {
+        const cs = getComputedStyle(el);
+        const pb = getComputedStyle(el, "::before");
+        if ((/url\(/.test(cs.backgroundImage) && +cs.opacity >= 0.3) || (/url\(/.test(pb.backgroundImage) && +pb.opacity >= 0.3)) { const r = el.getBoundingClientRect(); covers.push([r.top - sr.top, r.bottom - sr.top]); } // 只认 url() 艺术图（含 ::before 承载）；纯渐变=投诉对象不算覆盖
+      }
+      for (const el of stage.querySelectorAll("*")) {
+        const t = (el.textContent || "").trim();
+        const media = /^(IMG|VIDEO|CANVAS|SVG|INPUT|BUTTON|A|SELECT|TEXTAREA)$/.test(el.tagName);
+        const leafText = el.children.length === 0 && t.length > 0;
+        if (!media && !leafText) continue;
+        if (el.tagName === "CANVAS" && el.getAttribute("data-fx")) continue; // 粒子/氛围 canvas=装饰非内容
+        const cs = getComputedStyle(el); if (cs.visibility === "hidden" || +cs.opacity < 0.06 || cs.display === "none") continue;
+        const r = el.getBoundingClientRect(); if (r.height < 4 || r.width < 4) continue;
+        ys.push([r.top - sr.top, r.bottom - sr.top]);
+      }
+      return { ys, covers, H: sr.height };
+    });
+    const SL = 32; const flat = [];
+    for (let y = 0; y + SL <= H; y += SL) {
+      if (content.ys.some(([a, b]) => a < y + SL && b > y)) { flat.push(false); continue; }
+      const covered = content.covers.some(([a, b]) => a < y + SL && b > y);
+      flat.push(!covered); // void=无内容且无 opacity≥.3 的 url() 艺术图层覆盖（纯渐变/幽灵透明不算艺术在场）
+    }
+    let run = 0, maxRun = 0;
+    for (const f of flat) { run = f ? run + 1 : 0; maxRun = Math.max(maxRun, run); }
+    const frac = (maxRun * SL) / content.H;
+    if (frac > 0.12) bad.push("view" + i + ":" + (frac * 100).toFixed(0) + "%");
+  }
+  if (bad.length) throw new Error("空带（无内容且视觉平）超 12% 屏高: " + bad.join(","));
+});
+
 
 await stepw("assets-exist", async () => {
   const bad = await page.evaluate(() => [...document.querySelectorAll("#dc-stage img")].filter((i) => i.src && !i.complete || (i.complete && i.naturalWidth === 0)).map((i) => i.src.split("/").pop()).join(","));
@@ -584,7 +654,11 @@ await step("interactive-controls", async () => {
 await step("unstyled-view-classes", async () => {
   // M48：视图"带类却无任何视觉处理"=静默坏块（link-xhs5 教训）。 styled 判定三选一：
   // inline style / 任一 class 有 CSS 规则（选择器词边界匹配，含后代选择器）/ computed 有视觉处理
-  const st = await page.evaluate(() => {
+  // M104-W1：逐视图判定（跨视图共享缓存会让 A 视图的真规则洗白 B 视图的死 CSS）
+  const btnsU = page.locator("#dc-pages button"); const nU = await btnsU.count(); const badViews = [];
+  for (let vi = 0; vi < nU; vi++) {
+    await btnsU.nth(vi).click(); await page.waitForTimeout(520);
+    const st = await page.evaluate(() => {
     const cache = {};
     const hasRule = (cls) => {
       if (cls in cache) return cache[cls];
@@ -593,7 +667,11 @@ await step("unstyled-view-classes", async () => {
       let hit = false;
       for (const sh of document.styleSheets) {
         let rules; try { rules = sh.cssRules; } catch { continue; }
-        for (const r of rules) { if (r.selectorText && rx.test(r.selectorText)) { hit = true; break; } }
+        for (const r of rules) {
+          if (!r.selectorText || !rx.test(r.selectorText)) continue;
+          // M104-W1：token 含类≠规则生效（.xh .vh vs 根 .xh-c 死 CSS 教训）——选择器必须真匹配到 DOM
+          try { if (r.selectorText.split(",").some((s) => document.querySelector(s.trim()))) { hit = true; break; } } catch { continue; }
+        }
         if (hit) break;
       }
       return (cache[cls] = hit);
@@ -611,8 +689,10 @@ await step("unstyled-view-classes", async () => {
       if (!treated && cls.every((c) => !hasRule(c))) unstyled++;
     }
     return { withCls, unstyled };
-  });
-  if (st.withCls >= 8 && st.unstyled / st.withCls > 0.5) throw new Error(`视图 ${st.unstyled}/${st.withCls} 带类元素无 CSS 规则（缺样式表）`);
+    });
+    if (st.unstyled >= 2 || (st.withCls >= 8 && st.unstyled / st.withCls > 0.5)) badViews.push(`view${vi}:${st.unstyled}/${st.withCls}`);
+  }
+  if (badViews.length) throw new Error("视图带类元素无 CSS 规则（缺样式表/死选择器）: " + badViews.join(","));
 });
 
 await step("brief-director", async () => {

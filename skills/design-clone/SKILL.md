@@ -44,7 +44,7 @@ node {SKILL_DIR}/scripts/doctor.mjs
 ---
 
 ## 稀薄输入先富化（M75-W2）
-**概念/原创原型（稀薄描述）硬流程（M77）**：先 `scripts/gen/director.mjs` 产全套 brief（九 aspect：名/风格/角色/页+控件/资产/图标/封面/标签/场景/视频词），再 `gen/ref-images.mjs` 逐页参考图供确认，随后 brief-tokens/brief-products/brief-flows/brief-views 四件衍生（brief-views 产全控件接线的 2.5D 基线视图套，精品 run 在其上深化美术），视图按 brief 构建（控件全接线），见 references/concept-director.md。
+**概念/原创原型（稀薄描述）硬流程（M77）**：先 `scripts/gen/director.mjs` 产全套 brief（九 aspect：名/风格/角色/页+控件/资产/图标/封面/标签/场景/视频词），再 `gen/ref-images.mjs` 逐页参考图供确认，随后 brief-tokens/brief-products/brief-views 三件衍生（**flows/paths 真值一律 `scripts/paths-gen.mjs` 读视图 data-goto 产出，M104-W1 单源制；brief-flows 已退役为转调 wrapper**）（brief-views 产全控件接线的 2.5D 基线视图套，精品 run 在其上深化美术），视图按 brief 构建（控件全接线），见 references/concept-director.md。
 生图需求条件稀薄时（"一只猫"级单资产）：先 `scripts/gen/enrich.mjs` 产富提示词包（可 --hints 注入联网搜索成果），
 按 references/prompt-enrichment.md 三步+rubric 自检循环（≤3 轮）再生图；文本/品牌类需求分别走字标混合方案与 asset-sourcing 官方源链。
 
@@ -83,7 +83,8 @@ node {SKILL_DIR}/scripts/clone.mjs --target <名> --platform <web|android|ios|de
    锁屏、授权弹窗等无法自动化的项，脚本会打印给用户的话术
 3. 捕获中任何卡点（注入被拦/灭屏锁屏/登录/验证码）→ 一律按 human-takeover 四段式
    （检测→话术→验证→继续）处理，不硬重试超过 2 次
-4. **所有读帧/读截图/GUI 决策先读 `references/vlm-analysis.md`**，按其 JSON 协议输出；**生图/生视频/媒体后处理先读 `references/media-engine.md`**（provider 路由+agent-native 履约协议）
+4. **质量宪法（M104）**：任何生成/深化/发布原型前先读 `references/quality-standard.md`（六法+六类输入矩阵+点缀元素法+反作弊四机制）；门矩阵=regress（interact/inspect 含 empty-band·bg-cover·motion-min·unstyled 祖先校验/ui-smoke 含 stroke 锁/flow-truth/style-anchor）+ CI no-run-specialcase；修因不修果，手改已发布 run 只做存量 Remediation 并记账
+5. **所有读帧/读截图/GUI 决策先读 `references/vlm-analysis.md`**，按其 JSON 协议输出；**生图/生视频/媒体后处理先读 `references/media-engine.md`**（provider 路由+agent-native 履约协议）
    （页面三要素/边关系标签/弹窗即页节点/保真档/素材 bbox），保证信息挂接 inspector v3
 4. 结束时跑 `prepare.sh --restore` 并念恢复清单（safety-rules §9）
 

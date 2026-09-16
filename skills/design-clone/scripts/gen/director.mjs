@@ -196,9 +196,10 @@ const icon = { prompt: `圆角方形 app 图标，${characters[0] ? characters[0
 const cover = { prompt: `3:2 横幅封面，${nameZh}：${characters.slice(0, 2).map((x) => x.prompt.split("，")[0]).join(" 与 ")}立于${rec.scenes[0].motif}前，${styleWords}，电影级构图，无文字无水印` };
 const video_prompts = characters.slice(0, 2).map((ch) => `${styleWords}；${ch.prompt}；轻微头部微动+眨眼+呼吸感，循环短视频，人像居中特写，电影级运镜`);
 
-/* ---------- flows（场景树/路径） ---------- */
-const flows = pages.slice(1).map((p, i) => ({ from: pages[0].id, to: p.id, story: `${pages[0].name} → ${p.name}：${p.function}` }));
-for (let i = 1; i < pages.length - 1; i++) flows.push({ from: pages[i].id, to: pages[i + 1].id, story: `${pages[i].name} → ${pages[i + 1].name} 主链路` });
+/* ---------- flows（仅叙事注记；M104-W1 起 paths.json 一律由 paths-gen.mjs 读真实接线产出） ----------
+   旧实现（M77）对 pages[0] 无脑放射+按数组下标顺连"主链路"，与视图真实 data-goto 脱节（ petpark 13 条边 9 条凭空）。
+   现：flows 只保留入口边叙事（label 源），导航真值=视图 data-goto（paths-gen 单源）。 */
+const flows = [{ from: pages[0].id, to: (pages[1] || pages[0]).id, story: `${pages[0].name} → ${(pages[1] || pages[0]).name}：入口` }];
 
 /* ---------- tokens ---------- */
 const tokens = {

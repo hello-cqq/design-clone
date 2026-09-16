@@ -37,7 +37,8 @@
       </video>
     </div>
     <img class="motif" src="assets/character-xinghai.png" alt="">
-    <div class="ident" id="ident" title="replay"></div>
+    <div class="ident" id="ident" title="replay" data-rv></div>
+    <div class="sketch" style="right:5%;bottom:16%;width:200px;height:300px" aria-hidden="true"><img src="assets/sketch-xh.png" alt=""></div>
     <h1><span data-i18n="h1a">Clone any app into</span> <em data-i18n="h1b">a playable prototype.</em></h1>
     <div class="installbox">
       <span style="color:var(--mut);font-size:12.5px" data-i18n="install_label">Copy → paste into your agent:</span>
@@ -46,15 +47,8 @@
     </div>
   </section>
 
-  <nav class="storynav" aria-label="story">
-    <a class="act" href="gallery.html"><b>1</b><span data-i18n="s1_t">See</span><i data-i18n="s1_d">capture any app, site or link</i></a>
-    <span class="actline" aria-hidden="true"></span>
-    <a class="act" href="guide.html"><b>2</b><span data-i18n="s2_t">Clone</span><i data-i18n="s2_d">the agent rebuilds it as a living prototype</i></a>
-    <span class="actline" aria-hidden="true"></span>
-    <a class="act" href="#try" id="act3"><b>3</b><span data-i18n="s3_t">Play</span><i data-i18n="s3_d">tap through, tweak, export the design</i></a>
-  </nav>
-
   <section class="exp" id="try">
+    <div class="sketch" style="left:5%;top:6%;width:320px;height:213px" aria-hidden="true"><img src="assets/sketch-duo.png" alt=""></div>
     <div class="frame">
       <div class="bar"><span class="dot"></span><span data-i18n="exp_title">Try it live</span>
         <select id="expselect"></select>
@@ -76,10 +70,11 @@
   </section>
 </div>
 
-<footer class="ft"><div class="wrap">
-  <span class="ftbrand"></span>
+<footer class="ft">
+  <div class="ft-sky" aria-hidden="true"></div>
+  <div class="ft-in"><span class="ftbrand"></span>
   <span data-i18n="ft_note">MIT · prototypes carry their own license · brand replicas are unofficial study works</span>
-</div></footer>
+  </div></footer>
 <script src="assets/ident.b9590629.js"></script>
 <script src="assets/demo-anim.js"></script>
 <script src="assets/zipstore.site.js"></script>

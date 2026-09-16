@@ -33,7 +33,21 @@ const PAL = {
   news: ["#FFE9E3", "#FFF6E9", "#E07B39"], education: ["#E8F7EE", "#FFF6E9", "#3FAE83"],
   finance: ["#E3F0FA", "#FFF6E9", "#4AA3E8"], tools: ["#E8F7EE", "#FFF6E9", "#3FAE83"], lifestyle: ["#FFE8D2", "#FFF6E9", "#FFB38A"],
 };
-const [bg1, bg2, accent] = PAL[cat] || PAL.tools;
+// M104-W6：品牌/产品色一律数据驱动——优先 icon 主色取样（品牌复刻=品牌忠实），category 色板仅兜底
+let [bg1, bg2, accent] = PAL[cat] || PAL.tools;
+{
+  const iconPath = [path.join(run, "prototype", "appicon", "icon-256.png"), path.join(run, "icon.png")].find((f) => fs.existsSync(f));
+  if (iconPath) {
+    const { data } = await sharp(iconPath).resize({ width: 8, height: 8 }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+    let r = 0, g = 0, b = 0;
+    for (let i = 0; i < data.length; i += 3) { r += data[i]; g += data[i + 1]; b += data[i + 2]; }
+    const n = data.length / 3;
+    r = Math.round(r / n); g = Math.round(g / n); b = Math.round(b / n);
+    accent = `#${[r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("")}`;
+    bg1 = `rgb(${Math.round(r + (255 - r) * 0.88)},${Math.round(g + (255 - g) * 0.88)},${Math.round(b + (255 - b) * 0.88)})`;
+    bg2 = `rgb(${Math.round(r + (255 - r) * 0.94)},${Math.round(g + (255 - g) * 0.94)},${Math.round(b + (255 - b) * 0.94)})`;
+  }
+}
 const nameZh = (meta.name && meta.name.zh) || (dc.pages[0] || {}).name || "prototype";
 const nameEn = (meta.name && meta.name.en) || "";
 const tags = (meta.tags || []).slice(0, 3);
@@ -67,6 +81,7 @@ else if (values.base) {
 }
 if (!heroBuf) { console.error("无 hero 截图：需 capture/screens/<首页>.png 或 --base <url>"); process.exit(1); }
 
+
 /* ---------- 图标 ---------- */
 let iconB64 = "";
 for (const c of [path.join(run, "icon.png"), path.join(run, "prototype/appicon/icon-256.png"), path.join(run, "prototype/appicon/icon-512.png")]) {
@@ -80,6 +95,15 @@ const heroB64 = (await sharp(heroBuf).resize(FW - 24, FH - 24, { fit: "cover" })
 /* ---------- M103-W2：art-cinematic 合成（references/cover-bg.png 存在即启用；无则回落经典版式） ---------- */
 const artPath = path.join(run, "references", "cover-bg.png");
 const hasArt = fs.existsSync(artPath);
+// M104-W6 锚纪律：concept run 的 art 底风格必须等于 brief.style_anchor，否则拒合成（错锚封面根因）
+{
+  const brief = readJ(path.join(run, "knowledge", "brief.json"));
+  const manifest = readJ(path.join(run, "prototype", "assets-manifest.json"));
+  const anchor = brief && brief.style_anchor;
+  const artStyle = manifest && manifest.assets && manifest.assets["cover-bg.png"] && manifest.assets["cover-bg.png"].style;
+  if (anchor && hasArt && artStyle && artStyle !== anchor) { console.error(`封面 art 风格(${artStyle}) ≠ brief 锚(${anchor})：先按锚重出 cover-bg 再合成`); process.exit(1); }
+  fs.writeFileSync(path.join(run, "prototype", "cover-meta.json"), JSON.stringify({ hero: "screenshot", art: !!hasArt, anchor: anchor || null, at: new Date().toISOString() }, null, 1));
+}
 const pills = tags.map((t, i) => `<rect x="${70 + i * 150}" y="560" rx="999" ry="999" width="140" height="44" fill="#fffdf8" opacity=".92"/><text x="${140 + i * 150}" y="588" font-size="20" fill="#4a3b2e" text-anchor="middle" font-family="PingFang SC, Noto Sans CJK SC, sans-serif">${String(t).replace(/[<>&]/g, "")}</text>`).join("");
 let svg;
 if (hasArt) {

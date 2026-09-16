@@ -9,7 +9,7 @@
     "build:shell": "node skills/design-clone/scripts/build-shell.mjs --out skills/design-clone/templates/prototype/inspector.built.js",
     "lint": "npm run build:shell && eslint .",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "scan": "node skills/design-clone/scripts/qa/ip-scan.mjs && node skills/design-clone/scripts/qa/secret-scan.mjs",
+    "scan": "node skills/design-clone/scripts/qa/ip-scan.mjs && node skills/design-clone/scripts/qa/secret-scan.mjs && node skills/design-clone/scripts/qa/no-run-specialcase.mjs",
     "regress": "node skills/design-clone/scripts/regress.mjs"
   },
   "devDependencies": {
