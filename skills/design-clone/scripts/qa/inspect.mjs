@@ -513,6 +513,29 @@ await step("layout-sanity", async () => {
     return out;
     });
     const tag = (i + 1);
+    // M99: 视图切换动画中途采样会假红——clip 命中时 500ms 后复采，仅持续者判 fail
+    if (r.clipped.length) {
+      await page.waitForTimeout(500);
+      const r2 = await page.evaluate(() => {
+        const out = [];
+        const stage = document.querySelector("#dc-stage");
+        if (!stage) return out;
+        for (const el of stage.querySelectorAll("*")) {
+          const cs = getComputedStyle(el);
+          if (el.closest("svg") || el.tagName.toLowerCase() === "svg") continue;
+          const scrollable = /auto|scroll/.test(cs.overflowX + cs.overflowY) || el.hasAttribute("data-scroll-ok");
+          const ellipsis = cs.textOverflow === "ellipsis";
+          const rect = el.getBoundingClientRect();
+          if (rect.width < 4 || rect.height < 4) continue;
+          if (!scrollable && !ellipsis && (el.textContent || "").trim() &&
+            (el.scrollWidth - el.clientWidth > 8 || el.scrollHeight - el.clientHeight > 8)) {
+            out.push((el.getAttribute("data-dc") || el.tagName) + ":" + (el.textContent || "").trim().slice(0, 12));
+          }
+        }
+        return out;
+      });
+      r.clipped = r.clipped.filter((c) => r2.includes(c));
+    }
     if (r.clipped.length) all.push("p" + tag + " clipped:" + r.clipped.join(","));
     if (r.empty.length) all.push("p" + tag + " empty-slot:" + r.empty.join(","));
     if (r.broken.length) all.push("p" + tag + " broken-img:" + r.broken.join(","));
@@ -717,7 +740,7 @@ await step("pasted-screenshot", async () => {
     // M99-3: CSS background-image 全屏贴图同口径入_gate（旧门只扫 <img>）
     for (const el of stage.querySelectorAll("*")) {
       const bg = getComputedStyle(el).backgroundImage;
-      if (!bg || bg === "none") continue;
+      if (!bg || bg === "none" || !/url\(/.test(bg)) continue; // M99: 仅计 url() 贴图，渐变/纯色不算
       const r = el.getBoundingClientRect();
       const cov = (r.width * r.height) / (sr.width * sr.height);
       if (cov < 0.6) continue;
