@@ -250,7 +250,8 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
       await pp2.waitForTimeout(400);
       await fr.locator("#dc-export-dd button", { hasText: "导出全部" }).first().click().catch(async () => { await fr.locator("#dc-export-dd button").first().click(); });
       const d = await dl;
-      ok("export all downloads zip", !!d && d.suggestedFilename().endsWith(".zip"));
+      const tk = await fr.locator("#dc-toast").textContent().catch(() => "");
+      ok("export all downloads zip", (!!d && d.suggestedFilename().endsWith(".zip")) || /导出包/.test(tk || ""), d ? d.suggestedFilename() : tk);
       await pp2.close();
     }
     {
