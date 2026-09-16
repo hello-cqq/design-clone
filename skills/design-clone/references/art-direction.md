@@ -11,7 +11,7 @@
 | 3D | **2.5D 分层视差假 3D**（CSS transform + pointer/scroll 驱动） | 不引 three.js：无模型来源、包体大、离线门禁 |
 | 粒子 | 模板内置 `fx/particles.js`（~2KB canvas） | motes/petals/sparkles 三型，主题感知，reduced-motion 关 |
 | 动效 | CSS keyframes + rAF（模板无 gsap/无 CDN） | idle 呼吸、浮动、视差、页面过渡 |
-| 生视频 | 仅官网 ident（ffmpeg 帧合成，既有） | 原型内不嵌生成视频，保体积与门禁 |
+| 生视频 | genvideo.mjs provider 路由（Seedance/可灵/万相/MiniMax）或 agent-native 履约；无 key  exit 3 写 media-request.json | M99-2 起允许 hero/idle 视频层（ADR-M99-video：poster+reduced-motion+≤2MB+同层活控件），见 references/media-engine.md |
 
 ## 2. 深度分层（硬要求 ≥3 层）
 1. **far**：大气远景（genimg anime-cel 背景带：天空/海面/星野/林冠），`scale(1.06)` 慢视差；

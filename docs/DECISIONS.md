@@ -58,3 +58,9 @@
 | A54 | M45 开源工程面：根 package.json 仅 devDeps（eslint/typescript/@types/node，不进 zip）；eslint flat config 错误级只留故障类规则（首日 0 error），风格类 warn 逐步收紧；tsc --noEmit 只覆盖纯模块（policy/build-shell/zipstore）；CI=tests+lint+typecheck+ip/secret scan+build 确定性+zip 内容审计；qa/ip-scan（跟踪文件零二进制/零 run 产物/权利头人工确认）+qa/secret-scan（凭据/手机/身份证/wxid，md 豁免 PII 不豁免凭据） | "不被挑战"要靠可复跑的自证，而不是口头声明 | warn 债显式记录在 CONTRIBUTING 收紧路线 |
 | A55 | M45 回归完整性：regress 对 serve 做就绪轮询；inspect/interact/ui-smoke 的输出不可解析、exit 异常或 serve 未就绪一律 BROKEN=fail；interact 要求 views>0；报告行显式标注 BROKEN 原因 | 假绿比红危险（LESSONS 132）；"全绿"必须等价于"真的测过且过" | 单 run 回归时长 +就绪等待（≤30s） |
 | A56 | M46 视觉重修协议：每 run 四步（配对+缺口清单 → 资产补齐 autocrop/extract → 逐视图重誊 → viewshot 闭环），视图来源三分类（直誊/忠实空态/同壳 extrapolation）写入 critique notes；placeholder-blocks 硬门抓空色块顶替；critique 桌面/网页 full 及格线 4+全视图+证据；重修前物理备份 <run>-v1（runs 不在 git） | 用户逐图打回五 run；"像"需要资产覆盖+状态忠实+可审计来源 | extrapolation 页不得声称直誊；-v1 快照不进回归 |
+
+## ADR-M99-video：生成视频进原型 hero/idle 层（2026-09-16）
+- **决定**：撤销「原型内不嵌生成视频」旧红线；允许 `<video muted loop playsinline>` 作 `.far` 远景或角色 idle 层。
+- **约束**：poster 静帧必备；`prefers-reduced-motion` 下 pause+poster；单文件 ≤2MB（webm 优先）；禁整屏视频当 UI（同层必须有活控件或 data-act 热点）；入 assets-manifest（source=genvideo/agent-native）。
+- **理由**：brief 承诺的动态虚拟人（动物乐园/星海对话）静帧立绘无法兑现；门禁口径同步 M99-3（video 不计 img 覆盖门但受热点门约束）。
+- **后果**：genvideo.mjs/media.mjs 成为一等公民；无 key 环境走 agent-native 履约协议（references/media-engine.md §2）。

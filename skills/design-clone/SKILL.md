@@ -83,7 +83,7 @@ node {SKILL_DIR}/scripts/clone.mjs --target <名> --platform <web|android|ios|de
    锁屏、授权弹窗等无法自动化的项，脚本会打印给用户的话术
 3. 捕获中任何卡点（注入被拦/灭屏锁屏/登录/验证码）→ 一律按 human-takeover 四段式
    （检测→话术→验证→继续）处理，不硬重试超过 2 次
-4. **所有读帧/读截图/GUI 决策先读 `references/vlm-analysis.md`**，按其 JSON 协议输出
+4. **所有读帧/读截图/GUI 决策先读 `references/vlm-analysis.md`**，按其 JSON 协议输出；**生图/生视频/媒体后处理先读 `references/media-engine.md`**（provider 路由+agent-native 履约协议）
    （页面三要素/边关系标签/弹窗即页节点/保真档/素材 bbox），保证信息挂接 inspector v3
 4. 结束时跑 `prepare.sh --restore` 并念恢复清单（safety-rules §9）
 
