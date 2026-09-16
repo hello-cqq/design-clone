@@ -12,6 +12,7 @@ import { spawnSync } from "node:child_process";
 import path from "node:path";
 import crypto from "node:crypto";
 import { createRequire } from "node:module";
+import { genImage } from "./gen/providers.mjs";
 const sharp = createRequire(import.meta.url)("sharp");
 import { parseArgs } from "node:util";
 
@@ -79,6 +80,7 @@ async function fetchImg(url) {
 const manifest = path.join(outDir, "images.json");
 const list = fs.existsSync(manifest) ? JSON.parse(fs.readFileSync(manifest, "utf8")) : [];
 
+let engineUsed = "pollinations";
 for (const seed of seeds) {
   const key = crypto.createHash("sha1").update(JSON.stringify([full, values.style || "", values.w, values.h, seed, values["ref-url"] || ""])).digest("hex");
   const cached = path.join(cacheDir, key + ".png");
@@ -93,26 +95,41 @@ for (const seed of seeds) {
       if (r2.status === 0 && fs.existsSync(f + ".wm2")) fs.renameSync(f + ".wm2", f);
     } catch {}
   };
+  const engFile = cached + ".eng";
   if (fs.existsSync(cached)) {
     fs.copyFileSync(cached, target);
-    await wmErase(target); // M77: 缓存命中也擦水印
-    console.log("cache hit:", path.basename(target));
+    const prevEng = fs.existsSync(engFile) ? fs.readFileSync(engFile, "utf8").trim() : "pollinations";
+    if (prevEng.startsWith("pollinations")) await wmErase(target); // M77: 匿名档缓存命中也擦水印；provider 档无水印不擦
+    engineUsed = prevEng;
+    console.log("cache hit:", path.basename(target), `(${prevEng})`);
   } else {
-    const model = values["ref-url"] && process.env.POLLINATIONS_TOKEN ? "kontext" : "flux";
-    const u = new URL(`https://image.pollinations.ai/prompt/${encodeURIComponent(full)}`);
-    u.searchParams.set("model", model);
-    u.searchParams.set("width", values.w);
-    u.searchParams.set("height", values.h);
-    u.searchParams.set("seed", String(seed));
-    u.searchParams.set("nologo", "true");
-    if (model === "kontext") u.searchParams.set("image", values["ref-url"]);
-    const buf = await fetchImg(u.href);
+    // M99-2: provider 优先（Ark Seedream → 万相 → MiniMax），无 key/全败回落 pollinations 匿名档
+    const prov = await genImage({ prompt: full, w: +values.w, h: +values.h, seed });
+    let buf;
+    let model;
+    if (prov) {
+      buf = prov.buf;
+      model = prov.engine;
+      engineUsed = prov.engine;
+    } else {
+      model = values["ref-url"] && process.env.POLLINATIONS_TOKEN ? "kontext" : "flux";
+      const u = new URL(`https://image.pollinations.ai/prompt/${encodeURIComponent(full)}`);
+      u.searchParams.set("model", model);
+      u.searchParams.set("width", values.w);
+      u.searchParams.set("height", values.h);
+      u.searchParams.set("seed", String(seed));
+      u.searchParams.set("nologo", "true");
+      if (model === "kontext") u.searchParams.set("image", values["ref-url"]);
+      buf = await fetchImg(u.href);
+      engineUsed = `pollinations:${model}`;
+    }
     fs.writeFileSync(cached, buf);
+    fs.writeFileSync(engFile, engineUsed);
     fs.copyFileSync(cached, target);
-    await wmErase(target); // M76-W3c: 匿名档 flux 仍盖 pollinations 水印（nologo 无效）→ 落盘即擦
+    if (engineUsed.startsWith("pollinations")) await wmErase(target); // M76-W3c: 匿名档 flux 仍盖 pollinations 水印（nologo 无效）→ 落盘即擦
     console.log("generated:", path.basename(target), `(${model}, seed ${seed})`);
   }
-  list.push({ at: new Date().toISOString(), prompt: values.prompt, style: values.style || null, seed, engine: "pollinations", out: path.basename(target) });
+  list.push({ at: new Date().toISOString(), prompt: values.prompt, style: values.style || null, seed, engine: engineUsed, out: path.basename(target) });
 }
 fs.writeFileSync(manifest, JSON.stringify(list, null, 2));
 // M44c 素材溯源：生图资产登记进 prototype/assets-manifest.json（source=genimg），供 privacy/asset 门禁核验

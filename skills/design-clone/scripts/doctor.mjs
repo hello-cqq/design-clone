@@ -133,7 +133,14 @@ if (sh("command -v adb") && sh("adb devices 2>/dev/null | grep -c '\tdevice'") >
 }
 // s2c 可选加速（opt-in，不假设 key，跨 agent）
 const s2cKey = process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY || process.env.GEMINI_API_KEY;
+let _ps = { image: [], video: [] };
 add(s2cKey ? "opt" : "skip", "s2c 加速", s2cKey ? "检测到 provider key→可用 gen/s2c-adapter 加速（可选）" : "无 key→用内置宿主-agent 免费管线（默认）；如需完美复刻自备 key 或起本地 backend:7001");
+{
+  const { providerSummary } = await import("./gen/providers.mjs");
+  const ps = providerSummary(); _ps = ps;
+  add(ps.image.length ? "opt" : "skip", "生图 provider", ps.image.length ? ps.image.join("/") + "（key 已配，genimg 优先路由）" : "无 key→genimg 回落 pollinations 匿名档");
+  add(ps.video.length ? "opt" : "skip", "生视频 provider", ps.video.length ? ps.video.join("/") + "（genvideo 可用）" : "无 key→genvideo exit 3 写 media-request.json（agent-native 协议）");
+}
 add(sh("command -v chromium || ls ~/.cache/ms-playwright 2>/dev/null | grep -c chromium") !== "" ? "opt" : "skip", "preview chromium", "playwright install chromium 启用自渲染视觉门（audit/qa 无它自动降级）");
 add("info", "真视觉资产", "默认用 capture 真头像/图标+文本匿名；首次生成前询问用户授权（R1/隐私，safety-rules §10）");
 if (platform === "win32") add("info", "Windows", "bash 脚本请在 WSL2/Git Bash 运行；adb 驱动问题见 install-guide");
@@ -154,7 +161,8 @@ if (process.argv.includes("--onboard")) {
     capabilities: {
       web_capture: okc("Chromium"), android_gui: okc("adb"), desktop_gui: platform === "darwin" && okc("桌面点击通道"),
       ios_sim: platform === "darwin" && !!sh("command -v xcrun"), link_ladder: optc("lux") || optc("yt-dlp") || optc("you-get"),
-      figma_export: lvl("Figma MCP") === "opt", genimg: true, vlm: true, // genimg=匿名免费档无需 key；vlm=宿主 agent 自带（skill 运行前提）
+      figma_export: lvl("Figma MCP") === "opt", genimg: true, vlm: true,
+      genimg_provider: (_ps.image[0] || "pollinations"), genvideo_provider: (_ps.video[0] || "agent-native"), // genimg=匿名免费档无需 key；vlm=宿主 agent 自带（skill 运行前提）
     },
     entry: "node scripts/entry.mjs \"<一句话|链接|图片|app名>\" → clone/link/remix/export",
     note: "windows/linux/harmony 采集为 roadmap；当前 mac/android/web 全支持",
