@@ -449,3 +449,4 @@ footer.ft::before { content: ""; position: absolute; left: 0; right: 0; top: -46
 .crumb .eyebrow { margin-right: 2px; }
 .pagehead--left { text-align: left; padding: 22px 0 2px; }
 .pagehead--left::before { background: radial-gradient(50% 90% at 18% 0%, color-mix(in srgb, var(--acc2) 12%, transparent), transparent 70%); }
+.pagehead .ph-title { margin: 6px 0 0; font-size: 26px; font-weight: 600; }
