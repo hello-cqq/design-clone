@@ -336,12 +336,22 @@ export async function arkStandardVideo(args = {}) {
   let lastErr = null;
   for (const model of VIDEO_MODEL_SEQ()) {
     try {
-      const r = await fetch(`${STD_BASE}/contents/generations/tasks`, {
+      let r = await fetch(`${STD_BASE}/contents/generations/tasks`, {
         method: "POST", headers: auth(key),
         body: JSON.stringify({ model, content, ratio: args.firstFrame ? "adaptive" : (args.ratio || "adaptive"), duration: args.duration || 4, resolution: args.resolution || "480p", generate_audio: false, watermark: false }),
         signal: AbortSignal.timeout(60000),
       });
-      if (!r.ok) { const t = await r.text(); lastErr = new Error(`${model}: ${r.status} ${t.slice(0, 120)}`); continue; }
+      if (!r.ok) {
+        const t = await r.text();
+        if (/SetLimitExceeded|Too Many Requests|429/.test(t + r.status)) { // 限流退避：同模型重试 ≤2 次
+          for (let k = 0; k < 2; k++) {
+            await new Promise((res) => setTimeout(res, 30000));
+            r = await fetch(`${STD_BASE}/contents/generations/tasks`, { method: "POST", headers: auth(key), body: JSON.stringify({ model, content, ratio: args.firstFrame ? "adaptive" : (args.ratio || "adaptive"), duration: args.duration || 4, resolution: args.resolution || "480p", generate_audio: false, watermark: false }), signal: AbortSignal.timeout(60000) });
+            if (r.ok) break;
+          }
+        }
+        if (!r.ok) { lastErr = new Error(`${model}: ${r.status} ${t.slice(0, 120)}`); continue; }
+      }
       const id = (await j(r)).id;
       const task = await poll(async () => {
         const q = await fetch(`${STD_BASE}/contents/generations/tasks/${id}`, { headers: auth(key), signal: AbortSignal.timeout(30000) });
