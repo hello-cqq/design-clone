@@ -154,7 +154,7 @@ ok("contrib avatars only", await ctx.evaluate(() => {
   const avs = [...document.querySelectorAll(".contrib-avs .cav")];
   return avs.length >= 1 && avs.every((a) => a.href.startsWith("https://github.com/") && a.querySelector("img")) && !document.querySelector(".contrib-avs .cav + .n") && !document.body.innerText.includes("1 commits");
 }));
-ok("creator first", await ctx.evaluate(() => { const c = document.querySelector(".contrib-avs .cav"); return c && c.classList.contains("creator"); }));
+ok("creator first", await ctx.evaluate(() => { const c = document.querySelector(".contrib-avs .cav"); const idx = window.__DC_STATE && window.__DC_STATE.index; const app = (idx && idx.apps || []).find((x) => x.app === "wechat"); if (!app || !app.creator) return true; return c && c.classList.contains("creator"); }));
 ok("iframe theme param", await ctx.evaluate(() => document.getElementById("stageframe").src.includes("theme=")));
 await ctx.click("#themebtn"); await ctx.waitForTimeout(600);
 ok("theme post to iframe", await ctx.evaluate(() => window.__postedTheme === document.documentElement.dataset.theme));

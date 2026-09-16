@@ -31,8 +31,10 @@ fs.mkdirSync(shots, { recursive: true });
 const R = { name, base, at: new Date().toISOString(), checks: {}, consoleErrors: [], pageErrors: [] };
 // M98: run 年龄以 meta.json created_at 为准（scope.json mtime 可被 touch 翻转）；无 meta 回退 scope mtime
 const runCreatedMs = (run) => {
+  // scope.json mtime 为主（meta.created_at 会被重发布刷新，不能当 run 诞生时刻）；无 scope 回退 meta
+  try { return fs.statSync(path.join(run, "knowledge/scope.json")).mtimeMs; } catch {}
   try { const m = JSON.parse(fs.readFileSync(path.join(run, "meta.json"), "utf8")); if (m.created_at) return Date.parse(m.created_at); } catch {}
-  try { return fs.statSync(path.join(run, "knowledge/scope.json")).mtimeMs; } catch { return 0; }
+  return 0;
 };
 const ok = (k, v, note = "") => { R.checks[k] = { pass: !!v, note }; };
 const okw = (k, v, note = "") => { R.checks[k] = { pass: !!v, warn: true, note }; };

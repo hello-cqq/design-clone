@@ -207,3 +207,4 @@
 176. M98 proto 管理副本提交禁用 `git add -A`：工作区残留的未跟踪生成物（09-11 autocrop 垃圾图标组）被一并扫入并推送，CI 重生成 index 后画廊小图标全错（用户截图抓现）。教训：**管理副本/发布链提交必须显式路径 staging**；生成物残留在提交前用 `git status --porcelain` 逐行核。
 177. M98 清孤儿哈希外壳时按「文件名带哈希=活」直觉删除，实际 index.html 引用的正是哈希件、裸名才是孤儿——五 app 原型当场全坏（validate 冒烟全红抓现）。教训：**清理复制产物前先 grep 入口 html 的真实引用**，方向反了比不清更糟。
 178. M98 ip-scan「零二进制」前提与官网同仓现实自 M55 起就矛盾，CI 长期红而被无视。教训：**门的 premise 变了要改门（登记制），不能让红变常态**——常态化的红等于没有门。
+179. M98 跨仓拷贝两连坑：`--src repo/design-clone-prototype/...` 与 `cp repo/design-clone-prototype/...` 在主仓 cwd 下拼出嵌套 decoy 路径（repo/design-clone/repo/...），产物落进无人引用的影子目录——appicon 用错源、all.zip 根本没入仓。**跨空间路径一律绝对路径或先 `realpath` 校验存在**。
