@@ -211,3 +211,5 @@
 180. M99 两道「假红/假绿」新形态：①CSS transform 动画（scale 呼吸）会把绝对定位层的 rect 撑出根盒→layout-sanity 横向 scrollWidth 假 clip；动画表达改用 background-size 等不污染盒模型的属性。②视图切换动画中途采样 clip 必假红→门禁双采样（500ms 复采仅持续者判）。教训：**门禁度量要分清「设计溢出」与「度量溢出」**，后者修度量不修设计。
 181. M99 GitHub pr-gate 对个别 PR 的 pull_request 事件失联（close/reopen/空提交均不触发）——CI 不是绝对可靠的事实源；本地同口径门禁（validate/regress）绿+记录说明后可合并，但必须在 CHANGELOG 记账失联事件。
 182. M100 「配了 key」≠「全能力可用」：火山 AgentPlan 的 plan-scoped key 只授权 /api/plan/v3 的 LLM/VLM，标准 /api/v3 生图/生视频 401——provider 适配必须**端点级探针**（probe-providers 留档）而非 key 存在即宣称能力；doctor/文档措辞跟随探针事实。
+183. M101 AgentPlan 视频权益「控制台可见≠API 可用」：控制台视觉模型页列 seedance-1.5-pro（即将下线），但 plan base 对 1.5-pro/2.0/2.5/日期版全返 UnsupportedModel——订阅页 Skill 接入指引与实际权益不同步。教训：视频 means 必须以**探针/首次提交的 API 响应**为准登记能力，控制台截图只作线索；不可用时按教义留 agent-native 待办而非静默降级。
+184. M101 跨仓路径事故：在主仓 cwd 下 `$PWD/repo/design-clone-prototype` 拼出嵌套 decoy 路径（proto 实为 `$PWD/../design-clone-prototype`），cp 静默失败后 heredoc 断链使后续命令在**主仓**执行——误开主仓分支+PR#1。教训：跨仓操作一律绝对路径或先 `realpath` 断言；heredoc 后的命令用 `&&` 串联防断链漂移。

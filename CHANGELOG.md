@@ -5,6 +5,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M101
+- 指挥闭环定稿：skill 不直调生图/生视频；官方 byted-ark-seedream/seedance skill 全局接入；media-consent（发现/标准申请话术/DC_MEDIA_CONSENT 授权门，每 session 至多一次，匿名档免申请）+media-verify（image: 尺寸/空白/VLM rubric；video: ffprobe/faststart/≤2MB/webm/poster；manifest 登记 consent）+gen/layers.mjs（拆层规格+验收）；SKILL §G+media-engine 教义节
+- 示范履约：session 授权→Seedream 5.0 pro 全身立绘×2+layer_decomposition 透明人物层×2→星海对话 .vh 替换+分层 idle（proto PR#68, v3.0.6）；seedance 全模型 UnsupportedModel→视频留 agent-native 待办（LESSONS 183）
+
+
 ### M100
 - AgentPlan 适配：providers.mjs discoverAgentPlan（opencode/claude/codex 三端配置解析+掩码）+vlmChat（OpenAI 兼容 vision+anthropic-env 双通道）+Ark 多 base 工厂；probe-providers.mjs 能力矩阵探针（留档 report/）；**实测 AgentPlan 仅 LLM/VLM 面**（生图/视频端点 401/404）→ 生成维持回落链+agent-native；gen-loop 接 VLM 四维 rubric 语义自检（实测 5/4/5/5）；doctor 增 VLM 语义通道/诚实措辞
 
