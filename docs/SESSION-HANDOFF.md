@@ -1,7 +1,7 @@
 # SESSION-HANDOFF — 会话接力索引
 
 > **用途**：新开会话时先读这一篇，就能知道「之前做了什么 / 准备做什么 / 项目资源在哪」。
-> **落盘**：2026-09-15 ｜ 仓库 HEAD `f59be15`（工作树干净）
+> **落盘**：2026-09-15 ｜ 仓库 HEAD 见 `git log -1`（M98 后；本文数字若与 git 冲突以 git 为准）
 > **数据来源**：opencode 会话库 `~/.local/share/opencode/opencode.db` 中 design-clone 项目空间的全部 16 个 session（15,403 message / 69,055 part / 21 todo），逐会话抽取用户指令流 + 助手输出流 + patch 文件清单 + todo 后归纳。
 > **与其他文档的关系**：本文**不重复** `ROADMAP.md`（M0–M77 里程碑表）与 `SESSION-SUMMARY-M76-M94.md`（最近波次 + 门禁 + 端口 + 脚本索引）。它负责三件那两篇没有的事：① 会话 ↔ 里程碑的映射与 resume 入口；② **文档记账缺口的补全**（M45–M78 段）；③ 只存在于会话记录、从未落盘的隐性知识。
 
@@ -63,6 +63,7 @@
 | M78-1 / M78-3 | 09-14 | ⚠️ 并发会话：v1 女生视频回归 + 铅笔根除（簇跟踪色彩擦 + 笔杆几何 poly 插值擦，179 帧）；`sync-thumbs.mjs` 同源缩略图入 `pages.yml` | ❌ | ✅ |
 | M78-2 | — | **编号跳空，三处均无记录** | ❌ | ❌ |
 | **M84/M85/M88/M91/M93/M94** | 09-14→15 | 演示点击即播、选中框 rAF 活跟踪 + `sel-ring-align` 门、导出 `all.zip`、logo 换用户图 + 主题冰蓝、导航 logo 动图 webp、透明纯度 veil 门 | ❌ | ❌（M93/M94 仅在 SESSION-SUMMARY） |
+| **M96–M98** | 09-15→16 | README 美化（双主题 GIF 头/架构分层图/功能全景图）；官网效果修复波；门禁真实化；proto 资产契约归一（PR#63+下架残留清理）；终极审查清债+稳定版 v0.6.0 | ✅ | ✅ CHANGELOG |
 
 > **M92 从未使用**（M91 → M93 跳号）。
 
@@ -153,7 +154,7 @@
 
 - `brand-qa` 的 `logo-main.png stick-like=27` 仍是 warn（水波/发丝高光误报），未 fail，属目视复核项。
 - 暗色 favicon 依赖 JS `applyTheme()` 切换，**无 `prefers-color-scheme` 静态回退**。
-- logo 动图 316KB/214KB 仍可瘦身（降帧至 40 或尺寸 80px）。
+- ~~logo 动图 316/214KB 瘦身~~：M95 绿幕重制后 262/243KB，已关闭。
 - 三 agent headless 实证只 2/3：**claude code `-p` 在本机 403「Access to model denied」**（账号/模型资格问题，非 skill 问题），待有资格账号复验。
 - 平台缺口：iOS 真机 WDA 未跑（本机无 Xcode）；Windows/Linux/HarmonyOS 只在 `doctor --onboard` 的 capability roadmap 里；三指/捏合手势 adb 不支持（已如实声明）。
 - proto 仓 `index.json` 由仓 workflow 重扫；新增 app 发布走 `publish.mjs`。
@@ -190,15 +191,15 @@
 | slug | 中文名 | 来源 run | 版本 | downloads | pages | 备注 |
 |---|---|---|---|---|---|---|
 | `wechat` | — | `wechat-full` | 1.6.2 | 5 | 19 | `ip_attestation=public-material` + brand_disclaimer；shell `c_mobile` |
-| `ai-assistant` | 星海对话 | `demo-assistant` | 2.1.2 | 4 | 5 | M75-W3 引入，M76-W3 十视图重做 v2.0.0；中英描述不同源待修 |
+| `ai-assistant` | 星海对话 | `demo-assistant` | 2.1.2 | 4 | 5 | M75-W3 引入；M98 双语同源+版本对齐 Release |
 | `lark` | — | `mac-lark` | 1.6.2 | 4 | 14 | shell `c_desktop`；pages id 跳号（01-11,14,15,16） |
-| `aliyun-console` | — | `web-aliyun` | 1.6.2 | 3 | 7 | shell `c_browser`；`meta.platform` 空串 |
+| `aliyun-console` | — | `web-aliyun` | 1.6.2 | 3 | 7 | shell `c_browser`；M98 补 platform=web |
 | `petpark` | 动物乐园 | `demo-petpark` | 2.2.2 | 2 | 8 | commits 最多(19)；官网 live proof / 精选置顶默认用它 |
 
 > M55 的五种子 ≠ 今天的五个：种子之一 `dy-note`（源 `link-dy4`）→ M76-W2 `--retire` 改名 `pet-health-note` → 再被 `ai-assistant` 替换；`pet-health-note` 现亦不在仓。
 
 ### 4.4 run 产物（`design-clone-runs/`，2.3GB）
-28 个回归 run + 5 个 `<run>-v1` 重修前物理备份 + 3 个非 run 目录（`_asset-backups`/`_clean-src`/`_icon-probe`）+ 4 个 M77 概念 run（`gen-music`/`gen-shop`/`gen-study`/`gen-tea`）+ 8 个海外链接 run（`intl-yt1-3`/`tt1-2`/`fb1-2`）。
+26 个入集回归 run + 5 个 `<run>-v1` 重修前物理备份 + 3 个非 run 目录（`_asset-backups`/`_clean-src`/`_icon-probe`）+ 4 个 M77 概念 run（`gen-music`/`gen-shop`/`gen-study`/`gen-tea`）+ 7 个海外链接 run（`intl-yt1-3`/`tt1-2`/`fb1-2`，仅 yt3 入回归集）。
 
 ### 4.5 端口 map
 `SESSION-SUMMARY-M76-M94.md` §3 的终态：4202 web-aliyun · 4203 web-apple · 4204 mac-lark · 4205 mac-workbuddy · 4791 slytherin · 4801 demo-assistant · 4802 wechat-full · 4804 link-dy4(pet-health-note) · 4806 demo-petpark · 4211 site 静态 · **4210 demo（已退役目录，端口保留无用）**。

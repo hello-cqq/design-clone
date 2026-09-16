@@ -6,6 +6,7 @@
 #   bash sim-capture.sh launch <bundle-id>       # 启动 app
 #   bash sim-capture.sh openurl <url>            # 深链拉起（L5 同款）
 #   bash sim-capture.sh loop <目录> [间隔秒=2] [张数=10]   # 用户手动操作+定时截屏
+#   bash sim-capture.sh record <输出.mov>                  # 全流程录屏（Ctrl-C 停；M98 补 iOS 录屏缺口）
 # 无 simctl（未装 Xcode）时 exit 3 并打印回落路径（真机 WDA / 人接管）。
 set -euo pipefail
 CMD="${1:?用法: bash sim-capture.sh list|shot|launch|openurl|loop ...}"
@@ -26,6 +27,12 @@ case "$CMD" in
   shot)
     OUT="${2:?输出路径}"
     xcrun simctl io booted screenshot "$OUT"
+    echo "✅ $OUT"
+    ;;
+  record)
+    OUT="${2:?输出路径.mov}"
+    echo "录屏中（Ctrl-C 停止）→ $OUT"
+    xcrun simctl io booted recordVideo "$OUT"
     echo "✅ $OUT"
     ;;
   launch)

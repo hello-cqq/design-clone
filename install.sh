@@ -3,7 +3,7 @@
 #
 #   curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/main/install.sh | bash
 #   curl -fsSL .../install.sh | bash -s -- --agent opencode --skip-deps
-#   bash install.sh --agent all --channel snapshot --ref v0.6.0-snapshot.20260910
+#   bash install.sh --agent all --channel snapshot --ref v0.6.0
 #
 # 行为：克隆（ref 默认=最新稳定 release → 无则最新 snapshot → main）→ 装入 agent 全局 skills 目录
 # （auto=探测已有配置目录，全无则三家装齐）→ 默认全量装依赖（npm i + playwright chromium；--skip-deps 秒装）
@@ -82,7 +82,11 @@ else
   fi
   TMP=$(mktemp -d)
   log "克隆 $REPO @ ${REF}（depth 1）"
-  git clone --depth 1 --branch "$REF" "$REPO" "$TMP/repo" >/dev/null 2>&1 || git clone --depth 1 "$REPO" "$TMP/repo" >/dev/null 2>&1 || die "克隆失败（网络/ref 不存在）"
+  if ! git clone --depth 1 --branch "$REF" "$REPO" "$TMP/repo" >/dev/null 2>&1; then
+    log "⚠️ ref ${REF} 不存在——回退 main 分支（钉版请改传有效 tag，如 --ref v0.6.0）"
+    git clone --depth 1 "$REPO" "$TMP/repo" >/dev/null 2>&1 || die "克隆失败（网络）"
+    REF="main"
+  fi
   SRC_ROOT="$TMP/repo"
 fi
 SKILL_DIR="$SRC_ROOT/skills/design-clone"

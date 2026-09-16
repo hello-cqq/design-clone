@@ -12,7 +12,7 @@
 | 风格级 | 改暗黑风/日系杂志感/像 Linear 那种 | 换风格预设或提取参考图 tokens → 覆盖 tokens.css；必要时更新 `DESIGN.md` tone | 全部视图 + 检查组件适配 |
 | 组件级 | 把按钮改成胶囊/加个搜索栏/去掉轮播 | 对应 `pages/*.spec.yaml` 的 regions/components | 仅受影响页面 |
 | 布局级 | 列表改双列卡片/导航放侧边 | spec 的 regions/layout/shell | 仅受影响页面 |
-| 动效级 | 卡片弹性入场/页面转场改成淡入 | `prototype/motion.js` 或 spec `flows[].transition` | 仅动效代码 |
+| 动效级 | 卡片弹性入场/页面转场改成淡入 | 视图内 CSS transition/@keyframes 或 spec `flows[].transition` | 仅动效代码 |
 
 一次需求可能跨层（"暗黑风+卡片动效"）：拆成两步按序执行，每步单独验证。
 
@@ -68,7 +68,7 @@
 工具：`node {SKILL_DIR}/scripts/review.mjs <run>` → report/review-*.png 逐屏截屏 +
 tokens 对比度(WCAG) + anti-slop grep 命中 → agent 读图打分写 report/notes.md。
 
-## 5. 动效词汇表（motion.js，GSAP CDN）
+## 5. 动效词汇表（原生 CSS，零 CDN）
 
 ```js
 // 页面转场：push / fade / none（默认见 spec flows[].transition）
@@ -76,7 +76,7 @@ tokens 对比度(WCAG) + anti-slop grep 命中 → agent 读图打分写 report/
 gsap.from(".card", { y: 24, opacity: 0, duration: .45, stagger: .06, ease: "back.out(1.4)" });
 // 按钮点按反馈
 gsap.fromTo(btn, { scale: 1 }, { scale: .96, duration: .08, yoyo: true, repeat: 1 });
-// 列表骨架渐显、数字滚动、抽屉滑出……一律 GSAP timeline，集中写在 motion.js
+// 列表骨架渐显、数字滚动、抽屉滑出……一律原生 @keyframes/transition，集中写在视图 <style> 或 utilities.css
 ```
 
 约束：动效时长 ≤ 600ms；尊重 `prefers-reduced-motion`（媒体查询内禁用）；

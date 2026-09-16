@@ -1,6 +1,6 @@
 # ROADMAP — 里程碑与状态
 
-> **记账范围声明**：本表细记至 M77；**M78+ 以 `docs/SESSION-SUMMARY-M76-M94.md` 为权威**（现已覆盖至 M95），本表中间洞（M10/M19c-d/M20-M23/M29-M43/M48/M52/M57-M61/M63/M74/M78-M94）的补记见 `docs/SESSION-HANDOFF.md` §2.2 与 SESSION-SUMMARY §1。并发会话撞号以 `b` 后缀区分（如 M62b）。
+> **记账范围声明**：本表细记至 M77；**M78+ 以 `docs/SESSION-SUMMARY-M76-M94.md` 为权威**（现已覆盖至 M98），本表中间洞（M10/M19c-d/M20-M23/M29-M43/M48/M52/M57-M61/M63/M74/M78-M94）的补记见 `docs/SESSION-HANDOFF.md` §2.2 与 SESSION-SUMMARY §1。并发会话撞号以 `b` 后缀区分（如 M62b）。
 
 | 里程碑 | 状态 | 产物/验证 |
 |---|---|---|

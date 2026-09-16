@@ -116,10 +116,10 @@ tokens 小而具体；对比度达标且状态不只靠颜色表达；一条流�
 
 ## 技术栈
 
-- HTML + **Tailwind v4**（迭代期用浏览器 CDN：`<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>`）
+- HTML + 本地编译 utility 子集（`gen/utility-css.mjs` → `utilities.css`，M45 起禁运行时 CDN，离线/file:// 可开）
 - tokens 全部放 `tokens.css` 的 `:root` CSS 变量，视图里只引用变量名，**禁止硬编码色值/字号**
 - 自定义 CSS（非 Tailwind 工具类）必须放普通 `<style>` 标签，不要写进 `type="text/tailwindcss"`
-- 动效：GSAP（CDN 引入）+ 原生 CSS transition；不引入 React/构建工具
+- 动效：原生 CSS transition/@keyframes + `data-fx` 粒子/视差；不引入 React/构建工具/CDN
 - 图标：优先内联 SVG（从截图临摹简化）；占位图用纯色块+文字说明，禁止外链图床
 
 ## spec.yaml 写法
@@ -175,7 +175,7 @@ flows:
 1. 手机壳（`c_mobile`：390×844 圆角机身+状态栏）或桌面窗口壳（保持原宽高比）
 2. 视图切换：每个 `views/<screen-id>.html` 是一个 `<template>` 或独立 fragment，
    用 hash 路由（`#02-chat-list`）切换；`flows[]` 里的跳转绑定到对应元素
-3. 转场动效默认 `push`（移动端左右滑入）/ `fade`（桌面），可在 `motion.js` 覆盖
+3. 转场动效默认 `push`（移动端左右滑入）/ `fade`（桌面），可以视图内 CSS 覆盖
 4. 底部加开发者工具条（可折叠）：页面列表跳转、显示当前 page_id、"对照原图"开关
    （并排显示 `capture/screens/<id>.png`，方便验收）
 

@@ -18,7 +18,7 @@
 
 <img src="https://raw.githubusercontent.com/hello-cqq/design-clone-prototype/main/ai-assistant/cover.png" alt="星海对话 —— 由 design-clone 端到端生成的新海诚风 AI 聊天伙伴原型" width="720" />
 
-*↑ [智能助理](https://hello-cqq.github.io/design-clone/proto.html?app=ai-assistant)：skill 端到端生成——切换形象/音色、聊天、通话、可播可导出。*
+*↑ [星海对话](https://hello-cqq.github.io/design-clone/proto.html?app=ai-assistant)：skill 端到端生成——切换形象/音色、聊天、通话、可播可导出。*
 
 </div>
 
