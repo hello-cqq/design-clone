@@ -25,6 +25,16 @@ async function poll(fn, { interval = 4000, timeout = 300000 } = {}) {
 }
 
 const b64buf = (s) => Buffer.from(s, "base64");
+// M101: Seedream 5.0 size 契约——总像素 [921600, 4624220]、宽高比 [1/16,16]；不达标等比缩放
+export function clampArkSize(w, h) {
+  let W = Math.max(16, w | 0), H = Math.max(16, h | 0);
+  const ratio = W / H;
+  if (ratio > 16) W = H * 16; else if (ratio < 1 / 16) H = W * 16;
+  let px = W * H;
+  if (px < 921600) { const k = Math.sqrt(921600 / px); W = Math.round(W * k); H = Math.round(H * k); }
+  else if (px > 4624220) { const k = Math.sqrt(4624220 / px); W = Math.round(W * k); H = Math.round(H * k); }
+  return `${W}x${H}`;
+}
 async function urlbuf(u) { return Buffer.from(await (await fetch(u, { signal: AbortSignal.timeout(120000) })).arrayBuffer()); }
 
 /* ---------- 火山方舟 Ark ---------- */
@@ -221,52 +231,33 @@ const arkBases = (src) => {
   const cand = [ENV.ARK_BASE_URL, `${u.origin}/api/v3`, `${u.origin}/api/plan/v3`, src.baseURL].filter(Boolean);
   return [...new Set(cand)];
 };
-const makeArk = (src, tag) => ({
-  name: `ark-${tag}`,
-  _bases: arkBases(src),
-  _key: src.apiKey,
-  async image(args) {
-    for (const base of this._bases) {
-      try {
-        const r = await fetch(`${base.replace(/\/$/, "")}/images/generations`, {
-          method: "POST", headers: auth(this._key),
-          body: JSON.stringify({ model: ENV.ARK_IMAGE_MODEL || "doubao-seedream-4-5-251128", prompt: args.prompt, size: `${args.w}x${args.h}`, response_format: "b64_json", ...(args.seed != null ? { seed: args.seed } : {}) }),
-          signal: AbortSignal.timeout(180000),
-        });
-        if (!r.ok) { if (r.status === 404 || r.status === 401 || r.status === 403) continue; throw new Error(`ark ${r.status}`); }
-        const d = await j(r);
-        const it = (d.data || [])[0];
-        if (!it) throw new Error("ark 空响应");
-        this._imgBase = base;
-        return it.b64_json ? b64buf(it.b64_json) : urlbuf(it.url);
-      } catch (e) { if (/ark \d|空响应/.test(String(e.message))) continue; }
-    }
-    throw new Error("ark bases 全败");
-  },
-  vname: `ark-${tag}-seedance`,
-  async video(args) {
-    for (const base of this._bases) {
-      try {
-        const r = await fetch(`${base.replace(/\/$/, "")}/contents/generations/tasks`, {
-          method: "POST", headers: auth(this._key),
-          body: JSON.stringify({ model: ENV.ARK_VIDEO_MODEL || "doubao-seedance-1-5-pro-251215", content: [{ type: "text", text: args.prompt }] }),
-          signal: AbortSignal.timeout(60000),
-        });
-        if (!r.ok) { if ([401, 403, 404].includes(r.status)) continue; throw new Error(`ark video ${r.status}`); }
-        const id = (await j(r)).id;
-        this._vidBase = base;
-        return poll(async () => {
-          const q = await fetch(`${base.replace(/\/$/, "")}/contents/generations/tasks/${id}`, { headers: auth(this._key), signal: AbortSignal.timeout(30000) });
-          const d = await j(q);
-          if (d.status === "failed") throw new Error("ark video failed");
-          if (d.status === "succeeded") return urlbuf(d.content.video_url);
-          return null;
-        });
-      } catch (e) { if (/ark video \d/.test(String(e.message))) continue; throw e; }
-    }
-    throw new Error("ark video bases 全败");
-  },
-});
+// M101 教义：skill 不直调生图/生视频端点——直连能力仅以「请求规格」形式交给宿主 agent/官方 skill 履约。
+export function arkRequestSpec(kind, args = {}) {
+  const src = volcSources()[0];
+  const base = src ? src.baseURL : null;
+  if (kind === "image" || kind === "layers") {
+    return {
+      kind, engine_hint: "official-skill:byted-ark-seedream-skill | agent-native",
+      endpoint: base ? `${base.replace(/\/$/, "")}/images/generations` : null,
+      models: [ENV.ARK_IMAGE_MODEL || "doubao-seedream-5.0-pro", "doubao-seedream-5.0-lite"],
+      prompt: args.prompt || null,
+      size: clampArkSize(args.w || 1024, args.h || 1024),
+      output_format: "png", watermark: false,
+      ...(kind === "layers" ? { layer_decomposition: true, size: "auto" } : {}),
+      ...(args.reference ? { reference_images: [args.reference] } : {}),
+      ...(args.transparent ? { background: "transparent" } : {}),
+      constraints: ["总像素[921600,4624220]", "宽高比[1/16,16]", "URL 24h 有效→落地即下载", "拆图层预扣 17 IPM"],
+    };
+  }
+  return {
+    kind: "video", engine_hint: "official-skill:byted-ark-seedance-skill | agent-native",
+    endpoint: base ? `${base.replace(/\/$/, "")}/contents/generations/tasks` : null,
+    models: [ENV.ARK_VIDEO_MODEL || "doubao-seedance-1.5-pro", "doubao-seedance-2.0", "doubao-seedance-2.5"],
+    prompt: args.prompt || null, ratio: args.ratio || "adaptive", duration: args.duration || 5, resolution: args.resolution || "480p",
+    ...(args.firstFrame ? { content_roles: [{ type: "image_url", image_url: { url: args.firstFrame }, role: "first_frame" }], ratio: "adaptive" } : {}),
+    constraints: ["视频 URL 24h/100 次下载→即下载", "首帧任务 ratio 必须 adaptive", "2.5 需余额/资源包（AgentPlan 可能未含）", "不收真人人脸参考"],
+  };
+}
 
 /* ---------- VLM 语义通道（M100：AgentPlan doubao-seed / claude-env anthropic） ---------- */
 export async function vlmChat(text, imageB64, opts = {}) {
@@ -309,42 +300,21 @@ export async function vlmChat(text, imageB64, opts = {}) {
   return null;
 }
 
+/* ---------- 官方 AgentPlan skill 桥（M101：means③，尊重官方纪律不跨模型重试/不转后付费） ---------- */
+export function officialSkillPath(kind) {
+  const name = kind === "video" ? "byted-ark-seedance-skill" : "byted-ark-seedream-skill";
+  const roots = [
+    path.join(os.homedir(), ".config", "opencode", "skills"), path.join(os.homedir(), ".claude", "skills"),
+    path.join(os.homedir(), ".codex", "skills"), path.join(os.homedir(), ".agents", "skills"), "/tmp/skills",
+  ];
+  for (const r of roots) { const p = path.join(r, name); if (fs.existsSync(path.join(p, "SKILL.md"))) return p; }
+  return null;
+}
+export const arkKeyForOfficial = () => { const v = volcSources()[0]; return v ? v.apiKey : (ENV.ARK_API_KEY || null); };
+
 /* ---------- 探测与路由 ---------- */
-export function imageProviders() {
-  const list = [];
-  if (ENV.ARK_API_KEY) list.push(ark);
-  for (const src of volcSources()) list.push(makeArk(src, "agentplan"));
-  if (ENV.DASHSCOPE_API_KEY) list.push(dash);
-  if (ENV.MINIMAX_API_KEY) list.push(minimax);
-  const want = ENV.DC_IMAGE_PROVIDER;
-  if (want) { const p = list.find((x) => x.name.includes(want)); return p ? [p] : list; }
-  return list;
-}
-export function videoProviders() {
-  const list = [];
-  if (ENV.ARK_API_KEY) list.push(ark);
-  for (const src of volcSources()) list.push(makeArk(src, "agentplan"));
-  if (ENV.KLING_ACCESS_KEY && ENV.KLING_SECRET_KEY) list.push(kling);
-  if (ENV.DASHSCOPE_API_KEY) list.push(dash);
-  if (ENV.MINIMAX_API_KEY) list.push(minimax);
-  const want = ENV.DC_VIDEO_PROVIDER;
-  if (want) { const p = list.find((x) => (x.vname || "").includes(want)); return p ? [p] : list; }
-  return list;
-}
-export async function genImage(args) {
-  for (const p of imageProviders()) {
-    try { return { engine: p.name, buf: await p.image(args) }; }
-    catch (e) { console.warn(`provider ${p.name} 失败回落：${String(e.message).slice(0, 90)}`); }
-  }
-  return null;
-}
-export async function genVideo(args) {
-  for (const p of videoProviders()) {
-    try { return { engine: p.vname, buf: await p.video(args) }; }
-    catch (e) { console.warn(`provider ${p.vname} 失败回落：${String(e.message).slice(0, 90)}`); }
-  }
-  return null;
-}
+export function imageProviders() { return []; } // M101: 生图一律 agent 履约；此处仅保留接口兼容
+export function videoProviders() { return []; }
 export const providerSummary = () => ({
   image: imageProviders().map((p) => p.name),
   video: videoProviders().map((p) => p.vname),

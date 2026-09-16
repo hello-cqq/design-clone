@@ -341,6 +341,17 @@ node {SKILL_DIR}/scripts/qa/ip-scan.mjs && node {SKILL_DIR}/scripts/qa/secret-sc
 node {SKILL_DIR}/scripts/eval/eval.mjs --run <run目录> --base <base-url>   # M15：每次回归同步自评（含 interactivity）
 ```
 
+## §G 媒体按需生成（M101 指挥闭环）
+
+**教义**：skill 是指挥者，不是生成器。生图/生视频由**宿主 agent 用其已配置 means**（官方 byted-ark-seedream/seedance skill、自配图像/视频工具）履约；skill 负责机会识别、授权申请、出规格、验收登记。**VLM 语义策略由 skill 自控**（vlmChat：rubric 打分/选层/机会判断），免单独申请。
+
+1. **机会识别**（构建/Remix 原型时）：缺艺术资产、虚拟人/角色立绘、hero 动效、风格转换、图层拆分需求 → 判定「生成能提升对用户诉求的符合度」。
+2. **授权申请**（按需、每 session 至多一次）：`node scripts/media-consent.mjs --ask-text --kind <image|video|layers> --what "<内容>"` 打印标准话术 → 向用户展示（拟生成内容/means/配额形态/不批准的回落）→ 用户批准后宿主 agent 导出 `DC_MEDIA_CONSENT=<means|all>`；**匿名 pollinations 档免申请**（PROVENANCE 披露）。
+3. **出规格**：`genimg.mjs --defer-agent` / `genvideo.mjs` / `gen/layers.mjs --spec` 写 `media-request.json`（官方契约：模型候选/size 钳制/watermark:false/首帧 role/ratio adaptive/24h URL 纪律）。
+4. **履约**：宿主 agent 按 spec 调用其 means（官方 skill 优先；**不跨模型重试、不转后付费接口**——官方 skill 纪律）。
+5. **验收登记**：`node scripts/media-verify.mjs --kind <image|video> --in <产物> --run <runDir> --consent "<note>"`（image：尺寸/空白/VLM rubric；video：ffprobe+faststart+≤2MB+webm+poster）→ 登记 assets-manifest（source=agent-media, engine, consent）；layers 用 `gen/layers.mjs --ingest`。
+6. **接入原型**：验收产物入 views（.far 远景/角色层/video hero 层遵守 ADR-M99-video：poster+reduced-motion+同层活控件）→ 四门复跑。
+
 ## 红线（任何模式下必须遵守）
 
 完整规则见 `references/safety-rules.md`，摘要：

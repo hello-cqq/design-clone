@@ -12,7 +12,7 @@ import { spawnSync } from "node:child_process";
 import path from "node:path";
 import crypto from "node:crypto";
 import { createRequire } from "node:module";
-import { genImage } from "./gen/providers.mjs";
+import { arkRequestSpec, officialSkillPath } from "./gen/providers.mjs";
 const sharp = createRequire(import.meta.url)("sharp");
 import { parseArgs } from "node:util";
 
@@ -56,6 +56,21 @@ if (!values.prompt || !values.out) {
 }
 const full = [values.prompt, values.style ? (STYLES[values.style] || "") : "", SAFETY, values["no-anti"] ? "" : ANTI_TELL].filter(Boolean).join(", ");
 const outAbs = path.resolve(values.out);
+if (A.includes("--defer-agent")) {
+  // M101：引导宿主 agent 用其已配置 means 履约——出官方契约规格+验收标准，skill 不直调
+  const spec = arkRequestSpec("image", { prompt: get("--subject", "") || P.prompt, w: +W, h: +H });
+  const req = {
+    kind: "image", created_at: new Date().toISOString(), skill: "design-clone",
+    consent: "required — 本 session 内用户已批准使用配置模型生图（DC_MEDIA_CONSENT 或会话内明确同意）",
+    official_skill: officialSkillPath("image"), spec, out: outAbs,
+    acceptance: { min_side: 256, asset_qa: true, vlm_rubric: true, verify: "node media-verify.mjs --kind image --in <out>" },
+  };
+  const reqP = path.join(path.dirname(outAbs), "media-request.json");
+  fs.mkdirSync(path.dirname(outAbs), { recursive: true });
+  fs.writeFileSync(reqP, JSON.stringify(req, null, 1));
+  console.log(JSON.stringify({ deferred: true, request: reqP, official_skill: req.official_skill }, null, 1));
+  process.exit(3);
+}
 const outDir = path.dirname(outAbs);
 const cacheDir = path.join(outDir, ".cache");
 fs.mkdirSync(cacheDir, { recursive: true });
@@ -103,26 +118,17 @@ for (const seed of seeds) {
     engineUsed = prevEng;
     console.log("cache hit:", path.basename(target), `(${prevEng})`);
   } else {
-    // M99-2: provider 优先（Ark Seedream → 万相 → MiniMax），无 key/全败回落 pollinations 匿名档
-    const prov = await genImage({ prompt: full, w: +values.w, h: +values.h, seed });
-    let buf;
-    let model;
-    if (prov) {
-      buf = prov.buf;
-      model = prov.engine;
-      engineUsed = prov.engine;
-    } else {
-      model = values["ref-url"] && process.env.POLLINATIONS_TOKEN ? "kontext" : "flux";
-      const u = new URL(`https://image.pollinations.ai/prompt/${encodeURIComponent(full)}`);
-      u.searchParams.set("model", model);
-      u.searchParams.set("width", values.w);
-      u.searchParams.set("height", values.h);
-      u.searchParams.set("seed", String(seed));
-      u.searchParams.set("nologo", "true");
-      if (model === "kontext") u.searchParams.set("image", values["ref-url"]);
-      buf = await fetchImg(u.href);
-      engineUsed = `pollinations:${model}`;
-    }
+    // M101 教义：skill 不直调付费生图；匿名 pollinations 档=skill 自有免费默认（PROVENANCE 披露）；付费/配置模型档走 --defer-agent 由宿主 agent 履约
+    const model = values["ref-url"] && process.env.POLLINATIONS_TOKEN ? "kontext" : "flux";
+    const u = new URL(`https://image.pollinations.ai/prompt/${encodeURIComponent(full)}`);
+    u.searchParams.set("model", model);
+    u.searchParams.set("width", values.w);
+    u.searchParams.set("height", values.h);
+    u.searchParams.set("seed", String(seed));
+    u.searchParams.set("nologo", "true");
+    if (model === "kontext") u.searchParams.set("image", values["ref-url"]);
+    const buf = await fetchImg(u.href);
+    engineUsed = `pollinations:${model}`;
     fs.writeFileSync(cached, buf);
     fs.writeFileSync(engFile, engineUsed);
     fs.copyFileSync(cached, target);

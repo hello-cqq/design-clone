@@ -12,7 +12,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { execSync } from "node:child_process";
-import { genVideo } from "./gen/providers.mjs";
+import { arkRequestSpec, officialSkillPath } from "./gen/providers.mjs";
 
 const { values } = parseArgs({
   options: {
@@ -58,25 +58,20 @@ if (values.verify) {
   console.log(JSON.stringify({ ok: true, videos: okl }, null, 1));
   process.exit(0);
 }
-const tmp = path.join(path.dirname(path.resolve(jobs[0].out)), ".genvideo-tmp");
-fs.mkdirSync(tmp, { recursive: true });
 const done = [];
-for (const jb of jobs) {
-  const r = await genVideo({ prompt: jb.prompt, duration: jb.duration, aspect: values.aspect });
-  if (!r) break;
-  const raw = path.join(tmp, path.basename(jb.out) + ".raw.mp4");
-  fs.writeFileSync(raw, r.buf);
-  normalize(raw, jb.out, values.also);
-  done.push({ out: jb.out, engine: r.engine, prompt: jb.prompt.slice(0, 120) });
-  console.log("video:", path.basename(jb.out), `(${r.engine})`);
-}
-fs.rmSync(tmp, { recursive: true, force: true });
 if (!done.length) {
-  // agent-native 回落协议：写履约请求，宿主 agent 用自配视频工具产出同路径文件后重跑 --verify
-  const req = { kind: "video", created_at: new Date().toISOString(), items: jobs.map((x) => ({ prompt: x.prompt, out: path.resolve(x.out), duration: x.duration, aspect: values.aspect })) };
+  // M101 教义：skill 不直调生视频——写履约请求（含官方契约规格），宿主 agent 用其已配置 means
+  // （官方 byted-ark-seedance-skill / 自配视频工具）产出同路径 mp4 后重跑 --verify 验收
+  const req = {
+    kind: "video", created_at: new Date().toISOString(), skill: "design-clone",
+    consent: "required — 本 session 内用户已批准使用配置模型生视频（DC_MEDIA_CONSENT 或会话内明确同意）",
+    official_skill: officialSkillPath("video"),
+    items: jobs.map((x) => ({ prompt: x.prompt, out: path.resolve(x.out), duration: x.duration, aspect: values.aspect, spec: arkRequestSpec("video", { prompt: x.prompt, duration: x.duration, ratio: values.aspect }) })),
+    acceptance: { ffprobe: true, faststart: true, max_mb: 2, webm: true, poster: true, verify: "node media-verify.mjs --kind video --in <out>" },
+  };
   const reqP = path.join(path.dirname(path.resolve(jobs[0].out)), "media-request.json");
   fs.writeFileSync(reqP, JSON.stringify(req, null, 1));
-  console.error(`无可用视频 provider（ARK/KLING/DASHSCOPE/MINIMAX key 均未配置）。已写 agent-native 履约请求：${reqP}——宿主 agent 请用自配视频模型产出同路径 mp4 后重跑本脚本 --verify。`);
+  console.error(`M101 履约请求已写：${reqP}——宿主 agent 请按 spec 用已配置生视频 means（官方 seedance skill 优先）产出同路径 mp4，再重跑本脚本 --verify 验收。`);
   process.exit(3);
 }
 console.log(JSON.stringify({ ok: true, videos: done }, null, 1));
