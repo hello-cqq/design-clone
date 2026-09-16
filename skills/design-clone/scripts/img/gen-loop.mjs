@@ -50,7 +50,21 @@ async function selfcheck(f) {
     const sameish = corners.every(([r, gg, b]) => Math.abs(r - corners[0][0]) < 18 && Math.abs(b - corners[0][2]) < 18);
     if (uniform && sameish) issues.push("plain-bg");
   }
-  return { issues, stddev: +stddev.toFixed(1), sharp: +shp.toFixed(1), w: meta.width, h: meta.height };
+  // M100: AgentPlan VLM 四维 rubric（切题/质感/美感/可用性）；无 key 静默回落纯启发式
+  let vlm = null;
+  try {
+    const { vlmChat } = await import("../gen/providers.mjs");
+    const b64 = (await sharp(f).resize(512, 512, { fit: "inside" }).png().toBuffer()).toString("base64");
+    const vv = await vlmChat(`为应用原型资产生成的图（kind=${kind}）。只回一行 JSON：{"relevance":1-5,"texture":1-5,"beauty":1-5,"usability":1-5,"note":"<=20字"}`, b64, { maxTokens: 160 });
+    if (vv) {
+      const sc = JSON.parse((vv.text.match(/\{[\s\S]*\}/) || ["{}"])[0]);
+      vlm = { relevance: +sc.relevance || 0, texture: +sc.texture || 0, beauty: +sc.beauty || 0, usability: +sc.usability || 0, note: String(sc.note || "").slice(0, 24), engine: vv.engine };
+      const avg = (vlm.relevance + vlm.texture + vlm.beauty + vlm.usability) / 4;
+      if (vlm.relevance < 3) issues.push("vlm-relevance");
+      else if (avg < 3) issues.push("vlm-low");
+    }
+  } catch {}
+  return { issues, vlm, stddev: +stddev.toFixed(1), sharp: +shp.toFixed(1), w: meta.width, h: meta.height };
 }
 
 const tmpBase = path.join(path.dirname(outAbs), ".genloop-" + path.basename(outAbs));
@@ -67,7 +81,7 @@ for (let r = 1; r <= rounds; r++) {
   const g = spawnSync("node", [path.join(HERE, "..", "genimg.mjs"), "--prompt", prompt, "--style", style, "--w", W, "--h", H, "--seeds", String(40 + r * 17), "--out", target], { encoding: "utf8" });
   if (g.status !== 0 || !fs.existsSync(target)) { attempts.push({ r, style, issues: ["gen-failed"] }); continue; }
   const chk = await selfcheck(target);
-  attempts.push({ r, style, issues: chk.issues, stddev: chk.stddev, sharp: chk.sharp });
+  attempts.push({ r, style, issues: chk.issues, stddev: chk.stddev, sharp: chk.sharp, vlm: chk.vlm || null });
   if (!chk.issues.length) { finalOk = { file: target, r, style, chk }; break; }
 }
 if (!finalOk && attempts.length) { // 兜底：取问题最少的一轮

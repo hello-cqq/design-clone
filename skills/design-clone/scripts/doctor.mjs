@@ -138,8 +138,14 @@ add(s2cKey ? "opt" : "skip", "s2c 加速", s2cKey ? "检测到 provider key→�
 {
   const { providerSummary } = await import("./gen/providers.mjs");
   const ps = providerSummary(); _ps = ps;
-  add(ps.image.length ? "opt" : "skip", "生图 provider", ps.image.length ? ps.image.join("/") + "（key 已配，genimg 优先路由）" : "无 key→genimg 回落 pollinations 匿名档");
-  add(ps.video.length ? "opt" : "skip", "生视频 provider", ps.video.length ? ps.video.join("/") + "（genvideo 可用）" : "无 key→genvideo exit 3 写 media-request.json（agent-native 协议）");
+  add(ps.image.length ? "opt" : "skip", "生图 provider", ps.image.length ? ps.image.join("/") + "（key 已配；端点未授权时 genimg 自动回落 pollinations，见 probe-providers 报告）" : "无 key→genimg 回落 pollinations 匿名档");
+  add(ps.video.length ? "opt" : "skip", "生视频 provider", ps.video.length ? ps.video.join("/") + "（key 已配；端点未授权时 genvideo exit 3 走 agent-native 履约协议）" : "无 key→genvideo exit 3 写 media-request.json（agent-native 协议）");
+  {
+    const { discoverAgentPlan } = await import("./gen/providers.mjs");
+    const srcs = discoverAgentPlan();
+    const volc = srcs.find((x) => x.volc);
+    add(volc ? "opt" : (srcs.length ? "opt" : "skip"), "VLM 语义通道", volc ? `AgentPlan(${volc.provider})→gen-loop 四维 rubric/语义自检` : (srcs.length ? `agent 配置(${srcs.map((x) => x.agent).join("/")})→vlmChat 可用` : "无 agent 配置→gen-loop 纯启发式自检"));
+  }
 }
 add(sh("command -v chromium || ls ~/.cache/ms-playwright 2>/dev/null | grep -c chromium") !== "" ? "opt" : "skip", "preview chromium", "playwright install chromium 启用自渲染视觉门（audit/qa 无它自动降级）");
 add("info", "真视觉资产", "默认用 capture 真头像/图标+文本匿名；首次生成前询问用户授权（R1/隐私，safety-rules §10）");

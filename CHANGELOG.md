@@ -5,6 +5,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M100
+- AgentPlan 适配：providers.mjs discoverAgentPlan（opencode/claude/codex 三端配置解析+掩码）+vlmChat（OpenAI 兼容 vision+anthropic-env 双通道）+Ark 多 base 工厂；probe-providers.mjs 能力矩阵探针（留档 report/）；**实测 AgentPlan 仅 LLM/VLM 面**（生图/视频端点 401/404）→ 生成维持回落链+agent-native；gen-loop 接 VLM 四维 rubric 语义自检（实测 5/4/5/5）；doctor 增 VLM 语义通道/诚实措辞
+
+
 ### M99（进行中）
 - M99-6: 官网新海诚重绘（天空纵grad/星野月晕/胶片粒/ident 光轴海平线/h1 渐变字/卡片 cinematic/角色母题羽化/demo 换肤，结构全保留）
 - M99-7: 数据线字重审计（壳 wire 400 在门内；自绘流程图排版柔化重出）
