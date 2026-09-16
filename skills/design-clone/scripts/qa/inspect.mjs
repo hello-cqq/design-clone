@@ -157,8 +157,11 @@ await page.waitForTimeout(700);
     if (fs.existsSync(viewsDir)) for (const f of fs.readdirSync(viewsDir)) {
       if (!f.endsWith(".html")) continue;
       const html = fs.readFileSync(path.join(viewsDir, f), "utf8");
-      for (const m of html.matchAll(/src="assets\/([^"']+)"/g)) {
-        if (!fs.existsSync(path.join(assetsDir, m[1]))) missing.push(f + ":" + m[1]);
+      const refs = [];
+      for (const m of html.matchAll(/src="assets\/([^"']+)"/g)) refs.push(m[1]);
+      for (const m of html.matchAll(/url\((['"]?)assets\/([^"')]+)\1\)/g)) refs.push(m[2]); // M99-3: CSS background 贴图同口径
+      for (const r0 of refs) {
+        if (!fs.existsSync(path.join(assetsDir, r0))) missing.push(f + ":" + r0);
       }
     }
     if (missing.length) throw new Error(missing.length + " missing asset refs: " + missing.slice(0, 4).join(","));
@@ -706,10 +709,22 @@ await step("pasted-screenshot", async () => {
       const r = img.getBoundingClientRect();
       const cov = (r.width * r.height) / (sr.width * sr.height);
       if (cov < 0.45) continue;
-      if (img.closest("[data-fx-parallax]")) continue; // M76: 声明的艺术分层背景不计整屏贴图
+      if (img.closest(".far")) continue; // M99-3: 仅 .far 远景层豁免（M76 的 parallax 一律豁免是两 demo 贴图漏门的洞）
       const root = img.parentElement;
       const overlays = root ? [...root.children].filter((n) => n !== img && /absolute|fixed/.test(getComputedStyle(n).position)).length : 0;
       if (!overlays) out.push((img.getAttribute("src") || "img").split("/").pop() + "@" + Math.round(cov * 100) + "%");
+    }
+    // M99-3: CSS background-image 全屏贴图同口径入_gate（旧门只扫 <img>）
+    for (const el of stage.querySelectorAll("*")) {
+      const bg = getComputedStyle(el).backgroundImage;
+      if (!bg || bg === "none") continue;
+      const r = el.getBoundingClientRect();
+      const cov = (r.width * r.height) / (sr.width * sr.height);
+      if (cov < 0.6) continue;
+      if (el.classList.contains("far") || el.closest(".far")) continue;
+      const root = el.parentElement;
+      const overlays = root ? [...root.children].filter((n) => n !== el && /absolute|fixed/.test(getComputedStyle(n).position)).length : 0;
+      if (!overlays) out.push("bg:" + ((bg.match(/url\("[^"]*\/ ?([^"\/]+)"\)/) || [, "bg"])[1]) + "@" + Math.round(cov * 100) + "%");
     }
     return out;
   });

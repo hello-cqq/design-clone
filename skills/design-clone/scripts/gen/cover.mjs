@@ -49,7 +49,7 @@ if (fs.existsSync(briefPath)) {
     const bg = path.join(run, "references/cover-bg.png");
     if (!fs.existsSync(bg) && brief.cover && brief.cover.prompt) {
       const { spawnSync } = await import("node:child_process");
-      spawnSync("node", [path.join(path.dirname(new URL(import.meta.url).pathname), "genimg.mjs"), "--prompt", brief.cover.prompt, "--out", bg, "--style", brief.style_anchor || "anime-cel", "--w", "1200", "--h", "800"], { stdio: "inherit" });
+      spawnSync("node", [path.join(path.dirname(new URL(import.meta.url).pathname), "..", "genimg.mjs"), "--prompt", brief.cover.prompt, "--out", bg, "--style", brief.style_anchor || "anime-cel", "--w", "1200", "--h", "800"], { stdio: "inherit" });
     }
     if (fs.existsSync(bg)) heroBuf = fs.readFileSync(bg);
   } catch {}

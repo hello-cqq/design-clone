@@ -162,9 +162,13 @@
       const nav = e.target.closest("[data-goto]");
       if (nav && !S.edit) {
         e.preventDefault();
+        // M99-3: goto 跳转同时选中源节点（看板不再长空）；Alt/⌥+点=只选中不跳页
+        const d = selId(nav);
+        if (d) { S.selected = d; fillDetail(); redraw(); }
+        if (e.altKey) { notify("只选中", "已选中源节点（Alt+点=不跳页；直接点=跳转后保留同 id 选中）"); return; }
         const t = nav.dataset.goto;
         if (t.startsWith("placeholder:")) notify("原型占位", esc(t.slice(10)) + "（范围外/安全边界，不克隆）");
-        else loadView(t).catch((err) => notify("加载失败", esc(err.message)));
+        else loadView(t).then(() => { if (d && W.stage.querySelector(`[data-dc="${d}"]`)) { S.selected = d; fillDetail(); redraw(); } }).catch((err) => notify("加载失败", esc(err.message)));
         return;
       }
       S.selected = selId(selElem(e.target));
