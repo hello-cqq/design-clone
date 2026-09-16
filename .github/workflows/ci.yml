@@ -50,6 +50,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: "22" }
       - run: npm ci --no-audit --no-fund --prefix skills/design-clone/scripts
+      - name: install chromium (site-e2e)
+        run: npx --prefix skills/design-clone/scripts playwright install chromium --with-deps
       - name: serve site
         run: python3 -m http.server 8090 --directory site &
       - name: functional e2e (20 loops)
@@ -71,7 +73,7 @@ jobs:
           python3 - <<'EOF'
           import zipfile, sys
           names = zipfile.ZipFile("/tmp/design-clone.zip").namelist()
-          ALLOW_BIN = ("skills/design-clone/references/official-icons/",)  # M98: 策展官方图标登记（归属 THIRD-PARTY.md）
+          ALLOW_BIN = ("references/official-icons/",)  # M98: 策展官方图标登记（zip 内路径无仓前缀；归属 THIRD-PARTY.md）
           bad = [n for n in names if any(k in n for k in ("design-clone-runs/", "node_modules/", ".git/", "inspector.built.js")) or (n.lower().endswith((".png", ".jpg", ".jpeg", ".webp", ".gif", ".zip", ".woff", ".woff2", ".ttf", ".mp4")) and not n.startswith(ALLOW_BIN))]
           print("entries:", len(names))
           sys.exit(1 if bad else 0)
