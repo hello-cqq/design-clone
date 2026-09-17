@@ -29,64 +29,27 @@ ctx.on("pageerror", (e) => errs.push("pageerror:" + String(e.message).slice(0, 1
 // ---- index
 await ctx.goto(base + "/index.html", { waitUntil: "load" });
 await ctx.waitForTimeout(2500);
-ok("ident video", await ctx.locator(".ident .idf-video").count() === 2);
-ok("ident mask (no rectangle)", await ctx.evaluate(() => { const v = document.querySelector(".idf-video"); const cs = getComputedStyle(v); return (cs.maskImage || cs.webkitMaskImage || "").includes("radial-gradient"); }));
-ok("ident wrapper frameless", await ctx.evaluate(() => { const el = document.querySelector(".ident"); const cs = getComputedStyle(el); return cs.backgroundImage === "none" && cs.backgroundColor === "rgba(0, 0, 0, 0)" && cs.borderTopWidth === "0px"; }));
-ok("no lockup/hint text", await ctx.locator(".ident .idf-lockup, .ident .idf-hint").count() === 0);
-ok("dual video layers", await ctx.locator(".ident .idf-video").count() === 2 && await ctx.locator(".ident .idf-halo").count() === 2);
+ok("bigchar narrative (M106)", await ctx.locator(".bigchar").count() >= 3);
+ok("bigchar feathered", await ctx.evaluate(() => { const cs = getComputedStyle(document.querySelector(".bigchar")); return cs.maskImage.includes("radial") || cs.webkitMaskImage.includes("radial") || +cs.opacity < 1; }));
+ok("no install guide (M106)", await ctx.locator("#installcmd, #copycmd, [data-i18n=install_label]").count() === 0);
 {
-  const t0 = await ctx.evaluate(() => document.querySelector(".idf-video.on").currentTime);
-  await ctx.waitForTimeout(2600);
-  const t1 = await ctx.evaluate(() => document.querySelector(".idf-video.on").currentTime);
-  ok("ident plays+loops", t1 > t0 + 0.05 || t1 < t0 - 0.5);
-}
-{
-  await ctx.click("#themebtn"); await ctx.waitForTimeout(1000);
-  const st = await ctx.evaluate(() => ({
-    lightOn: document.querySelector('.idf-video[data-k="light"]').classList.contains("on"),
-    darkOn: document.querySelector('.idf-video[data-k="dark"]').classList.contains("on"),
-    logo: (document.querySelector(".logolock") || {}).alt || "",
-    wmGrad: getComputedStyle(document.documentElement).getPropertyValue("--acc"),
-  }));
-  ok("theme crossfade swap", st.lightOn && !st.darkOn && (st.logo || "").includes("design-clone"));
-  await ctx.click("#themebtn"); await ctx.waitForTimeout(1000);
-  const st2 = await ctx.evaluate(() => ({
-    wmGrad2: getComputedStyle(document.documentElement).getPropertyValue("--acc"),
-    lightOn: document.querySelector('.idf-video[data-k="light"]').classList.contains("on"),
-    darkOn: document.querySelector('.idf-video[data-k="dark"]').classList.contains("on"),
-  }));
-  ok("theme crossfade back", st2.darkOn && !st2.lightOn && st2.wmGrad2 !== st.wmGrad);
-}
-ok("nav logo lockup (M91)", await ctx.locator(".logo .logolock").count() === 1 && (await ctx.locator(".logo .logolock").evaluate((n) => n.naturalWidth)) > 0);
-ok("no agent switcher", await ctx.locator(".agentbtn").count() === 0);
-ok("install label", ((await ctx.locator("[data-i18n=install_label]").textContent()) || "").trim().toLowerCase() === "install");
-ok("universal install cmd", ((await ctx.locator("#installcmd").textContent()) || "").includes("install.sh | bash") && !((await ctx.locator("#installcmd").textContent()) || "").includes("--agent"));
-ok("subs removed", await ctx.evaluate(() => !document.body.innerText.includes("按下载量排序") && !document.body.innerText.includes("四种来源") && !document.body.innerText.includes("Ranked by downloads") && !document.body.innerText.includes("Four sources")));
-ok("footer logo lockup (M91)", await ctx.locator(".ftbrand .logolock").count() === 1);
-ok("no static brandmark", await ctx.locator(".brandmark").count() === 0);
-ok("duo layer present", await ctx.locator(".ident .idf-duo").count() === 1);
-try {
-  await ctx.waitForFunction(() => window.__ident && window.__ident.phase() === "seam", null, { timeout: 14000 });
-  ok("duo seam end-card", true);
-} catch { ok("duo seam end-card", false); }
-{
-  await ctx.click("#themebtn");
-  let bridged = false;
-  try { await ctx.waitForFunction(() => window.__ident && window.__ident.phase() === "bridge", null, { timeout: 2500 }); bridged = true; } catch {}
-  ok("duo theme bridge", bridged);
-  await ctx.waitForTimeout(1600);
-  await ctx.click("#themebtn");
-  await ctx.waitForTimeout(1600);
+  await ctx.click("#themebtn"); await ctx.waitForTimeout(900);
+  const th1 = await ctx.evaluate(() => document.documentElement.dataset.theme);
+  const sky1 = await ctx.evaluate(() => document.querySelector(".skycanvas").style.background);
+  await ctx.click("#themebtn"); await ctx.waitForTimeout(900);
+  const th2 = await ctx.evaluate(() => document.documentElement.dataset.theme);
+  const sky2 = await ctx.evaluate(() => document.querySelector(".skycanvas").style.background);
+  ok("theme swaps sky palette", th1 !== th2 && sky1 !== sky2);
 }
 ok("logo lockup theme-swap (M94)", (await ctx.locator(".logo .logolock").getAttribute("src")) === "assets/logo-anim-dark.webp" && (await ctx.evaluate(() => document.querySelector('link[rel="icon"]').getAttribute("href"))) === "assets/favicon-dark.png");
 ok("footer lockup (M91)", await ctx.locator(".ftbrand .logolock").count() === 1);
 ok("wordmark no plain text", await ctx.evaluate(() => ![...document.querySelector(".logo").childNodes].some((n) => n.nodeType === 3 && n.textContent.trim() === "design-clone")));
 ok("footer lockup ft (M91)", await ctx.locator("footer .logolock--ft").count() === 1);
 ok("favicon themed (M94)", await ctx.evaluate(() => [...document.querySelectorAll("link[rel=icon]")].every((l) => /favicon(-dark)?\.png$/.test(l.href || "")) && /favicon(-dark)?\.png$/.test((document.querySelector("link[rel=icon]") || {}).href || "")));
-ok("install cmd", (await ctx.locator("#installcmd").textContent()).includes("install.sh"));
 ok("exp iframe", (await ctx.locator("#stageframe").getAttribute("src") || "").includes("/prototype/")); // M105：单页 #play 段承接 live embed
-ok("featured cards", await ctx.locator("#cards .pcard").count() >= 4);
-ok("flame heat", await ctx.locator("#cards .heat svg path").count() >= 4);
+await ctx.waitForSelector("#featured .pcard", { timeout: 9000 }).catch(() => {});
+ok("featured cards", await ctx.locator("#featured .pcard").count() >= 4); // M106：首页尾精选
+ok("flame heat", await ctx.locator("#featured .heat svg path").count() >= 4);
 ok("no footer links", await ctx.locator("footer a").count() === 0);
 await ctx.locator("#animstage").scrollIntoViewIfNeeded(); await ctx.waitForTimeout(1800); // M105：单页下 .animstage 子层由 IO 视口触发挂载，先滚父容器
 await ctx.waitForTimeout(2500); ok("anim stage", (await ctx.locator("#animstage > .animstage:visible").count()) === 1 && (await ctx.locator("#animstage svg").count()) >= 1);
@@ -189,8 +152,7 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
   await mp.goto(base + "/index.html", { waitUntil: "load" });
   await mp.waitForTimeout(1800);
   ok("mobile index no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
-  ok("mobile ident visible", await mp.locator(".ident .idf-video").first().isVisible());
-  ok("mobile install code visible", await mp.locator("#installcmd").isVisible());
+  ok("mobile bigchar visible (M106)", await mp.locator(".bigchar").first().isVisible());
   await mp.goto(base + "/gallery.html", { waitUntil: "load" });
   await mp.waitForTimeout(1800);
   ok("mobile gallery no h-scroll", await mp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
@@ -294,10 +256,10 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
     const hp = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await hp.goto("http://localhost:4399/index.html", { waitUntil: "domcontentloaded" });
     await hp.waitForTimeout(3500);
-    const c1 = await hp.evaluate(() => { const v = document.querySelector(".idf-video.on"); return v ? v.currentTime : -1; });
-    await hp.waitForTimeout(2500);
-    const c2 = await hp.evaluate(() => { const v = document.querySelector(".idf-video.on"); return v ? v.currentTime : -1; });
-    ok("http ident plays (no-range server)", c2 > c1 + 0.2 || (c2 >= 0 && c2 < c1));
+    await hp.waitForTimeout(1500);
+    const nChar = await hp.locator(".bigchar").count();
+    const loaded = await hp.evaluate(() => [...document.querySelectorAll(".bigchar")].filter((i) => i.complete && i.naturalWidth > 0).length);
+    ok("http char art loads (no-range server)", nChar >= 3 && loaded >= 2); // M106：ident 退役，改验大人物画在无 Range 服务器下可载
     await hp.close();
     srv.kill();
   }
@@ -341,7 +303,6 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
   await mp.goto(base + "/index.html", { waitUntil: "load" });
   await mp.waitForTimeout(2000);
   ok("mobile exp chromeless", await mp.evaluate(() => (document.getElementById("stageframe") || { src: "" }).src.includes("chrome=0"))); // M105 单页
-  ok("mobile install wraps", await mp.evaluate(() => { const c = document.getElementById("installcmd"); return c.scrollWidth <= c.clientWidth + 2; }));
   await mp.close();
 }
 
