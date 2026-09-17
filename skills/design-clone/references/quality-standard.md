@@ -62,6 +62,14 @@
 - 视差系数小于云层（更"远"）；z 序在天空层上、内容下。
 - 登记入资产清单+PROVENANCE；水印门覆盖。
 
+## 3.5 门分级（输入类型矩阵落地）
+| tier | 适用 | 美效门(empty-band/bg-cover/motion-min) | 结构门(layout/flow-truth/unstyled/style-anchor/stroke) |
+|---|---|---|---|
+| strict | concept/original（含演练 run） | 强制 | 强制 |
+| fidelity | clone（GUI/web 捕获） | advisory（源即静态时加动效=背叛保真） | 强制 |
+| advisory | 存量实验 run（无 meta 或声明） | advisory | advisory |
+tier 由 meta.json `gate_tier` 数据声明（无 meta=advisory），代码无 run 特判。
+
 ## 4. 测试验收 vs 产品验收
 - **测试验收**（机器）：regress 全门矩阵（interact/inspect[含 empty-band/bg-cover/motion-min/unstyled 祖先校验]/ui-smoke[含 stroke 锁]/flow-truth/style-anchor）+ e2e + brand-qa + media-verify + no-run-specialcase + 变异测试矩阵。
 - **产品验收**（人）：`docs/QA/M104-acceptance.md` 式清单——每条用户诉求转**通用判据**+before/after 截图证据；判据不得含 app/页面字面。

@@ -14,6 +14,20 @@
 | 14 | 页脚丑 | 地平线极简 | 点缀元素法（页脚=地平线渐变+小字） | 目视 | ✅ W5 |
 | 16 | 封面不契合 | 封面=产品锚+真截图 | 封面法（brief.cover.prompt 强制；hero 必真截图；品牌=icon 主色取样） | cover.mjs 锚拒合成 + publish cover-meta 前置 + style-anchor | ✅ W6 |
 
+## 活门证明矩阵（W7b）
+| 门 | 证明方式 | 证据 |
+|---|---|---|
+| flow-truth | 变异（paths 注入凭空边）→红 | mutation-test: gate-red |
+| style-anchor | 变异（manifest 注入 photoreal 错锚资产）→红 | mutation-test: gate-red |
+| motion-min | 变异（drill 副本剥光 video/animation/fx）→红 view0-4 | /tmp/mut-mm qa/inspect.json |
+| empty-band | 变异（40% 纯色 void 层）→红；有机：chat 413px 空带 52% | 同上 + W2 前 inspect |
+| bg-cover | 有机：kb 改 background-size →红（W2 前 assistant） | W2 inspect 记录 |
+| unstyled-祖先 | 有机：03-call `.xh` 前缀死 CSS →红 view3 3/15（W2 前） | W2 inspect 记录 |
+
+## 新场景演练（W7b）
+- **模糊概念**（"治愈系宠物陪伴 app"一句）：director→brief（anchor=shinkai-2.5d, flows=1 入口边）→brief-tokens/products/views→paths-gen（20 边全 DOM 真值, phantom=0）→gates：**empty-band 红 66%×5 页**=门在发布前拦下稀薄基线（标准体系设计内行为：基线视图必须走艺术深化路径）。run=design-clone-runs/drill-paw（不发布）。
+- **网页链接**（HN）：clone.mjs 捕获 0 屏（反爬 drained）=管线如实报告覆盖不足而非硬凑产物；coverage.json 留证。run=drill-hn（不发布）。教训入 LESSONS：链接演练需选可抓目标或降级声明。
+
 ## 测试验收（机器）
 - 门矩阵：regress（interact/inspect[empty-band·bg-cover·motion-min·unstyled-祖先·layout-sanity]/ui-smoke[stroke 锁]/flow-truth/style-anchor）+ e2e + brand-qa + media-verify + no-run-specialcase。
 - 活门证明（W7b）：变异测试矩阵（注入五类故障断言门红）+ 双新场景演练（模糊概念/网页链接端到端）。
