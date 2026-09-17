@@ -229,3 +229,6 @@
 198. M105 「暗色接缝」真凶常是 backdrop-filter：透明 background+blur 仍会在视频/艺术背景上切出直角板边（header 未滚动态、installbox）。教训：叠加层要么全透（不 blur），要么形状语义化（pill/圆角+羽化阴影），blur 必配滚动态开关。
 199. M105 测试自身的 artifact 要和真 bug 分清：加载后 JS 改主题会触发 ident bridge/duo 闪（视频看似不播），而真实用户主题在 parse 前由 localStorage 决定——复现主题类缺陷必须 addInitScript 前置；否则会把设计内桥接当 bug 修。
 200. M105 单页合一的契约迁移清单：旧页 id（#expframe/#featured/.navwrap/.animstage 直滚）全部有 e2e 依赖——合页前先 grep e2e 逐条映射（stageframe/expselect/rail/IO 挂载先滚父容器），stub 重定向保旧链；i18n textContent 会抹 em markup→标题拆双 span 各自 data-i18n。
+201. M106 grid 大人物段被面板固定宽撑爆：`grid-template-columns:1fr 1fr` 的 1fr=minmax(auto,1fr)，auto min=内容 min-width（.secinner 固定 1180px）→列变 149/1160。教训：叙事双栏一律 `minmax(0,1fr)`+面板 `width:auto;min-width:0`。
+202. M106 scroll-snap proximity 会让加载即自动吸附第一段→相对定位 header 滚出视口→e2e 点不到主题钮。教训：上 snap 必复查 header sticky 特异性（旧覆盖规则会偷走 position），e2e 首屏点击类断言对"加载即滚动"的页面要先回顶或改 sticky。
+203. M106 贡献者"机器人"真相：同一自然人的多 git 身份（旧账号 AhahahQ + noreply cqq + 个人邮箱）被按 NAME 聚成多人，头像陌生的旧账号被用户认成机器人。教训：贡献者聚合键=邮箱，login 归一到 owner；展示前先问"这是几个人"而不是"几条 git 身份"。

@@ -5,6 +5,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M106
+- 安装引导全链路删除（hero pill/#clone 六卡/#start 段/i18n 键/site.js 命令逻辑/e2e 契约），代码级清零
+- 首页六段新海诚叙事：雨后初光大女孩→错位时空（黄昏即黎明缝+红线+白鸽）→动物乐园（正午积云+高架火车+回望狐）→夜雨三元素（纸飞机云/掠月鸟群/云海山）→play（stageframe+animstage，叙事序）→尾精选+原野之门（铃芽之门母题=画廊入口）；萌萌 3 图强参考共 5 张新画；小白鸟彩蛋贯穿；scroll-snap+大人物交叉淡入+红线 seam
+- 画廊独立页恢复（全功能+backcue），入口=星点轨独立菱形星点+首页尾素描门；旧 #see/#clone/#start hash 映射
+- 改名归一：星海对话/智能助理→错位时空（Dislocated Spacetime）全链路（meta/brief/showcase/视图标题）；宠物乐园残字清；阿里云控制台仅存 capture 保真件
+- 贡献者按邮箱聚合归一 hello-cqq（proto lib.mjs），机器人/旧马甲不展示
+- sticky header 恢复（M103 relative 覆盖致滚出视口）；e2e ident 契约退役改大人物画契约
+
 ### M105
 - W0 三缺陷修因：暗色 hero 接缝=header 未滚动 backdrop 板边+installbox 直角板（改透明至 scrolled/暗色羽化 pill）；选中失同步=loadView 状态同步尾序（前置+finally，ui-smoke 新门 nav-state-sync 三元一致）；聊天页顶栏玻璃板改渐变羽化+消息不足顶部起排+dayline 分隔
 - W1 参考图生图：archive/萌萌 3 图+现有男女设计共参考，seedream pro 出 8 张淡雅素描（四时场景/地平缝/鸟云 cue/双人/睡狐角隅）；像素下限坑（<921600 拒）放大尺寸重试
