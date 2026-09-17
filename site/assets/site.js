@@ -177,6 +177,7 @@
     // M94: logo 动图/标签图标随主题切换
     const lockSrc = `assets/logo-anim-${state.theme === "dark" ? "dark" : "light"}.webp`;
     document.querySelectorAll(".logolock").forEach((im) => { im.src = lockSrc; });
+    document.querySelectorAll(".wordmark").forEach((im) => { im.src = `assets/wordmark-${state.theme === "dark" ? "dark" : "light"}.png`; });
     const favs = [...document.querySelectorAll('link[rel="icon"]')];
     favs.forEach((fav) => { fav.href = state.theme === "dark" ? "assets/favicon-dark.png" : "assets/favicon.png"; });
 
@@ -387,7 +388,6 @@
     { const sel = document.getElementById("expselect"); if (sel && a) sel.value = a.app; }
     const side = document.getElementById("side");
     if (!a || !side) return;
-    document.title = `${L(a.name, a.app)} — design-clone gallery`;
     document.getElementById("stageframe").src = protoSrc(a, state.theme);
     const chips = document.getElementById("pagechips");
     if (chips) {
@@ -439,8 +439,8 @@
     // M91: logo 锁定为用户新标图片（mark+手写体锁排），替代渐变字标
     const LOCKSRC = () => `assets/logo-anim-${state.theme === "dark" ? "dark" : "light"}.webp`;
     const LOCK = (cls) => `<img class="${cls}" src="${LOCKSRC()}" alt="design-clone">`;
-    document.querySelectorAll(".logo").forEach((el) => { if (!el.querySelector(".logolock")) el.innerHTML = LOCK("logolock"); });
-    document.querySelectorAll(".ftbrand").forEach((el) => { el.innerHTML = LOCK("logolock logolock--ft"); });
+    document.querySelectorAll(".logo").forEach((el) => { if (!el.querySelector(".logolock")) el.innerHTML = LOCK("logolock") + '<img class="wordmark" src="assets/wordmark-light.png" alt="design-clone">'; });
+    document.querySelectorAll(".ftbrand").forEach((el) => { el.innerHTML = LOCK("logolock logolock--ft") + '<img class="wordmark wordmark--ft" src="assets/wordmark-light.png" alt="design-clone">'; });
 
     matchMedia("(max-width: 820px)").addEventListener("change", () => { if (document.getElementById("stageframe")) renderProto(); });
     const idn = document.getElementById("ident");

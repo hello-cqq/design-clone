@@ -240,3 +240,9 @@
 209. M108 默认值多源=错配 bug：expselect 用白名单序、embed 用 index 序→pill 与舞台不同步。教训：**同一语义的默认值只能有一个源**（WL_ORDER 常量），其余消费方一律反向同步（sel.value=a.app），e2e 断言多源一致。
 210. M108 CLI 传 base64 有 ARG_MAX 墙（~1MB）：照片原图 base64 进 argv 直接 "Argument list too long"。教训：生图参考图先 sharp 缩到 ≤768px/≤150KB 再入参；JSON 数组字符串元素必须带内引号（`["data:..."]`）。
 211. M108 sharp palette PNG 量化会毁 alpha 通道（角像素 0→255）：透明层优化用 `png({compressionLevel:9})` 无损，禁 palette；门（e2e alpha 审计）当场抓出。
+212. M109 i18n 空串=隐形件：`el.textContent = t(key)` 在词典缺键时写空串→微信/阿里云母题对整块隐形（用户只见飞书对）。教训：t() 缺键必须回退 EN 或原文本；e2e 加"可见交互件计数"断言防隐形。
+213. M109 双负 margin 相撞：ftabs -15svh + animstage -4svh 让舞台 cap 压住 chips 行→点击被拦截 e2e 超时。教训：负 margin 只允许单层牵引；相邻块叠压先 elementFromPoint 验点击点。
+214. M109 "白蛋"不在 CSS 层：cloudlayer/secbg/径向全调遍仍见蛋→真凶是 demo-anim.js svg 内部 `<ellipse fill=var(--bg2) opacity=.7>`。教训：截图里的几何色块先问"是不是插画自带"，grep 生成器源码再调 CSS。
+215. M109 抠白词标底噪：alpha=(255-lum) 线性映射把纸纹噪点留成低 alpha  veil→暗色头部出现矩形底。教训：抠白必须带噪点阈值（a<60 清零）再 gamma 拉升；暗色版重着色前先看噪。
+216. M109 seedream pro 尺寸下限 921600 像素：1536x256 词标直接拒。教训：横幅类资产按 ≥1024x1024 等效像素取尺寸（2048x512 过）。
+217. M109 手机竖屏先减后排：小屏第一动作是隐藏次要角色/母题（meng2/door/rail），再缩主角色入角落做前景，文案永远 z 上位+胶囊省略号；transform:scale 不缩布局盒→svg 小屏改 width:100% height:auto。
