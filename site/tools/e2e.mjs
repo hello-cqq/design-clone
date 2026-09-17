@@ -31,7 +31,15 @@ await ctx.goto(base + "/index.html", { waitUntil: "load" });
 await ctx.waitForTimeout(2500);
 ok("bigchar narrative (M106)", await ctx.locator(".bigchar").count() >= 3);
 ok("bigchar feathered", await ctx.evaluate(() => { const cs = getComputedStyle(document.querySelector(".bigchar")); return cs.maskImage.includes("radial") || cs.webkitMaskImage.includes("radial") || +cs.opacity < 1; }));
-ok("no install guide (M106)", await ctx.locator("#installcmd, #copycmd, [data-i18n=install_label]").count() === 0);
+ok("no install guide cards (M106)", await ctx.locator("#start, .tagline, #copycmd0").count() === 0); // M107：胶囊保留，引导卡/段仍禁
+ok("copy capsule restored (M107)", await ctx.locator("#copycmd").isVisible() && ((await ctx.locator("#installcmd").textContent()) || "").includes("install.sh"));
+ok("ident video restored (M107)", await ctx.locator(".ident .idf-video").count() === 2);
+ok("hub lifted before worlds (M107)", await ctx.evaluate(() => { const ids = [...document.querySelectorAll("main .sec")].map((s) => s.id); return ids.indexOf("play") < ids.indexOf("petpark") && ids.indexOf("play") <= 2; }));
+ok("animstage in trio (M107)", await ctx.locator("#trio #animstage").count() === 1);
+ok("secvid backgrounds (M107)", await ctx.locator(".secvid").count() >= 2);
+ok("mengmeng motifs (M107)", await ctx.evaluate(() => ["sk-lake", "sk-vines", "sk-basket"].every((k) => document.querySelector(`img[src*="${k}"]`))));
+await ctx.waitForSelector("#tail #featured .pcard", { timeout: 9000 }).catch(() => {});
+ok("featured in tail direct (M107)", await ctx.locator("#tail #featured .pcard").count() >= 4);
 {
   await ctx.click("#themebtn"); await ctx.waitForTimeout(900);
   const th1 = await ctx.evaluate(() => document.documentElement.dataset.theme);

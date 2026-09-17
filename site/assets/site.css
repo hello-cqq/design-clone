@@ -592,3 +592,54 @@ html { scroll-snap-type: y proximity; }
 .sec-char .secinner.panel-right { order: 2; }
 .sec-char .char-left { order: 1; }
 header.top { position: sticky; top: 0; z-index: 50; } /* M106：恢复 sticky（M103 relative 覆盖致滚出视口） */
+
+/* ---------- M107 段背景视频 + 复制胶囊 + 明信片散落 ---------- */
+.secvid { position: absolute; inset: -4%; width: 108%; height: 108%; object-fit: cover; object-position: 50% 42%; opacity: .16; z-index: 0; pointer-events: none;
+  filter: saturate(.82) blur(1px);
+  -webkit-mask-image: radial-gradient(76% 70% at 50% 44%, #000 42%, transparent 86%); mask-image: radial-gradient(76% 70% at 50% 44%, #000 42%, transparent 86%);
+  animation: secvidbreathe 26s ease-in-out infinite alternate; }
+:root[data-theme="dark"] .secvid { opacity: .22; }
+@keyframes secvidbreathe { from { transform: scale(1); } to { transform: scale(1.05); } }
+@media (prefers-reduced-motion: reduce) { .secvid { animation: none; } }
+.copycap { display: inline-flex; align-items: center; gap: 10px; margin-top: 6px; max-width: 100%;
+  background: color-mix(in srgb, var(--card) 66%, transparent); backdrop-filter: blur(10px); border-radius: 999px; padding: 9px 10px 9px 18px;
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--ink) 8%, transparent); rotate: -0.8deg; }
+.copycap code { font: 500 11.5px var(--mono); color: var(--mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 52ch; }
+/* 明信片散落：individual rotate 属性，不与 reveal transform 冲突 */
+.sec-char .panel-left { rotate: -1.4deg; }
+.sec-char .panel-right { rotate: 1.2deg; }
+.sec-char .charwrap .bigchar { scale: 1.05; }
+.sec-char .char-right .bigchar { translate: 3% -2%; }
+.sec-char .char-left .bigchar { translate: -3% -1.5%; }
+.worldbtn { rotate: -1deg; }
+.worldchips .worldbtn:nth-child(2) { rotate: 1.3deg; }
+.worldchips .worldbtn:nth-child(3) { rotate: -0.6deg; }
+#play .proto-layout { rotate: -0.5deg; }
+#play .appsel { rotate: 0.9deg; }
+#tail .cards .pcard:nth-child(odd) { rotate: -1.1deg; }
+#tail .cards .pcard:nth-child(even) { rotate: 0.9deg; }
+#tail .cards .pcard:nth-child(3n) { translate: 0 -8px; }
+.doorcue { rotate: -1.2deg; }
+.triomots .mot:nth-child(1) { rotate: -2deg; }
+.triomots .mot:nth-child(2) { rotate: 1.6deg; }
+.triomots .mot:nth-child(3) { rotate: -1deg; }
+@media (prefers-reduced-motion: reduce) {
+  .copycap, .sec-char .panel-left, .sec-char .panel-right, .worldbtn, .worldchips .worldbtn:nth-child(2), .worldchips .worldbtn:nth-child(3),
+  #play .proto-layout, #play .appsel, #tail .cards .pcard:nth-child(odd), #tail .cards .pcard:nth-child(even), .doorcue, .triomots .mot { rotate: 0deg; }
+}
+
+/* ---------- M107-W3 素雅调色：降彩度+纸纱 veil ---------- */
+:root { --mute-veil: rgba(246, 244, 239, .05); }
+:root[data-theme="dark"] { --mute-veil: rgba(20, 22, 26, .06); }
+body::before { content: ""; position: fixed; inset: 0; z-index: 55; pointer-events: none; background: var(--mute-veil); mix-blend-mode: multiply; }
+:root[data-theme="dark"] body::before { mix-blend-mode: screen; }
+.secbg, .bigchar, .secvid, .sketch img { filter: saturate(.82) contrast(.99); }
+:root[data-theme="dark"] .secbg, :root[data-theme="dark"] .bigchar, :root[data-theme="dark"] .secvid { filter: saturate(.86) brightness(.98); }
+.worldbtn { background: linear-gradient(140deg, color-mix(in srgb, var(--acc) 62%, #9aa7b4), color-mix(in srgb, var(--acc2) 58%, #6b7684)); box-shadow: 0 12px 28px color-mix(in srgb, var(--ink) 12%, transparent); }
+.doorcue { background: color-mix(in srgb, var(--card) 70%, #b9b3a8 8%); }
+.heroambient video, .ident { filter: saturate(.88); }
+.rail button.on i { background: color-mix(in srgb, var(--gold) 72%, #8d97a3); }
+.thread { opacity: .38; }
+.copycap { width: fit-content; }
+#prologue .ident { position: absolute; top: 5%; right: 5%; width: min(300px, 26vw); height: auto; aspect-ratio: 4 / 3; margin: 0; z-index: 2; }
+#prologue .heroambient { height: 70%; top: -6%; }
