@@ -5,6 +5,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M107
+- 视觉换装（内容零删）：段序重排 prologue→错位时空→play 枢纽上提→动物乐园→夜雨群像(animstage 演示移入)→尾架精选全量+素描门
+- 恢复项：ident 桌宠视频角隅 vignette+prologue ambient 视频；curl 复制小胶囊（无引导文案）；世界段 worldbtn=选中+滚枢纽
+- 段背景类型化：S1 双视频/S2 xinghai-idle 视频满铺/动物乐园 fox-idle 视频满铺/群像 sk-city+雨丝/枢纽暮海静融/尾架星空静融；secvid IO 出视口暂停
+- 萌萌场景元素：teal 山湖倒影(S1)/倒木垂藤(动物乐园+群像顶)/卵石竹篮花(尾架门旁) 三张素雅素描
+- 明信片散落排版：±1.2–2° 微旋(interpolate-safe rotate 属性)+错位+bleed；红线/cue 叙事保留
+- 素雅调色：四时色板/ accent /背景 saturate(.82-.86) 降彩度+全局纸纱 veil
+- e2e 契约：copy capsule/ident 回/hub 序/animstage 在群像/secvid/萌萌 motif/featured 尾段直显/无引导卡
+
 ### M106
 - 安装引导全链路删除（hero pill/#clone 六卡/#start 段/i18n 键/site.js 命令逻辑/e2e 契约），代码级清零
 - 首页六段新海诚叙事：雨后初光大女孩→错位时空（黄昏即黎明缝+红线+白鸽）→动物乐园（正午积云+高架火车+回望狐）→夜雨三元素（纸飞机云/掠月鸟群/云海山）→play（stageframe+animstage，叙事序）→尾精选+原野之门（铃芽之门母题=画廊入口）；萌萌 3 图强参考共 5 张新画；小白鸟彩蛋贯穿；scroll-snap+大人物交叉淡入+红线 seam

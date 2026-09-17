@@ -232,3 +232,5 @@
 201. M106 grid 大人物段被面板固定宽撑爆：`grid-template-columns:1fr 1fr` 的 1fr=minmax(auto,1fr)，auto min=内容 min-width（.secinner 固定 1180px）→列变 149/1160。教训：叙事双栏一律 `minmax(0,1fr)`+面板 `width:auto;min-width:0`。
 202. M106 scroll-snap proximity 会让加载即自动吸附第一段→相对定位 header 滚出视口→e2e 点不到主题钮。教训：上 snap 必复查 header sticky 特异性（旧覆盖规则会偷走 position），e2e 首屏点击类断言对"加载即滚动"的页面要先回顶或改 sticky。
 203. M106 贡献者"机器人"真相：同一自然人的多 git 身份（旧账号 AhahahQ + noreply cqq + 个人邮箱）被按 NAME 聚成多人，头像陌生的旧账号被用户认成机器人。教训：贡献者聚合键=邮箱，login 归一到 owner；展示前先问"这是几个人"而不是"几条 git 身份"。
+204. M107 「换风格」≠「删内容」：用户说"只不过换一种视觉风格"时，先盘点上一版全部功能件（视频/复制/演示/在线体验/精选）逐件保留再换皮；M106 把 ident/复制/演示埋深即被判定"敷衍"。教训：风格迭代的验收清单=旧功能全集+新美学，缺一件都是回归。
+205. M107 素雅=降彩度不是降对比：saturate(.82-.86)+纸纱 veil 保留明暗结构；鲜艳感主要来自 accent 纯色块——accent 混灰 18-25% 比动背景更有效。
