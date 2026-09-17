@@ -24,7 +24,7 @@ const MUT = {
   "empty-band": (d) => {
     const f = path.join(viewsOf(d), firstView(d));
     let c = fs.readFileSync(f, "utf8");
-    c = c.replace(/<\/div>\s*$/, '<div class="mut-void" style="position:relative;height:40%;background:#eeeeee"></div>\n</div>');
+    c = c.replace(/<\/div>\s*$/, '<div class="mut-void" style="position:absolute;left:0;right:0;bottom:0;height:40%;background:#eeeeee"></div>\n</div>');
     fs.writeFileSync(f, c);
   },
   "bg-cover": (d) => {
@@ -50,8 +50,8 @@ const MUT = {
   "unstyled-deadcss": (d) => {
     const f = path.join(viewsOf(d), firstView(d));
     let c = fs.readFileSync(f, "utf8");
-    c = c.replace("<style>", "<style>.mut-nope .a1{color:red}.mut-nope .a2{padding:2px}.mut-nope .a3{margin:1px}");
-    c = c.replace(/<div /, '<div class="mut-nope"><span class="a1"></span><span class="a2"></span><span class="a3"></span><div ', 1);
+    c = c.replace("<style>", "<style>.mut-ghost .a1{color:red}.mut-ghost .a2{padding:2px}.mut-ghost .a3{margin:1px}.mut-ghost .a4{font-size:2px}");
+    c = c.replace(/<div /, '<div><span class="a1"></span><span class="a2"></span><span class="a3"></span><span class="a4"></span><div ', 1);
     fs.writeFileSync(f, c);
   },
   "motion-min": (d) => {
@@ -71,6 +71,7 @@ for (const [name, inject] of Object.entries(MUT)) {
   const dst = path.join(tmp, "run");
   fs.cpSync(src, dst, { recursive: true });
   let applied = true;
+  const mutAt = Date.now();
   try { applied = inject(dst) !== false; } catch (e) { applied = false; }
   if (!applied) { results.push({ case: name, verdict: "skip" }); fs.rmSync(tmp, { recursive: true, force: true }); continue; }
   const [script, needsServe] = GATE_OF[name];
@@ -83,7 +84,9 @@ for (const [name, inject] of Object.entries(MUT)) {
     const r = gate("qa/inspect.mjs", "", [ "http://localhost:" + port, "mut", "--run", dst ]);
     red = failed(r);
     const jf = path.join(dst, "qa", "inspect.json");
-    if (fs.existsSync(jf)) { const j = JSON.parse(fs.readFileSync(jf, "utf8")); const key = name.includes("unstyled") ? "unstyled-view-classes" : name; red = !!(j.checks && j.checks[key] && j.checks[key].pass === false); }
+    const key = name.includes("unstyled") ? "unstyled-view-classes" : name;
+    if (fs.existsSync(jf) && fs.statSync(jf).mtimeMs > mutAt) { const j = JSON.parse(fs.readFileSync(jf, "utf8")); red = !!(j.checks && j.checks[key] && j.checks[key].pass === false); }
+    else { results.push({ case: name, verdict: "harness-error" }); hs.kill(); fs.rmSync(tmp, { recursive: true, force: true }); continue; }
     hs.kill();
   } else {
     const r = gate(script, dst, script.includes("flow") || script.includes("anchor") ? ["--json"] : []);

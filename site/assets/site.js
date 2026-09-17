@@ -238,7 +238,7 @@
   async function renderFeatured() {
     const idx = await loadIndex();
     const boost = (a) => (a.app === "ai-assistant" ? 1e9 : 0) + (a.downloads || 0); // M75-W3: 智能助理置顶精选
-    const apps = (["ai-assistant", "petpark", "wechat", "lark", "aliyun-console"].map((sl) => (idx.apps || []).find((a) => a.app === sl)).filter(Boolean)) // M106：首页尾精选=叙事序
+    const apps = WL_ORDER.map((sl) => (idx.apps || []).find((a) => a.app === sl)).filter(Boolean); // M108：与 expselect 同源叙事序
     await loadThumbs();
     const el = document.getElementById("featured");
     if (el) el.innerHTML = apps.map(card).join("");
@@ -317,6 +317,7 @@
     armThumbIO();
   }
 
+  const WL_ORDER = ["ai-assistant", "petpark", "wechat", "lark", "aliyun-console"]; // M108：叙事序白名单（expselect/featured 同源）
   let forcedTag = "";
   let THUMBS = null;
   async function loadThumbs() {
@@ -376,14 +377,14 @@
     { // M105 单页：#play 段内应用切换器（白名单五 app，契约同原 expselect）
       const sel = document.getElementById("expselect");
       if (sel && !sel.options.length) {
-        const WL = ["ai-assistant", "wechat", "lark", "petpark", "aliyun-console"];
-        const wl = WL.map((sl) => (idx.apps || []).find((x) => x.app === sl)).filter(Boolean);
+        const wl = WL_ORDER.map((sl) => (idx.apps || []).find((x) => x.app === sl)).filter(Boolean);
         sel.innerHTML = wl.map((x) => `<option value="${x.app}">${L(x.name, x.app)}</option>`).join("");
         sel.onchange = () => { history.replaceState(null, "", location.pathname + "?app=" + sel.value + "#play"); renderProto(); };
       }
-      if (sel) sel.value = app || sel.value;
     }
-    const a = (idx.apps || []).find((x) => x.app === app) || (idx.apps || [])[0];
+    // M108-W0：默认 app 与 expselect 同源（白名单序首位），四源（pill/stageframe/side/crumb）同步
+    const a = (idx.apps || []).find((x) => x.app === app) || (idx.apps || []).find((x) => x.app === WL_ORDER[0]) || (idx.apps || [])[0];
+    { const sel = document.getElementById("expselect"); if (sel && a) sel.value = a.app; }
     const side = document.getElementById("side");
     if (!a || !side) return;
     document.title = `${L(a.name, a.app)} — design-clone gallery`;

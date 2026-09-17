@@ -427,7 +427,7 @@ footer.ft { position: relative; }
 /* 云体视差层（JS 滚动驱动，reduced-motion 关闭） */
 .cloudlayer { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: .5; will-change: transform; }
 :root[data-theme="dark"] .cloudlayer { opacity: .3; }
-.cloudlayer .cl { position: absolute; border-radius: 50%; filter: blur(26px); background: radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,.5), transparent 70%); }
+.cloudlayer .cl { position: absolute; border-radius: 50%; filter: blur(30px); background: radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,.20), transparent 70%); }
 :root[data-theme="dark"] .cloudlayer .cl { background: radial-gradient(50% 50% at 50% 50%, rgba(127,179,224,.16), transparent 70%); }
 .wrap, header.top, footer.ft { position: relative; z-index: 1; }
 
@@ -643,3 +643,47 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 55; pointer-even
 .copycap { width: fit-content; }
 #prologue .ident { position: absolute; top: 5%; right: 5%; width: min(300px, 26vw); height: auto; aspect-ratio: 4 / 3; margin: 0; z-index: 2; }
 #prologue .heroambient { height: 70%; top: -6%; }
+
+/* ---------- M108-W1 ident 整段背景化（去角隅 vignette/heroambient） ---------- */
+#prologue .ident.ident-bg { position: absolute; inset: -4%; width: 108%; height: 108%; z-index: 0; pointer-events: none; }
+#prologue .ident-bg .idf-video { animation: none; filter: saturate(.85) blur(1.2px);
+  -webkit-mask-image: radial-gradient(80% 74% at 50% 46%, #000 44%, transparent 88%); mask-image: radial-gradient(80% 74% at 50% 46%, #000 44%, transparent 88%); }
+#prologue .ident-bg .idf-video.on { opacity: .13; }
+:root[data-theme="dark"] #prologue .ident-bg .idf-video.on { opacity: .17; }
+#prologue .ident-bg .idf-halo.on { opacity: .10; }
+#prologue .ident-bg .idf-duo { display: none; }
+
+/* ---------- M108-W2/W4 透明融入+接地阴影+trio 去框降白 ---------- */
+.charwrap::after { content: ""; position: absolute; bottom: 1.5%; left: 50%; width: 58%; height: 6%; transform: translateX(-50%);
+  background: radial-gradient(50% 50% at 50% 50%, rgba(24, 30, 38, .26), transparent 72%); filter: blur(7px); pointer-events: none; }
+:root[data-theme="dark"] .charwrap::after { background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, .42), transparent 72%); }
+:root[data-theme="dark"] .bigchar { filter: saturate(.86) contrast(.99) drop-shadow(0 0 26px rgba(143, 208, 255, .10)); }
+#trio .secbg { opacity: .06; }
+:root[data-theme="dark"] #trio .secbg { opacity: .10; }
+.animstage, #animstage > .animstage { background: transparent !important; box-shadow: none !important; border: 0 !important; }
+#animstage { background: radial-gradient(46% 38% at 50% 56%, color-mix(in srgb, var(--card) 10%, transparent), transparent 80%); border-radius: 28px; }
+.triopairs { display: flex; gap: 40px; justify-content: center; align-items: stretch; margin: 10px 0 6px; }
+.triopair { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.triopair .tie { width: 1.5px; height: 26px; background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--mut) 55%, transparent), transparent); }
+.triomots { display: none; }
+.worldchips { display: none; }
+
+/* ---------- M108-W3 萌萌三角色尺度语言 ---------- */
+.mengslot { position: absolute; z-index: 1; pointer-events: none; display: block; }
+.mengslot img { width: 100%; height: auto; display: block; filter: saturate(.86) contrast(.99); }
+.mengslot::after { content: ""; position: absolute; bottom: -2%; left: 12%; width: 76%; height: 5%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(24, 30, 38, .24), transparent 72%); filter: blur(6px); }
+:root[data-theme="dark"] .mengslot::after { background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, .4), transparent 72%); }
+:root[data-theme="dark"] .mengslot img { filter: saturate(.86) contrast(.99) drop-shadow(0 0 22px rgba(143, 208, 255, .10)); }
+.meng2 { left: 33%; bottom: 4.5%; width: min(21vw, 290px); rotate: -1.6deg; }
+.meng3 { right: 20%; bottom: 9%; width: min(22vw, 290px); rotate: 1.4deg; }
+#prologue .charwrap { height: min(74svh, 760px); }
+@media (max-width: 860px) { .meng2 { width: 40vw; left: 4%; } .meng3 { height: 34svh; right: 6%; } }
+.meng3 { width: auto; height: min(42svh, 430px); right: 18%; bottom: 8%; }
+.meng3 img { width: auto; height: 100%; }
+.meng2 img { width: 100%; }
+
+/* ---------- M108-W5 门归位（簪花女孩身后）+尾段收高 ---------- */
+.doorart { opacity: .5; z-index: 0; }
+.meng3 { right: 16.5%; }
+#tail { min-height: auto; padding-bottom: 70px; }

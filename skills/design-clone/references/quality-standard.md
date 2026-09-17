@@ -49,7 +49,13 @@
 - tab/底栏边 role=module（虚线降权）；CTA role=task；返回 role=back。
 - 树/路径标签：SVG text 必须 stroke:none（`ui-smoke wire-label-lite` 扩 stroke 断言）；全局 `svg{}` 继承污染=壳级红线。
 
-### 2.6 封面法+水印法
+### 2.6 透明融合法（M108 立）
+- 站点/原型内**所有大静态贴图必须透明 PNG**（角色/母题/门等），与背景融入；矩形 wash 仅允许径向羽化的场景晕（secbg 类），不允许硬边矩形贴图。
+- 透明角色必须带接地软阴影（椭圆晕）防贴纸漂浮；暗色主题加极淡 rim glow 保可读。
+- 无意义母题不留：每个母题必须有叙事职责（边饰/供花/入口/陪伴），否则删除。
+- 门：e2e alpha 审计（角像素 alpha<40 且存在半透明像素）。
+
+### 2.7 封面法+水印法
 - cover prompt 强制取 brief.cover.prompt（含锚词）；cover.mjs 读 style_anchor，锚不符=重出（W6 实现）。
 - hero 设备框内**必须真截图**（--base 现拍或 capture/screens），art 只做底；publish 前置校验。
 - 品牌克隆封面=真截图+品牌色极简构图，不生品牌 art（品牌安全）。
