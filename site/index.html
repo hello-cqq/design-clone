@@ -3,73 +3,131 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>design-clone — clone any app into a playable prototype</title>
-<meta property="og:image" content="https://hello-cqq.github.io/design-clone/assets/logo-mark.png">
 <meta property="og:title" content="design-clone — clone any app into a playable prototype">
-<meta property="og:description" content="Agent Skill: capture real apps/sites/links and rebuild them as living PRDs — offline interactive prototypes plus design specs, tokens and paths.">
-<meta name="description" content="Agent skill that captures real apps, sites, or shared links and rebuilds them as fully interactive prototypes with exportable design specs. Open community gallery on GitHub Pages.">
+<meta property="og:description" content="An agent skill that captures real apps/sites/links and rebuilds them as faithful, interactive local web prototypes with design assets.">
+<meta property="og:image" content="https://hello-cqq.github.io/design-clone/assets/logo-mark.png">
+<title>design-clone — clone any app into a playable prototype</title>
 <link rel="icon" type="image/png" media="(prefers-color-scheme: light)" href="assets/favicon.png">
 <link rel="icon" type="image/png" media="(prefers-color-scheme: dark)" href="assets/favicon-dark.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/site.css">
 </head>
-<body>
+<body class="onepage">
+<div class="skycanvas" aria-hidden="true"></div>
 <header class="top"><div class="wrap">
-  <a class="logo" href="index.html">design-clone</a>
-  <nav class="navwrap">
-    <a href="index.html" class="on" data-i18n="nav_home">Home</a>
-    <a href="gallery.html" data-i18n="nav_gallery">Gallery</a>
-  </nav>
+  <a class="logo" href="#prologue"></a>
   <span class="sp"></span>
-  <button class="iconbtn" id="langbtn">中文</button>
-  <button class="iconbtn" id="themebtn"></button>
-  <a class="iconbtn ghbtn" href="https://github.com/hello-cqq/design-clone" target="_blank" rel="noopener">
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-    <span class="ghlabel">GitHub</span>
-    <span class="starbadge" id="starbadge">★ 0</span></a>
+  <div class="utilcluster">
+    <button class="iconbtn" id="langbtn">中文</button>
+    <button class="iconbtn" id="themebtn"></button>
+    <a class="iconbtn ghbtn" href="https://github.com/hello-cqq/design-clone" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38.01-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg><span class="ghlabel">GitHub</span><span class="starbadge" id="starbadge">★ 0</span></a>
+  </div>
 </div></header>
+<nav class="rail" aria-label="sections">
+  <button data-sec="prologue" title="prologue"><i></i></button>
+  <button data-sec="see" title="see"><i></i></button>
+  <button data-sec="play" title="play"><i></i></button>
+  <button data-sec="clone" title="clone"><i></i></button>
+  <button data-sec="start" title="start"><i></i></button>
+</nav>
+<main>
+<section id="prologue" data-season="dawn" class="sec">
+  <div class="secbg" style="--bgimg:url(/assets/sk-dawn.png)" aria-hidden="true"></div>
+  <div class="heroambient" aria-hidden="true">
+    <video muted loop playsinline preload="metadata" poster="assets/xinghai-idle-poster.webp">
+      <source src="assets/xinghai-idle.webm" type="video/webm">
+    </video>
+  </div>
+  <img class="motif" src="assets/character-xinghai.png" alt="">
+  <div class="ident" id="ident" title="replay" data-rv></div>
+  <div class="herotext" data-rv>
+    <h1><span data-i18n="hero_h1">clone any app into a</span> <em data-i18n="hero_h2">playable prototype</em></h1>
+    <p class="sub" data-i18n="hero_sub">an agent skill · captures real apps, sites or links · rebuilds them as living local web prototypes with design assets</p>
+    <div class="installbox"><span data-i18n="install_label">install</span><code id="installcmd0"></code><button class="pillbtn" id="copycmd0">copy</button></div>
+  </div>
+  <a class="cue" href="#see" aria-label="continue"><img src="assets/sk-cue.png" alt=""><span data-i18n="cue_see">slide into the gallery</span></a>
+</section>
 
-<div class="wrap">
-  <section class="hero">
-    <div class="heroambient" aria-hidden="true">
-      <video muted loop playsinline preload="metadata" poster="assets/xinghai-idle-poster.webp">
-        <source src="assets/xinghai-idle.webm" type="video/webm">
-      </video>
+<section id="see" data-season="noon" class="sec">
+  <div class="secbg" style="--bgimg:url(/assets/sk-noon.png)" aria-hidden="true"></div>
+  <div class="sketch seccorner" style="right:4%;top:8%;width:220px;height:220px" aria-hidden="true"><img src="assets/sk-corner.png" alt=""></div>
+  <div class="wrap secinner" data-rv>
+    <div class="pagehead pagehead--left"><span class="eyebrow" data-i18n="ph_gal">Act II · pick a world</span><div class="ph-title" data-i18n="gal_h">Every clone, one shelf</div></div>
+    <div class="filters">
+      <input id="q" type="search" placeholder="search name or tag…" data-i18n-ph="gal_q">
+      <select id="sort"><option value="dl" data-i18n="gal_sort_dl">most downloads</option><option value="new" data-i18n="gal_sort_new">newest</option><option value="az" data-i18n="gal_sort_az">A→Z</option></select>
+      <div class="qsuggest" id="qsuggest" hidden></div>
     </div>
-    <img class="motif" src="assets/character-xinghai.png" alt="">
-    <div class="ident" id="ident" title="replay" data-rv></div>
-    <div class="sketch" style="right:5%;bottom:16%;width:200px;height:300px" aria-hidden="true"><img src="assets/sketch-xh.png" alt=""></div>
-    <h1><span data-i18n="h1a">Clone any app into</span> <em data-i18n="h1b">a playable prototype.</em></h1>
-    <div class="installbox">
-      <span style="color:var(--mut);font-size:12.5px" data-i18n="install_label">Copy → paste into your agent:</span>
-      <code id="installcmd"></code>
-      <button class="iconbtn" id="copycmd">copy</button>
-    </div>
-  </section>
+    <div class="tagactive" id="tagactive"></div>
+    <div class="tagrow" id="tagrow"></div>
+    <div class="cards" id="cards"></div>
+  </div>
+  <a class="cue" href="#play" aria-label="continue"><img src="assets/sk-cue.png" alt=""><span data-i18n="cue_play">step inside one</span></a>
+</section>
 
-  <section class="exp" id="try">
-    <div class="sketch" style="left:5%;top:6%;width:320px;height:213px" aria-hidden="true"><img src="assets/sketch-duo.png" alt=""></div>
-    <div class="frame">
-      <div class="bar"><span class="dot"></span><span data-i18n="exp_title">Try it live</span>
-        <select id="expselect"></select>
-        <span style="flex:1"></span><span data-i18n="exp_note">hosted on GitHub Pages · tap, play, export</span></div>
-      <iframe id="expframe" title="live prototype" loading="lazy" allow="downloads"></iframe>
+<section id="play" data-season="dusk" class="sec">
+  <div class="secbg" style="--bgimg:url(/assets/sk-dusk.png)" aria-hidden="true"></div>
+  <div class="wrap secinner" data-rv>
+    <div class="pagehead pagehead--left"><div class="ph-title" data-i18n="proto_h">Play, inspect, export</div></div>
+    <div class="appsel"><select id="expselect" aria-label="prototype"></select></div>
+    <div class="crumbrow"><div class="crumb" id="crumb"></div>
+      <a class="jump" id="jump" href="#" target="_blank" rel="noopener">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        <span data-i18n="proto_jump">source on GitHub</span></a></div>
+    <div class="proto-layout">
+      <div class="pagechips" id="pagechips"></div>
+      <div class="stage">
+        <iframe id="stageframe" title="prototype" allow="downloads"></iframe>
+        <div class="stagefail hidden" id="stagefail"><div style="text-align:center;color:var(--mut);font-size:13px"><div>prototype failed to load</div><button class="iconbtn" id="stageretry">retry</button></div></div>
+      </div>
+      <aside class="side" id="side"></aside>
     </div>
-  </section>
+  </div>
+  <a class="cue" href="#clone" aria-label="continue"><img src="assets/sk-cue.png" alt=""><span data-i18n="cue_clone">see how it clones</span></a>
+</section>
 
-  <section class="blk center">
-    <h2 data-i18n="feat_h">Feature demos</h2>
+<section id="clone" data-season="night" class="sec">
+  <div class="secbg" style="--bgimg:url(/assets/sk-night.png)" aria-hidden="true"></div>
+  <div class="wrap secinner" data-rv>
+    <div class="pagehead pagehead--left"><span class="eyebrow" data-i18n="ph_guide">Backstage · how it works</span><div class="ph-title" data-i18n="guide_h">Guide</div></div>
     <div class="ftabs" id="ftabs"></div>
-    <div class="animstage" id="animstage"></div>
-  </section>
+    <div id="animstage"></div>
+    <div class="grid3">
+      <div class="fcard"><div class="tagline">1 · INSTALL</div><h3>One command</h3>
+        <p>Paste the installer for your agent (opencode / claude / codex) or use <code>npx skills add hello-cqq/design-clone -g</code>. See <a href="#start">Install</a>.</p></div>
+      <div class="fcard"><div class="tagline">2 · CLONE</div><h3>Ask your agent</h3>
+        <p>“Use design-clone to clone &lt;app or url&gt;.” The skill captures, rebuilds a playable prototype, runs its gates, and serves it locally.</p></div>
+      <div class="fcard"><div class="tagline">3 · PUBLISH</div><h3 id="publish">Share to the gallery</h3>
+        <p><code>node &lt;skill&gt;/scripts/publish.mjs --run &lt;run&gt; --app &lt;app&gt; --title "…" [--title-zh --desc --desc-zh --tags --version]</code> opens a PR to <a href="https://github.com/hello-cqq/design-clone-prototype" target="_blank" rel="noopener">design-clone-prototype</a>; after review it goes live here with your avatar on it.</p>
+        <p lang="zh">发布一行命令：<code>publish.mjs --run &lt;run&gt; --app &lt;app&gt; --title "…"</code>。生成期已产画廊三件套（双语 meta.json + icon.png + 3:2 cover.png）与设计规格，publish 自动搬运；三门绿+gallery-ready 才放行，PR 经维护者审核后上线并署贡献者头像。</p></div>
+    </div>
+    <div class="grid3">
+      <div class="fcard"><h3>Gates first</h3><p>interact dead=0 · inspect 0 fail · ui-smoke 0 fail · privacy green. CI re-smokes every PR.</p></div>
+      <div class="fcard"><h3>Privacy &amp; IP</h3><p>No real personal data, ever. Three-way IP attestation; brand clones carry a disclaimer.</p></div>
+      <div class="fcard"><h3>Offline bundles</h3><p>Prototypes are static bundles; GitHub Pages serves them as live apps; no runtime CDN.</p></div>
+    </div>
+  </div>
+  <a class="cue" href="#start" aria-label="continue"><img src="assets/sk-cue.png" alt=""><span data-i18n="cue_start">take it home</span></a>
+</section>
 
-  <section class="blk center">
-    <h2 data-i18n="top_h">Top prototypes</h2>
-    <div class="cards" id="featured"></div>
-    <p class="more"><a href="gallery.html" data-i18n="more">More</a></p>
-  </section>
-</div>
-
+<section id="start" data-season="night" class="sec">
+  <div class="sketch" style="right:6%;bottom:16%;width:280px;height:186px" aria-hidden="true"><img src="assets/sk-duo.png" alt=""></div>
+  <div class="wrap secinner" data-rv>
+    <div class="pagehead pagehead--left"><span class="eyebrow" data-i18n="ph_start">Act I · take it home</span><div class="ph-title" data-i18n="start_h">Install in one command</div></div>
+    <p class="sub">Pick your agent — the command installs the skill globally plus its gate dependencies (Node ≥20.19, Playwright Chromium). Re-run anytime to update.</p>
+    <div class="installbox" style="max-width:900px">
+      <code id="installcmd"></code>
+      <button class="pillbtn" id="copycmd">copy</button>
+    </div>
+    <div class="grid3" style="margin-top:26px">
+      <div class="fcard"><h3>Fast channel</h3><p>Add <code>-- --skip-deps</code> for a seconds-fast install; the skill's <code>doctor</code> will guide dependency install on first gate run.</p></div>
+      <div class="fcard"><h3>Pinned / snapshot</h3><p><code>-- --ref v0.6.0</code> pins a release; <code>-- --channel snapshot</code> tracks prerelease snapshots.</p></div>
+      <div class="fcard"><h3>No CLI / air-gapped</h3><p>Grab the zip from <a href="https://github.com/hello-cqq/design-clone/releases" target="_blank" rel="noopener">Releases</a> and unpack into your agent's skills directory.</p></div>
+    </div>
+    <p style="margin-top:22px;color:var(--mut);font-size:13px">First sentence after install — open your agent and say: <em>“Use design-clone to clone &lt;your app or url&gt;.”</em></p>
+  </div>
+</section>
+</main>
 <footer class="ft">
   <div class="ft-sky" aria-hidden="true"></div>
   <div class="ft-in"><span class="ftbrand"></span>
