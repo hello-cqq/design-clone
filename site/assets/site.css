@@ -687,3 +687,51 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 55; pointer-even
 .doorart { opacity: .5; z-index: 0; }
 .meng3 { right: 16.5%; }
 #tail { min-height: auto; padding-bottom: 70px; }
+
+/* ---------- M109-B trio+演示合并一块 ---------- */
+#trio .secinner { padding-bottom: 0; margin-bottom: 0; }
+#trio .ftabs { margin-top: 1svh; position: relative; z-index: 2; }
+#trio #animstage { margin-top: 8px; position: relative; z-index: 2; }
+#trio .cue { margin-top: 2svh; }
+.cloudlayer .cl { background: radial-gradient(50% 50% at 50% 50%, rgba(255, 255, 255, .06), transparent 70%); }
+#trio .cloudlayer .cl { background: radial-gradient(50% 50% at 50% 50%, rgba(255, 255, 255, .06), transparent 70%); }
+#animstage { background: radial-gradient(46% 38% at 50% 56%, color-mix(in srgb, var(--card) 6%, transparent), transparent 80%); }
+.triopairs, .triopair, .triopair .tie, .triomots, .worldchips { display: none !important; }
+
+/* ---------- M109-D 手写词标 ---------- */
+.wordmark { height: 20px; width: auto; margin-left: 2px; opacity: .92; user-select: none; }
+.wordmark--ft { height: 15px; opacity: .8; }
+:root[data-theme="dark"] .wordmark { opacity: .85; }
+
+/* ---------- M109-A 暗色女角融合 ---------- */
+:root[data-theme="dark"] #prologue .bigchar { filter: saturate(.84) contrast(.99) brightness(.88) drop-shadow(0 0 26px rgba(143, 208, 255, .12)); }
+
+/* ---------- M109-C 手机竖屏 ---------- */
+@media (max-width: 640px) {
+  #prologue .secinner.panel-left { padding-top: 12svh; }
+  #prologue .charwrap { height: 42svh; right: -4%; opacity: .96; }
+  #prologue .ident-bg .idf-video.on { opacity: .10; }
+  #petpark .charwrap { height: 38svh; }
+  .meng2 { display: none; }
+  .meng3 { height: 26svh; right: 4%; bottom: 6%; }
+  .doorart { display: none; }
+  #petpark .sketch, #trio .sketch { width: 120px !important; height: 160px !important; }
+  #trio .ftabs { margin-top: 1svh; overflow-x: auto; }
+  #trio #animstage { margin-top: 0; }
+  #trio #animstage svg { transform: none; width: 100%; height: auto; }
+  .proto-layout { grid-template-columns: minmax(0, 1fr) !important; }
+  .pagechips { flex-wrap: wrap; }
+  #tail .cards { grid-template-columns: 1fr; }
+  header.top .wrap { gap: 8px; }
+  .wordmark { height: 16px; }
+  .rail { display: none; }
+}
+
+/* ---------- M109-C2 手机竖屏修正 ---------- */
+@media (max-width: 640px) {
+  #prologue h1, #prologue .ph-title { font-size: clamp(24px, 7.6vw, 34px); line-height: 1.28; }
+  #prologue .charwrap { position: absolute; right: -10%; bottom: 2%; height: 40svh; width: auto; z-index: 0; }
+  #prologue .secinner { position: relative; z-index: 2; }
+  .copycap { max-width: 94vw; }
+  .copycap code { display: inline-block; vertical-align: middle; max-width: 58vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10.5px; }
+}

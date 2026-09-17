@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M109
+- 站点精修二轮：S1 女角更少女重制（身份保真+冷调）+暗色 brightness/saturate 融合；trio 删 triopairs（灭 i18n 空串隐形件）+演示上移与飞鸟云带合并一块+svg 内椭圆降透；手机竖屏适配（≤640 减法布局）；logo 补手写词标 design-clone（亮暗双版透明 png）；站名归一（删动态 document.title）。LESSONS #212–217。
+
 ### M108
 - 站点精修终版：hub 默认四源同源（WL_ORDER）；ident 整段背景化（去角隅 vignette/heroambient）；透明融合硬法（quality-standard 2.6）——char-rift/char-fox/sk-vines/sk-door 图层拆分透明，删 sk-lake/sk-corner/sk-duo/sk-basket/char-rain；萌萌=站点缪斯三角色（char-meng1/2/3，照片风格转换身份保真+拆透明，尺度语言 74svh/21vw/42svh）；接地软阴影+暗色 rim glow；animstage 去白卡；trio 母题-钮配对+素描连线；cloudlayer 降白；e2e 新增四源断言+alpha 审计门。LESSONS #206–211。
 

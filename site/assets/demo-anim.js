@@ -11,7 +11,7 @@
 
   /* M81-W2: 可辨认迷你 UI 引导动画——每场景=品牌色板+真实微文案的矢量迷你界面（借 enrich/brief 经验） */
   const glow = `
-    <ellipse cx="260" cy="150" rx="252" ry="142" fill="var(--bg2)" opacity=".7"/>
+    <ellipse cx="260" cy="150" rx="252" ry="142" fill="var(--bg2)" opacity=".22"/>
     <circle cx="90" cy="70" r="60" fill="var(--acc)" opacity=".07"/>
     <circle cx="440" cy="220" r="70" fill="var(--acc2)" opacity=".08"/>`;
   const T = (x, y, str, size, fill, anchor, weight) => `<text x="${x}" y="${y}" font-size="${size}" fill="${fill}"${anchor ? ` text-anchor="${anchor}"` : ""}${weight ? ` font-weight="${weight}"` : ""} font-family="ui-rounded,-apple-system,'PingFang SC',sans-serif">${str}</text>`;
