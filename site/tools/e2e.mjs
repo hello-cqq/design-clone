@@ -84,16 +84,16 @@ ok("wordmark no plain text", await ctx.evaluate(() => ![...document.querySelecto
 ok("footer lockup ft (M91)", await ctx.locator("footer .logolock--ft").count() === 1);
 ok("favicon themed (M94)", await ctx.evaluate(() => [...document.querySelectorAll("link[rel=icon]")].every((l) => /favicon(-dark)?\.png$/.test(l.href || "")) && /favicon(-dark)?\.png$/.test((document.querySelector("link[rel=icon]") || {}).href || "")));
 ok("install cmd", (await ctx.locator("#installcmd").textContent()).includes("install.sh"));
-ok("exp iframe", (await ctx.locator("#expframe").getAttribute("src") || "").includes("/prototype/"));
-ok("featured cards", await ctx.locator("#featured .pcard").count() >= 4);
-ok("flame heat", await ctx.locator("#featured .heat svg path").count() >= 4);
+ok("exp iframe", (await ctx.locator("#stageframe").getAttribute("src") || "").includes("/prototype/")); // M105：单页 #play 段承接 live embed
+ok("featured cards", await ctx.locator("#cards .pcard").count() >= 4);
+ok("flame heat", await ctx.locator("#cards .heat svg path").count() >= 4);
 ok("no footer links", await ctx.locator("footer a").count() === 0);
-await ctx.locator(".animstage").scrollIntoViewIfNeeded(); await ctx.waitForTimeout(1200);
+await ctx.locator("#animstage").scrollIntoViewIfNeeded(); await ctx.waitForTimeout(1800); // M105：单页下 .animstage 子层由 IO 视口触发挂载，先滚父容器
 await ctx.waitForTimeout(2500); ok("anim stage", (await ctx.locator("#animstage > .animstage:visible").count()) === 1 && (await ctx.locator("#animstage svg").count()) >= 1);
 // lang + theme
-const h1en = await ctx.locator("h1").textContent();
+const h1en = await ctx.locator("#prologue h1").textContent(); // M105 单页：hero h1 定址
 await ctx.click("#langbtn"); await ctx.waitForTimeout(600);
-const h1zh = await ctx.locator("h1").textContent();
+const h1zh = await ctx.locator("#prologue h1").textContent();
 ok("lang toggle", h1en !== h1zh, `${h1en} vs ${h1zh}`);
 await ctx.click("#langbtn"); await ctx.waitForTimeout(400);
 const th0 = await ctx.evaluate(() => document.documentElement.dataset.theme);
@@ -102,7 +102,7 @@ const th1 = await ctx.evaluate(() => document.documentElement.dataset.theme);
 ok("theme toggle", th0 !== th1);
 await ctx.click("#themebtn"); await ctx.waitForTimeout(300);
 // nav glow pill
-ok("nav glowpill", await ctx.locator(".navwrap .glowpill").count() === 1);
+ok("nav rail fused (M105)", await ctx.locator(".rail [data-sec]").count() >= 5);
 ok("gh pill", (await ctx.locator(".ghbtn").textContent()).includes("GitHub"));
 
 // ---- gallery
@@ -137,7 +137,7 @@ for (let i = 0; i < 2 && !frameReady; i++) {
   catch { await ctx.reload({ waitUntil: "load" }); await ctx.waitForTimeout(1500); }
 }
 ok("iframe prototype ready", frameReady);
-ok("no page scroll", await ctx.evaluate(() => document.documentElement.scrollHeight <= window.innerHeight + 2));
+ok("no page scroll", await ctx.evaluate(() => { const pl = document.querySelector("#play .proto-layout") || document.querySelector(".proto-layout"); return pl ? pl.getBoundingClientRect().height <= innerHeight + 2 : document.documentElement.scrollHeight <= window.innerHeight + 2; })); // M105 单页：proto 体验区不超视口
 
 // ---- guide/start
 for (const p of ["/guide.html", "/start.html"]) {
@@ -221,7 +221,7 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
     const dp = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await dp.goto(base + "/index.html", { waitUntil: "load" });
     await dp.waitForTimeout(2600);
-    await dp.locator(".animstage").first().scrollIntoViewIfNeeded();
+    await dp.locator("#animstage").scrollIntoViewIfNeeded(); await dp.waitForTimeout(1500); // M105 单页 IO 挂载
     await dp.waitForTimeout(800);
     const txt = await dp.locator(".animstage").first().textContent();
     ok("demo no real names", !txt.includes("段雅洁"));
@@ -340,7 +340,7 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
   }
   await mp.goto(base + "/index.html", { waitUntil: "load" });
   await mp.waitForTimeout(2000);
-  ok("mobile exp chromeless", await mp.evaluate(() => document.getElementById("expframe").src.includes("chrome=0")));
+  ok("mobile exp chromeless", await mp.evaluate(() => (document.getElementById("stageframe") || { src: "" }).src.includes("chrome=0"))); // M105 单页
   ok("mobile install wraps", await mp.evaluate(() => { const c = document.getElementById("installcmd"); return c.scrollWidth <= c.clientWidth + 2; }));
   await mp.close();
 }

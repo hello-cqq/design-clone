@@ -18,6 +18,7 @@
       proto_tags: "Tags", ft_note: "MIT · prototypes carry their own license · brand replicas are unofficial study works",
       empty: "No prototypes yet — be the first:",
       ph_gal: "Act II · pick a world", gal_h: "Every clone, one shelf", ph_proto: "Act III · step inside", ph_guide: "Backstage · how it works", ph_start: "Act I · take it home",
+      gal_q: "search name or tag…", hero_h1: "clone any app into a", hero_h2: "playable prototype", hero_sub: "an agent skill · captures real apps, sites or links · rebuilds them as living local web prototypes with design assets", proto_h: "Play, inspect, export", cue_see: "slide into the gallery", cue_play: "step inside one", cue_clone: "see how it clones", cue_start: "take it home",
     },
     zh: {
       nav_home: "首页", nav_gallery: "画廊",
@@ -31,6 +32,7 @@
       proto_tags: "标签", ft_note: "MIT · 原型各自携带许可 · 品牌复刻为非官方学习作品",
       empty: "暂无原型——成为第一个：",
       ph_gal: "第二幕 · 挑选一个世界", gal_h: "所有复刻，同一面墙", ph_proto: "第三幕 · 走进原型", ph_guide: "幕后 · 它如何工作", ph_start: "第一幕 · 带它回家",
+      gal_q: "搜索名称或标签…", hero_h1: "把任意应用克隆为", hero_h2: "可玩原型", hero_sub: "一个 agent skill · 捕获真实应用/网站/链接 · 重建为带设计资产的活本地原型", proto_h: "可玩 · 可查 · 可导出", cue_see: "滑进画廊", cue_play: "走进一个原型", cue_clone: "看它如何克隆", cue_start: "带它回家",
     },
   };
 
@@ -56,6 +58,46 @@
     if (document.getElementById("cards")) renderGallery();
     if (document.getElementById("side")) renderProto();
     if (document.getElementById("featured")) renderFeatured();
+  }
+  /* M105-W2：单页合一——星点轨/四时色温/段背景视差 */
+  function wireOnepage() {
+    const secs = [...document.querySelectorAll("main .sec")];
+    if (!secs.length) return;
+    const rail = document.querySelector(".rail");
+    if (rail) {
+      rail.querySelectorAll("[data-sec]").forEach((b) => b.addEventListener("click", () => {
+        const t = document.getElementById(b.dataset.sec);
+        if (t) t.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      }));
+    }
+    const SEASONS_DARK = { dawn: [[16, 26, 46], [42, 66, 96]], noon: [[26, 48, 78], [86, 128, 168]], dusk: [[30, 26, 48], [196, 122, 74]], night: [[6, 12, 26], [22, 42, 72]] };
+    const SEASONS_LIGHT = { dawn: [[234, 241, 248], [206, 224, 240]], noon: [[240, 246, 250], [212, 232, 244]], dusk: [[250, 241, 232], [238, 206, 180]], night: [[226, 232, 244], [196, 208, 232]] };
+    const sky = document.querySelector(".skycanvas");
+    const lerp = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+    let tick = false;
+    const paint = () => {
+      const y = scrollY + innerHeight * 0.5;
+      let cur = secs[0], nxt = secs[0], t = 0;
+      for (let i = 0; i < secs.length; i++) {
+        const r = secs[i].getBoundingClientRect();
+        if (r.top <= innerHeight * 0.5) { cur = secs[i]; nxt = secs[i + 1] || cur; t = nxt === cur ? 0 : Math.min(1, Math.max(0, (innerHeight * 0.5 - r.top) / Math.max(1, r.height))); }
+      }
+      if (sky) {
+        const SEASONS = (document.documentElement.dataset.theme === "dark" ? SEASONS_DARK : SEASONS_LIGHT);
+        const A = SEASONS[cur.dataset.season] || SEASONS.dawn, B = SEASONS[nxt.dataset.season] || A;
+        const a = lerp(A[0], B[0], t), b2 = lerp(A[1], B[1], t);
+        sky.style.background = `linear-gradient(180deg, rgb(${a.join(",")}), rgb(${b2.join(",")}))`;
+      }
+      if (rail) rail.querySelectorAll("[data-sec]").forEach((b) => b.classList.toggle("on", b.dataset.sec === cur.id));
+      secs.forEach((s) => { const bg = s.querySelector(".secbg"); if (bg) { const r = s.getBoundingClientRect(); bg.style.transform = `translateY(${(r.top * -0.06).toFixed(1)}px)`; } });
+    };
+    addEventListener("scroll", () => { if (tick) return; tick = true; requestAnimationFrame(() => { paint(); tick = false; }); }, { passive: true });
+    new MutationObserver(() => paint()).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    paint();
+    for (const [a, b] of [["copycmd0", "installcmd0"], ["copycmd", "installcmd"]]) {
+      const btn = document.getElementById(a), src = document.getElementById(b);
+      if (btn && src) btn.onclick = () => { navigator.clipboard && navigator.clipboard.writeText(src.textContent || ""); btn.textContent = "✓"; setTimeout(() => (btn.textContent = "copy"), 1200); };
+    }
   }
   /* M104-W5：无边界叙事——滚动感知页眉 / IO reveal+素描扫显 / View Transitions 页间过渡 */
   function wireNarrative() {
@@ -315,6 +357,16 @@
     const params = new URLSearchParams(location.search);
     const app = params.get("app");
     const idx = await loadIndex();
+    { // M105 单页：#play 段内应用切换器（白名单五 app，契约同原 expselect）
+      const sel = document.getElementById("expselect");
+      if (sel && !sel.options.length) {
+        const WL = ["ai-assistant", "wechat", "lark", "petpark", "aliyun-console"];
+        const wl = WL.map((sl) => (idx.apps || []).find((x) => x.app === sl)).filter(Boolean);
+        sel.innerHTML = wl.map((x) => `<option value="${x.app}">${L(x.name, x.app)}</option>`).join("");
+        sel.onchange = () => { history.replaceState(null, "", location.pathname + "?app=" + sel.value + "#play"); renderProto(); };
+      }
+      if (sel) sel.value = app || sel.value;
+    }
     const a = (idx.apps || []).find((x) => x.app === app) || (idx.apps || [])[0];
     const side = document.getElementById("side");
     if (!a || !side) return;
@@ -463,7 +515,15 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    applyTheme(); applyI18n(); wireNav(); wireStars(); wireFeatureTabs(); wireAmbient(); wireNarrative();
+    { // M105-W2：单页 hash 参数（#play&app=x）提升为 search，复用既有渲染逻辑
+      const h = location.hash || "";
+      if (h.includes("&")) {
+        const [sec, ...rest] = h.slice(1).split("&");
+        const qs = rest.join("&");
+        history.replaceState(null, "", location.pathname + (qs ? "?" + qs : "") + "#" + sec);
+      }
+    }
+    applyTheme(); applyI18n(); wireNav(); wireStars(); wireFeatureTabs(); wireAmbient(); wireNarrative(); wireOnepage();
     const lb = document.getElementById("langbtn");
     if (lb) lb.onclick = () => { state.lang = state.lang === "en" ? "zh" : "en"; localStorage.setItem("dc-lang", state.lang); applyI18n(); };
     const tb = document.getElementById("themebtn");
@@ -498,9 +558,11 @@
       e.preventDefault();
       try { await clientZip(dlb.dataset.app); } catch {}
     });
-    const code0 = document.getElementById("installcmd");
+    const code0 = document.getElementById("installcmd") || document.getElementById("installcmd0");
+
     const STABLE_CMD = "curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/main/install.sh | bash";
     if (code0) code0.textContent = STABLE_CMD;
+    { const e0 = document.getElementById("installcmd0"); if (e0) e0.textContent = code0.textContent; }
     const cp = document.getElementById("copycmd");
     if (cp) cp.onclick = () => { const done = () => { cp.textContent = "✓"; setTimeout(() => (cp.textContent = "copy"), 1200); }; try { navigator.clipboard.writeText(document.getElementById("installcmd").textContent).then(done).catch(done); } catch { done(); } };
 

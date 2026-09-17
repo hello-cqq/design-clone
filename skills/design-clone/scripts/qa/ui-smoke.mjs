@@ -94,6 +94,26 @@ await step("boot", async () => {
 /* ---------- 设备档：名称、切换、持久化（用户点名要 手机/平板/桌面/网页） ---------- */
 const DEVICE_LABELS = ["手机", "平板", "桌面", "网页"];
 let origDeviceCls = "dc-mobile";
+await step("nav-state-sync", async () => {
+  // M105-W0 三元一致：舞台视图 ≡ 列表 .on ≡ 详情头（高亮失同步根因门）
+  const rows = page.locator("#dc-pages [data-nav]");
+  const n = Math.min(await rows.count(), 4);
+  if (n < 2) return;
+  for (let i = 0; i < n; i++) {
+    await rows.nth(i).click();
+    await page.waitForTimeout(520);
+    const st = await page.evaluate(() => {
+      const hashId = (location.hash || "").replace(/^#pages\//, "");
+      const onEl = document.querySelector("#dc-pages [data-nav].on");
+      const det = (document.querySelector("#dc-board-detail") || {}).textContent || "";
+      return { hashId, onId: onEl ? onEl.dataset.nav : "", det: det.replace(/\s+/g, " ").slice(0, 30) };
+    });
+    if (!st.hashId || st.hashId !== st.onId) throw new Error(`状态失同步 view${i}: hash=${st.hashId} on=${st.onId}`);
+    const idx = String(i).padStart(2, "0");
+    if (st.det && !st.det.includes(idx)) throw new Error(`详情头失同步 view${i}: ${st.det}`);
+  }
+});
+
 await step("device-names", async () => {
   origDeviceCls = await page.evaluate(() => ["dc-mobile", "dc-tablet", "dc-desktop", "dc-browser"].find((c) => document.body.classList.contains(c)) || "dc-mobile");
   await openDD("#dc-device-btn", "#dc-device-dd");

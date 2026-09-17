@@ -8,6 +8,10 @@
     if (!res.ok) throw new Error(`view ${id} 不存在`);
     S.lastHTML = await res.text();
     W.stage.innerHTML = S.lastHTML;
+    // M105-W0：状态同步（当前页/列表高亮/crumb/详情）先于任何可能抛错的下游（脚本重执行/enhance/redraw），失同步根因修因
+    S.view = id;
+    $$("#dc-pages [data-nav]").forEach((b) => b.classList.toggle("on", b.dataset.nav === id));
+    try { syncURL(false); updateCrumb(); fillDetail(); } catch {}
     W.stage.querySelectorAll("script").forEach((old) => {
       const s = document.createElement("script");
       if (old.src) s.src = old.src; else s.textContent = old.textContent;

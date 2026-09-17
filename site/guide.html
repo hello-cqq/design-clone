@@ -1,71 +1,13 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
-<head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta property="og:title" content="design-clone guide">
-<meta property="og:description" content="Install → clone → publish in three moves.">
-<meta property="og:image" content="https://hello-cqq.github.io/design-clone/assets/logo-mark.png">
-<title>Guide — design-clone</title>
-<link rel="icon" type="image/png" media="(prefers-color-scheme: light)" href="assets/favicon.png">
-<link rel="icon" type="image/png" media="(prefers-color-scheme: dark)" href="assets/favicon-dark.png">
-<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<link rel="stylesheet" href="assets/site.css">
-</head>
-<body>
-<header class="top"><div class="wrap">
-  <a class="logo" href="index.html">design-clone</a>
-  <nav class="navwrap">
-    <a href="index.html" data-i18n="nav_home">Home</a>
-    <a href="gallery.html" data-i18n="nav_gallery">Gallery</a>
-  </nav>
-  <span class="sp"></span>
-  <button class="iconbtn" id="langbtn">中文</button>
-  <button class="iconbtn" id="themebtn"></button>
-  <a class="iconbtn" href="https://github.com/hello-cqq/design-clone" target="_blank" rel="noopener"><span class="starbadge" id="starbadge">★ —</span></a>
-</div></header>
-<div class="wrap">
-  <section class="blk">
-    <div class="sketch" style="left:5%;top:80px;width:160px;height:240px" aria-hidden="true"><img src="assets/sketch-xh.png" alt=""></div>
-  <div class="pagehead pagehead--left"><span class="eyebrow" data-i18n="ph_guide">Backstage · how it works</span></div>
-    <h2 data-i18n="guide_h">Guide</h2>
-    <p class="sub">Three moves: install → clone → publish. Everything else is gated for you.</p>
-    <div class="grid3">
-      <div class="fcard"><div class="tagline">1 · INSTALL</div><h3>One command</h3>
-        <p>Paste the installer for your agent (opencode / claude / codex) or use <code>npx skills add hello-cqq/design-clone -g</code>. See <a href="start.html">Install</a>.</p></div>
-      <div class="fcard"><div class="tagline">2 · CLONE</div><h3>Ask your agent</h3>
-        <p>“Use design-clone to clone &lt;app or url&gt;.” The skill captures, rebuilds a playable prototype, runs its gates, and serves it locally.</p></div>
-      <div class="fcard"><div class="tagline">3 · PUBLISH</div><h3 id="publish">Share to the gallery</h3>
-        <p><code>node &lt;skill&gt;/scripts/publish.mjs --run &lt;run&gt; --app &lt;app&gt; --title "…" [--title-zh --desc --desc-zh --tags --version]</code> opens a PR to <a href="https://github.com/hello-cqq/design-clone-prototype">design-clone-prototype</a>; after review it goes live here with your avatar on it. Generation already emits the gallery trio (<code>meta.json</code> bilingual + <code>icon.png</code> + 3:2 <code>cover.png</code>) and design specs (<code>pages/*.spec.json</code>, <code>design/figma-source.json</code>) — publish carries them; gates must be green first.</p>
-        <p lang="zh">发布一行命令：<code>publish.mjs --run &lt;run&gt; --app &lt;app&gt; --title "…"</code>（中英描述/标签/版本可覆盖）。生成期已产画廊三件套（双语 meta.json + icon.png + 3:2 cover.png）与设计规格（pages/*.spec.json、design/figma-source.json），publish 自动搬运；三门绿+gallery-ready 才放行，PR 经维护者审核后上线并署贡献者头像。</p></div>
-    </div>
-  </section>
-  <section class="blk">
-    <h2>Submission spec, in one breath</h2>
-    <p class="sub">Full text: <a href="https://github.com/hello-cqq/design-clone-prototype/blob/main/SPEC.md">SPEC.md</a> (<a href="https://github.com/hello-cqq/design-clone-prototype/blob/main/SPEC.zh.md">中文</a>)</p>
-    <div class="grid3">
-      <div class="fcard"><h3>Layout</h3><p><code>app/flavor/prototype/</code>; flavor vocabulary <code>mobile|tablet|desktop|web</code> + optional platform + <code>-cn|-global</code>.</p></div>
-      <div class="fcard"><h3>Gates first</h3><p>interact dead=0 · inspect 0 fail · ui-smoke 0 fail · privacy green. CI re-smokes every PR.</p></div>
-      <div class="fcard"><h3>Privacy &amp; IP</h3><p>No real personal data, ever. Three-way IP attestation; brand clones carry a disclaimer.</p></div>
-      <div class="fcard"><h3>Versions</h3><p>SemVer per flavor; bump on any <code>prototype/**</code> change; merges auto-tag <code>app-flavor-version</code> with an offline zip Release.</p></div>
-      <div class="fcard"><h3>Size</h3><p>≤80 MB per flavor; system fonts; no runtime CDN — prototypes must work fully offline.</p></div>
-      <div class="fcard"><h3>Review</h3><p>No auto-merge. A maintainer approves every prototype; takedown issues answered within 48 h.</p></div>
-    </div>
-  </section>
-  <section class="blk">
-    <h2>FAQ</h2>
-    <div class="grid3">
-      <div class="fcard"><h3>Do prototypes need a server?</h3><p>No. They are offline static bundles; GitHub Pages serves them as live apps (annotation writes fall back to localStorage).</p></div>
-      <div class="fcard"><h3>Can I remix someone's prototype?</h3><p>Yes — clone the flavor directory, remix in the skill, publish your own flavor or app with attribution in PROVENANCE.md.</p></div>
-      <div class="fcard"><h3>Which license?</h3><p>Prototype code MIT; assets per flavor <code>license</code> (default CC-BY-4.0); repo infrastructure MIT.</p></div>
-    </div>
-  </section>
-</div>
-<footer class="ft">
-  <div class="ft-sky" aria-hidden="true"></div>
-  <div class="ft-in"><span class="ftbrand"></span>
-  <span data-i18n="ft_note">MIT · prototypes carry their own license · brand replicas are unofficial study works</span>
-  </div></footer>
-<script src="assets/site.js"></script>
-</body>
-</html>
+<title>design-clone · redirect</title>
+<script>
+// M105-W2：单页合一重定向 stub（保旧链接/e2e 迁移期）
+var map = { "gallery.html": "see", "proto.html": "play", "guide.html": "clone", "start.html": "start" };
+var sec = map[location.pathname.split("/").pop()] || "prologue";
+var q = new URLSearchParams(location.search);
+var h = "#" + sec;
+if (q.get("app")) h += "&app=" + encodeURIComponent(q.get("app"));
+if (q.get("q")) h += "&q=" + encodeURIComponent(q.get("q"));
+location.replace("index.html" + h);
+</script>
