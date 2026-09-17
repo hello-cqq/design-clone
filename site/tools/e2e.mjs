@@ -34,10 +34,29 @@ ok("bigchar feathered", await ctx.evaluate(() => { const cs = getComputedStyle(d
 ok("no install guide cards (M106)", await ctx.locator("#start, .tagline, #copycmd0").count() === 0); // M107：胶囊保留，引导卡/段仍禁
 ok("copy capsule restored (M107)", await ctx.locator("#copycmd").isVisible() && ((await ctx.locator("#installcmd").textContent()) || "").includes("install.sh"));
 ok("ident video restored (M107)", await ctx.locator(".ident .idf-video").count() === 2);
+ok("hub default four-source sync (M108)", await ctx.evaluate(() => {
+      const sel = document.getElementById("expselect"); const fr = document.getElementById("stageframe");
+      if (!sel || !fr) return false;
+      const v = sel.value; return v && fr.src.includes("/" + v + "/") && sel.selectedIndex === 0;
+    }));
 ok("hub lifted before worlds (M107)", await ctx.evaluate(() => { const ids = [...document.querySelectorAll("main .sec")].map((s) => s.id); return ids.indexOf("play") < ids.indexOf("petpark") && ids.indexOf("play") <= 2; }));
 ok("animstage in trio (M107)", await ctx.locator("#trio #animstage").count() === 1);
 ok("secvid backgrounds (M107)", await ctx.locator(".secvid").count() >= 2);
-ok("mengmeng motifs (M107)", await ctx.evaluate(() => ["sk-lake", "sk-vines", "sk-basket"].every((k) => document.querySelector(`img[src*="${k}"]`))));
+ok("mengmeng motifs (M108)", await ctx.evaluate(() => ["sk-vines", "sk-door", "char-meng1"].every((k) => document.querySelector(`img[src*="${k}"]`))));
+ok("big static art transparent (M108)", await ctx.evaluate(async () => {
+      const list = ["char-meng1", "char-rift", "char-fox", "sk-vines", "sk-door"];
+      for (const k of list) {
+        const img = new Image(); img.src = "assets/" + k + ".png"; await img.decode().catch(() => {});
+        if (!img.naturalWidth) return false;
+        const cv = document.createElement("canvas"); cv.width = 40; cv.height = 40;
+        const g = cv.getContext("2d"); g.drawImage(img, 0, 0, 40, 40);
+        const d = g.getImageData(0, 0, 40, 40).data;
+        let transparentCorner = d[3] < 40; let anyAlpha = false;
+        for (let i = 3; i < d.length; i += 4) { if (d[i] < 250) anyAlpha = true; }
+        if (!transparentCorner || !anyAlpha) return false;
+      }
+      return true;
+    }));
 await ctx.waitForSelector("#tail #featured .pcard", { timeout: 9000 }).catch(() => {});
 ok("featured in tail direct (M107)", await ctx.locator("#tail #featured .pcard").count() >= 4);
 {

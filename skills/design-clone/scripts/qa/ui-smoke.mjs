@@ -109,9 +109,10 @@ await step("nav-state-sync", async () => {
       return { hashId, onId: onEl ? onEl.dataset.nav : "", det: det.replace(/\s+/g, " ").slice(0, 30) };
     });
     if (!st.hashId || st.hashId !== st.onId) throw new Error(`状态失同步 view${i}: hash=${st.hashId} on=${st.onId}`);
-    const idx = String(i).padStart(2, "0");
+    const idx = ((await rows.nth(i).locator(".idx").textContent()) || "").trim() || String(i).padStart(2, "0"); // M105：idx 取行内序号（页 id 未必从 00 起）
     if (st.det && !st.det.includes(idx)) throw new Error(`详情头失同步 view${i}: ${st.det}`);
   }
+  await rows.nth(0).click(); await page.waitForTimeout(520); // M105：复原默认页，避免污染后续步初始态
 });
 
 await step("device-names", async () => {

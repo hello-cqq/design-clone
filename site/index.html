@@ -34,17 +34,15 @@
 </nav>
 <main>
 <section id="prologue" data-season="dawn" class="sec sec-char">
-  <div class="heroambient" aria-hidden="true"><video muted loop playsinline preload="metadata" poster="assets/xinghai-idle-poster.webp"><source src="assets/xinghai-idle.webm" type="video/webm"></video></div>
   <div class="secbg" style="--bgimg:url(/assets/sk-dawn.png)" aria-hidden="true"></div>
-  <div class="charwrap char-right" data-rv><img class="bigchar" src="assets/char-rain.png" alt=""></div>
-  <div class="ident" id="ident" title="replay" data-rv></div>
+  <div class="ident ident-bg" id="ident" title="replay"></div>
+  <div class="charwrap char-right" data-rv><img class="bigchar" src="assets/char-meng1.png" alt=""></div>
   <div class="wrap secinner panel-left" data-rv>
     <span class="eyebrow" data-i18n="s1_eye">after the rain · first light</span>
     <h1><span data-i18n="hero_h1">clone any app into a</span> <em data-i18n="hero_h2">playable prototype</em></h1>
     <p class="sub" data-i18n="hero_sub">an agent skill · captures real apps, sites or links · rebuilds them as living local web prototypes with design assets</p>
     <div class="copycap"><code id="installcmd">curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/main/install.sh | bash</code><button class="pillbtn" id="copycmd" data-i18n="copy_btn">copy</button></div>
   </div>
-  <div class="sketch" style="left:4%;bottom:6%;width:340px;height:191px" aria-hidden="true"><img src="assets/sk-lake.png" alt=""></div>
   <div class="thread" aria-hidden="true"></div>
   <a class="cue" href="#shikong" aria-label="continue"><img src="assets/sk-cue.png" alt=""><span data-i18n="cue_shikong">follow the thread</span></a>
 </section>
@@ -85,6 +83,7 @@
 </section>
 <section id="petpark" data-season="noon" class="sec sec-char">
   <div class="sketch" style="left:6%;top:-3%;width:210px;height:280px" aria-hidden="true"><img src="assets/sk-vines.png" alt=""></div>
+  <span class="mengslot meng2" data-rv><img src="assets/char-meng2.png" alt=""></span>
   <video class="secvid" muted loop playsinline preload="metadata" poster="assets/fox-idle-poster.png" aria-hidden="true"><source src="assets/fox-idle.webm" type="video/webm"></video>
   <div class="secbg" style="--bgimg:url(/assets/sk-noon.png)" aria-hidden="true"></div>
   <div class="charwrap char-right" data-rv><img class="bigchar" src="assets/char-fox.png" alt=""></div>
@@ -104,15 +103,10 @@
   <div class="wrap secinner panel-center" data-rv>
     <span class="eyebrow" data-i18n="s4_eye">night rain front · three familiar worlds</span>
     <div class="ph-title" data-i18n="s4_t">Study replicas, faithfully cloned</div>
-    <div class="triomots" aria-hidden="true">
-      <span class="mot" data-i18n-title="m_wechat"><img src="assets/sk-cue.png" alt=""><i data-i18n="m_wechat">paper-plane cloud</i></span>
-      <span class="mot"><img src="assets/sk-cue.png" alt=""><i data-i18n="m_lark">birds across the moon</i></span>
-      <span class="mot"><img src="assets/sk-cue.png" alt=""><i data-i18n="m_aliyun">sea of clouds</i></span>
-    </div>
-    <div class="worldchips">
-      <button class="worldbtn" data-app="wechat" data-i18n="w_wechat">WeChat</button>
-      <button class="worldbtn" data-app="lark" data-i18n="w_lark">Lark</button>
-      <button class="worldbtn" data-app="aliyun-console" data-i18n="w_aliyun">Aliyun</button>
+    <div class="triopairs">
+      <span class="triopair"><span class="mot"><img src="assets/sk-cue.png" alt=""><i data-i18n="m_wechat">paper-plane cloud</i></span><span class="tie" aria-hidden="true"></span><button class="worldbtn" data-app="wechat" data-i18n="w_wechat">WeChat</button></span>
+      <span class="triopair"><span class="mot"><img src="assets/sk-cue.png" alt=""><i data-i18n="m_lark">birds across the moon</i></span><span class="tie" aria-hidden="true"></span><button class="worldbtn" data-app="lark" data-i18n="w_lark">Lark</button></span>
+      <span class="triopair"><span class="mot"><img src="assets/sk-cue.png" alt=""><i data-i18n="m_aliyun">sea of clouds</i></span><span class="tie" aria-hidden="true"></span><button class="worldbtn" data-app="aliyun-console" data-i18n="w_aliyun">Aliyun</button></span>
     </div>
   </div>
 
@@ -125,9 +119,8 @@
 
 <section id="tail" data-season="night" class="sec">
   <div class="secbg" style="--bgimg:url(/assets/sk-night.png)" aria-hidden="true"></div>
-  <div class="sketch" style="right:8%;top:10%;width:240px;height:160px" aria-hidden="true"><img src="assets/sk-duo.png" alt=""></div>
-  <div class="sketch doorart" style="left:6%;bottom:12%;width:230px;height:306px" aria-hidden="true"><img src="assets/sk-door.png" alt=""></div>
-  <div class="sketch" style="right:12%;bottom:8%;width:190px;height:190px" aria-hidden="true"><img src="assets/sk-basket.png" alt=""></div>
+  <div class="sketch doorart" style="right:25%;bottom:9%;width:200px;height:266px" aria-hidden="true"><img src="assets/sk-door.png" alt=""></div>
+  <span class="mengslot meng3" data-rv><img src="assets/char-meng3.png" alt=""></span>
   <div class="wrap secinner" data-rv>
     <div class="pagehead pagehead--left"><span class="eyebrow" data-i18n="ph_gal">the shelf</span><div class="ph-title" data-i18n="gal_h">Every clone, one shelf</div></div>
     <div class="cards" id="featured"></div>
