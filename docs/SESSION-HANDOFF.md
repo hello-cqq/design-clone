@@ -65,6 +65,7 @@
 | **M84/M85/M88/M91/M93/M94** | 09-14→15 | 演示点击即播、选中框 rAF 活跟踪 + `sel-ring-align` 门、导出 `all.zip`、logo 换用户图 + 主题冰蓝、导航 logo 动图 webp、透明纯度 veil 门 | ❌ | ❌（M93/M94 仅在 SESSION-SUMMARY） |
 | **M99** | 09-16 | 架构图 v3（archify 双主题 SVG）；媒体引擎（provider 路由+genvideo+agent-native 协议+media 工具集）；门禁第二轮（bg 覆盖/.far 豁免/选中语义）；两 demo 体感修复（PR#67）；官网新海诚重绘；数据线审计；全身立绘 v2+透明人物层（seedream pro） | ✅ | ✅ |
 | **M100–M102** | 09-16 | 指挥闭环定版（media-consent/plan/verify 三件套+官方 skill 桥）；标准 Ark key 直连档（仓外 0600+掩码+DELETE 止损）；media-strategy 总纲；Seedance 2.0-mini 实测履约（星海/耳廓狐 idle 视频，安全体验模式=SetLimitExceeded 真因）；双 demo 视频 hero 层（PR#69/#70） | ✅ | ✅ CHANGELOG |
+| **M108** | 09-17 | 站点精修终版：hub 默认同源/ident 背景化/透明融合硬法+alpha 门/萌萌缪斯三角色/去框去白；审美验收双主题六段过；LESSONS 206-211 | ✅ | ✅ CHANGELOG |
 | **M107** | 09-17 | 素雅视觉换装：段序重排 hub 上提+ident/复制胶囊恢复+段背景视频(secvid IO)+萌萌三元素素描+明信片散落+降彩度纸纱；e2e 契约全绿 | ✅ | ✅ CHANGELOG |
 | **M106** | 09-17 | 首页六段新海诚叙事（萌萌参考 5 画+大人物段+红线+原野之门）；画廊独立页+菱形星点/素描门双入口；安装引导全链路删除；错位时空改名归一；贡献者归一 hello-cqq；e2e 大人物契约 | ✅ | ✅ CHANGELOG |
 | **M105** | 09-17 | 官网单页合一（四时大段+萌萌参考素描+导航融合+stub 重定向）；W0 三缺陷修因（暗色接缝/选中失同步/聊天页）+nav-state-sync 门；e2e 单页契约全绿；shell nav-sync 随 3.2.1/1.7.2 交付 | ✅ | ✅ CHANGELOG |
