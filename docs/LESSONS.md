@@ -224,3 +224,5 @@
 193. M104 门自身也会作弊：pretty-print JSON 让 regress 的 lastJson 末行解析恒空→门假绿；display:none 元素零矩形被当 clipped；ambient canvas 全屏被当内容；纯渐变被当艺术覆盖。**门的每个判定常量都要用「已知坏样例」校准过才上线**（W7b 变异矩阵制度化）。
 194. M104 生图模型会自作主张加烘焙 UI（"no text" 也出按钮面板）——背景类资产统一**中心裁切**再用；角色类 prompt 加 isolated/transparent 语义但透明底需参考图（skill 限制），白底生成+本地抠白是稳定替代。
 195. M104 风格锚是产品契约不是建议：brief.style_anchor 与实生 prompt 不符=封面/图标错魂（petpark 三锚并存教训）。修：style-anchor 门（manifest 锚指纹）+ cover.mjs 锚拒合成 + manifest 登记强制 style 字段。
+196. M104 并发自伤新形态： ad-hoc 调试服务器（4818/4831/42xx/49xx）长期残留，恰好占据 regress 按 run 分配的端口 → sweep 大批假败（smokeFail/inspectFail 齐飞）。教训：**调试服务器用完即杀；长 sweep 前先 `pgrep -fl http-server` 清场**；假败特征=多 run 同刻齐败且 fail 数杂乱。
+197. M104 变异/演练副本的门证明要避开三个坑：①serve 根必须是 run 根（含 /prototype/ 子路径），serve prototype 目录=壳 404 全超时；②cp -R 会带上旧 qa/inspect.json，读证据前核 `at` 时间戳；③后台 server 用裸 `&` 会随父 shell 死，必须 nohup。门的"盲"判定前先排除这三者。

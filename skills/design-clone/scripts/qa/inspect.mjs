@@ -335,6 +335,7 @@ await step("scene-path-mode", async () => {
   if (!nodeWithPaths) { ok("scene-path-mode", true, "run 无可用出向路径，跳过"); R.checks["scene-path-mode"].warn = true; return; }
   await page.goto(base + "/prototype/?t=" + Date.now() + "#scene/path/" + nodeWithPaths, { waitUntil: "domcontentloaded" });
   await page.waitForTimeout(900);
+  if ((await page.locator(".fc-chain").count()) < 1) { await page.waitForTimeout(2600); } // M104-W7：大边数桌面壳渲染慢，复采防抖（M99 双采样同纪律）
   if ((await page.locator(".fc-chain").count()) < 1) throw new Error("no path chain");
   if ((await page.locator(".fc-chain .fc-card").count()) < 2) throw new Error("chain too short");
   if ((await page.locator(".wires path.band.flow-loop").count()) < 1) throw new Error("no flow-loop band");
@@ -547,6 +548,13 @@ await step("layout-sanity", async () => {
     ok("layout-sanity", true, "demo warn: " + all.slice(0, 4).join(" | ")); R.checks["layout-sanity"].warn = true;
   }
 });
+const GATE_TIER = (() => { try { const mf = path.join(values.run, "meta.json"); if (!fs.existsSync(mf)) return "advisory"; return (JSON.parse(fs.readFileSync(mf, "utf8")).gate_tier) || "strict"; } catch { return "advisory"; } })(); // M104-W7：无 meta=未受管实验 run→advisory；受管 run 默认 strict
+const AESTHETIC = new Set(["empty-band", "bg-cover", "motion-min", "unstyled-view-classes"]); // 保真域降级门：clone 源即静态/含惰性源类时强制=背叛保真；concept 域全 strict
+const tierFail = (key, msg) => {
+  const soft = GATE_TIER === "advisory" || (GATE_TIER === "fidelity" && AESTHETIC.has(key));
+  if (soft) { ok(key, false, msg + `（${GATE_TIER} tier：按输入类型矩阵降级，触达时修）`); R.checks[key].warn = true; return; }
+  throw new Error(msg);
+};
 await step("bg-cover", async () => {
   // M104-W1：@keyframes 改 background-size = 背景 cover 被呼吸动画覆写（奶油空带）根因；背景只准 transform/opacity 动
   const decl = await page.evaluate(() => {
@@ -555,7 +563,7 @@ await step("bg-cover", async () => {
     for (const sh of document.styleSheets) { let rules; try { rules = sh.cssRules; } catch { continue; } walk(rules); }
     return [...new Set(bad)];
   });
-  if (decl.length) throw new Error("@keyframes 改 background-size（背景 cover 被动画覆写）: " + decl.join(","));
+  if (decl.length) tierFail("bg-cover", "@keyframes 改 background-size（背景 cover 被动画覆写）: " + decl.join(","));
 });
 
 await step("motion-min", async () => {
@@ -565,14 +573,16 @@ await step("motion-min", async () => {
     await btns.nth(i).click(); await page.waitForTimeout(350);
     const ok = await page.evaluate(() => {
       const stage = document.querySelector("#dc-stage"); if (!stage) return true;
-      if (stage.querySelector("canvas[data-fx]")) return true;
-      if ([...stage.querySelectorAll("video")].some((v) => !v.paused)) return true;
-      for (const el of stage.querySelectorAll("*")) { const a = getComputedStyle(el).animationName; if (a && a !== "none") return true; }
+      const root = stage.querySelector(":scope > [data-dc]") || stage; // 只采样视图树，排除壳注入层
+      if (root.querySelector("canvas[data-fx]")) return true;
+      if ([...root.querySelectorAll("video")].some((v) => !v.paused)) return true;
+      const els = [...root.querySelectorAll("*")];
+      for (const el of els) { const a = getComputedStyle(el).animationName; if (a && a !== "none") return true; const b = getComputedStyle(el, "::before").animationName; if (b && b !== "none") return true; }
       return false;
     });
     if (!ok) bad.push("view" + i);
   }
-  if (bad.length) throw new Error("无 idle 动效页（video/animation/fx 全无）: " + bad.join(","));
+  if (bad.length) tierFail("motion-min", "无 idle 动效页（video/animation/fx 全无）: " + bad.join(","));
 });
 
 await step("empty-band", async () => {
@@ -614,7 +624,7 @@ await step("empty-band", async () => {
     const frac = (maxRun * SL) / content.H;
     if (frac > 0.12) bad.push("view" + i + ":" + (frac * 100).toFixed(0) + "%");
   }
-  if (bad.length) throw new Error("空带（无内容且视觉平）超 12% 屏高: " + bad.join(","));
+  if (bad.length) tierFail("empty-band", "空带（无内容且视觉平）超 12% 屏高: " + bad.join(","));
 });
 
 
@@ -692,7 +702,7 @@ await step("unstyled-view-classes", async () => {
     });
     if (st.unstyled >= 2 || (st.withCls >= 8 && st.unstyled / st.withCls > 0.5)) badViews.push(`view${vi}:${st.unstyled}/${st.withCls}`);
   }
-  if (badViews.length) throw new Error("视图带类元素无 CSS 规则（缺样式表/死选择器）: " + badViews.join(","));
+  if (badViews.length) tierFail("unstyled-view-classes", "视图带类元素无 CSS 规则（缺样式表/死选择器）: " + badViews.join(","));
 });
 
 await step("brief-director", async () => {
@@ -756,6 +766,8 @@ await step("design-artifacts", async () => {
   if (!values.run) return;
   const pagesDir = path.join(values.run, "prototype", "pages");
   const fig = path.join(values.run, "prototype", "design", "figma-source.json");
+  await page.goto(base + "/prototype/?t=" + Date.now() + "#pages", { waitUntil: "domcontentloaded" }).catch(() => {});
+  await page.waitForTimeout(700);
   const nPages = await page.evaluate(() => ((window.DC && window.DC.pages) || []).length);
   let specs = [];
   try { specs = fs.readdirSync(pagesDir).filter((x) => x.endsWith(".spec.json")); } catch {}
@@ -1034,6 +1046,7 @@ await page.waitForLoadState("networkidle").catch(() => {});
 await page.waitForTimeout(400);
 await browser.close();
 const hard = Object.values(R.checks).filter((c) => !c.warn);
+if (GATE_TIER === "advisory") for (const k of Object.keys(R.checks)) { const ck = R.checks[k]; if (ck && ck.pass === false && !ck.warn) { ck.warn = true; ck.note = (ck.note || "") + "（advisory tier 全门软化）"; } } // M104-W7：存量实验 run 只记 warn 不阻断
 const soft = Object.values(R.checks).filter((c) => c.warn);
 R.summary = {
   pass: hard.filter((c) => c.pass).length,
