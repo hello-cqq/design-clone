@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M108
+- 站点精修终版：hub 默认四源同源（WL_ORDER）；ident 整段背景化（去角隅 vignette/heroambient）；透明融合硬法（quality-standard 2.6）——char-rift/char-fox/sk-vines/sk-door 图层拆分透明，删 sk-lake/sk-corner/sk-duo/sk-basket/char-rain；萌萌=站点缪斯三角色（char-meng1/2/3，照片风格转换身份保真+拆透明，尺度语言 74svh/21vw/42svh）；接地软阴影+暗色 rim glow；animstage 去白卡；trio 母题-钮配对+素描连线；cloudlayer 降白；e2e 新增四源断言+alpha 审计门。LESSONS #206–211。
+
 ### M107
 - 视觉换装（内容零删）：段序重排 prologue→错位时空→play 枢纽上提→动物乐园→夜雨群像(animstage 演示移入)→尾架精选全量+素描门
 - 恢复项：ident 桌宠视频角隅 vignette+prologue ambient 视频；curl 复制小胶囊（无引导文案）；世界段 worldbtn=选中+滚枢纽
