@@ -65,6 +65,7 @@
 | **M84/M85/M88/M91/M93/M94** | 09-14→15 | 演示点击即播、选中框 rAF 活跟踪 + `sel-ring-align` 门、导出 `all.zip`、logo 换用户图 + 主题冰蓝、导航 logo 动图 webp、透明纯度 veil 门 | ❌ | ❌（M93/M94 仅在 SESSION-SUMMARY） |
 | **M99** | 09-16 | 架构图 v3（archify 双主题 SVG）；媒体引擎（provider 路由+genvideo+agent-native 协议+media 工具集）；门禁第二轮（bg 覆盖/.far 豁免/选中语义）；两 demo 体感修复（PR#67）；官网新海诚重绘；数据线审计；全身立绘 v2+透明人物层（seedream pro） | ✅ | ✅ |
 | **M100–M102** | 09-16 | 指挥闭环定版（media-consent/plan/verify 三件套+官方 skill 桥）；标准 Ark key 直连档（仓外 0600+掩码+DELETE 止损）；media-strategy 总纲；Seedance 2.0-mini 实测履约（星海/耳廓狐 idle 视频，安全体验模式=SetLimitExceeded 真因）；双 demo 视频 hero 层（PR#69/#70） | ✅ | ✅ CHANGELOG |
+| **M106** | 09-17 | 首页六段新海诚叙事（萌萌参考 5 画+大人物段+红线+原野之门）；画廊独立页+菱形星点/素描门双入口；安装引导全链路删除；错位时空改名归一；贡献者归一 hello-cqq；e2e 大人物契约 | ✅ | ✅ CHANGELOG |
 | **M105** | 09-17 | 官网单页合一（四时大段+萌萌参考素描+导航融合+stub 重定向）；W0 三缺陷修因（暗色接缝/选中失同步/聊天页）+nav-state-sync 门；e2e 单页契约全绿；shell nav-sync 随 3.2.1/1.7.2 交付 | ✅ | ✅ CHANGELOG |
 | **M104** | 09-17 | 标准体系立宪（quality-standard 六法+反作弊四机制）；新门七件；生成器修因（director/paths-gen 单流源/cover 锚纪律/publish 真截图前置）；星海对话+动物乐园 in-place 重制（清 pollinations、锚对齐 3D art、死端/不可达清零）；官网无边界新海诚（VT 过渡/reveal/素描/地平线）；封面 v3 锚对齐；变异测试+双演练 | ✅ | ✅ CHANGELOG |
 | **M103** | 09-16 | 数据线字重复发锁（wiremark 提浅+computed 门）；图标 full-bleed v2+品牌 flatten 归一；cover art-cinematic 分支（去 pills）；官网五页新海诚叙事流（hero idle webm 环境层+三幕故事带+眉标+cinematic hover+云视差+海面反射带）；runtime vid-replay/lipstate/静音自播；proto PR#71/#72（3.1.0）+品牌 1.7.0；index.json version 语义定案 | ✅ | ✅ CHANGELOG |
