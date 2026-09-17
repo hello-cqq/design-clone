@@ -5,6 +5,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M105
+- W0 三缺陷修因：暗色 hero 接缝=header 未滚动 backdrop 板边+installbox 直角板（改透明至 scrolled/暗色羽化 pill）；选中失同步=loadView 状态同步尾序（前置+finally，ui-smoke 新门 nav-state-sync 三元一致）；聊天页顶栏玻璃板改渐变羽化+消息不足顶部起排+dayline 分隔
+- W1 参考图生图：archive/萌萌 3 图+现有男女设计共参考，seedream pro 出 8 张淡雅素描（四时场景/地平缝/鸟云 cue/双人/睡狐角隅）；像素下限坑（<921600 拒）放大尺寸重试
+- W2 官网单页合一：index=prologue/see/play/clone/start 五段全屏大段+四时色温滚动插值（主题双调色板）+段背景素描视差+星点轨导航+叙事 cue；gallery/proto/guide/start 改重定向 stub（保旧链与 e2e 迁移期）；工具角（中英/主题/GitHub）右上悬浮；#play 段内 expselect 白名单切换器回归
+- W3 动效：标题笔刷 clip reveal、卡片 stagger、cue 漂浮、secbg 极慢 pan；reduced-motion 全兜底
+- W4 e2e 单页契约迁移（stageframe/expselect/rail/#animstage IO 挂载/h1 双 span 保 em）全绿
+- 发布：shell nav-sync 修复随 3.2.1/1.7.2 交付五 app
+
 ### M104
 - 标准体系立宪：references/quality-standard.md（六法+六类输入矩阵+点缀元素法+反作弊四机制）；SKILL.md 挂接；CI 增 no-run-specialcase 反特判门
 - 新门七件：empty-band（空带≤12% 屏高，url() 艺术含 ::before 才算覆盖）、bg-cover（@keyframes 禁改 background-size）、motion-min（每页≥1 idle 动效）、unstyled-view-classes 祖先真匹配校验（死 CSS 根因）、flow-truth（声明边⊆真接线+不可达 fail）、style-anchor（资产 prompt 携带本 run 锚指纹）、wire-label-lite 扩 SVG stroke=0 断言（树标签"深粗"perennial 根因=全局 svg{stroke} 继承）
