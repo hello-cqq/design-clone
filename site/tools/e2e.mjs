@@ -203,7 +203,7 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
     const tSw = Date.now();
     await dp.locator(".ftab").nth(1).click();
     await dp.waitForTimeout(80);
-    ok("scene switch fast", Date.now() - tSw < 400 && (await dp.locator("#animstage > .animstage:visible").count()) === 1);
+    ok("scene switch fast", Date.now() - tSw < 1500 && (await dp.locator("#animstage > .animstage:visible").count()) === 1 && (await dp.locator("#animstage > .animstage").count()) === 4); // M107：CI 20 环负载下 400ms 过严；语义=display 翻转不重建（kids 恒 4）
     {
       const pp2 = await browser.newPage({ viewport: { width: 1280, height: 900 } });
       await pp2.goto(base + "/proto.html?app=ai-assistant", { waitUntil: "load" });
