@@ -17,7 +17,7 @@
       proto_tags: "Tags", ft_note: "MIT · prototypes carry their own license · brand replicas are unofficial study works",
       empty: "No prototypes yet — be the first:",
       ph_gal: "Act II · pick a world", gal_h: "Every clone, one shelf", ph_proto: "Act III · step inside", ph_guide: "Backstage · how it works", ph_start: "Act I · take it home",
-      gal_q: "search name or tag…", hero_h1: "clone any app into a", hero_h2: "playable prototype", s1_eye: "after the rain · first light", s2_eye: "dusk that is also dawn", s2_t: "Dislocated Spacetime", s2_d: "an AI companion world: two voices, one sea, a thread between night and morning. step in and talk.", s2_b: "step inside", s3_eye: "noon · wind through grass ears", s3_t: "Animal Paradise", s3_d: "a zootopia-grade 3D town where a fennec fox waves at you: pet, sing, build, wander the map.", s3_b: "wave back", s4_eye: "night rain front · three familiar worlds", s4_t: "Study replicas, faithfully cloned", m_wechat: "paper-plane cloud", m_lark: "birds across the moon", m_aliyun: "sea of clouds", w_wechat: "WeChat", w_lark: "Lark", w_aliyun: "Aliyun", cue_shikong: "follow the thread", cue_petpark: "the grass is calling", cue_trio: "city lights ahead", cue_tail: "the shelf below", door_cue: "open the door · full gallery", back_story: "← back to the story", hero_sub: "an agent skill · captures real apps, sites or links · rebuilds them as living local web prototypes with design assets", proto_h: "Play, inspect, export", cue_see: "slide into the gallery", cue_play: "step inside one", cue_clone: "see how it clones", cue_start: "take it home",
+      gal_q: "search name or tag…", hero_h1: "clone any app into a", hero_h2: "playable prototype", s1_eye: "after the rain · first light", s2_eye: "dusk that is also dawn", s2_t: "Dislocated Spacetime", s2_d: "an AI companion world: two voices, one sea, a thread between night and morning. step in and talk.", s2_b: "step inside", s3_eye: "noon · wind through grass ears", s3_t: "Animal Paradise", s3_d: "a zootopia-grade 3D town where a fennec fox waves at you: pet, sing, build, wander the map.", s3_b: "wave back", s4_eye: "night rain front · three familiar worlds", s4_t: "Study replicas, faithfully cloned", m_wechat: "paper-plane cloud", m_lark: "birds across the moon", m_aliyun: "sea of clouds", w_wechat: "WeChat", w_lark: "Lark", w_aliyun: "Aliyun", cue_shikong: "follow the thread", cue_petpark: "the grass is calling", cue_trio: "city lights ahead", cue_tail: "the shelf below", door_cue: "open the door · full gallery", back_story: "← back to the story", copy_btn: "copy", hero_sub: "an agent skill · captures real apps, sites or links · rebuilds them as living local web prototypes with design assets", proto_h: "Play, inspect, export", cue_see: "slide into the gallery", cue_play: "step inside one", cue_clone: "see how it clones", cue_start: "take it home",
     },
     zh: {
       nav_home: "首页", nav_gallery: "画廊",
@@ -30,7 +30,7 @@
       proto_tags: "标签", ft_note: "MIT · 原型各自携带许可 · 品牌复刻为非官方学习作品",
       empty: "暂无原型——成为第一个：",
       ph_gal: "第二幕 · 挑选一个世界", gal_h: "所有复刻，同一面墙", ph_proto: "第三幕 · 走进原型", ph_guide: "幕后 · 它如何工作", ph_start: "第一幕 · 带它回家",
-      gal_q: "搜索名称或标签…", hero_h1: "把任意应用克隆为", hero_h2: "可玩原型", s1_eye: "雨后 · 初光", s2_eye: "黄昏即黎明", s2_t: "错位时空", s2_d: "一个 AI 陪伴世界：两种声音、同一片海、夜与晨之间的一线红。进来说话。", s2_b: "走进去", s3_eye: "正午 · 草耳风", s3_t: "动物乐园", s3_d: "疯狂动物城级 3D 小镇：耳廓狐朝你挥手——抚摸、唱歌、搭建、逛地图。", s3_b: "挥回去", s4_eye: "夜雨锋 · 三个熟悉的世界", s4_t: "学习复刻 · 忠实克隆", m_wechat: "纸飞机云", m_lark: "掠月鸟群", m_aliyun: "云海山", w_wechat: "微信", w_lark: "飞书", w_aliyun: "阿里云", cue_shikong: "顺着红线", cue_petpark: "草在叫你", cue_trio: "前方都市灯", cue_tail: "下面的架子", door_cue: "推开门 · 完整画廊", back_story: "← 回到故事", hero_sub: "一个 agent skill · 捕获真实应用/网站/链接 · 重建为带设计资产的活本地原型", proto_h: "可玩 · 可查 · 可导出", cue_see: "滑进画廊", cue_play: "走进一个原型", cue_clone: "看它如何克隆", cue_start: "带它回家",
+      gal_q: "搜索名称或标签…", hero_h1: "把任意应用克隆为", hero_h2: "可玩原型", s1_eye: "雨后 · 初光", s2_eye: "黄昏即黎明", s2_t: "错位时空", s2_d: "一个 AI 陪伴世界：两种声音、同一片海、夜与晨之间的一线红。进来说话。", s2_b: "走进去", s3_eye: "正午 · 草耳风", s3_t: "动物乐园", s3_d: "疯狂动物城级 3D 小镇：耳廓狐朝你挥手——抚摸、唱歌、搭建、逛地图。", s3_b: "挥回去", s4_eye: "夜雨锋 · 三个熟悉的世界", s4_t: "学习复刻 · 忠实克隆", m_wechat: "纸飞机云", m_lark: "掠月鸟群", m_aliyun: "云海山", w_wechat: "微信", w_lark: "飞书", w_aliyun: "阿里云", cue_shikong: "顺着红线", cue_petpark: "草在叫你", cue_trio: "前方都市灯", cue_tail: "下面的架子", door_cue: "推开门 · 完整画廊", back_story: "← 回到故事", copy_btn: "复制", hero_sub: "一个 agent skill · 捕获真实应用/网站/链接 · 重建为带设计资产的活本地原型", proto_h: "可玩 · 可查 · 可导出", cue_see: "滑进画廊", cue_play: "走进一个原型", cue_clone: "看它如何克隆", cue_start: "带它回家",
     },
   };
 
@@ -90,6 +90,23 @@
       secs.forEach((s) => { const bg = s.querySelector(".secbg"); if (bg) { const r = s.getBoundingClientRect(); bg.style.transform = `translateY(${(r.top * -0.06).toFixed(1)}px)`; } });
     };
     addEventListener("scroll", () => { if (tick) return; tick = true; requestAnimationFrame(() => { paint(); tick = false; }); }, { passive: true });
+    // M107：段背景视频出视口暂停/进视口播放（性能）+ 复制胶囊接线
+    const rmv = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const vids = [...document.querySelectorAll(".secvid")];
+    if (vids.length && "IntersectionObserver" in window) {
+      const vio = new IntersectionObserver((es) => es.forEach((e) => {
+        const v = e.target;
+        if (rmv) { v.pause(); return; }
+        if (e.isIntersecting) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } else v.pause();
+      }), { threshold: 0.06 });
+      vids.forEach((v) => vio.observe(v));
+    }
+    const cbtn = document.getElementById("copycmd");
+    if (cbtn) cbtn.onclick = () => {
+      const code = document.getElementById("installcmd");
+      const done = () => { cbtn.textContent = "✓"; setTimeout(() => { cbtn.textContent = t("copy_btn"); }, 1200); };
+      try { navigator.clipboard.writeText((code || {}).textContent || "").then(done).catch(done); } catch { done(); }
+    };
     document.querySelectorAll("[data-app]").forEach((b) => b.addEventListener("click", () => {
       history.replaceState(null, "", location.pathname + "?app=" + b.dataset.app + "#play");
       renderProto();
