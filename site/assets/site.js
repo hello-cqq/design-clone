@@ -9,7 +9,6 @@
     en: {
       nav_home: "Home", nav_gallery: "Gallery",
       h1a: "Clone any app into", h1b: "a playable prototype.",
-      install_label: "Install",
       exp_title: "Try it live", exp_note: "hosted on GitHub Pages · tap, play, export",
       feat_h: "Feature demos", guide_h: "Guide", start_h: "Install in one command",
       f_a_t: "Mobile GUI capture", f_b_t: "Douyin / RED links", f_c_t: "Desktop GUI capture", f_d_t: "Website links", top_h: "Top prototypes", more: "More",
@@ -18,12 +17,11 @@
       proto_tags: "Tags", ft_note: "MIT · prototypes carry their own license · brand replicas are unofficial study works",
       empty: "No prototypes yet — be the first:",
       ph_gal: "Act II · pick a world", gal_h: "Every clone, one shelf", ph_proto: "Act III · step inside", ph_guide: "Backstage · how it works", ph_start: "Act I · take it home",
-      gal_q: "search name or tag…", hero_h1: "clone any app into a", hero_h2: "playable prototype", hero_sub: "an agent skill · captures real apps, sites or links · rebuilds them as living local web prototypes with design assets", proto_h: "Play, inspect, export", cue_see: "slide into the gallery", cue_play: "step inside one", cue_clone: "see how it clones", cue_start: "take it home",
+      gal_q: "search name or tag…", hero_h1: "clone any app into a", hero_h2: "playable prototype", s1_eye: "after the rain · first light", s2_eye: "dusk that is also dawn", s2_t: "Dislocated Spacetime", s2_d: "an AI companion world: two voices, one sea, a thread between night and morning. step in and talk.", s2_b: "step inside", s3_eye: "noon · wind through grass ears", s3_t: "Animal Paradise", s3_d: "a zootopia-grade 3D town where a fennec fox waves at you: pet, sing, build, wander the map.", s3_b: "wave back", s4_eye: "night rain front · three familiar worlds", s4_t: "Study replicas, faithfully cloned", m_wechat: "paper-plane cloud", m_lark: "birds across the moon", m_aliyun: "sea of clouds", w_wechat: "WeChat", w_lark: "Lark", w_aliyun: "Aliyun", cue_shikong: "follow the thread", cue_petpark: "the grass is calling", cue_trio: "city lights ahead", cue_tail: "the shelf below", door_cue: "open the door · full gallery", back_story: "← back to the story", hero_sub: "an agent skill · captures real apps, sites or links · rebuilds them as living local web prototypes with design assets", proto_h: "Play, inspect, export", cue_see: "slide into the gallery", cue_play: "step inside one", cue_clone: "see how it clones", cue_start: "take it home",
     },
     zh: {
       nav_home: "首页", nav_gallery: "画廊",
       h1a: "把任意应用克隆成", h1b: "可玩的原型。",
-      install_label: "安装",
       exp_title: "在线体验", exp_note: "GitHub Pages 托管 · 可点可玩可导出",
       feat_h: "功能演示", guide_h: "指南", start_h: "一条命令安装",
       f_a_t: "手机 GUI 抓取", f_b_t: "抖音 / 小红书链接", f_c_t: "桌面 GUI 抓取", f_d_t: "网站链接", top_h: "精选原型", more: "更多",
@@ -32,7 +30,7 @@
       proto_tags: "标签", ft_note: "MIT · 原型各自携带许可 · 品牌复刻为非官方学习作品",
       empty: "暂无原型——成为第一个：",
       ph_gal: "第二幕 · 挑选一个世界", gal_h: "所有复刻，同一面墙", ph_proto: "第三幕 · 走进原型", ph_guide: "幕后 · 它如何工作", ph_start: "第一幕 · 带它回家",
-      gal_q: "搜索名称或标签…", hero_h1: "把任意应用克隆为", hero_h2: "可玩原型", hero_sub: "一个 agent skill · 捕获真实应用/网站/链接 · 重建为带设计资产的活本地原型", proto_h: "可玩 · 可查 · 可导出", cue_see: "滑进画廊", cue_play: "走进一个原型", cue_clone: "看它如何克隆", cue_start: "带它回家",
+      gal_q: "搜索名称或标签…", hero_h1: "把任意应用克隆为", hero_h2: "可玩原型", s1_eye: "雨后 · 初光", s2_eye: "黄昏即黎明", s2_t: "错位时空", s2_d: "一个 AI 陪伴世界：两种声音、同一片海、夜与晨之间的一线红。进来说话。", s2_b: "走进去", s3_eye: "正午 · 草耳风", s3_t: "动物乐园", s3_d: "疯狂动物城级 3D 小镇：耳廓狐朝你挥手——抚摸、唱歌、搭建、逛地图。", s3_b: "挥回去", s4_eye: "夜雨锋 · 三个熟悉的世界", s4_t: "学习复刻 · 忠实克隆", m_wechat: "纸飞机云", m_lark: "掠月鸟群", m_aliyun: "云海山", w_wechat: "微信", w_lark: "飞书", w_aliyun: "阿里云", cue_shikong: "顺着红线", cue_petpark: "草在叫你", cue_trio: "前方都市灯", cue_tail: "下面的架子", door_cue: "推开门 · 完整画廊", back_story: "← 回到故事", hero_sub: "一个 agent skill · 捕获真实应用/网站/链接 · 重建为带设计资产的活本地原型", proto_h: "可玩 · 可查 · 可导出", cue_see: "滑进画廊", cue_play: "走进一个原型", cue_clone: "看它如何克隆", cue_start: "带它回家",
     },
   };
 
@@ -92,12 +90,13 @@
       secs.forEach((s) => { const bg = s.querySelector(".secbg"); if (bg) { const r = s.getBoundingClientRect(); bg.style.transform = `translateY(${(r.top * -0.06).toFixed(1)}px)`; } });
     };
     addEventListener("scroll", () => { if (tick) return; tick = true; requestAnimationFrame(() => { paint(); tick = false; }); }, { passive: true });
+    document.querySelectorAll("[data-app]").forEach((b) => b.addEventListener("click", () => {
+      history.replaceState(null, "", location.pathname + "?app=" + b.dataset.app + "#play");
+      renderProto();
+      document.getElementById("play").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    }));
     new MutationObserver(() => paint()).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     paint();
-    for (const [a, b] of [["copycmd0", "installcmd0"], ["copycmd", "installcmd"]]) {
-      const btn = document.getElementById(a), src = document.getElementById(b);
-      if (btn && src) btn.onclick = () => { navigator.clipboard && navigator.clipboard.writeText(src.textContent || ""); btn.textContent = "✓"; setTimeout(() => (btn.textContent = "copy"), 1200); };
-    }
   }
   /* M104-W5：无边界叙事——滚动感知页眉 / IO reveal+素描扫显 / View Transitions 页间过渡 */
   function wireNarrative() {
@@ -222,7 +221,7 @@
   async function renderFeatured() {
     const idx = await loadIndex();
     const boost = (a) => (a.app === "ai-assistant" ? 1e9 : 0) + (a.downloads || 0); // M75-W3: 智能助理置顶精选
-    const apps = (idx.apps || []).slice().sort((a, b) => boost(b) - boost(a)).slice(0, 4);
+    const apps = (["ai-assistant", "petpark", "wechat", "lark", "aliyun-console"].map((sl) => (idx.apps || []).find((a) => a.app === sl)).filter(Boolean)) // M106：首页尾精选=叙事序
     await loadThumbs();
     const el = document.getElementById("featured");
     if (el) el.innerHTML = apps.map(card).join("");
@@ -517,6 +516,8 @@
   document.addEventListener("DOMContentLoaded", () => {
     { // M105-W2：单页 hash 参数（#play&app=x）提升为 search，复用既有渲染逻辑
       const h = location.hash || "";
+      const SECMAP = { see: "tail", clone: "play", start: "tail", gallery: "tail" };
+      { const sec0 = h.slice(1).split("&")[0]; if (SECMAP[sec0]) history.replaceState(null, "", location.pathname + "#" + SECMAP[sec0]); }
       if (h.includes("&")) {
         const [sec, ...rest] = h.slice(1).split("&");
         const qs = rest.join("&");
@@ -558,13 +559,9 @@
       e.preventDefault();
       try { await clientZip(dlb.dataset.app); } catch {}
     });
-    const code0 = document.getElementById("installcmd") || document.getElementById("installcmd0");
 
-    const STABLE_CMD = "curl -fsSL https://raw.githubusercontent.com/hello-cqq/design-clone/main/install.sh | bash";
-    if (code0) code0.textContent = STABLE_CMD;
-    { const e0 = document.getElementById("installcmd0"); if (e0) e0.textContent = code0.textContent; }
     const cp = document.getElementById("copycmd");
-    if (cp) cp.onclick = () => { const done = () => { cp.textContent = "✓"; setTimeout(() => (cp.textContent = "copy"), 1200); }; try { navigator.clipboard.writeText(document.getElementById("installcmd").textContent).then(done).catch(done); } catch { done(); } };
+    // M106-W1：安装引导全链路删除（copy 接线一并移除）
 
   });
 })();

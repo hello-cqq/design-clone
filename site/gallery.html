@@ -1,13 +1,49 @@
 <!doctype html>
+<html lang="en" data-theme="dark">
+<head>
 <meta charset="utf-8">
-<title>design-clone · redirect</title>
-<script>
-// M105-W2：单页合一重定向 stub（保旧链接/e2e 迁移期）
-var map = { "gallery.html": "see", "proto.html": "play", "guide.html": "clone", "start.html": "start" };
-var sec = map[location.pathname.split("/").pop()] || "prologue";
-var q = new URLSearchParams(location.search);
-var h = "#" + sec;
-if (q.get("app")) h += "&app=" + encodeURIComponent(q.get("app"));
-if (q.get("q")) h += "&q=" + encodeURIComponent(q.get("q"));
-location.replace("index.html" + h);
-</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:title" content="gallery — design-clone">
+<meta property="og:description" content="Every clone on one shelf: playable prototypes with design assets.">
+<meta property="og:image" content="https://hello-cqq.github.io/design-clone/assets/logo-mark.png">
+<title>Gallery — design-clone</title>
+<link rel="icon" type="image/png" media="(prefers-color-scheme: light)" href="assets/favicon.png">
+<link rel="icon" type="image/png" media="(prefers-color-scheme: dark)" href="assets/favicon-dark.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body class="galpage">
+<div class="skycanvas" aria-hidden="true"></div>
+<header class="top"><div class="wrap">
+  <a class="logo" href="index.html"></a>
+  <span class="sp"></span>
+  <div class="utilcluster">
+    <button class="iconbtn" id="langbtn">中文</button>
+    <button class="iconbtn" id="themebtn"></button>
+    <a class="iconbtn ghbtn" href="https://github.com/hello-cqq/design-clone" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38.01-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg><span class="ghlabel">GitHub</span><span class="starbadge" id="starbadge">★ 0</span></a>
+  </div>
+</div></header>
+<main class="galmain">
+  <div class="sketch" style="right:5%;top:64px;width:200px;height:300px" aria-hidden="true"><img src="assets/sketch-hx.png" alt=""></div>
+  <div class="wrap galwrap">
+    <a class="backcue" href="index.html#tail" data-i18n="back_story">← back to the story</a>
+    <div class="pagehead pagehead--left"><span class="eyebrow" data-i18n="ph_gal">Act II · pick a world</span><div class="ph-title" data-i18n="gal_h">Every clone, one shelf</div></div>
+    <div class="filters">
+      <input id="q" type="search" placeholder="search name or tag…" data-i18n-ph="gal_q">
+      <select id="sort"><option value="dl" data-i18n="gal_sort_dl">most downloads</option><option value="new" data-i18n="gal_sort_new">newest</option><option value="az" data-i18n="gal_sort_az">A→Z</option></select>
+      <div class="qsuggest" id="qsuggest" hidden></div>
+    </div>
+    <div class="tagactive" id="tagactive"></div>
+    <div class="tagrow" id="tagrow"></div>
+    <div class="cards" id="cards"></div>
+  </div>
+</main>
+<footer class="ft">
+  <div class="ft-sky" aria-hidden="true"></div>
+  <div class="ft-in"><span class="ftbrand"></span>
+  <span data-i18n="ft_note">MIT · prototypes carry their own license · brand replicas are unofficial study works</span>
+  </div></footer>
+<script src="assets/zipstore.site.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

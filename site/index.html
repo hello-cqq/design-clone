@@ -25,43 +25,69 @@
 </div></header>
 <nav class="rail" aria-label="sections">
   <button data-sec="prologue" title="prologue"><i></i></button>
-  <button data-sec="see" title="see"><i></i></button>
+  <button data-sec="shikong" title="dislocated spacetime"><i></i></button>
+  <button data-sec="petpark" title="animal paradise"><i></i></button>
+  <button data-sec="trio" title="replicas"><i></i></button>
   <button data-sec="play" title="play"><i></i></button>
-  <button data-sec="clone" title="clone"><i></i></button>
-  <button data-sec="start" title="start"><i></i></button>
+  <button data-sec="tail" title="shelf"><i></i></button>
+  <a class="railgal" href="gallery.html" title="gallery"><i></i></a>
 </nav>
 <main>
-<section id="prologue" data-season="dawn" class="sec">
+<section id="prologue" data-season="dawn" class="sec sec-char">
   <div class="secbg" style="--bgimg:url(/assets/sk-dawn.png)" aria-hidden="true"></div>
-  <div class="heroambient" aria-hidden="true">
-    <video muted loop playsinline preload="metadata" poster="assets/xinghai-idle-poster.webp">
-      <source src="assets/xinghai-idle.webm" type="video/webm">
-    </video>
-  </div>
-  <img class="motif" src="assets/character-xinghai.png" alt="">
-  <div class="ident" id="ident" title="replay" data-rv></div>
-  <div class="herotext" data-rv>
+  <div class="charwrap char-right" data-rv><img class="bigchar" src="assets/char-rain.png" alt=""></div>
+  <div class="wrap secinner panel-left" data-rv>
+    <span class="eyebrow" data-i18n="s1_eye">after the rain · first light</span>
     <h1><span data-i18n="hero_h1">clone any app into a</span> <em data-i18n="hero_h2">playable prototype</em></h1>
     <p class="sub" data-i18n="hero_sub">an agent skill · captures real apps, sites or links · rebuilds them as living local web prototypes with design assets</p>
-    <div class="installbox"><span data-i18n="install_label">install</span><code id="installcmd0"></code><button class="pillbtn" id="copycmd0">copy</button></div>
   </div>
-  <a class="cue" href="#see" aria-label="continue"><img src="assets/sk-cue.png" alt=""><span data-i18n="cue_see">slide into the gallery</span></a>
+  <div class="thread" aria-hidden="true"></div>
+  <a class="cue" href="#shikong" aria-label="continue"><img src="assets/sk-cue.png" alt=""><span data-i18n="cue_shikong">follow the thread</span></a>
 </section>
 
-<section id="see" data-season="noon" class="sec">
-  <div class="secbg" style="--bgimg:url(/assets/sk-noon.png)" aria-hidden="true"></div>
-  <div class="sketch seccorner" style="right:4%;top:8%;width:220px;height:220px" aria-hidden="true"><img src="assets/sk-corner.png" alt=""></div>
-  <div class="wrap secinner" data-rv>
-    <div class="pagehead pagehead--left"><span class="eyebrow" data-i18n="ph_gal">Act II · pick a world</span><div class="ph-title" data-i18n="gal_h">Every clone, one shelf</div></div>
-    <div class="filters">
-      <input id="q" type="search" placeholder="search name or tag…" data-i18n-ph="gal_q">
-      <select id="sort"><option value="dl" data-i18n="gal_sort_dl">most downloads</option><option value="new" data-i18n="gal_sort_new">newest</option><option value="az" data-i18n="gal_sort_az">A→Z</option></select>
-      <div class="qsuggest" id="qsuggest" hidden></div>
-    </div>
-    <div class="tagactive" id="tagactive"></div>
-    <div class="tagrow" id="tagrow"></div>
-    <div class="cards" id="cards"></div>
+<section id="shikong" data-season="dusk" class="sec sec-char">
+  <div class="secbg" style="--bgimg:url(/assets/sk-dusk.png)" aria-hidden="true"></div>
+  <div class="charwrap char-left" data-rv><img class="bigchar" src="assets/char-rift.png" alt=""></div>
+  <div class="wrap secinner panel-right" data-rv>
+    <span class="eyebrow" data-i18n="s2_eye">dusk that is also dawn</span>
+    <div class="ph-title" data-i18n="s2_t">Dislocated Spacetime</div>
+    <p class="sub" data-i18n="s2_d">an AI companion world: two voices, one sea, a thread between night and morning. step in and talk.</p>
+    <button class="worldbtn" data-app="ai-assistant" data-i18n="s2_b">step inside</button>
   </div>
+  <div class="thread" aria-hidden="true"></div>
+  <a class="cue" href="#petpark" aria-label="continue"><img src="assets/sk-cue.png" alt=""><span data-i18n="cue_petpark">the grass is calling</span></a>
+</section>
+
+<section id="petpark" data-season="noon" class="sec sec-char">
+  <div class="secbg" style="--bgimg:url(/assets/sk-noon.png)" aria-hidden="true"></div>
+  <div class="charwrap char-right" data-rv><img class="bigchar" src="assets/char-fox.png" alt=""></div>
+  <div class="wrap secinner panel-left" data-rv>
+    <span class="eyebrow" data-i18n="s3_eye">noon · wind through grass ears</span>
+    <div class="ph-title" data-i18n="s3_t">Animal Paradise</div>
+    <p class="sub" data-i18n="s3_d">a zootopia-grade 3D town where a fennec fox waves at you: pet, sing, build, wander the map.</p>
+    <button class="worldbtn" data-app="petpark" data-i18n="s3_b">wave back</button>
+  </div>
+  <div class="thread" aria-hidden="true"></div>
+  <a class="cue" href="#trio" aria-label="continue"><img src="assets/sk-cue.png" alt=""><span data-i18n="cue_trio">city lights ahead</span></a>
+</section>
+
+<section id="trio" data-season="night" class="sec">
+  <div class="secbg" style="--bgimg:url(/assets/sk-city.png)" aria-hidden="true"></div>
+  <div class="wrap secinner panel-center" data-rv>
+    <span class="eyebrow" data-i18n="s4_eye">night rain front · three familiar worlds</span>
+    <div class="ph-title" data-i18n="s4_t">Study replicas, faithfully cloned</div>
+    <div class="triomots" aria-hidden="true">
+      <span class="mot" data-i18n-title="m_wechat"><img src="assets/sk-cue.png" alt=""><i data-i18n="m_wechat">paper-plane cloud</i></span>
+      <span class="mot"><img src="assets/sk-cue.png" alt=""><i data-i18n="m_lark">birds across the moon</i></span>
+      <span class="mot"><img src="assets/sk-cue.png" alt=""><i data-i18n="m_aliyun">sea of clouds</i></span>
+    </div>
+    <div class="worldchips">
+      <button class="worldbtn" data-app="wechat" data-i18n="w_wechat">WeChat</button>
+      <button class="worldbtn" data-app="lark" data-i18n="w_lark">Lark</button>
+      <button class="worldbtn" data-app="aliyun-console" data-i18n="w_aliyun">Aliyun</button>
+    </div>
+  </div>
+  <div class="thread" aria-hidden="true"></div>
   <a class="cue" href="#play" aria-label="continue"><img src="assets/sk-cue.png" alt=""><span data-i18n="cue_play">step inside one</span></a>
 </section>
 
@@ -82,49 +108,20 @@
       </div>
       <aside class="side" id="side"></aside>
     </div>
-  </div>
-  <a class="cue" href="#clone" aria-label="continue"><img src="assets/sk-cue.png" alt=""><span data-i18n="cue_clone">see how it clones</span></a>
-</section>
-
-<section id="clone" data-season="night" class="sec">
-  <div class="secbg" style="--bgimg:url(/assets/sk-night.png)" aria-hidden="true"></div>
-  <div class="wrap secinner" data-rv>
-    <div class="pagehead pagehead--left"><span class="eyebrow" data-i18n="ph_guide">Backstage · how it works</span><div class="ph-title" data-i18n="guide_h">Guide</div></div>
     <div class="ftabs" id="ftabs"></div>
     <div id="animstage"></div>
-    <div class="grid3">
-      <div class="fcard"><div class="tagline">1 · INSTALL</div><h3>One command</h3>
-        <p>Paste the installer for your agent (opencode / claude / codex) or use <code>npx skills add hello-cqq/design-clone -g</code>. See <a href="#start">Install</a>.</p></div>
-      <div class="fcard"><div class="tagline">2 · CLONE</div><h3>Ask your agent</h3>
-        <p>“Use design-clone to clone &lt;app or url&gt;.” The skill captures, rebuilds a playable prototype, runs its gates, and serves it locally.</p></div>
-      <div class="fcard"><div class="tagline">3 · PUBLISH</div><h3 id="publish">Share to the gallery</h3>
-        <p><code>node &lt;skill&gt;/scripts/publish.mjs --run &lt;run&gt; --app &lt;app&gt; --title "…" [--title-zh --desc --desc-zh --tags --version]</code> opens a PR to <a href="https://github.com/hello-cqq/design-clone-prototype" target="_blank" rel="noopener">design-clone-prototype</a>; after review it goes live here with your avatar on it.</p>
-        <p lang="zh">发布一行命令：<code>publish.mjs --run &lt;run&gt; --app &lt;app&gt; --title "…"</code>。生成期已产画廊三件套（双语 meta.json + icon.png + 3:2 cover.png）与设计规格，publish 自动搬运；三门绿+gallery-ready 才放行，PR 经维护者审核后上线并署贡献者头像。</p></div>
-    </div>
-    <div class="grid3">
-      <div class="fcard"><h3>Gates first</h3><p>interact dead=0 · inspect 0 fail · ui-smoke 0 fail · privacy green. CI re-smokes every PR.</p></div>
-      <div class="fcard"><h3>Privacy &amp; IP</h3><p>No real personal data, ever. Three-way IP attestation; brand clones carry a disclaimer.</p></div>
-      <div class="fcard"><h3>Offline bundles</h3><p>Prototypes are static bundles; GitHub Pages serves them as live apps; no runtime CDN.</p></div>
-    </div>
   </div>
-  <a class="cue" href="#start" aria-label="continue"><img src="assets/sk-cue.png" alt=""><span data-i18n="cue_start">take it home</span></a>
+  <a class="cue" href="#tail" aria-label="continue"><img src="assets/sk-cue.png" alt=""><span data-i18n="cue_tail">the shelf below</span></a>
 </section>
 
-<section id="start" data-season="night" class="sec">
-  <div class="sketch" style="right:6%;bottom:16%;width:280px;height:186px" aria-hidden="true"><img src="assets/sk-duo.png" alt=""></div>
+<section id="tail" data-season="night" class="sec">
+  <div class="secbg" style="--bgimg:url(/assets/sk-night.png)" aria-hidden="true"></div>
+  <div class="sketch" style="right:8%;top:10%;width:240px;height:160px" aria-hidden="true"><img src="assets/sk-duo.png" alt=""></div>
+  <div class="sketch doorart" style="left:6%;bottom:12%;width:230px;height:306px" aria-hidden="true"><img src="assets/sk-door.png" alt=""></div>
   <div class="wrap secinner" data-rv>
-    <div class="pagehead pagehead--left"><span class="eyebrow" data-i18n="ph_start">Act I · take it home</span><div class="ph-title" data-i18n="start_h">Install in one command</div></div>
-    <p class="sub">Pick your agent — the command installs the skill globally plus its gate dependencies (Node ≥20.19, Playwright Chromium). Re-run anytime to update.</p>
-    <div class="installbox" style="max-width:900px">
-      <code id="installcmd"></code>
-      <button class="pillbtn" id="copycmd">copy</button>
-    </div>
-    <div class="grid3" style="margin-top:26px">
-      <div class="fcard"><h3>Fast channel</h3><p>Add <code>-- --skip-deps</code> for a seconds-fast install; the skill's <code>doctor</code> will guide dependency install on first gate run.</p></div>
-      <div class="fcard"><h3>Pinned / snapshot</h3><p><code>-- --ref v0.6.0</code> pins a release; <code>-- --channel snapshot</code> tracks prerelease snapshots.</p></div>
-      <div class="fcard"><h3>No CLI / air-gapped</h3><p>Grab the zip from <a href="https://github.com/hello-cqq/design-clone/releases" target="_blank" rel="noopener">Releases</a> and unpack into your agent's skills directory.</p></div>
-    </div>
-    <p style="margin-top:22px;color:var(--mut);font-size:13px">First sentence after install — open your agent and say: <em>“Use design-clone to clone &lt;your app or url&gt;.”</em></p>
+    <div class="pagehead pagehead--left"><span class="eyebrow" data-i18n="ph_gal">the shelf</span><div class="ph-title" data-i18n="gal_h">Every clone, one shelf</div></div>
+    <div class="cards" id="featured"></div>
+    <a class="doorcue" href="gallery.html" data-i18n="door_cue">open the door · full gallery</a>
   </div>
 </section>
 </main>
