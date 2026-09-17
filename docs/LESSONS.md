@@ -226,3 +226,6 @@
 195. M104 风格锚是产品契约不是建议：brief.style_anchor 与实生 prompt 不符=封面/图标错魂（petpark 三锚并存教训）。修：style-anchor 门（manifest 锚指纹）+ cover.mjs 锚拒合成 + manifest 登记强制 style 字段。
 196. M104 并发自伤新形态： ad-hoc 调试服务器（4818/4831/42xx/49xx）长期残留，恰好占据 regress 按 run 分配的端口 → sweep 大批假败（smokeFail/inspectFail 齐飞）。教训：**调试服务器用完即杀；长 sweep 前先 `pgrep -fl http-server` 清场**；假败特征=多 run 同刻齐败且 fail 数杂乱。
 197. M104 变异/演练副本的门证明要避开三个坑：①serve 根必须是 run 根（含 /prototype/ 子路径），serve prototype 目录=壳 404 全超时；②cp -R 会带上旧 qa/inspect.json，读证据前核 `at` 时间戳；③后台 server 用裸 `&` 会随父 shell 死，必须 nohup。门的"盲"判定前先排除这三者。
+198. M105 「暗色接缝」真凶常是 backdrop-filter：透明 background+blur 仍会在视频/艺术背景上切出直角板边（header 未滚动态、installbox）。教训：叠加层要么全透（不 blur），要么形状语义化（pill/圆角+羽化阴影），blur 必配滚动态开关。
+199. M105 测试自身的 artifact 要和真 bug 分清：加载后 JS 改主题会触发 ident bridge/duo 闪（视频看似不播），而真实用户主题在 parse 前由 localStorage 决定——复现主题类缺陷必须 addInitScript 前置；否则会把设计内桥接当 bug 修。
+200. M105 单页合一的契约迁移清单：旧页 id（#expframe/#featured/.navwrap/.animstage 直滚）全部有 e2e 依赖——合页前先 grep e2e 逐条映射（stageframe/expselect/rail/IO 挂载先滚父容器），stub 重定向保旧链；i18n textContent 会抹 em markup→标题拆双 span 各自 data-i18n。
