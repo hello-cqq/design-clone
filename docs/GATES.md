@@ -63,7 +63,7 @@
 - `qa/interact.mjs`——**点每个控件**并断言可观测变化（`dead=0`，hard）。
 - `qa/inspect.mjs`——硬门：live-views、placeholder-scan、asset-qa、layout-sanity、privacy-anon、paths-sanity（方向/回边/互反）、appicon-present、structural-critique、parity、**design-artifacts**、**gallery-ready**、**pasted-screenshot**、**view-weight-budget**、art-depth、brief-director、sel-ring-align；consoleErrors/requestfailed=warn 列。
 - `qa/ui-smoke.mjs`——点外壳：播放/导出下载(含设计规格断言)/分享/设备/标注写/产品写/变体写/画布标签排版/`?chrome=0`/过滤/帮助/代码视图/**canvas-text-budget**/**wire-ink**/**wire-label-lite**/**tree-dir-clean**/**path-rows-all**/**cover-geometry**/**export-design-artifacts**。
-- `qa/parity.mjs`——逐控件/交互覆盖（control≥0.8、interaction≥0.9，hard；存量 cutoff 前=warn+`report/parity-debt.md` 公示）。
+- `qa/parity.mjs`——逐控件/交互覆盖（control≥0.8、interaction≥0.9，hard；存量 cutoff 前=warn+`docs/QA/parity-debt.md` 公示）。
 - `fidelity.mjs` / `qa/fidelity-all.mjs`——与源像素 diff（view↔capture 正确配对）+ 样式 parity（hard>0.40 未 waive）。
 - `qa/critique.mjs`——VLM 结构 critique（像素指标对稀疏浅色 UI 结构盲）。
 - `qa/privacy.mjs`——真名/脸/PII 必须匿名或 genimg 替换（hard）；**consent 红线实际执法点在 `clone.mjs` 采集期**（无 `knowledge/consent.json` 拒绝启动 GUI 捕获）。

@@ -43,7 +43,7 @@
 | 4812 | Paimomo · 宠物陪护（新·抖音） | http://localhost:4812/prototype/ |
 | 4814 | Mac App Store（新·桌面） | http://localhost:4814/prototype/ |
 | 4211 | 官网 | http://localhost:4211/ |
-| — | softer-xhs | 待 headed 登录续跑（§2） |
+| 4810 | SOFTER · 情绪记录（新·小红书） | http://localhost:4810/prototype/ |
 
 ## 8. M111 增补（链接原型做深做细）
 - 帧库存：ju/paimomo 各 12 帧全过 → screen-inventory.md；screen-coverage 门全绿（ju 9 屏/paimomo 5 屏）。
@@ -52,3 +52,11 @@
 - 门禁：paimomo PASS（50/0）；ju 49/1（仅登记在案的 Chromium scrollWidth 幻影）。
 - 存量影响：regress 子集（demo-assistant/wechat-full）ALL GREEN。
 - softer-xhs：headed 浏览器已起，待用户扫码一次（profile 持久化后免登），捕获自动续跑。
+
+## 9. M112 增补（收尾清债波）
+- softer-xhs 续跑成功：xhs.mjs 修因（共享 profile）+ 短链 404 后经登录态搜索定位 note；10 原图 → 六屏原型（today/checkin/journal/practice/breathe/reflect）。门禁：inspect 48/0、ui-smoke 28/0、screen-coverage 6/6、paths-qa/asset-qa 6/6/privacy/ip-scan 过；外推登记见 demo/softer-xhs/knowledge/DESIGN.md（情绪脸文案×4、End session 幽灵链、周历空日 toast 改静默）。
+- 官网：首页萌萌 74svh→64svh、不透明度 .92/.96→.74/.80、object-position 60%（让位背景视频女主，双主题目检过）；其余章节角色不动。
+- paimomo 资产净化：六宠源帧紧裁 → seedream-4.5 交互编辑（保角色/换纯白底/去 UI 杂质）→ 纯白底几何无缝贴白卡与白圆头像（免抠透明）；健康卡背景 #fbf8f4→#ffffff（源帧实测）；头像芯片补 overflow+圆角。门禁复跑 50/0、asset-qa 7/7、screen-coverage 5/5。
+- 新工具：scripts/img/matte.mjs（flood 边缘泛洪 / global 全局色键 双模 + 羽化）；适用色距足够背景，白毛白底类走几何无缝路（LESSONS 232）。
+- 仓卫生：report/ 账本四件迁 docs/QA/（parity-debt/agent-e2e/site-perf/visual-debt），活引用五处同步（inspect.mjs 注释/GATES/HANDOFF×2/ROADMAP）；report/ 归纯转储区（gitignore 既有）+ tracked 转储 untrack；双仓 secret-scan 过；ip-scan 设计范围=skill 仓（过），proto 仓二进制即产品不适用；site e2e 全绿（NODE_PATH 指 scripts/node_modules 跑）。
+- LESSONS #230–233。

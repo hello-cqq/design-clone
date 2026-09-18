@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M112
+- 收尾清债波：xhs 取材修因（xhs.mjs 挂共享 profile+登录墙话术明示；短链 404 后经登录态搜索续跑）→ SOFTER 六屏完整原型全门绿（inspect 48/0、ui-smoke 28/0、screen-coverage 6/6、asset-qa/privacy/ip-scan/paths-qa 过）；首页萌萌 64svh+降透让位背景视频女主；paimomo 六宠资产净化（源帧紧裁→seedream-4.5 交互编辑换纯白底→几何无缝贴白卡，免抠透明）+健康卡色校正+头像圆角；新增 img/matte.mjs（flood/global 双模泛洪/全局色键）；report/ 账本迁 docs/QA/（parity-debt/agent-e2e/site-perf/visual-debt）+转储 untrack；双仓 secret-scan 过、site e2e 全绿；LESSONS #230–233。
+
 ### M111
 - 链接原型做深做细：帧库存前置（screen-inventory+screen-coverage 门）、提取优先铁律（角色/图标帧裁切零付费）、逐屏并排闭环入 quality-standard 2.7；ju 2→9 屏、paimomo 2→5 屏（含黑狗/褐猫全角色切换）；paimomo PASS、ju 仅余登记在案幻影问题；存量 regress 子集全绿；LESSONS #226–229。
 
