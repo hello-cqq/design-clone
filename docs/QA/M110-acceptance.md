@@ -44,3 +44,11 @@
 | 4814 | Mac App Store（新·桌面） | http://localhost:4814/prototype/ |
 | 4211 | 官网 | http://localhost:4211/ |
 | — | softer-xhs | 待 headed 登录续跑（§2） |
+
+## 8. M111 增补（链接原型做深做细）
+- 帧库存：ju/paimomo 各 12 帧全过 → screen-inventory.md；screen-coverage 门全绿（ju 9 屏/paimomo 5 屏）。
+- 角色资产化：6 宠物（westie/siamese/blackdog/poodle/ragdoll/graycat）+猫 logo+卡通头像，全部帧裁切零付费；paimomo 首页宠物切换覆盖全部角色（含用户点名的黑狗/褐猫）。
+- 视图扩写：ju 2→9 屏、paimomo 2→5 屏；逐屏并排 critique ≥8。
+- 门禁：paimomo PASS（50/0）；ju 49/1（仅登记在案的 Chromium scrollWidth 幻影）。
+- 存量影响：regress 子集（demo-assistant/wechat-full）ALL GREEN。
+- softer-xhs：headed 浏览器已起，待用户扫码一次（profile 持久化后免登），捕获自动续跑。

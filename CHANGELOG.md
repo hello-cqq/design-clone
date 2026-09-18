@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M111
+- 链接原型做深做细：帧库存前置（screen-inventory+screen-coverage 门）、提取优先铁律（角色/图标帧裁切零付费）、逐屏并排闭环入 quality-standard 2.7；ju 2→9 屏、paimomo 2→5 屏（含黑狗/褐猫全角色切换）；paimomo PASS、ju 仅余登记在案幻影问题；存量 regress 子集全绿；LESSONS #226–229。
+
 ### M110
 - 终版回归：存量 5 proto 备份+regress 全绿；模拟用户五场景（coloros PASS/douyin-ju FIX 已知问题/douyin-paimomo PASS/mac-appstore PASS/softer-xhs 登录墙待 headed 续）；skill 修因三件（sync-shell DC.pages 单一真源/capture.sh help/parity-log 库存步）；官网飞鸟带归位+i18n 缺键补齐；验收单 docs/QA/M110-acceptance.md；LESSONS #218–225。
 
