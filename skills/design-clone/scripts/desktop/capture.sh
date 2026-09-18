@@ -11,6 +11,7 @@
 #   bash capture.sh rec <输出.mp4> [秒=10]          # 录屏（ffmpeg avfoundation）
 # Windows 见 references/ios-desktop.md §win。
 set -euo pipefail
+if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ] || [ "${1:-}" = "help" ]; then echo "用法: bash capture.sh check|shot <out.png>|click <x> <y>|type <text>|loop <dir> [间隔秒] [张数]|rec <out.mp4> [秒]"; exit 0; fi
 CMD="${1:?用法: bash capture.sh check|shot|click|type|loop ...}"
 
 case "$CMD" in

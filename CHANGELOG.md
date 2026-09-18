@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M110
+- 终版回归：存量 5 proto 备份+regress 全绿；模拟用户五场景（coloros PASS/douyin-ju FIX 已知问题/douyin-paimomo PASS/mac-appstore PASS/softer-xhs 登录墙待 headed 续）；skill 修因三件（sync-shell DC.pages 单一真源/capture.sh help/parity-log 库存步）；官网飞鸟带归位+i18n 缺键补齐；验收单 docs/QA/M110-acceptance.md；LESSONS #218–225。
+
 ### M109
 - 站点精修二轮：S1 女角更少女重制（身份保真+冷调）+暗色 brightness/saturate 融合；trio 删 triopairs（灭 i18n 空串隐形件）+演示上移与飞鸟云带合并一块+svg 内椭圆降透；手机竖屏适配（≤640 减法布局）；logo 补手写词标 design-clone（亮暗双版透明 png）；站名归一（删动态 document.title）。LESSONS #212–217。
 
