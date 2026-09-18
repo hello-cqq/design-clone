@@ -258,3 +258,7 @@
 227. M111 插入锚用"开标签片段"会把开标签拦腰截断（`<button class="fab"` 后插 div→div 被吞作标签属性、DOM 消失且裸属性文本外露）。教训：插入锚必须整行/整元素；插后 curl+DOM 探针验证。
 228. M111 柔渐变色块与低密颗粒都会被 empty-band 判平带：照片墙/渐变卡须叠颗粒+高光；颗粒资产密度需 stddev≥15（v2：85% 覆盖、alpha 40-130）。
 229. M111 顺序依赖：paths-gen 节点源含 window.DC pages→必须先 sync-shell 再 paths-gen；反序得旧图（2 节点 0 边）。
+230. M112 xhs 取材双真凶：xhs.mjs 用 chromium.launch 不挂共享 profile（headless 必撞登录墙，cookie 明明在盘上）；短链 xhslink 数小时即 404（M110 梯子 L1/L2 失败的后续真因）。修：xhs.mjs 改 launchPersistentContext 共用 /tmp/dc-browser-profile + 登录墙话术明示"扫码+等待+profile 持久化"；短链死后经登录态搜索定位 note id 续跑。教训：登录态是 profile 资产，取材脚本必须共享；短链是易逝资源，note id 才是持久锚。
+231. M112 视图片段被注入壳文档，相对路径以**壳**为基（ju 惯例 src="assets/..."）；写 ../assets/ 全 404。ui-smoke 还要求每视图有 data-dc 根标记（annotate 三检查的前置）。教训：新 run 动手前先读存量 run 的视图约定（路径/标记/外壳注入模型），不从视图文件位置猜相对路径。
+232. M112 同色系主体+同色系背景（白毛宠物/白卡、torus/淡紫底）抠透明必败：泛洪从边入，白毛连白底必漏；全局色键色距太近误杀高光。可靠路=seedream 交互编辑换纯白底+**几何无缝**（纯白底图贴白卡/白圆，免 alpha）；色距足够的背景才用 matte.mjs（flood/global 双模）。教训：先问"放置面是否单色"——是则用几何换无缝，不与 alpha 硬战。
+233. M112 仓根 report/ 混放运行时转储与持久账本：账本（parity-debt/agent-e2e/site-perf/visual-debt）迁 docs/QA/，report/ 归纯转储区（.gitignore 早有规则，tracked 遗留是加规则前误提交）。教训：gitignore 只约束未来不清理过去；加忽略规则应同提交 git rm --cached 清存量。

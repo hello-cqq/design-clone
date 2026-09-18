@@ -122,7 +122,7 @@ await page.waitForTimeout(700);
     const lowCov = Object.entries(parity).filter(([k, v]) => v.mode !== "na" && v.control_coverage != null && v.control_coverage < 0.8).map(([k, v]) => k + ":ctrl-cov-" + v.control_coverage.toFixed(2));
     if (bad.length) throw new Error(bad.length + " parity-fail: " + bad.slice(0, 4).join(","));
     // M49：控件覆盖/交互覆盖=存量保真债。M49 门落地后新建 run 硬拦（demo-orbit 已证新管线达标）；
-    // 存量 run 记 warn 并进 report/parity-debt.md 公示，不清债不删门。
+    // 存量 run 记 warn 并进 docs/QA/parity-debt.md 公示，不清债不删门。
     let legacy = false;
     legacy = runCreatedMs(values.run) < 1788998400000;
     if (lowCov.length) {

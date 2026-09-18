@@ -18,7 +18,7 @@ if (process.argv.includes("--help") || process.argv.includes("-h")) {
 }
 const { positionals, values } = parseArgs({
   allowPositionals: true,
-  options: { out: { type: "string" }, headed: { type: "boolean", default: false }, "wait-login": { type: "string", default: "90" } },
+  options: { out: { type: "string" }, headed: { type: "boolean", default: false }, "wait-login": { type: "string", default: "90" }, profile: { type: "string" } },
 });
 let url = positionals[0];
 const out = path.resolve(values.out || ".");
@@ -34,12 +34,15 @@ if (url.includes("xhslink.com") || url.includes("xhslink.cn")) {
 }
 const noteId = (url.match(/explore\/([a-f0-9]+)|discovery\/item\/([a-f0-9]+)|\/([a-f0-9]{24})/i) || []).filter(Boolean)[1] || "";
 
-const browser = await chromium.launch({ headless: !values.headed });
-const ctx = await browser.newContext({
+// M112：与 web-sim 共用持久 profile（登录一次长期免登）；无 profile 时回落临时 context
+const PROFILE = path.resolve(values.profile || "/tmp/dc-browser-profile");
+const browser = await chromium.launchPersistentContext(PROFILE, {
+  headless: !values.headed,
   userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
   viewport: { width: 1280, height: 900 },
 });
-const page = await ctx.newPage();
+const ctx = browser;
+const page = ctx.pages()[0] || (await ctx.newPage());
 await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45000 }).catch(() => {});
 
 const readNote = () => page.evaluate((id) => {
@@ -59,7 +62,7 @@ const readNote = () => page.evaluate((id) => {
 
 let note = await readNote();
 if (!note && values.headed) {
-  console.log("⏸ 可能需要登录：请在打开的浏览器里登录小红书，登录后自动继续…");
+  console.log(`⏸ 需要登录：请在弹出的浏览器窗口扫码/登录小红书；本进程将等待 ${values["wait-login"]} 秒并自动轮询，登录成功后 profile 持久化、之后免登。请勿关闭窗口…`);
   const deadline = Date.now() + (+values["wait-login"] * 1000);
   while (!note && Date.now() < deadline) { await page.waitForTimeout(3000); note = await readNote(); }
 }

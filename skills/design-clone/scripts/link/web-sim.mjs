@@ -180,7 +180,7 @@ while (!note && Date.now() < deadline) {
   if (!note) {
     if (!asked) {
       asked = true;
-      console.log("⏸ 若出现登录/验证弹窗，请在浏览器中完成登录（profile 会记住，之后免登），自动轮询中…");
+      console.log(`⏸ 需要登录：请在弹出的浏览器窗口完成扫码/登录；本进程将等待并自动轮询（--wait-login 秒），登录成功后 profile 持久化、之后免登。请勿关闭窗口…`);
       if (!values.headed) console.log("（headless 模式下请改用 --headed 重试）");
     }
     await page.waitForTimeout(3000);

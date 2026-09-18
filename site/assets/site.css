@@ -541,6 +541,9 @@ html { scroll-snap-type: y proximity; }
   -webkit-mask-image: radial-gradient(72% 66% at 50% 46%, #000 52%, transparent 88%); mask-image: radial-gradient(72% 66% at 50% 46%, #000 52%, transparent 88%);
   filter: drop-shadow(0 30px 60px color-mix(in srgb, var(--ink) 18%, transparent)); }
 :root[data-theme="dark"] .charwrap .bigchar { opacity: .96; }
+/* M112-W1：首页萌萌让位背景视频女主——缩小+降透+右移，其余章节角色不动 */
+#prologue .charwrap .bigchar { opacity: .74; object-position: 60% 100%; }
+:root[data-theme="dark"] #prologue .charwrap .bigchar { opacity: .8; }
 .charwrap { opacity: 0; transform: translateY(34px) scale(.985); transition: opacity 1s ease, transform 1.1s cubic-bezier(.22, .9, .32, 1); }
 .charwrap.rv-in { opacity: 1; transform: none; }
 .char-left { order: -1; }
@@ -677,7 +680,7 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 55; pointer-even
 :root[data-theme="dark"] .mengslot img { filter: saturate(.86) contrast(.99) drop-shadow(0 0 22px rgba(143, 208, 255, .10)); }
 .meng2 { left: 33%; bottom: 4.5%; width: min(21vw, 290px); rotate: -1.6deg; }
 .meng3 { right: 20%; bottom: 9%; width: min(22vw, 290px); rotate: 1.4deg; }
-#prologue .charwrap { height: min(74svh, 760px); }
+#prologue .charwrap { height: min(64svh, 640px); }
 @media (max-width: 860px) { .meng2 { width: 40vw; left: 4%; } .meng3 { height: 34svh; right: 6%; } }
 .meng3 { width: auto; height: min(42svh, 430px); right: 18%; bottom: 8%; }
 .meng3 img { width: auto; height: 100%; }
