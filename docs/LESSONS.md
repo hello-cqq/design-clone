@@ -254,3 +254,7 @@
 223. M110 --skip-capture 脚手架不生 knowledge/tokens.css→壳 404 成 console error、stab 门红。教训：脚手架后核 tokens.css/privacy.json/source-map.json 三件套。
 224. M110 Chromium scrollWidth 幻影例：某 absolute 根+overflow 双值组合下 #dc-stage scrollWidth 比任何可见盒大 62px；删子/伪元素/overflow/contain/clip 全法医手段不复原源头，仅隐藏 stage 自身归零。教训：门红与法医矛盾时带复现记录登记已知问题，不烧整夜。
 225. M110 emoji 门 full  tier：⚙/☏/♡ 等 Unicode 符号被判 emoji；UI 图标用文字或 SVG。
+226. M111 「只有两页、不细腻」三真凶：未过全部帧就誊写（漏屏）、CSS 近似角色（背叛保真）、无逐屏并排闭环（首稿无人验收）。修：帧库存前置法+提取优先铁律+逐屏并排循环入 quality-standard 2.7；新增 screen-coverage 硬门（清单每屏必有视图）。
+227. M111 插入锚用"开标签片段"会把开标签拦腰截断（`<button class="fab"` 后插 div→div 被吞作标签属性、DOM 消失且裸属性文本外露）。教训：插入锚必须整行/整元素；插后 curl+DOM 探针验证。
+228. M111 柔渐变色块与低密颗粒都会被 empty-band 判平带：照片墙/渐变卡须叠颗粒+高光；颗粒资产密度需 stddev≥15（v2：85% 覆盖、alpha 40-130）。
+229. M111 顺序依赖：paths-gen 节点源含 window.DC pages→必须先 sync-shell 再 paths-gen；反序得旧图（2 节点 0 边）。
