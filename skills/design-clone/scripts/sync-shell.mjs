@@ -49,6 +49,21 @@ for (const dir of dirs) {
   // M44f: __VIEW_CSS__ 以组件库为唯一源重建（库更新可传播到存量 run），不再沿用 run 内烘焙旧 css
   let shell = "c_mobile";
   try { shell = JSON.parse(mDC[1]).shell || "c_mobile"; } catch {}
+  // M110：DC.pages 以 pages/*.spec.json 为单一真源重修（脚手架空注入不再沿用——模拟用户跑出的真缺口）
+  let dcJson = mDC[1].trim();
+  try {
+    const pdir = path.join(dir, "pages");
+    if (fs.existsSync(pdir)) {
+      const specs = fs.readdirSync(pdir).filter((f) => f.endsWith(".spec.json")).sort()
+        .map((f) => JSON.parse(fs.readFileSync(path.join(pdir, f), "utf8")));
+      if (specs.length) {
+        const pages = specs.map((s) => ({ id: s.meta.page_id, name: s.meta.page_name, fidelity: "live-high" }));
+        shell = specs[0].meta.surface || shell;
+        const dcObj = JSON.parse(mDC[1]); dcObj.pages = pages; dcObj.shell = shell;
+        dcJson = JSON.stringify(dcObj);
+      }
+    }
+  } catch {}
   const CSSFOR = { c_mobile: "mobile-im.css", mobile: "mobile-im.css", c_tablet: "mobile-im.css", tablet: "mobile-im.css", c_desktop: "desktop-app.css", desktop: "desktop-app.css", c_browser: "web-marketing.css", c_browser2: "web-marketing.css", web: "web-marketing.css" };
   const cssFile = path.join(TPL, "../components", CSSFOR[shell] || "mobile-im.css");
   const libCss = fs.existsSync(cssFile) ? fs.readFileSync(cssFile, "utf8") : "";
@@ -66,7 +81,7 @@ for (const dir of dirs) {
   const html = tplIndex
     .replaceAll("__TITLE__", title)
     .replaceAll("__VIEW_CSS__", viewCss)
-    .replaceAll("__DC_JSON__", mDC[1].trim())
+    .replaceAll("__DC_JSON__", dcJson)
     .replaceAll("__BUILD__", buildHash);
   fs.writeFileSync(old, html);
   fs.copyFileSync(path.join(TPL, "inspector.css"), path.join(dir, "inspector.css"));

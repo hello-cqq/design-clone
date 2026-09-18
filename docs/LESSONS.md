@@ -246,3 +246,11 @@
 215. M109 抠白词标底噪：alpha=(255-lum) 线性映射把纸纹噪点留成低 alpha  veil→暗色头部出现矩形底。教训：抠白必须带噪点阈值（a<60 清零）再 gamma 拉升；暗色版重着色前先看噪。
 216. M109 seedream pro 尺寸下限 921600 像素：1536x256 词标直接拒。教训：横幅类资产按 ≥1024x1024 等效像素取尺寸（2048x512 过）。
 217. M109 手机竖屏先减后排：小屏第一动作是隐藏次要角色/母题（meng2/door/rail），再缩主角色入角落做前景，文案永远 z 上位+胶囊省略号；transform:scale 不缩布局盒→svg 小屏改 width:100% height:auto。
+218. M110 脚手架空注入静默沿用：index.html 的 window.DC pages 空被 sync-shell 原样沿用→inspector boot 缺 DC.pages 连锁硬红。教训：脚手架注入项必须有单一真源重修点（sync-shell 现以 pages/*.spec.json 重修）；门禁成片硬红先查数据注入项是否为空。
+219. M110 paths-gen 节点源=capture graph：视图 id 与 graph 节点不齐=场景树挂无视图死页（页 chip 点击=死控件）。教训：誊写完视图先与 graph 节点对齐 id（或把 graph 裁剪到 scope 页）再 paths-gen。
+220. M110 parity 库存步是 agent 职责：link/desktop 源无 ui-tree 时 parity mode=none 直接硬红；qa/parity-log.md（控件库存对照）是设计内回落。教训：视图写完随附 parity-log。
+221. M110 link 源 fidelity 别拿合成帧当源屏：笔记帧=营销合成图（黑底+机模），直作 screens 则 r 恒 >.4；裁真机区域再做 capture/screens。
+222. M110 视图内 position:fixed=相对视口→溢出 390 设备壳（no-h-overflow 硬红）；视图内浮层一律 absolute（根为视图）。button 挂 data-act="input" 焦点无可观测反应=死控件；input 语义给 input 或改 dialog。
+223. M110 --skip-capture 脚手架不生 knowledge/tokens.css→壳 404 成 console error、stab 门红。教训：脚手架后核 tokens.css/privacy.json/source-map.json 三件套。
+224. M110 Chromium scrollWidth 幻影例：某 absolute 根+overflow 双值组合下 #dc-stage scrollWidth 比任何可见盒大 62px；删子/伪元素/overflow/contain/clip 全法医手段不复原源头，仅隐藏 stage 自身归零。教训：门红与法医矛盾时带复现记录登记已知问题，不烧整夜。
+225. M110 emoji 门 full  tier：⚙/☏/♡ 等 Unicode 符号被判 emoji；UI 图标用文字或 SVG。
