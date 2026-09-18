@@ -29,3 +29,18 @@
 
 ## 6. 过夜服务矩阵（W8，明早 check）
 见收尾消息 URL 清单；服务为 nohup 静态 serve，机器不眠即存活。
+
+## 7. 过夜 URL 清单（/prototype/ 为原型入口）
+| 端口 | 原型 | URL |
+|---|---|---|
+| 4801 | 错位时空（ai-assistant） | http://localhost:4801/prototype/ |
+| 4806 | 动物乐园（petpark） | http://localhost:4806/prototype/ |
+| 4802 | 微信（wechat） | http://localhost:4802/prototype/ |
+| 4204 | 飞书（lark） | http://localhost:4204/prototype/ |
+| 4202 | 阿里云（aliyun-console） | http://localhost:4202/prototype/ |
+| 4813 | ColorOS 17 官网（新） | http://localhost:4813/prototype/ |
+| 4811 | 每一迹 · 资产记录（新·抖音） | http://localhost:4811/prototype/ |
+| 4812 | Paimomo · 宠物陪护（新·抖音） | http://localhost:4812/prototype/ |
+| 4814 | Mac App Store（新·桌面） | http://localhost:4814/prototype/ |
+| 4211 | 官网 | http://localhost:4211/ |
+| — | softer-xhs | 待 headed 登录续跑（§2） |
