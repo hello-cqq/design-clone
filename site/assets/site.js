@@ -90,6 +90,14 @@
       secs.forEach((s) => { const bg = s.querySelector(".secbg"); if (bg) { const r = s.getBoundingClientRect(); bg.style.transform = `translateY(${(r.top * -0.06).toFixed(1)}px)`; } });
     };
     addEventListener("scroll", () => { if (tick) return; tick = true; requestAnimationFrame(() => { paint(); tick = false; }); }, { passive: true });
+    // M113-W3：secbg 懒载——近屏才设 --bgimg（首屏省 ~6MB）
+    const bgs = [...document.querySelectorAll(".secbg[data-bg]")];
+    if ("IntersectionObserver" in window && bgs.length) {
+      const bio = new IntersectionObserver((es) => es.forEach((e) => {
+        if (e.isIntersecting) { e.target.style.backgroundImage = `url(${e.target.dataset.bg})`; bio.unobserve(e.target); } // M113: 直设 background-image（var() 内 url() 会按 site.css 基解析）
+      }), { rootMargin: "300px" });
+      bgs.forEach((b) => bio.observe(b));
+    } else bgs.forEach((b) => { b.style.backgroundImage = `url(${b.dataset.bg})`; });
     // M107：段背景视频出视口暂停/进视口播放（性能）+ 复制胶囊接线
     const rmv = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const vids = [...document.querySelectorAll(".secvid")];
