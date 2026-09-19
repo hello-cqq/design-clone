@@ -145,7 +145,7 @@ body.dc-desktop .dc-framebar { height: 34px; }
 body.dc-chromeless .dc-framebar, body.dc-chromeless .dc-statusbar { display: none; }
 #dc-screen { width: 100%; flex: 1; min-height: 0; overflow: auto; background: var(--color-bg, #EDEDED); scrollbar-width: none; }
 #dc-screen::-webkit-scrollbar { display: none; }
-#dc-stage { min-height: 100%; display: flex; flex-direction: column;
+#dc-stage { min-height: 100%; display: flex; flex-direction: column; position: relative; overflow: hidden;
   font-family: var(--font-body, -apple-system, "PingFang SC", "Noto Sans SC", sans-serif); }
 #dc-stage > * { flex: 1; }
 #dc-stage.dc-fade { animation: dc-fade .35s ease; }
