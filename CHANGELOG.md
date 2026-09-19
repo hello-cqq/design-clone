@@ -5,6 +5,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M114
+- 文档策展波：删 docs/QA/2026-09-01 阶段件；site-perf/agent-e2e 归档 docs/archive/QA/；M104+M110 验收单合并活文档 docs/QA/acceptance.md；visual-debt 结论并入 GATES；QA README 索引；引用五处同步。
+- 飞鸟重做：移除 M113 小雁阵；seedream 水墨比翼鸟（白底）入 #trio .sketch（大尺寸完整不裁、双主题、e2e 契约换 sk-birds）。
+- 移动端：hub embed 壳不 fit 致右裁/下裁 → 站点 fitStage() 缩放居中 + 壳模板 embed 自 fit 双保险；.appsel caret 贴胶囊；e2e 增 embed 缩放契约+时序余量。
+- LESSONS #240–242；site e2e 全绿；demo 五 run 新壳 sync 后 softer 48/0。
+
 ### M113
 - 官网修复波：顶栏/底栏 logo 光学对齐（webp 透明边距修正+e2e 光学契约）；飞鸟带重建为 #trio 功能演示背景（手绘雁阵 SVG 双主题、完整不裁切、e2e 防丢契约）+裁切藤蔓归位；性能：secbg 六张近屏懒载（IntersectionObserver 直设 background-image）、chars/sk 全转 webp（首屏 ~9MB→~2.2MB）、below-fold lazy/decoding；移动端：.sec 裁切+relative、390 无横滚/底栏居中/移动 console 净三契约；稳定：stars 嵌值免 api 限流、壳可选 JSON 空件消 404 噪点；LESSONS #236–239。
 

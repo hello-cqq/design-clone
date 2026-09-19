@@ -268,3 +268,6 @@
 237. M113 两连坑：①自定义属性里 url() 的相对路径按**使用变量的样式表**基解析（Chromium 对 var(--bgimg) 按 site.css=/assets/ 基）→ 懒载背景必须直设 background-image 或根绝对路径；②「div 还在、CSS 丢了」无门即静默退化（birdband 空 div 裸奔数个里程碑）→ 补 e2e 契约（.birdband 必须有 background-image 且高>40）。教训：装饰层契约也要进门，空容器是债不是占位。
 238. M113 移动端横滚门度量口径：overflow:hidden 容器的 scrollWidth 仍报内部溢出但**用户不可滚**，按 section.scrollWidth 判会误报；用户可见口径=documentElement.scrollWidth-clientWidth + 段盒 rect.right 出屏。教训：门禁度量先问"用户能感受到吗"。
 239. M113 操作事故：`cd a && x && cd b && y; z` 中 cd b 失败后 `;` 使 z 落在 a 仓——把 proto 仓提交信息误commit进 skill 仓（reset --mixed 回滚重理）。教训：跨仓一行流禁用 `;` 串联异仓命令；多仓操作用 git -C 绝对路径或分调用。
+240. M114 公开仓文档策展：阶段脚手架（按日期的临时 QA 报告）不进树（git 历史可溯）；活文档不用里程碑命名（M110-acceptance 里躺 M112 增补=命名债）→ 合并为 docs/QA/acceptance.md 活文档+README 索引三类角色（活账本/活验收/归档证据）；清零旧账本并入 GATES 一行。教训：文档与代码同寿命管理——无活引用的文件要么归档要么删，"放着"就是漂移源。
+241. M114 移动 embed 双裁真凶：壳 boot 的 fit() 条件排除 embed（chrome=0&embed=1 时 canvas 固 398×852），手机 stage ~350×460 → 右裁标题+下裁立绘。双保险修：站点侧 fitStage()（iframe 定尺+transform scale 居中，立即生效于已发布 app）+ 壳模板 embed 自 fit（未来发布生效）。教训：嵌入态是独立运行形态，fit/主题/手势都要单列条件过一遍；e2e 时序门在重载机 flaky 时加余量不删门。
+242. M114 装饰意象先考古用户记忆再动手：M113 把"飞鸟背景"实现成小雁阵 SVG，用户要的是"比较大的水墨风素描比翼鸟"——记忆里已有资产意象时，小碎图案=碍眼噪点。修：seedream 水墨比翼鸟（白底免抠，.sketch 混合模式直接吃白底）大尺寸入 trio，雁阵整组移除。教训：用户嘴里的视觉名词先对存量资产/历史版本做意象匹配，匹配不到再问或生成大主体，不要自造散点。

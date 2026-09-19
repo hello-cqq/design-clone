@@ -374,6 +374,19 @@
     paintActive();
   }
   const isMobile = () => matchMedia("(max-width: 980px)").matches;
+  // M114-W3：移动 embed 壳不自 fit（canvas 固 398×852）→ 站点侧 transform 缩放居中，防右裁/下裁
+  function fitStage() {
+    const st = document.querySelector(".stage"); const fr = document.getElementById("stageframe");
+    if (!st || !fr) return;
+    if (!/embed=1/.test(fr.src || "")) { fr.style.cssText = ""; return; }
+    const DW = 398, DH = 852;
+    const k = Math.min(st.clientWidth / DW, st.clientHeight / DH);
+    fr.style.width = DW + "px"; fr.style.height = DH + "px"; fr.style.position = "absolute";
+    fr.style.left = ((st.clientWidth - DW * k) / 2).toFixed(1) + "px";
+    fr.style.top = ((st.clientHeight - DH * k) / 2).toFixed(1) + "px";
+    fr.style.transform = "scale(" + k.toFixed(4) + ")"; fr.style.transformOrigin = "top left";
+  }
+  addEventListener("resize", () => { clearTimeout(window.__fitT); window.__fitT = setTimeout(fitStage, 120); }, { passive: true });
   const protoSrc = (a, theme, pageId) => {
     const base = a.url + (a.url.includes("?") ? "&" : "?");
     if (isMobile()) return base + "chrome=0&embed=1&theme=" + theme + (pageId ? "#pages/" + pageId : "");
@@ -397,6 +410,8 @@
     const side = document.getElementById("side");
     if (!a || !side) return;
     document.getElementById("stageframe").src = protoSrc(a, state.theme);
+    fitStage();
+    document.getElementById("stageframe").addEventListener("load", fitStage);
     const chips = document.getElementById("pagechips");
     if (chips) {
       chips.innerHTML = (a.pages || []).map((p, i) => `<button class="pchip${i === 0 ? " on" : ""}" data-p="${p.id}">${p.name || p.id}</button>`).join("");
