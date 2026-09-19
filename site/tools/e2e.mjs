@@ -44,9 +44,9 @@ ok("animstage in trio (M107)", await ctx.locator("#trio #animstage").count() ===
 ok("secvid backgrounds (M107)", await ctx.locator(".secvid").count() >= 2);
 ok("mengmeng motifs (M108)", await ctx.evaluate(() => ["sk-vines", "sk-door", "char-meng1"].every((k) => document.querySelector(`img[src*="${k}"]`))));
 ok("big static art transparent (M108)", await ctx.evaluate(async () => {
-      const list = ["char-meng1", "char-rift", "char-fox", "sk-vines", "sk-door"];
+      const list = ["char-meng1", "char-rift", "char-fox", "sk-door"]; // M113: webp 同名单测
       for (const k of list) {
-        const img = new Image(); img.src = "assets/" + k + ".png"; await img.decode().catch(() => {});
+        const img = new Image(); img.src = "assets/" + k + ".webp"; await img.decode().catch(() => {});
         if (!img.naturalWidth) return false;
         const cv = document.createElement("canvas"); cv.width = 40; cv.height = 40;
         const g = cv.getContext("2d"); g.drawImage(img, 0, 0, 40, 40);
@@ -345,6 +345,33 @@ for (let i = 0; i < loops; i++) {
 await ctx.waitForTimeout(1500);
 ok("console clean", errs.length === 0, errs.slice(0, 3).join(" | "));
 
+ok("header logo optical aligned (M113)", await ctx.evaluate(() => {
+  const l = document.querySelector("header .logo .logolock"), w = document.querySelector("header .logo .wordmark");
+  if (!l || !w) return false;
+  const a = l.getBoundingClientRect(), b = w.getBoundingClientRect();
+  return Math.abs((a.top + a.height * 0.535) - (b.top + b.height / 2)) <= 2; // webp 光学中心 51.5/96
+}));
+{
+  // M113-W4 移动契约：390 无横滚 + 底栏品牌居中 + 移动 console 净
+  const mctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const mc = await mctx.newPage();
+  const merrs = [];
+  mc.on("console", (x) => { if (x.type() === "error") merrs.push(x.text().slice(0, 80)); });
+  mc.on("pageerror", (e) => merrs.push("PAGEERR " + e.message.slice(0, 80)));
+  await mc.goto(base + "/index.html", { waitUntil: "load" });
+  await mc.waitForTimeout(2500);
+  const over = await mc.evaluate(() => { const d = document.documentElement; const doc = d.scrollWidth - d.clientWidth; const boxes = [...document.querySelectorAll("main .sec, footer")].map((s) => [s.id || s.tagName, Math.round(s.getBoundingClientRect().right - window.innerWidth)]).filter((x) => x[1] > 2); return doc > 2 ? [["document", doc]] : boxes; }); // M113：用户可见口径=document 横滚+段盒出屏（段内 hidden 容器的内部 scrollWidth 非用户可滚）
+  ok("mobile 390 no h-scroll (M113)", over.length === 0, JSON.stringify(over));
+  const ft = await mc.evaluate(() => {
+    const l = document.querySelector(".ftbrand .logolock"), w = document.querySelector(".ftbrand .wordmark");
+    if (!l || !w) return false;
+    const a = l.getBoundingClientRect(), b = w.getBoundingClientRect();
+    return Math.abs((a.left + a.right) / 2 - (b.left + b.right) / 2) <= 2;
+  });
+  ok("footer brand centered (M113)", ft);
+  ok("mobile console clean (M113)", merrs.length === 0, merrs.slice(0, 3).join(" | "));
+  await mctx.close();
+}
 await browser.close();
 
 console.log(JSON.stringify({ pass: fails.length === 0, fails }, null, 1));

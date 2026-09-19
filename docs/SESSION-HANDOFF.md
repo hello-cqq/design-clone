@@ -65,6 +65,7 @@
 | **M84/M85/M88/M91/M93/M94** | 09-14→15 | 演示点击即播、选中框 rAF 活跟踪 + `sel-ring-align` 门、导出 `all.zip`、logo 换用户图 + 主题冰蓝、导航 logo 动图 webp、透明纯度 veil 门 | ❌ | ❌（M93/M94 仅在 SESSION-SUMMARY） |
 | **M99** | 09-16 | 架构图 v3（archify 双主题 SVG）；媒体引擎（provider 路由+genvideo+agent-native 协议+media 工具集）；门禁第二轮（bg 覆盖/.far 豁免/选中语义）；两 demo 体感修复（PR#67）；官网新海诚重绘；数据线审计；全身立绘 v2+透明人物层（seedream pro） | ✅ | ✅ |
 | **M100–M102** | 09-16 | 指挥闭环定版（media-consent/plan/verify 三件套+官方 skill 桥）；标准 Ark key 直连档（仓外 0600+掩码+DELETE 止损）；media-strategy 总纲；Seedance 2.0-mini 实测履约（星海/耳廓狐 idle 视频，安全体验模式=SetLimitExceeded 真因）；双 demo 视频 hero 层（PR#69/#70） | ✅ | ✅ CHANGELOG |
+| **M113** | 09-19 | 官网修复波：logo 光学对齐/飞鸟带重建/首屏 9MB→2.2MB/移动三契约/稳定消噪；LESSONS 236-239 | ✅ | ✅ CHANGELOG |
 | **M112** | 09-18 | 收尾清债波：xhs 修因续跑+SOFTER 六屏全门绿；萌萌让位背景视频；六宠资产净化（seedream 换底+几何无缝）；matte.mjs 新工具；report/ 账本迁 docs/QA+转储 untrack；LESSONS 230-233 | ✅ | ✅ CHANGELOG |
 | **M111** | 09-18 | 链接原型做深做细：帧库存前置+提取优先+逐屏并排入 quality-standard 2.7；screen-coverage 硬门；ju 9 屏/paimomo 5 屏；LESSONS 226-229 | ✅ | ✅ CHANGELOG |
 | **M110** | 09-18 | 终版回归：五场景模拟用户+存量回归+修因三件+验收单+过夜服务矩阵；LESSONS 218-225 | ✅ | ✅ CHANGELOG |

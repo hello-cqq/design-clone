@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M113
+- 官网修复波：顶栏/底栏 logo 光学对齐（webp 透明边距修正+e2e 光学契约）；飞鸟带重建为 #trio 功能演示背景（手绘雁阵 SVG 双主题、完整不裁切、e2e 防丢契约）+裁切藤蔓归位；性能：secbg 六张近屏懒载（IntersectionObserver 直设 background-image）、chars/sk 全转 webp（首屏 ~9MB→~2.2MB）、below-fold lazy/decoding；移动端：.sec 裁切+relative、390 无横滚/底栏居中/移动 console 净三契约；稳定：stars 嵌值免 api 限流、壳可选 JSON 空件消 404 噪点；LESSONS #236–239。
+
 ### M112
 - 收尾清债波：xhs 取材修因（xhs.mjs 挂共享 profile+登录墙话术明示；短链 404 后经登录态搜索续跑）→ SOFTER 六屏完整原型全门绿（inspect 48/0、ui-smoke 28/0、screen-coverage 6/6、asset-qa/privacy/ip-scan/paths-qa 过）；首页萌萌 64svh+降透让位背景视频女主；paimomo 六宠资产净化（源帧紧裁→seedream-4.5 交互编辑换纯白底→几何无缝贴白卡，免抠透明）+健康卡色校正+头像圆角；新增 img/matte.mjs（flood/global 双模泛洪/全局色键）；report/ 账本迁 docs/QA/（parity-debt/agent-e2e/site-perf/visual-debt）+转储 untrack；双仓 secret-scan 过、site e2e 全绿；LESSONS #230–233。
 
