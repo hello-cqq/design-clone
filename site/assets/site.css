@@ -465,6 +465,7 @@ section, footer.ft { position: relative; }
 .sketch { position: absolute; pointer-events: none; z-index: 0; opacity: .10; mix-blend-mode: multiply; }
 :root[data-theme="dark"] .sketch { opacity: .16; mix-blend-mode: screen; filter: invert(1); }
 .sketch img { width: 100%; height: 100%; object-fit: contain; clip-path: inset(0 0 100% 0); }
+.sketch.birdsart img { filter: brightness(1.07); } /* 240*1.07>255 纸纹角块归纯白 */ /* M114.1：生图米白底(249-255)推纯白，multiply/screen 下矩形帷子归零；墨线+4% 亮度无可感差 */
 .sketch.rv-in img { animation: skdraw 1.6s cubic-bezier(.3, .7, .3, 1) .15s both; }
 @keyframes skdraw { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 -4% 0); } }
 @media (prefers-reduced-motion: reduce) { .sketch img { clip-path: none; } .sketch.rv-in img { animation: none; } }
