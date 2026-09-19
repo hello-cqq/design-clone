@@ -52,7 +52,7 @@
 | **M52** | 09-10 | 圆周轨迹探索页**结构化重建非贴图**（地图底=内联 SVG，城市名/圆点为独立可选元素，删整屏裁切 `explore-map.jpg`）；新门 `inspect: pasted-screenshot`（单 `<img>` 覆盖 ≥45% 舞台且同根无绝对定位兄弟 → hard） | ❌ | ✅ |
 | M54.1 | 09-11 | `release.mjs` ROOT 路径修正（scripts→repo 三级） | ❌ | ✅ |
 | **M57** | 09-11 | 官网三轮打磨：hero 三行居中、logo v3、功能演示全宽真实场景动画、精选 3:2 封面、详情页恰好一屏 + 面包屑 | ❌ | ✅ |
-| **M58** | 09-11 | **测试三件套建成**：`site/tools/e2e.mjs`（20 轮）+ `loadtest.mjs` + CI site job；star 数改构建期内嵌 `site/data/stars.json`（消除 GitHub API 60/hr 限额）；**1000req/200 并发 0 错，rps 1160，p95 167ms** | ❌ | ✅ + `docs/QA/site-perf.md` |
+| **M58** | 09-11 | **测试三件套建成**：`site/tools/e2e.mjs`（20 轮）+ `loadtest.mjs` + CI site job；star 数改构建期内嵌 `site/data/stars.json`（消除 GitHub API 60/hr 限额）；**1000req/200 并发 0 错，rps 1160，p95 167ms** | ❌ | ✅ + `docs/archive/QA/site-perf.md` |
 | **M59–M61** | 09-11 | 吉祥物三连试错：Q 版设计师 SVG → genimg pixar-3d → 圆框眼镜 + 水镜微电影。**三版全被用户否「好丑」**，最终 M64 改用户自产 AI 视频 | ❌ | ✅ |
 | M62.1/.2 | 09-11 | ⚠️ **并发 session 回滚残留**：把 M67 已删的渠道 pill / release 徽章重新接了回来 → 靠 e2e「三无元素计数=0」断言物理钉死（LESSONS 164） | ❌ | ✅ |
 | **M63** + M63.1 | 09-11 | 资源治理：cover 桌面窗口框/浏览器框分流 + category 计分制；publish **FORBID 生图中间件**（`_raw-`/`assets/_`）；四种子 v1.2.0；修画廊封面**双前缀 404** | ❌ | ✅ |
@@ -65,6 +65,7 @@
 | **M84/M85/M88/M91/M93/M94** | 09-14→15 | 演示点击即播、选中框 rAF 活跟踪 + `sel-ring-align` 门、导出 `all.zip`、logo 换用户图 + 主题冰蓝、导航 logo 动图 webp、透明纯度 veil 门 | ❌ | ❌（M93/M94 仅在 SESSION-SUMMARY） |
 | **M99** | 09-16 | 架构图 v3（archify 双主题 SVG）；媒体引擎（provider 路由+genvideo+agent-native 协议+media 工具集）；门禁第二轮（bg 覆盖/.far 豁免/选中语义）；两 demo 体感修复（PR#67）；官网新海诚重绘；数据线审计；全身立绘 v2+透明人物层（seedream pro） | ✅ | ✅ |
 | **M100–M102** | 09-16 | 指挥闭环定版（media-consent/plan/verify 三件套+官方 skill 桥）；标准 Ark key 直连档（仓外 0600+掩码+DELETE 止损）；media-strategy 总纲；Seedance 2.0-mini 实测履约（星海/耳廓狐 idle 视频，安全体验模式=SetLimitExceeded 真因）；双 demo 视频 hero 层（PR#69/#70） | ✅ | ✅ CHANGELOG |
+| **M114** | 09-19 | 文档策展+飞鸟重做（水墨比翼鸟）+移动 embed 缩放双保险；LESSONS 240-242 | ✅ | ✅ CHANGELOG |
 | **M113** | 09-19 | 官网修复波：logo 光学对齐/飞鸟带重建/首屏 9MB→2.2MB/移动三契约/稳定消噪；LESSONS 236-239 | ✅ | ✅ CHANGELOG |
 | **M112** | 09-18 | 收尾清债波：xhs 修因续跑+SOFTER 六屏全门绿；萌萌让位背景视频；六宠资产净化（seedream 换底+几何无缝）；matte.mjs 新工具；report/ 账本迁 docs/QA+转储 untrack；LESSONS 230-233 | ✅ | ✅ CHANGELOG |
 | **M111** | 09-18 | 链接原型做深做细：帧库存前置+提取优先+逐屏并排入 quality-standard 2.7；screen-coverage 硬门；ju 9 屏/paimomo 5 屏；LESSONS 226-229 | ✅ | ✅ CHANGELOG |

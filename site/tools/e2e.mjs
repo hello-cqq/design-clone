@@ -256,7 +256,7 @@ ok("favicon prefers-color-scheme fallback", await ctx.evaluate(() => !!document.
       await ap.waitForTimeout(600);
       const off = await ap.evaluate(() => { const r = document.getElementById("animstage").getBoundingClientRect(); return r.top > innerHeight || r.bottom < 0; });
       await ap.locator(".ftab").nth(1).click();
-      await ap.waitForTimeout(3400);
+      await ap.waitForTimeout(4200); // M114: 重载机时序余量（flaky 加固）
       const cap1 = await ap.locator("#animstage > .animstage:visible .captxt").textContent();
       ok("offscreen click autoplays", !off || /^[2-4]\//.test(cap1 || ""), cap1 || "");
       await ap.locator("#animstage > .animstage:visible .steps b").nth(0).click().catch(() => {});
@@ -345,6 +345,12 @@ for (let i = 0; i < loops; i++) {
 await ctx.waitForTimeout(1500);
 ok("console clean", errs.length === 0, errs.slice(0, 3).join(" | "));
 
+ok("ink birds sketch in trio, uncut (M114)", await ctx.evaluate(() => {
+  const im = document.querySelector('#trio .sketch img[src*="sk-birds"]');
+  if (!im) return false;
+  const r = im.getBoundingClientRect();
+  return r.width > 120 && r.top >= 0 && r.right <= innerWidth + 1;
+}));
 ok("header logo optical aligned (M113)", await ctx.evaluate(() => {
   const l = document.querySelector("header .logo .logolock"), w = document.querySelector("header .logo .wordmark");
   if (!l || !w) return false;
@@ -369,6 +375,13 @@ ok("header logo optical aligned (M113)", await ctx.evaluate(() => {
     return Math.abs((a.left + a.right) / 2 - (b.left + b.right) / 2) <= 2;
   });
   ok("footer brand centered (M113)", ft);
+  ok("mobile embed scaled to fit (M114)", await mc.evaluate(async () => {
+    document.getElementById("play")?.scrollIntoView();
+    await new Promise((r) => setTimeout(r, 1500));
+    const fr = document.getElementById("stageframe"), st = document.querySelector(".stage");
+    if (!fr || !st || !/embed=1/.test(fr.src || "")) return false;
+    return /scale\(/.test(fr.style.transform || "") && fr.getBoundingClientRect().width <= st.clientWidth + 2;
+  }));
   ok("mobile console clean (M113)", merrs.length === 0, merrs.slice(0, 3).join(" | "));
   await mctx.close();
 }

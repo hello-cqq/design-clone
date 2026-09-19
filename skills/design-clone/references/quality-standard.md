@@ -84,5 +84,5 @@ tier 由 meta.json `gate_tier` 数据声明（无 meta=advisory），代码无 r
 
 ## 4. 测试验收 vs 产品验收
 - **测试验收**（机器）：regress 全门矩阵（interact/inspect[含 empty-band/bg-cover/motion-min/unstyled 祖先校验]/ui-smoke[含 stroke 锁]/flow-truth/style-anchor）+ e2e + brand-qa + media-verify + no-run-specialcase + 变异测试矩阵。
-- **产品验收**（人）：`docs/QA/M104-acceptance.md` 式清单——每条用户诉求转**通用判据**+before/after 截图证据；判据不得含 app/页面字面。
+- **产品验收**（人）：`docs/QA/acceptance.md` 式清单（M114 起活文档）——每条用户诉求转**通用判据**+before/after 截图证据；判据不得含 app/页面字面。
 - 发布前置：三门绿+publish 真截图校验+manifest 完整（缺登记=拒发）。

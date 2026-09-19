@@ -83,7 +83,7 @@
       }
     }
     if (!S.variant) tweaksApply(tweaksStore());
-    if (!Q.get("chrome") && !Q.get("card") && !Q.get("embed")) setTimeout(() => { if (S.ia === "pages" && isLarge()) fit(); }, 300);
+    if (Q.get("embed") || (!Q.get("chrome") && !Q.get("card"))) setTimeout(() => { if (S.ia === "pages" && (isLarge() || Q.get("embed"))) fit(); }, 300); // M114: embed 也自 fit（未来发布生效）
   }
   boot();
 })();
