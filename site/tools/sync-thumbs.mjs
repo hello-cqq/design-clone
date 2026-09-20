@@ -20,6 +20,9 @@ fs.mkdirSync(OUT, { recursive: true });
 
 const crypto = await import("node:crypto");
 const idx = idxUrl ? await (await fetchT(idxUrl)).json() : await (await fetchDual("index.json")).json();
+const MANIFEST_P = path.join(OUT, "thumbs-index.json");
+let prev = {};
+try { prev = JSON.parse(fs.readFileSync(MANIFEST_P, "utf8")); } catch {}
 const manifest = {};
 for (const a of idx.apps || []) {
   manifest[a.app] = {};
@@ -39,6 +42,10 @@ for (const a of idx.apps || []) {
       console.log("thumb", dst);
     } catch (e) { console.log("skip", a.app, kind, String(e).slice(0, 60)); }
   }
+}
+for (const [app, kinds] of Object.entries(prev)) {
+  manifest[app] = Object.assign({}, kinds, manifest[app] || {});
+  for (const [kind, fn] of Object.entries(manifest[app])) if (!fs.existsSync(path.join(OUT, fn))) delete manifest[app][kind];
 }
 fs.writeFileSync(path.join(OUT, "thumbs-index.json"), JSON.stringify(manifest, null, 1));
 console.log("sync-thumbs done (hashed + manifest)");
