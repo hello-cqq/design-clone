@@ -84,6 +84,7 @@
     }
     if (!S.variant) tweaksApply(tweaksStore());
     if (Q.get("embed") || (!Q.get("chrome") && !Q.get("card"))) setTimeout(() => { if (S.ia === "pages" && (isLarge() || Q.get("embed"))) fit(); }, 300); // M114: embed 也自 fit（未来发布生效）
+    try { if (window.parent !== window) window.parent.postMessage({ type: "dc-ready" }, "*"); } catch {} // M114.2: embed 心跳，宿主据此判定壳 JS 存活
   }
   boot();
 })();

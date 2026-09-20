@@ -19,6 +19,8 @@
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
+html { scroll-padding-top: 70px; } /* M114.2: hash/锚跳转避开 sticky 头 */
+.sec { scroll-margin-top: 70px; }
 body { background: var(--bg); color: var(--ink); font: 15px/1.7 var(--sans); -webkit-font-smoothing: antialiased; }
 /* M99-6 新海诚层：天空纵grad + 星野/月晕 + 胶片粒 */
 body { background: linear-gradient(180deg, var(--sky) 0%, var(--bg) 42%, var(--bg) 100%); background-attachment: fixed; }
@@ -269,7 +271,7 @@ body, header.top, .pcard, .fcard, .side, .stage, .installbox, .ident, .filters i
   .installbox code { flex-basis: 100%; min-width: 0; order: 3; }
   .installbox #copycmd { order: 4; margin-left: auto; }
   .proto-layout { grid-template-columns: 1fr; height: auto; }
-  .stage { height: 55vh; min-height: 340px; }
+  .stage { height: 62vh; min-height: 340px; } /* M114.2: 移动端嵌预览更大画幅 */
   .side { height: auto; overflow: visible; }
   body.proto-page { height: auto; overflow: auto; }
   .cards { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
