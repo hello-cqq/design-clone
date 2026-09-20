@@ -8,22 +8,27 @@ import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
 const sharp = createRequire(import.meta.url)("sharp");
-const idxUrl = process.argv.includes("--index") ? process.argv[process.argv.indexOf("--index") + 1] : "https://hello-cqq.github.io/design-clone-prototype/index.json";
+const PAGES = "https://hello-cqq.github.io/design-clone-prototype";
+const RAW = "https://raw.githubusercontent.com/hello-cqq/design-clone-prototype/main";
+// Pages 快但部署滞后（CI 竞态 404）；raw 即时一致但个别网络慢 → 双源超时回落
+const fetchT = async (url, ms = 12000) => { const r = await fetch(url, { signal: AbortSignal.timeout(ms) }); if (!r.ok) throw new Error(r.status); return r; };
+const fetchDual = async (rel) => { try { return await fetchT(`${PAGES}/${rel}`); } catch { return await fetchT(`${RAW}/${rel}`, 60000); } };
+const idxUrl = process.argv.includes("--index") ? process.argv[process.argv.indexOf("--index") + 1] : null;
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const OUT = path.join(ROOT, "data", "thumbs");
 fs.mkdirSync(OUT, { recursive: true });
-const PROTO = "https://hello-cqq.github.io/design-clone-prototype";
+
 const crypto = await import("node:crypto");
-const idx = await (await fetch(idxUrl)).json();
+const idx = idxUrl ? await (await fetchT(idxUrl)).json() : await (await fetchDual("index.json")).json();
 const manifest = {};
 for (const a of idx.apps || []) {
   manifest[a.app] = {};
   for (const [kind, src] of [
-    ["cover", a.cover ? `${PROTO}/${a.cover}` : `${PROTO}/${a.app}/cover.png`],
-    ["icon", `${PROTO}/${a.app}/icon.png`],
+    ["cover", a.cover || `${a.app}/cover.png`],
+    ["icon", `${a.app}/icon.png`],
   ]) {
     try {
-      const r = await fetch(src);
+      const r = await fetchDual(src);
       if (!r.ok) continue;
       const buf = Buffer.from(await r.arrayBuffer());
       const h = crypto.createHash("md5").update(buf).digest("hex").slice(0, 8);
