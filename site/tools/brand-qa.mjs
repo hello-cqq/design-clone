@@ -117,7 +117,8 @@ function stickHits(data, w, h) {
 async function logoVeilCheck() {
   const A = path.join(ROOT, "assets");
   let bad = 0;
-  for (const f of ["logo-mark.png", "logo-mark-dark.png"]) { // 小尺寸 AA 主导，仅门 512 静图
+  for (const f of ["logo-mark.png", "favicon-dark.png"]) { // 小尺寸 AA 主导，仅门现存 512/64 静图（logo-mark-dark 已于 M110 下线）
+    if (!fs.existsSync(path.join(A, f))) continue;
     const { data, info } = await sharp(path.join(A, f)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
     // veil = 半透明且不邻接(2px 内)不透明像素 → 背景雾残留；AA 边像素邻接不透明=合法
     const w = info.width, h = info.height;
