@@ -3,6 +3,23 @@ on:
   push: { branches: ["main"] }
   pull_request:
 jobs:
+  commit-msg-en:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: commit subjects ASCII-only
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            RANGE="origin/${{ github.base_ref }}..HEAD"
+          elif [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            RANGE="HEAD~1..HEAD"
+          else
+            RANGE="${{ github.event.before }}..${{ github.event.after }}"
+          fi
+          bad=$(git log --format=%s "$RANGE" | LC_ALL=C grep -n '[^ -~]' || true)
+          if [ -n "$bad" ]; then echo "::error::non-English commit subject(s):"; echo "$bad"; exit 1; fi
+          echo "commit subjects OK"
   gates:
     runs-on: ubuntu-24.04
     strategy:

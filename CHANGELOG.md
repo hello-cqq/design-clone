@@ -5,6 +5,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M114.2
+- 飞鸟终版：浓墨稿转 alpha 墨片（alpha=255−luma），白底像素 alpha=0，双主题边带 Δ≈0.1、艺术核可见；blend/亮度数学全弃。
+- 移动 embed 兜底：壳 dc-ready 心跳+站点 8s 超时→stagefail（含全屏打开）；移动 stage 55→62vh；scroll-padding-top 修 sticky 头遮锚标题。
+- 已发布七应用同步新壳（心跳+embed 自 fit）+清 224 个 stale hash 包+patch 版本；proto 仓单独提交。
+- commit message 英文化规范：CONTRIBUTING/AGENTS + scripts/git-hooks/commit-msg + CI commit-msg-en 门。
+- LESSONS #244–246。
+
 ### M114
 - 文档策展波：删 docs/QA/2026-09-01 阶段件；site-perf/agent-e2e 归档 docs/archive/QA/；M104+M110 验收单合并活文档 docs/QA/acceptance.md；visual-debt 结论并入 GATES；QA README 索引；引用五处同步。
 - 飞鸟重做：移除 M113 小雁阵；seedream 水墨比翼鸟（白底）入 #trio .sketch（大尺寸完整不裁、双主题、e2e 契约换 sk-birds）。

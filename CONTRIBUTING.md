@@ -34,6 +34,7 @@ Editor: `.editorconfig` (LF, utf-8, 2 spaces, final newline). Lint/typecheck con
 ## Commit & PR
 
 - Small, revertible commits; message states run/milestone context (e.g. `M44k: export downloads to local + ui-smoke gate`).
+- Commit messages (subject and body) are **English only**; keep the existing prefix taxonomy (`M112:`, `chore:`, `docs(scope):` …). Enforced locally by `scripts/git-hooks/commit-msg` (enable once per clone: `git config core.hooksPath scripts/git-hooks`) and in CI by the `commit-msg-en` gate.
 - PR body uses `.github/PULL_REQUEST_TEMPLATE.md` and includes gate output lines (`dead=`, `inspectFail=`, `smokeFail=`, `warnFail=`).
 - Record a lesson in `docs/LESSONS.md` for every non-obvious failure you fix, with the skill location that now prevents it; add a `docs/ROADMAP.md` row for milestone-sized work.
 - Releases: bump `SKILL.md metadata.version` + `package.json version` together (CI version-sync gate compares both against the top non-`[Unreleased]` CHANGELOG section); rename the `[Unreleased]` section to `## [<new version>]` and tag (`release.mjs`/`release.yml`); CI packages `dist/*.zip` (never commit the zip).

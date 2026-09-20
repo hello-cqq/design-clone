@@ -21,6 +21,8 @@
 
 ## 开发约定
 
+- commit message 仅英文（subject+body）；钩子 `scripts/git-hooks/commit-msg` + CI `commit-msg-en` 门校验；新 clone 执行 `git config core.hooksPath scripts/git-hooks` 启用。
+
 - `SKILL.md` frontmatter 只允许 5 个字段：`name, description, license, compatibility, metadata`（name 必须等于目录名），禁止平台私有字段（`context: fork`、`hooks` 等），保证跨端可移植
 - `scripts/` 内脚本必须是可被裸 bash 调用的独立入口（`node scripts/xxx.mjs --help`），不依赖任何特定 MCP
 - 脚本只允许使用 `scripts/package.json` 声明的依赖 + 系统命令（adb/ffmpeg 等）；禁止引入需要付费或需 GPU 的运行时依赖

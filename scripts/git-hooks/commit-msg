@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# English-only commit messages (CONTRIBUTING.md §Commit & PR).
+set -eu
+f="$1"
+body=$(grep -v '^#' "$f" || true)
+if printf '%s' "$body" | LC_ALL=C grep -q '[^[:print:][:space:]]'; then
+  echo "commit-msg: message must be English (ASCII only) — see CONTRIBUTING.md §Commit & PR" >&2
+  exit 1
+fi
