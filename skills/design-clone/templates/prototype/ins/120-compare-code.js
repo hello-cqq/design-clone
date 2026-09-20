@@ -5,6 +5,7 @@
   /* ---------- 对照回退链 ---------- */
   function compareChain(id) {
     const ch = [];
+    if (S.srcmap && S.srcmap.__none__) return ch; // published apps ship knowledge/source-map.json {__none__:true}: no capture by design, zero 404 noise
     if (S.srcmap[id]) ch.push("../" + S.srcmap[id]);
     ch.push(`../capture/screens/${id}.png`);
     ch.push(`../capture/frames/img-${idxOf(id)}.jpeg`, "../capture/frames/img-01.jpeg");
@@ -35,6 +36,7 @@
     img.onload = () => { $("#dc-compare-src").textContent = img.src.split("/").slice(-2).join("/"); syncCompareScale(); };
     img.style.display = "";
     const miss = $("#dc-compare .miss"); if (miss) miss.remove();
+    if (!chain.length) { img.style.display = "none"; let m = $("#dc-compare .miss"); if (!m) { m = document.createElement("div"); m.className = "miss"; m.textContent = "no source screenshots published"; $("#dc-compare-body").appendChild(m); } return; }
     img.dataset.ci = 0; img.src = chain[0];
   }
 
