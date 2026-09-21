@@ -12,7 +12,7 @@ import { spawnSync } from "node:child_process";
 import path from "node:path";
 import crypto from "node:crypto";
 import { createRequire } from "node:module";
-import { arkRequestSpec, officialSkillPath } from "./gen/providers.mjs";
+import { arkRequestSpec, officialSkillPath, arkPaidKey, arkStandardImage, consentAskText } from "./gen/providers.mjs";
 const sharp = createRequire(import.meta.url)("sharp");
 import { parseArgs } from "node:util";
 
@@ -48,6 +48,7 @@ const { values } = parseArgs({
     prompt: { type: "string" }, out: { type: "string" }, style: { type: "string" },
     w: { type: "string", default: "512" }, h: { type: "string", default: "512" },
     seeds: { type: "string" }, "ref-url": { type: "string" }, "no-anti": { type: "boolean", default: false },
+    tier: { type: "string" }, "dry-run": { type: "boolean", default: false }, "defer-agent": { type: "boolean", default: false },
   },
 });
 if (!values.prompt || !values.out) {
@@ -55,10 +56,26 @@ if (!values.prompt || !values.out) {
   process.exit(1);
 }
 const full = [values.prompt, values.style ? (STYLES[values.style] || "") : "", SAFETY, values["no-anti"] ? "" : ANTI_TELL].filter(Boolean).join(", ");
+// M115 机械门：付费档必经 consent（exit 4=需申请，每 session 一次）；禁 agent 绕脚本手工索要 key
+const paid = arkPaidKey();
+const tier = values.tier || "auto";
+if (tier === "std" && !paid) {
+  console.error(JSON.stringify({ ok: false, error: "no-ark-key", guide: "place Ark key at ~/.config/design-clone/ark.key (chmod 600) or export ARK_API_KEY; never paste keys into chat" }));
+  process.exit(5);
+}
+const useStd = tier === "std" || (tier === "auto" && !!paid);
+if (useStd && !process.env.DC_MEDIA_CONSENT) {
+  console.error(JSON.stringify({ ok: false, need_consent: true, tier: "std", key_source: paid.source, ask_text: consentAskText("image", String(values.prompt).slice(0, 80), paid), note: "once per session; export DC_MEDIA_CONSENT after approval and rerun" }, null, 1));
+  process.exit(4);
+}
+if (values["dry-run"]) {
+  console.log(JSON.stringify({ ok: true, dry_run: true, tier: useStd ? "std" : "anon", engine: useStd ? "ark-standard" : "pollinations:flux", models: useStd ? ["doubao-seedream-4-5-251128"] : ["flux"], size: { w: +values.w, h: +values.h }, consent: process.env.DC_MEDIA_CONSENT || null }));
+  process.exit(0);
+}
 const outAbs = path.resolve(values.out);
-if (A.includes("--defer-agent")) {
+if (values["defer-agent"]) { // M115-fix: M101 遗留未定义变量（A/get/P/W/H）死代码修因——parseArgs 取值
   // M101：引导宿主 agent 用其已配置 means 履约——出官方契约规格+验收标准，skill 不直调
-  const spec = arkRequestSpec("image", { prompt: get("--subject", "") || P.prompt, w: +W, h: +H });
+  const spec = arkRequestSpec("image", { prompt: values.prompt, w: +values.w, h: +values.h });
   const req = {
     kind: "image", created_at: new Date().toISOString(), skill: "design-clone",
     consent: "required — 本 session 内用户已批准使用配置模型生图（DC_MEDIA_CONSENT 或会话内明确同意）",
@@ -117,8 +134,26 @@ for (const seed of seeds) {
     if (prevEng.startsWith("pollinations")) await wmErase(target); // M77: 匿名档缓存命中也擦水印；provider 档无水印不擦
     engineUsed = prevEng;
     console.log("cache hit:", path.basename(target), `(${prevEng})`);
+  } else if (useStd) {
+    // M115 直连档（consent 门控）：标准 key 走 /api/v3 images；失败回落 defer-agent（不静默降档匿名）
+    try {
+      const r = await arkStandardImage({ prompt: full, w: +values.w, h: +values.h });
+      engineUsed = r.engine;
+      fs.writeFileSync(cached, r.buf);
+      fs.writeFileSync(engFile, engineUsed);
+      fs.copyFileSync(cached, target);
+      console.log("generated:", path.basename(target), `(${r.engine})`);
+    } catch (e) {
+      console.error("直连档失败→回落 defer-agent:", String(e.message).slice(0, 140));
+      const spec = arkRequestSpec("image", { prompt: full, w: +values.w, h: +values.h });
+      const req = { kind: "image", created_at: new Date().toISOString(), skill: "design-clone", consent: process.env.DC_MEDIA_CONSENT || "granted-this-session", official_skill: officialSkillPath("image"), items: [{ prompt: full, out: outAbs, spec }], acceptance: { verify: "node media-verify.mjs --kind image --in <out>" } };
+      const reqP = path.join(outDir, "media-request.json");
+      fs.writeFileSync(reqP, JSON.stringify(req, null, 1));
+      console.error(`M101 履约请求已写：${reqP}`);
+      process.exit(3);
+    }
   } else {
-    // M101 教义：skill 不直调付费生图；匿名 pollinations 档=skill 自有免费默认（PROVENANCE 披露）；付费/配置模型档走 --defer-agent 由宿主 agent 履约
+    // 匿名 pollinations 档=skill 自有免费默认（PROVENANCE 披露）
     const model = values["ref-url"] && process.env.POLLINATIONS_TOKEN ? "kontext" : "flux";
     const u = new URL(`https://image.pollinations.ai/prompt/${encodeURIComponent(full)}`);
     u.searchParams.set("model", model);
@@ -138,6 +173,7 @@ for (const seed of seeds) {
   list.push({ at: new Date().toISOString(), prompt: values.prompt, style: values.style || null, seed, engine: engineUsed, out: path.basename(target) });
 }
 fs.writeFileSync(manifest, JSON.stringify(list, null, 2));
+if (!useStd) console.log(paid ? "hint: Ark key detected; use --tier std (consent-gated, once per session) for higher quality" : "hint: for higher quality, place an Ark key at ~/.config/design-clone/ark.key (chmod 600)");
 // M44c 素材溯源：生图资产登记进 prototype/assets-manifest.json（source=genimg），供 privacy/asset 门禁核验
 {
   const mp = path.join(outDir, "..", "assets-manifest.json");

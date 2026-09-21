@@ -12,13 +12,14 @@ import fs from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { execSync } from "node:child_process";
-import { arkRequestSpec, officialSkillPath, arkStandardKey, arkStandardVideo } from "./gen/providers.mjs";
+import { arkRequestSpec, officialSkillPath, arkStandardKey, arkStandardVideo, arkPaidKey, consentAskText } from "./gen/providers.mjs";
 
 const { values } = parseArgs({
   options: {
     prompt: { type: "string" }, out: { type: "string" }, brief: { type: "string" },
     duration: { type: "string", default: "5" }, aspect: { type: "string", default: "16:9" }, "first-frame": { type: "string" },
     also: { type: "string" }, verify: { type: "boolean" }, help: { type: "boolean" },
+    tier: { type: "string" },
   },
 });
 if (values.help) { console.log("用法: node genvideo.mjs --prompt <p> --out <out.mp4> [--also gif|frames|webm] | --brief <brief.json> --out <dir>"); process.exit(0); }
@@ -59,8 +60,20 @@ if (values.verify) {
   process.exit(0);
 }
 const done = [];
+// M115 机械门：付费档必经 consent（exit 4=需申请，每 session 一次）；禁 agent 绕脚本手工索要 key
+const paid = arkPaidKey();
+const tier = values.tier || "auto";
+if (tier === "std" && !paid) {
+  console.error(JSON.stringify({ ok: false, error: "no-ark-key", guide: "place Ark key at ~/.config/design-clone/ark.key (chmod 600) or export ARK_API_KEY; never paste keys into chat" }));
+  process.exit(5);
+}
+const useStd = tier === "std" || (tier === "auto" && !!paid);
+if (useStd && !process.env.DC_MEDIA_CONSENT) {
+  console.error(JSON.stringify({ ok: false, need_consent: true, tier: "std", key_source: paid.source, ask_text: consentAskText("video", null, paid), note: "once per session; export DC_MEDIA_CONSENT after approval and rerun" }, null, 1));
+  process.exit(4);
+}
 // M102 直连档：标准 key 在位+本 session 授权（DC_MEDIA_CONSENT）→ skill 直接履约（后付费，省配额默认 480p/4s/无声）
-if (arkStandardKey() && process.env.DC_MEDIA_CONSENT) {
+if (useStd) {
   for (const jb of jobs) {
     try {
       const r = await arkStandardVideo({ prompt: jb.prompt, duration: Math.min(jb.duration || 4, 5), resolution: "480p", firstFrame: jb.firstFrame || null });

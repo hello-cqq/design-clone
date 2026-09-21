@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M115
+- Media key/consent usability: standard Ark key unlocked for image+video (arkPaidKey); genimg/genvideo mechanical consent gate (exit 4 need_consent with ask_text stating detected key source and once-per-session rule; exit 5 key-placement guide instead of asking users for keys); --tier anon|std|auto + --dry-run; Ark direct image path with 3.68M-px image clamp and 4-5 model sequence; cover/CI default anon; doctor dual-capability row; media-consent discover/ask-text upgraded; SKILL.md section G rewritten (mechanical gate, fulfillment priority, key-never-asked); latent M101 defer-agent undefined-var dead code fixed (silent capture-hero fallback root cause); LESSONS 249-250.
+
 ### M114.3
 - Shell fix: clear stale cross-page selection before redraw + guard raw-selector fallback in drawSelection; kills the "as/end is not a valid selector" load-fail dialog on ai-assistant hang-up and any data-dc value that is not a valid bare selector; shells synced to all runs/demos/published apps.
 ### M114.4

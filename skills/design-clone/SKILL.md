@@ -342,18 +342,18 @@ node {SKILL_DIR}/scripts/qa/ip-scan.mjs && node {SKILL_DIR}/scripts/qa/secret-sc
 node {SKILL_DIR}/scripts/eval/eval.mjs --run <run目录> --base <base-url>   # M15：每次回归同步自评（含 interactivity）
 ```
 
-## §G 媒体按需生成（M101 指挥闭环）
+## §G 媒体按需生成（M101 指挥闭环 + M115 机械门）
 
-**教义**：skill 是指挥者，不是生成器。生图/生视频由**宿主 agent 用其已配置 means**（官方 byted-ark-seedream/seedance skill、自配图像/视频工具）履约；skill 负责机会识别、授权申请、出规格、验收登记。**VLM 语义策略由 skill 自控**（vlmChat：rubric 打分/选层/机会判断），免单独申请。
+**教义**：skill 是指挥者；**标准 Ark key 直连档为唯一自履约例外**（M115：image+video，consent 门控）。履约优先序：ark 直连档 > 官方 byted-ark-seedream/seedance skill（宿主履约）> 宿主自配 skill > 匿名免费档。**key 字符串只从发现链来**（`ARK_API_KEY` → `~/.config/design-clone/ark.key` → 宿主配置 volces provider）；**禁 agent 在对话里向用户索要 key**——发现链全空只给一次性放 key 指南（exit 5 的 guide 字段）。**consent（`DC_MEDIA_CONSENT`）每 session 至多申请一次**；匿名档免申请（PROVENANCE 披露）。**机械门优先于一切文档约定**：付费档必先跑 genimg/genvideo；exit 4=把脚本输出的 ask_text 原样展示给用户（已含检测到的 key 来源/费率/每 session 一次说明），批准导出 `DC_MEDIA_CONSENT` 后重跑；exit 3=履约请求 `media-request.json` 已写（defer/直连失败场景）；禁绕开脚本自判档位或手工拼请求。VLM 语义策略由 skill 自控（vlmChat），免单独申请。
 
-0. **媒体规划**（知识提炼后必跑）：`node scripts/gen/media-plan.mjs --run <run>` → `knowledge/media-plan.json`（槽位×means 序×成本预估×回落；策略总纲 `references/media-strategy.md`：生图按槽位结构化模板+pro/lite 路由+变异重试≤2+角色一致性锁 seed；生图默认 0 成本档优先；生视频默认 CSS/精灵假动效，直连档仅 idle/hero 且 consent+估价，长视频先 draft 样片，禁用于 UI 反馈/文字精度场景）。
-1. **机会识别**（构建/Remix 原型时）：缺艺术资产、虚拟人/角色立绘、hero 动效、风格转换、图层拆分需求 → 判定「生成能提升对用户诉求的符合度」。
-2. **授权申请**（按需、每 session 至多一次）：`node scripts/media-consent.mjs --ask-text --kind <image|video|layers> --what "<内容>"` 打印标准话术 → 向用户展示（拟生成内容/means/配额形态/不批准的回落）→ 用户批准后宿主 agent 导出 `DC_MEDIA_CONSENT=<means|all>`；**匿名 pollinations 档免申请**（PROVENANCE 披露）。
-3. **出规格**：`genimg.mjs --defer-agent` / `genvideo.mjs` / `gen/layers.mjs --spec` 写 `media-request.json`（官方契约：模型候选/size 钳制/watermark:false/首帧 role/ratio adaptive/24h URL 纪律）。
-4. **履约**：宿主 agent 按 spec 调用其 means（官方 skill 优先；**不跨模型重试、不转后付费接口**——官方 skill 纪律）。
-5. **验收登记**：`node scripts/media-verify.mjs --kind <image|video> --in <产物> --run <runDir> --consent "<note>"`（image：尺寸/空白/VLM rubric；video：ffprobe+faststart+≤2MB+webm+poster）→ 登记 assets-manifest（source=agent-media, engine, consent）；layers 用 `gen/layers.mjs --ingest`。
-6. **接入原型**：验收产物入 views（.far 远景/角色层/video hero 层遵守 ADR-M99-video：poster+reduced-motion+同层活控件）→ 四门复跑。
-7. **直连档纪律（M102）**：标准 Ark key（`~/.config/design-clone/ark.key` 0600 或 `ARK_API_KEY`，**永不入仓/日志/报告**）仅视频直连 `/api/v3`；默认 `doubao-seedance-2-0-mini` 480p/4-5s/无声/免水印；首帧 first_frame+adaptive；poll 10s/30min；video_url 24h 即下载；queued 超时 DELETE 止损；成本预估进申请话术。
+0. **媒体规划**（知识提炼后必跑）：`node scripts/gen/media-plan.mjs --run <run>` → `knowledge/media-plan.json`（槽位×means 序×成本预估×回落；策略总纲 `references/media-strategy.md`）。
+1. **机会识别**（构建/Remix 时）：缺艺术资产/虚拟人立绘/hero 动效/风格转换/图层拆分 → 判定生成提升符合度；**视觉要求高的项目（用户强调质量/设计感、brief 有 style_anchor）首个媒体机会必触发申请流，禁静默匿名回落**。
+2. **机械门**：跑 `genimg.mjs`/`genvideo.mjs`（默认 `--tier auto`）：exit 4=展示 ask_text 申请 consent；exit 5=无 key，展示 guide 放置指南；exit 3=按 `media-request.json` 履约后重跑 `--verify`；`--dry-run` 出规格不联网。
+3. **出规格**：`--defer-agent`/`--dry-run` 写官方契约规格（模型候选/size 钳制/watermark:false/首帧 role/ratio adaptive）。
+4. **履约**：直连档脚本自调 `/api/v3`（image seedream 4.5→5.0-lite 回落；video 2.0-mini 480p/4-5s/无声）；defer 档宿主按 spec 用其 means（官方 skill 优先；**不跨模型重试、不转后付费接口**）。
+5. **验收登记**：`node scripts/media-verify.mjs --kind image|video --in <产物> --run <runDir> --consent "<note>"` → assets-manifest（source/engine/consent）；layers 用 `gen/layers.mjs --ingest`。
+6. **接入原型**：验收产物入 views（ADR-M99-video：poster+reduced-motion+同层活控件）→ 四门复跑。
+7. **直连档纪律（M102/M115）**：标准 key（0600，**永不入仓/日志/报告**）image+video；成本预估进申请话术；queued 超时 DELETE 止损；video_url 24h 即下载。
 
 ## 红线（任何模式下必须遵守）
 

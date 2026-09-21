@@ -313,13 +313,58 @@ export function officialSkillPath(kind) {
 export const arkKeyForOfficial = () => { const v = volcSources()[0]; return v ? v.apiKey : (ENV.ARK_API_KEY || null); };
 
 /* ---------- 标准 Ark key 直连档（M102：后付费 /api/v3，仅视频；consent 门控） ---------- */
-export function arkStandardKey() {
-  if (ENV.ARK_API_KEY && /^ark-/.test(ENV.ARK_API_KEY)) return ENV.ARK_API_KEY;
+export function arkPaidKey() {
+  if (ENV.ARK_API_KEY && /^ark-/.test(ENV.ARK_API_KEY)) return { key: ENV.ARK_API_KEY, source: "env:ARK_API_KEY" };
   try {
     const f = path.join(os.homedir(), ".config", "design-clone", "ark.key");
-    if (fs.existsSync(f)) { const k = fs.readFileSync(f, "utf8").trim(); if (/^ark-/.test(k)) return k; }
+    if (fs.existsSync(f)) { const k = fs.readFileSync(f, "utf8").trim(); if (/^ark-/.test(k)) return { key: k, source: "~/.config/design-clone/ark.key" }; }
   } catch {}
   return null;
+}
+// M115: 标准 key 解禁 image+video（成本门=consent+策略层钳制）；旧名保留兼容
+export function arkStandardKey() { const p = arkPaidKey(); return p ? p.key : null; }
+// M115: seedream-4-5 图像接口要求 >=3686400 px（<=4624220）；5.0-lite 标准 key 无权限不入序
+export function clampArkImageSize(w, h) {
+  let W = Math.max(16, w | 0), H = Math.max(16, h | 0);
+  const ratio = W / H;
+  if (ratio > 4) W = H * 4; else if (ratio < 0.25) H = W * 4;
+  let px = W * H;
+  if (px < 3686400) { const k = Math.sqrt(3686400 / px); W = Math.round(W * k); H = Math.round(H * k); }
+  else if (px > 4624220) { const k = Math.sqrt(4624220 / px); W = Math.round(W * k); H = Math.round(H * k); }
+  return `${W}x${H}`;
+}
+const IMG_MODEL_SEQ = () => (ENV.ARK_IMAGE_MODEL ? [ENV.ARK_IMAGE_MODEL] : ["doubao-seedream-4-5-251128"]);
+export async function arkStandardImage(args = {}) {
+  const paid = arkPaidKey();
+  if (!paid) throw new Error("无标准 Ark key（ARK_API_KEY 或 ~/.config/design-clone/ark.key）");
+  const size = clampArkImageSize(args.w || 1024, args.h || 1024);
+  let lastErr = null;
+  for (const model of IMG_MODEL_SEQ()) {
+    try {
+      const res = await fetch(`${STD_BASE}/images/generations`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${paid.key}` },
+        body: JSON.stringify({ model, prompt: args.prompt, size, response_format: "b64_json", watermark: false }),
+        signal: AbortSignal.timeout(180000),
+      });
+      const j = await res.json();
+      if (!res.ok || !j.data || !j.data[0]) { lastErr = new Error((j.error && j.error.message) || `HTTP ${res.status}`); continue; }
+      return { buf: Buffer.from(j.data[0].b64_json, "base64"), engine: `ark-standard:${model}`, model };
+    } catch (e) { lastErr = e; }
+  }
+  throw lastErr || new Error("ark image failed");
+}
+// M115: 标准申请话术（genimg/genvideo/media-consent 共用）——首句声明钥匙已检测到、只需花钱同意、每 session 一次
+export function consentAskText(kind, what, keyMeta) {
+  const km = keyMeta || arkPaidKey();
+  const cost = kind === "video" ? `预估 ≈${((+(process.env.DC_EST_DURATION || 4)) * 0.2).toFixed(1)} 元/条（2.0 mini 480p 无声）` : "按张后付费（seedream 4.5/5.0-lite，尺寸钳制内）";
+  return [
+    "【design-clone 生成授权申请（本 session 仅此次）】",
+    km ? `已检测到你配置的 Ark key（来源 ${km.source}，后付费）。无需提供 key。` : "未检测到已配置 key；批准后由你 agent 已配置的生图/生视频通道履约。",
+    `拟${kind === "video" ? "生成短视频素材" : kind === "layers" ? "对图做图层拆分" : "生成图片资产"}：${what || "原型所需的艺术资产/动效素材"}。${km ? cost : ""}`,
+    "不批准的回落：匿名免费档（图片）/静态分层动效（视频），效果上限较低。",
+    "批准请回复「同意」或指定 means；批准后导出 DC_MEDIA_CONSENT，本 session 内不再询问。",
+  ].join("\n");
 }
 const STD_BASE = "https://ark.cn-beijing.volces.com/api/v3";
 const VIDEO_MODEL_SEQ = () => (ENV.ARK_VIDEO_MODEL ? [ENV.ARK_VIDEO_MODEL] : ["doubao-seedance-2-0-mini-260615", "doubao-seedance-2-0-260128", "doubao-seedance-2-5-260628"]);
