@@ -112,7 +112,9 @@
     if (cnt) cnt.textContent = (list.length - orphans.length) || "";
   }
   function drawSelection() {
-    const t = el(S.selected) || W.stage.querySelector(S.selected); if (!t) return;
+    let t = el(S.selected);
+    if (!t && S.selected) { try { t = W.stage.querySelector(S.selected); } catch { t = null; } } // M114.3: 裸选择器回退吞 SyntaxError（data-dc 含 / 等非法裸选择器值）
+    if (!t) return;
     const r = toWS(t.getBoundingClientRect());
     const box = document.createElement("div"); box.className = "dc-sel";
     Object.assign(box.style, { left: r.x + "px", top: r.y + "px", width: r.w + "px", height: r.h + "px" });

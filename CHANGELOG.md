@@ -5,6 +5,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versioning i
 
 ## [Unreleased]
 
+### M114.3
+- Shell fix: clear stale cross-page selection before redraw + guard raw-selector fallback in drawSelection; kills the "as/end is not a valid selector" load-fail dialog on ai-assistant hang-up and any data-dc value that is not a valid bare selector; shells synced to all runs/demos/published apps.
+### M114.4
+- cover.mjs --hero live: private-app covers re-shot from fictionalized prototype views; wechat + lark covers regenerated (real chat feed / real workspace + real desktop retired); proto validate OK; LESSONS 247-248.
+
 ### M114.2
 - 飞鸟终版：浓墨稿转 alpha 墨片（alpha=255−luma），白底像素 alpha=0，双主题边带 Δ≈0.1、艺术核可见；blend/亮度数学全弃。
 - 移动 embed 兜底：壳 dc-ready 心跳+站点 8s 超时→stagefail（含全屏打开）；移动 stage 55→62vh；scroll-padding-top 修 sticky 头遮锚标题。

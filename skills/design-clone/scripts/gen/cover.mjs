@@ -15,7 +15,7 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const sharp = require("sharp");
-const { values } = parseArgs({ options: { run: { type: "string" }, base: { type: "string" }, force: { type: "boolean" } } });
+const { values } = parseArgs({ options: { run: { type: "string" }, base: { type: "string" }, force: { type: "boolean" }, hero: { type: "string" } } });
 if (!values.run) { console.log("用法: node cover.mjs --run <runDir> [--base <url>] [--force]"); process.exit(1); }
 const run = path.resolve(values.run);
 const out = path.join(run, "cover.png");
@@ -56,8 +56,9 @@ const tags = (meta.tags || []).slice(0, 3);
 const first = (dc.pages[0] || {}).id;
 let heroBuf = null;
 // M77-W1: concept run 封面底=brief.cover 生图（clone 仍 capture/base 链不变）
+const liveHero = (values.hero || "capture") === "live"; // M114.4: 私域应用封面用虚构化视图现拍，禁 capture 真截图（隐私）
 const briefPath = path.join(run, "knowledge/brief.json");
-if (fs.existsSync(briefPath)) {
+if (!liveHero && fs.existsSync(briefPath)) {
   try {
     const brief = JSON.parse(fs.readFileSync(briefPath, "utf8"));
     const bg = path.join(run, "references/cover-bg.png");
@@ -69,8 +70,8 @@ if (fs.existsSync(briefPath)) {
   } catch {}
 }
 const cap = path.join(run, "capture/screens", `${first}.png`);
-if (fs.existsSync(cap)) heroBuf = fs.readFileSync(cap);
-else if (values.base) {
+if (!liveHero && fs.existsSync(cap)) heroBuf = fs.readFileSync(cap);
+if (!heroBuf && values.base) {
   const { chromium } = require("playwright");
   const b = await chromium.launch();
   const p = await b.newPage({ viewport: shell === "c_mobile" || shell === "c_tablet" ? { width: 390, height: 844 } : { width: 1280, height: 800 } });
