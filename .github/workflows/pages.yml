@@ -35,7 +35,7 @@ jobs:
       - name: sync gallery thumbs (same-origin, proto edge cold-safe)
         env:
           NODE_PATH: ${{ github.workspace }}/skills/design-clone/scripts/node_modules
-        run: node site/tools/sync-thumbs.mjs
+        run: node site/tools/sync-thumbs.mjs --source raw
       - name: hash site child assets (edge-cache bust)
         run: node site/tools/hash-assets.mjs
       - uses: actions/configure-pages@v5

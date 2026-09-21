@@ -12,7 +12,8 @@ const PAGES = "https://hello-cqq.github.io/design-clone-prototype";
 const RAW = "https://raw.githubusercontent.com/hello-cqq/design-clone-prototype/main";
 // Pages 快但部署滞后（CI 竞态 404）；raw 即时一致但个别网络慢 → 双源超时回落
 const fetchT = async (url, ms = 12000) => { const r = await fetch(url, { signal: AbortSignal.timeout(ms) }); if (!r.ok) throw new Error(r.status); return r; };
-const fetchDual = async (rel) => { try { return await fetchT(`${PAGES}/${rel}`); } catch { return await fetchT(`${RAW}/${rel}`, 60000); } };
+const SRC = process.argv.includes("--source") ? process.argv[process.argv.indexOf("--source") + 1] : "auto";
+const fetchDual = async (rel) => { if (SRC === "raw") return await fetchT(`${RAW}/${rel}`, 60000); if (SRC === "pages") return await fetchT(`${PAGES}/${rel}`); try { return await fetchT(`${PAGES}/${rel}`); } catch { return await fetchT(`${RAW}/${rel}`, 60000); } };
 const idxUrl = process.argv.includes("--index") ? process.argv[process.argv.indexOf("--index") + 1] : null;
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const OUT = path.join(ROOT, "data", "thumbs");
